@@ -49,7 +49,6 @@ def hero_rank(request):
         'ban_rate': 'main_hero_ban_rate',
         'win_rate': 'main_hero_win_rate'
     }
-    sort_field = sort_field_map.get(sort_field, 'main_hero_win_rate')
 
     url_map = {
         '1': url_1_day,
@@ -68,8 +67,10 @@ def hero_rank(request):
         'glory': glory_rank
     }
 
+    sort_field = sort_field_map.get(sort_field, 'main_hero_win_rate')
     url = url_map.get(days, url_1_day)
     payload = rank_map.get(rank, all_rank)
+    
     payload['pageSize'] = int(page_size)
     payload['pageIndex'] = int(page_index)
     payload['sorts'] = [
@@ -78,6 +79,58 @@ def hero_rank(request):
 
     headers = {'Content-Type': 'application/json'}
     response = requests.post(url, json=payload, headers=headers)
+    
+    if response.status_code == 200:
+        return Response(response.json())
+    else:
+        return Response({'error': 'Failed to fetch data', 'details': response.text}, status=response.status_code)
+    
+@api_view(['GET'])
+def hero_position(request):
+    url_role_lane = f"{MLBB_URL}gms/source/2669606/2756564"
+    
+    role_map = {
+        'all': [1, 2, 3, 4, 5, 6],
+        'tank': [1],
+        'fighter': [2],
+        'ass': [3],
+        'mage': [4],
+        'mm': [5],
+        'supp': [6]
+    }
+    
+    lane_map = {
+        'all': [1, 2, 3, 4, 5],
+        'exp': [1],
+        'mid': [2],
+        'roam': [3],
+        'jungle': [4],
+        'gold': [5]
+    }
+    
+    role = request.query_params.get('role', 'all')
+    lane = request.query_params.get('lane', 'all')
+    page_size = request.query_params.get('size', '21')
+    page_index = request.query_params.get('index', '1')
+    
+    payload = {
+        "pageSize": int(page_size),
+        "filters": [
+            {"field": "<hero.data.sortid>", "operator": "hasAnyOf", "value": role_map.get(role, [1, 2, 3, 4, 5, 6])},
+            {"field": "<hero.data.roadsort>", "operator": "hasAnyOf", "value": lane_map.get(lane, [1, 2, 3, 4, 5])}
+        ],
+        "sorts": [
+            {"data": {"field": "hero_id", "order": "desc"}, "type": "sequence"}
+        ],
+        "pageIndex": int(page_index),
+        "fields": [
+            "id", "hero_id", "hero.data.name", "hero.data.smallmap", "hero.data.sortid", "hero.data.roadsort"
+        ],
+        "object": []
+    }
+    
+    headers = {'Content-Type': 'application/json'}
+    response = requests.post(url_role_lane, json=payload, headers=headers)
     
     if response.status_code == 200:
         return Response(response.json())

@@ -2,5 +2,5 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('rank/', views.rank, name='rank'),
+    path('hero-rank/', views.hero_rank, name='hero-rank'),
 ]

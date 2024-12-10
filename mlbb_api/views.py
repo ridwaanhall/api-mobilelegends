@@ -261,3 +261,49 @@ def hero_relation(request, hero_id):
         return Response(response.json())
     else:
         return Response({'error': 'Failed to fetch data', 'details': response.text}, status=response.status_code)
+    
+@api_view(['GET'])
+def hero_counter_relationship(request, main_heroid):
+    url = f"{MLBB_URL}gms/source/2669606/2756569"
+    
+    payload = {
+        "pageSize": 20,
+        "filters": [
+            {"field": "match_type", "operator": "eq", "value": "0"},
+            {"field": "main_heroid", "operator": "eq", "value": main_heroid},
+            {"field": "bigrank", "operator": "eq", "value": "7"}
+        ],
+        "sorts": [],
+        "pageIndex": 1
+    }
+    
+    headers = {'Content-Type': 'application/json'}
+    response = requests.post(url, json=payload, headers=headers)
+    
+    if response.status_code == 200:
+        return Response(response.json())
+    else:
+        return Response({'error': 'Failed to fetch data', 'details': response.text}, status=response.status_code)
+    
+@api_view(['GET'])
+def hero_compatibility(request, main_heroid):
+    url = f"{MLBB_URL}gms/source/2669606/2756569"
+    
+    payload = {
+        "pageSize": 20,
+        "filters": [
+            {"field": "match_type", "operator": "eq", "value": "1"},
+            {"field": "main_heroid", "operator": "eq", "value": main_heroid},
+            {"field": "bigrank", "operator": "eq", "value": "7"}
+        ],
+        "sorts": [],
+        "pageIndex": 1
+    }
+    
+    headers = {'Content-Type': 'application/json'}
+    response = requests.post(url, json=payload, headers=headers)
+    
+    if response.status_code == 200:
+        return Response(response.json())
+    else:
+        return Response({'error': 'Failed to fetch data', 'details': response.text}, status=response.status_code)

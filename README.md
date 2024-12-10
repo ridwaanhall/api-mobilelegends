@@ -23,7 +23,7 @@ This project provides an API for fetching various analytics and data related to 
 The base URL for all endpoints is `https://api-mobilelegends.vercel.app`.
 
 ```text
-Base URL: https://api-mobilelegends.vercel.app
+https://api-mobilelegends.vercel.app
 ```
 
 ### Hero Rank

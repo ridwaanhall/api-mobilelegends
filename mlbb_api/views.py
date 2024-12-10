@@ -7,7 +7,7 @@ MLBB_URL = settings.MLBB_URL
 
 # Create your views here.
 @api_view(['GET'])
-def rank(request):
+def hero_rank(request):
     url_1_day = f"{MLBB_URL}gms/source/2669606/2756567"
     url_3_days = f"{MLBB_URL}gms/source/2669606/2756568"
     url_7_days = f"{MLBB_URL}gms/source/2669606/2756569"

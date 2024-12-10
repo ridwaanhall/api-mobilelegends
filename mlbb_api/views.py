@@ -136,3 +136,70 @@ def hero_position(request):
         return Response(response.json())
     else:
         return Response({'error': 'Failed to fetch data', 'details': response.text}, status=response.status_code)
+
+@api_view(['GET'])
+def hero_detail(request, hero_id):
+    url = f"{MLBB_URL}gms/source/2669606/2756564"
+    
+    payload = {
+        "pageSize": 20,
+        "filters": [
+            {"field": "hero_id", "operator": "eq", "value": hero_id}
+        ],
+        "sorts": [],
+        "pageIndex": 1,
+        "object": []
+    }
+    
+    headers = {'Content-Type': 'application/json'}
+    response = requests.post(url, json=payload, headers=headers)
+    
+    if response.status_code == 200:
+        return Response(response.json())
+    else:
+        return Response({'error': 'Failed to fetch data', 'details': response.text}, status=response.status_code)
+
+@api_view(['GET'])
+def hero_detail_stats(request, main_hero_id):
+    url = f"{MLBB_URL}gms/source/2669606/2756567"
+    
+    payload = {
+        "pageSize": 20,
+        "filters": [
+            {"field": "main_heroid", "operator": "eq", "value": main_hero_id},
+            {"field": "bigrank", "operator": "eq", "value": "101"},
+            {"field": "match_type", "operator": "eq", "value": "1"}
+        ],
+        "sorts": [],
+        "pageIndex": 1
+    }
+    
+    headers = {'Content-Type': 'application/json'}
+    response = requests.post(url, json=payload, headers=headers)
+    
+    if response.status_code == 200:
+        return Response(response.json())
+    else:
+        return Response({'error': 'Failed to fetch data', 'details': response.text}, status=response.status_code)
+
+@api_view(['GET'])
+def hero_detail_combos(request, hero_id):
+    url = f"{MLBB_URL}gms/source/2669606/2674711"
+    
+    payload = {
+        "pageSize": 20,
+        "filters": [
+            {"field": "hero_id", "operator": "eq", "value": hero_id}
+        ],
+        "sorts": [],
+        "pageIndex": 1,
+        "object": [2684183]
+    }
+    
+    headers = {'Content-Type': 'application/json'}
+    response = requests.post(url, json=payload, headers=headers)
+    
+    if response.status_code == 200:
+        return Response(response.json())
+    else:
+        return Response({'error': 'Failed to fetch data', 'details': response.text}, status=response.status_code)

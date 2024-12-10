@@ -263,7 +263,7 @@ def hero_relation(request, hero_id):
         return Response({'error': 'Failed to fetch data', 'details': response.text}, status=response.status_code)
     
 @api_view(['GET'])
-def hero_counter_relationship(request, main_heroid):
+def hero_counter(request, main_heroid):
     url = f"{MLBB_URL}gms/source/2669606/2756569"
     
     payload = {

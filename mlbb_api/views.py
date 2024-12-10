@@ -7,7 +7,7 @@ MLBB_URL = settings.MLBB_URL
 
 # Create your views here.
 @api_view(['GET'])
-def docs(request):
+def DocsByRidwaanhall(request):
     return Response([
         {
             "endpoint": "GET /hero-rank/",

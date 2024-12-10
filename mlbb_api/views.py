@@ -160,13 +160,13 @@ def hero_detail(request, hero_id):
         return Response({'error': 'Failed to fetch data', 'details': response.text}, status=response.status_code)
 
 @api_view(['GET'])
-def hero_detail_stats(request, main_hero_id):
+def hero_detail_stats(request, main_heroid):
     url = f"{MLBB_URL}gms/source/2669606/2756567"
     
     payload = {
         "pageSize": 20,
         "filters": [
-            {"field": "main_heroid", "operator": "eq", "value": main_hero_id},
+            {"field": "main_heroid", "operator": "eq", "value": main_heroid},
             {"field": "bigrank", "operator": "eq", "value": "101"},
             {"field": "match_type", "operator": "eq", "value": "1"}
         ],
@@ -183,7 +183,7 @@ def hero_detail_stats(request, main_hero_id):
         return Response({'error': 'Failed to fetch data', 'details': response.text}, status=response.status_code)
 
 @api_view(['GET'])
-def hero_detail_combos(request, hero_id):
+def hero_skill_combo(request, hero_id):
     url = f"{MLBB_URL}gms/source/2669606/2674711"
     
     payload = {
@@ -194,6 +194,64 @@ def hero_detail_combos(request, hero_id):
         "sorts": [],
         "pageIndex": 1,
         "object": [2684183]
+    }
+    
+    headers = {'Content-Type': 'application/json'}
+    response = requests.post(url, json=payload, headers=headers)
+    
+    if response.status_code == 200:
+        return Response(response.json())
+    else:
+        return Response({'error': 'Failed to fetch data', 'details': response.text}, status=response.status_code)
+    
+@api_view(['GET'])
+def hero_rate(request, main_heroid):
+    url_past_7_days  = f"{MLBB_URL}gms/source/2669606/2674709"
+    url_past_15_days = f"{MLBB_URL}gms/source/2669606/2687909"
+    url_past_30_days = f"{MLBB_URL}gms/source/2669606/2690860"
+    
+    days = request.query_params.get('past-days', '7')
+    
+    url_map = {
+        '7': url_past_7_days,
+        '15': url_past_15_days,
+        '30': url_past_30_days
+    }
+    
+    url = url_map.get(days, url_past_7_days)
+    
+    payload = {
+        "pageSize": 20,
+        "filters": [
+            {"field": "main_heroid", "operator": "eq", "value": main_heroid},
+            {"field": "bigrank", "operator": "eq", "value": "8"},
+            {"field": "match_type", "operator": "eq", "value": "1"}
+        ],
+        "sorts": [],
+        "pageIndex": 1
+    }
+    
+    headers = {'Content-Type': 'application/json'}
+    response = requests.post(url, json=payload, headers=headers)
+    
+    if response.status_code == 200:
+        return Response(response.json())
+    else:
+        return Response({'error': 'Failed to fetch data', 'details': response.text}, status=response.status_code)
+
+@api_view(['GET'])
+def hero_relation(request, hero_id):
+    url = f"{MLBB_URL}gms/source/2669606/2756564"
+    
+    payload = {
+        "pageSize": 20,
+        "filters": [
+            {"field": "hero_id", "operator": "eq", "value": hero_id}
+        ],
+        "sorts": [],
+        "pageIndex": 1,
+        "fields": ["hero.data.name"],
+        "object": []
     }
     
     headers = {'Content-Type': 'application/json'}

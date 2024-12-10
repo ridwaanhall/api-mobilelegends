@@ -22,7 +22,7 @@ This project provides an API for fetching various analytics and data related to 
 
 ### Hero Rank
 
-**Endpoint:** `GET /api/hero-rank/`
+**Endpoint:** `GET /hero-rank/`
 
 **Description:** Fetch hero rankings based on various parameters such as days, rank, page size, page index, and sorting options.
 
@@ -38,12 +38,12 @@ This project provides an API for fetching various analytics and data related to 
 **Example Request:**
 
 ```text
-GET /api/hero-rank/?days=7&rank=mythic&size=10&index=2&sort_field=pick_rate&sort_order=asc
+GET /hero-rank/?days=7&rank=mythic&size=10&index=2&sort_field=pick_rate&sort_order=asc
 ```
 
 ### Hero Position
 
-**Endpoint:** `GET /api/hero-position/`
+**Endpoint:** `GET /hero-position/`
 
 **Description:** Fetch hero positions based on various parameters such as role, lane, page size, and page index.
 
@@ -57,12 +57,12 @@ GET /api/hero-rank/?days=7&rank=mythic&size=10&index=2&sort_field=pick_rate&sort
 **Example Request:**
 
 ```text
-GET /api/hero-position/?role=tank&lane=mid&size=10&index=2
+GET /hero-position/?role=tank&lane=mid&size=10&index=2
 ```
 
 ### Hero Detail
 
-**Endpoint:** `GET /api/hero-detail/<int:hero_id>/`
+**Endpoint:** `GET /hero-detail/<int:hero_id>/`
 
 **Description:** Display details of a specific hero identified by `hero_id`.
 
@@ -73,12 +73,12 @@ GET /api/hero-position/?role=tank&lane=mid&size=10&index=2
 **Example Request:**
 
 ```text
-GET /api/hero-detail/123/
+GET /hero-detail/123/
 ```
 
 ### Hero Detail Stats
 
-**Endpoint:** `GET /api/hero-detail-stats/<int:main_heroid>/`
+**Endpoint:** `GET /hero-detail-stats/<int:main_heroid>/`
 
 **Description:** Display detailed statistics of a specific hero identified by `main_heroid`.
 
@@ -89,12 +89,12 @@ GET /api/hero-detail/123/
 **Example Request:**
 
 ```text
-GET /api/hero-detail-stats/123/
+GET /hero-detail-stats/123/
 ```
 
 ### Hero Skill Combo
 
-**Endpoint:** `GET /api/hero-skill-combo/<int:hero_id>/`
+**Endpoint:** `GET /hero-skill-combo/<int:hero_id>/`
 
 **Description:** Display skill combinations of a specific hero identified by `hero_id`.
 
@@ -105,12 +105,12 @@ GET /api/hero-detail-stats/123/
 **Example Request:**
 
 ```text
-GET /api/hero-skill-combo/123/
+GET /hero-skill-combo/123/
 ```
 
 ### Hero Rate
 
-**Endpoint:** `GET /api/hero-rate/<int:main_heroid>/`
+**Endpoint:** `GET /hero-rate/<int:main_heroid>/`
 
 **Description:** Rate a specific hero identified by `main_heroid`.
 
@@ -125,12 +125,12 @@ GET /api/hero-skill-combo/123/
 **Example Request:**
 
 ```text
-GET /api/hero-rate/123/?past-days=15
+GET /hero-rate/123/?past-days=15
 ```
 
 ### Hero Relation
 
-**Endpoint:** `GET /api/hero-relation/<int:hero_id>/`
+**Endpoint:** `GET /hero-relation/<int:hero_id>/`
 
 **Description:** Display relationships of a specific hero identified by `hero_id`.
 
@@ -141,12 +141,12 @@ GET /api/hero-rate/123/?past-days=15
 **Example Request:**
 
 ```text
-GET /api/hero-relation/123/
+GET /hero-relation/123/
 ```
 
 ### Hero Counter
 
-**Endpoint:** `GET /api/hero-counter/<int:main_heroid>/`
+**Endpoint:** `GET /hero-counter/<int:main_heroid>/`
 
 **Description:** Display counter information of a specific hero identified by `main_heroid`.
 
@@ -157,12 +157,12 @@ GET /api/hero-relation/123/
 **Example Request:**
 
 ```text
-GET /api/hero-counter/123/
+GET /hero-counter/123/
 ```
 
 ### Hero Compatibility
 
-**Endpoint:** `GET /api/hero-compatibility/<int:main_heroid>/`
+**Endpoint:** `GET /hero-compatibility/<int:main_heroid>/`
 
 **Description:** Display compatibility information of a specific hero identified by `main_heroid`.
 
@@ -173,7 +173,7 @@ GET /api/hero-counter/123/
 **Example Request:**
 
 ```text
-GET /api/hero-compatibility/123/
+GET /hero-compatibility/123/
 ```
 
 ## Setup

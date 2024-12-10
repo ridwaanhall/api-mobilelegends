@@ -225,15 +225,30 @@ def hero_rank(request):
         return {
             "pageSize": 20,
             "filters": [
-                {"field": "bigrank", "operator": "eq", "value": rank_value},
-                {"field": "match_type", "operator": "eq", "value": "0"}
+                {
+                    "field": "bigrank",
+                    "operator": "eq",
+                    "value": rank_value
+                },
+                {
+                    "field": "match_type",
+                    "operator":"eq",
+                    "value": "0"
+                }
             ],
             "sorts": [],
             "pageIndex": 1,
             "fields": [
-                "main_hero", "main_hero_appearance_rate", "main_hero_ban_rate", "main_hero_channel",
-                "main_hero_win_rate", "main_heroid", "data.sub_hero.hero", "data.sub_hero.hero_channel",
-                "data.sub_hero.increase_win_rate", "data.sub_hero.heroid"
+                "main_hero",
+                "main_hero_appearance_rate",
+                "main_hero_ban_rate",
+                "main_hero_channel",
+                "main_hero_win_rate",
+                "main_heroid",
+                "data.sub_hero.hero",
+                "data.sub_hero.hero_channel",
+                "data.sub_hero.increase_win_rate",
+                "data.sub_hero.heroid"
             ]
         }
 
@@ -281,7 +296,13 @@ def hero_rank(request):
     payload['pageSize'] = int(page_size)
     payload['pageIndex'] = int(page_index)
     payload['sorts'] = [
-        {"data": {"field": sort_field, "order": sort_order}, "type": "sequence"}
+        {"data":
+            {
+                "field": sort_field,
+                "order": sort_order
+            },
+            "type": "sequence"
+        }
     ]
 
     headers = {'Content-Type': 'application/json'}
@@ -290,14 +311,24 @@ def hero_rank(request):
     if response.status_code == 200:
         return Response(response.json())
     else:
-        return Response({'error': 'Failed to fetch data', 'details': response.text}, status=response.status_code)
+        return Response({
+            'error': 'Failed to fetch data', 
+            'details': response.text
+        }, status=response.status_code)
     
 @api_view(['GET'])
 def hero_position(request):
     url_role_lane = f"{MLBB_URL}gms/source/2669606/2756564"
     
     role_map = {
-        'all': [1, 2, 3, 4, 5, 6],
+        'all': [
+            1, 
+            2, 
+            3, 
+            4, 
+            5, 
+            6
+        ],
         'tank': [1],
         'fighter': [2],
         'ass': [3],
@@ -307,7 +338,13 @@ def hero_position(request):
     }
     
     lane_map = {
-        'all': [1, 2, 3, 4, 5],
+        'all': [
+            1, 
+            2, 
+            3, 
+            4, 
+            5
+        ],
         'exp': [1],
         'mid': [2],
         'roam': [3],
@@ -323,15 +360,34 @@ def hero_position(request):
     payload = {
         "pageSize": int(page_size),
         "filters": [
-            {"field": "<hero.data.sortid>", "operator": "hasAnyOf", "value": role_map.get(role, [1, 2, 3, 4, 5, 6])},
-            {"field": "<hero.data.roadsort>", "operator": "hasAnyOf", "value": lane_map.get(lane, [1, 2, 3, 4, 5])}
+            {
+                "field": "<hero.data.sortid>", 
+                "operator": "hasAnyOf", 
+                "value": role_map.get(role, [1, 2, 3, 4, 5, 6])
+            },
+            {
+                "field": "<hero.data.roadsort>", 
+                "operator": "hasAnyOf", 
+                "value": lane_map.get(lane, [1, 2, 3, 4, 5])
+            }
         ],
         "sorts": [
-            {"data": {"field": "hero_id", "order": "desc"}, "type": "sequence"}
+            {
+                "data": 
+                    {
+                        "field": "hero_id", 
+                        "order": "desc"
+                    }, 
+                "type": "sequence"
+            }
         ],
         "pageIndex": int(page_index),
         "fields": [
-            "id", "hero_id", "hero.data.name", "hero.data.smallmap", "hero.data.sortid", "hero.data.roadsort"
+            "id", "hero_id", 
+            "hero.data.name", 
+            "hero.data.smallmap", 
+            "hero.data.sortid", 
+            "hero.data.roadsort"
         ],
         "object": []
     }
@@ -342,7 +398,10 @@ def hero_position(request):
     if response.status_code == 200:
         return Response(response.json())
     else:
-        return Response({'error': 'Failed to fetch data', 'details': response.text}, status=response.status_code)
+        return Response(
+            {'error': 'Failed to fetch data', 
+             'details': response.text
+        }, status=response.status_code)
 
 @api_view(['GET'])
 def hero_detail(request, hero_id):
@@ -351,7 +410,11 @@ def hero_detail(request, hero_id):
     payload = {
         "pageSize": 20,
         "filters": [
-            {"field": "hero_id", "operator": "eq", "value": hero_id}
+            {
+                "field": "hero_id", 
+                "operator": "eq", 
+                "value": hero_id
+            }
         ],
         "sorts": [],
         "pageIndex": 1,
@@ -364,7 +427,10 @@ def hero_detail(request, hero_id):
     if response.status_code == 200:
         return Response(response.json())
     else:
-        return Response({'error': 'Failed to fetch data', 'details': response.text}, status=response.status_code)
+        return Response({
+            'error': 'Failed to fetch data', 
+            'details': response.text
+        }, status=response.status_code)
 
 @api_view(['GET'])
 def hero_detail_stats(request, main_heroid):
@@ -373,9 +439,21 @@ def hero_detail_stats(request, main_heroid):
     payload = {
         "pageSize": 20,
         "filters": [
-            {"field": "main_heroid", "operator": "eq", "value": main_heroid},
-            {"field": "bigrank", "operator": "eq", "value": "101"},
-            {"field": "match_type", "operator": "eq", "value": "1"}
+            {
+                "field": "main_heroid", 
+                "operator": "eq", 
+                "value": main_heroid
+            },
+            {
+                "field": "bigrank", 
+                "operator": "eq", 
+                "value": "101"
+            },
+            {
+                "field": "match_type",
+                "operator": "eq", 
+                "value": "1"
+            }
         ],
         "sorts": [],
         "pageIndex": 1
@@ -387,7 +465,10 @@ def hero_detail_stats(request, main_heroid):
     if response.status_code == 200:
         return Response(response.json())
     else:
-        return Response({'error': 'Failed to fetch data', 'details': response.text}, status=response.status_code)
+        return Response({
+            'error': 'Failed to fetch data', 
+            'details': response.text
+        }, status=response.status_code)
 
 @api_view(['GET'])
 def hero_skill_combo(request, hero_id):
@@ -396,7 +477,11 @@ def hero_skill_combo(request, hero_id):
     payload = {
         "pageSize": 20,
         "filters": [
-            {"field": "hero_id", "operator": "eq", "value": hero_id}
+            {
+                "field": "hero_id", 
+                "operator": "eq", 
+                "value": hero_id
+            }
         ],
         "sorts": [],
         "pageIndex": 1,
@@ -409,7 +494,10 @@ def hero_skill_combo(request, hero_id):
     if response.status_code == 200:
         return Response(response.json())
     else:
-        return Response({'error': 'Failed to fetch data', 'details': response.text}, status=response.status_code)
+        return Response({
+            'error': 'Failed to fetch data', 
+            'details': response.text
+        }, status=response.status_code)
     
 @api_view(['GET'])
 def hero_rate(request, main_heroid):
@@ -430,9 +518,21 @@ def hero_rate(request, main_heroid):
     payload = {
         "pageSize": 20,
         "filters": [
-            {"field": "main_heroid", "operator": "eq", "value": main_heroid},
-            {"field": "bigrank", "operator": "eq", "value": "8"},
-            {"field": "match_type", "operator": "eq", "value": "1"}
+            {
+                "field": "main_heroid", 
+                "operator": "eq", 
+                "value": main_heroid
+            },
+            {
+                "field": "bigrank", 
+                "operator": "eq", 
+                "value": "8"
+            },
+            {
+                "field": "match_type",
+                "operator": "eq",
+                "value": "1"
+            }
         ],
         "sorts": [],
         "pageIndex": 1
@@ -444,7 +544,10 @@ def hero_rate(request, main_heroid):
     if response.status_code == 200:
         return Response(response.json())
     else:
-        return Response({'error': 'Failed to fetch data', 'details': response.text}, status=response.status_code)
+        return Response({
+            'error': 'Failed to fetch data', 
+            'details': response.text
+        }, status=response.status_code)
 
 @api_view(['GET'])
 def hero_relation(request, hero_id):
@@ -453,7 +556,11 @@ def hero_relation(request, hero_id):
     payload = {
         "pageSize": 20,
         "filters": [
-            {"field": "hero_id", "operator": "eq", "value": hero_id}
+            {
+                "field": "hero_id", 
+                "operator": "eq", 
+                "value": hero_id
+            }
         ],
         "sorts": [],
         "pageIndex": 1,
@@ -467,7 +574,10 @@ def hero_relation(request, hero_id):
     if response.status_code == 200:
         return Response(response.json())
     else:
-        return Response({'error': 'Failed to fetch data', 'details': response.text}, status=response.status_code)
+        return Response({
+            'error': 'Failed to fetch data', 
+            'details': response.text
+        }, status=response.status_code)
     
 @api_view(['GET'])
 def hero_counter(request, main_heroid):
@@ -476,9 +586,21 @@ def hero_counter(request, main_heroid):
     payload = {
         "pageSize": 20,
         "filters": [
-            {"field": "match_type", "operator": "eq", "value": "0"},
-            {"field": "main_heroid", "operator": "eq", "value": main_heroid},
-            {"field": "bigrank", "operator": "eq", "value": "7"}
+            {
+                "field": "match_type",
+                "operator": "eq", 
+                 "value": "0"
+            },
+            {
+                "field": "main_heroid", 
+                "operator": "eq", 
+                "value": main_heroid
+            },
+            {
+                "field": "bigrank", 
+                "operator": "eq", 
+                "value": "7"
+            }
         ],
         "sorts": [],
         "pageIndex": 1
@@ -490,7 +612,10 @@ def hero_counter(request, main_heroid):
     if response.status_code == 200:
         return Response(response.json())
     else:
-        return Response({'error': 'Failed to fetch data', 'details': response.text}, status=response.status_code)
+        return Response({
+            'error': 'Failed to fetch data', 
+            'details': response.text
+        }, status=response.status_code)
     
 @api_view(['GET'])
 def hero_compatibility(request, main_heroid):
@@ -499,9 +624,21 @@ def hero_compatibility(request, main_heroid):
     payload = {
         "pageSize": 20,
         "filters": [
-            {"field": "match_type", "operator": "eq", "value": "1"},
-            {"field": "main_heroid", "operator": "eq", "value": main_heroid},
-            {"field": "bigrank", "operator": "eq", "value": "7"}
+            {
+                "field": "match_type", 
+                "operator": "eq", 
+                "value": "1"
+            },
+            {
+                "field": "main_heroid", 
+                "operator": "eq", 
+                "value": main_heroid
+            },
+            {
+                "field": "bigrank", 
+                "operator": "eq", 
+                "value": "7"
+            }
         ],
         "sorts": [],
         "pageIndex": 1
@@ -513,4 +650,7 @@ def hero_compatibility(request, main_heroid):
     if response.status_code == 200:
         return Response(response.json())
     else:
-        return Response({'error': 'Failed to fetch data', 'details': response.text}, status=response.status_code)
+        return Response({
+            'error': 'Failed to fetch data', 
+            'details': response.text
+        }, status=response.status_code)

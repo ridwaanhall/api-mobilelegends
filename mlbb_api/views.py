@@ -10,7 +10,7 @@ MLBB_URL = settings.MLBB_URL
 def DocsByRidwaanhall(request):
     return Response([
         {
-            "endpoint": "GET /hero-rank/",
+            "endpoint": "GET /api/hero-rank/",
             "description": "This endpoint is used to fetch hero rankings based on various parameters such as days, rank, page size, page index, and sorting options.",
             "query_parameters": {
                 "days": {
@@ -64,10 +64,10 @@ def DocsByRidwaanhall(request):
                     "default": "desc"
                 }
             },
-            "example_request": "GET /hero-rank/?days=7&rank=mythic&size=10&index=2&sort_field=pick_rate&sort_order=asc"
+            "example_request": "GET /api/hero-rank/?days=7&rank=mythic&size=10&index=2&sort_field=pick_rate&sort_order=asc"
         },
         {
-            "endpoint": "GET /hero-position/",
+            "endpoint": "GET /api/hero-position/",
             "description": "This endpoint is used to fetch hero positions based on various parameters such as role, lane, page size, and page index.",
             "query_parameters": {
                 "role": {
@@ -106,10 +106,10 @@ def DocsByRidwaanhall(request):
                     "default": "1"
                 }
             },
-            "example_request": "GET /hero-position/?role=tank&lane=mid&size=10&index=2"
+            "example_request": "GET /api/hero-position/?role=tank&lane=mid&size=10&index=2"
         },
         {
-            "endpoint": "GET /hero-detail/<int:hero_id>/",
+            "endpoint": "GET /api/hero-detail/<int:hero_id>/",
             "description": "This endpoint is used to display details of a specific hero identified by `hero_id`.",
             "path_parameters": {
                 "hero_id": {
@@ -119,10 +119,10 @@ def DocsByRidwaanhall(request):
                     "required": True
                 }
             },
-            "example_request": "GET /hero-detail/123/"
+            "example_request": "GET /api/hero-detail/123/"
         },
         {
-            "endpoint": "GET /hero-detail-stats/<int:main_heroid>/",
+            "endpoint": "GET /api/hero-detail-stats/<int:main_heroid>/",
             "description": "This endpoint is used to display detailed statistics of a specific hero identified by `main_heroid`.",
             "path_parameters": {
                 "main_heroid": {
@@ -132,10 +132,10 @@ def DocsByRidwaanhall(request):
                     "required": True
                 }
             },
-            "example_request": "GET /hero-detail-stats/123/"
+            "example_request": "GET /api/hero-detail-stats/123/"
         },
         {
-            "endpoint": "GET /hero-skill-combo/<int:hero_id>/",
+            "endpoint": "GET /api/hero-skill-combo/<int:hero_id>/",
             "description": "This endpoint is used to display skill combinations of a specific hero identified by `hero_id`.",
             "path_parameters": {
                 "hero_id": {
@@ -145,10 +145,10 @@ def DocsByRidwaanhall(request):
                     "required": True
                 }
             },
-            "example_request": "GET /hero-skill-combo/123/"
+            "example_request": "GET /api/hero-skill-combo/123/"
         },
         {
-            "endpoint": "GET /hero-rate/<int:main_heroid>/",
+            "endpoint": "GET /api/hero-rate/<int:main_heroid>/",
             "description": "This endpoint is used to rate a specific hero identified by `main_heroid`.",
             "path_parameters": {
                 "main_heroid": {
@@ -169,10 +169,10 @@ def DocsByRidwaanhall(request):
                     "default": "7"
                 }
             },
-            "example_request": "GET /hero-rate/123/?past-days=15"
+            "example_request": "GET /api/hero-rate/123/?past-days=15"
         },
         {
-            "endpoint": "GET /hero-relation/<int:hero_id>/",
+            "endpoint": "GET /api/hero-relation/<int:hero_id>/",
             "description": "This endpoint is used to display relationships of a specific hero identified by `hero_id`.",
             "path_parameters": {
                 "hero_id": {
@@ -182,10 +182,10 @@ def DocsByRidwaanhall(request):
                     "required": True
                 }
             },
-            "example_request": "GET /hero-relation/123/"
+            "example_request": "GET /api/hero-relation/123/"
         },
         {
-            "endpoint": "GET /hero-counter/<int:main_heroid>/",
+            "endpoint": "GET /api/hero-counter/<int:main_heroid>/",
             "description": "This endpoint is used to display counter information of a specific hero identified by `main_heroid`.",
             "path_parameters": {
                 "main_heroid": {
@@ -195,10 +195,10 @@ def DocsByRidwaanhall(request):
                     "required": True
                 }
             },
-            "example_request": "GET /hero-counter/123/"
+            "example_request": "GET /api/hero-counter/123/"
         },
         {
-            "endpoint": "GET /hero-compatibility/<int:main_heroid>/",
+            "endpoint": "GET /api/hero-compatibility/<int:main_heroid>/",
             "description": "This endpoint is used to display compatibility information of a specific hero identified by `main_heroid`.",
             "path_parameters": {
                 "main_heroid": {
@@ -208,7 +208,7 @@ def DocsByRidwaanhall(request):
                     "required": True
                 }
             },
-            "example_request": "GET /hero-compatibility/123/"
+            "example_request": "GET /api/hero-compatibility/123/"
         }
     ])
 

@@ -25,7 +25,7 @@ MLBB_URL = config('MLBB_URL')
 SECRET_KEY = 'django-insecure-0dbenlez&b==-4l3*wn=emswc6)rsj)9dicawy!0da0ekoll=_'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     '.vercel.app',

@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Hero Rank</h1>
+    <form method="get" class="mb-4">
+        <div class="form-row">
+            <div class="form-group col-md-2">
+                <label for="days">Days</label>
+                <select id="days" name="days" class="form-control">
+                    <option value="1" {% if days == '1' %}selected{% endif %}>1</option>
+                    <option value="3" {% if days == '3' %}selected{% endif %}>3</option>
+                    <option value="7" {% if days == '7' %}selected{% endif %}>7</option>
+                    <option value="15" {% if days == '15' %}selected{% endif %}>15</option>
+                    <option value="30" {% if days == '30' %}selected{% endif %}>30</option>
+                </select>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="rank">Rank</label>
+                <select id="rank" name="rank" class="form-control">
+                    <option value="all" {% if rank == 'all' %}selected{% endif %}>All</option>
+                    <option value="epic" {% if rank == 'epic' %}selected{% endif %}>Epic</option>
+                    <option value="legend" {% if rank == 'legend' %}selected{% endif %}>Legend</option>
+                    <option value="mythic" {% if rank == 'mythic' %}selected{% endif %}>Mythic</option>
+                    <option value="honor" {% if rank == 'honor' %}selected{% endif %}>Honor</option>
+                    <option value="glory" {% if rank == 'glory' %}selected{% endif %}>Glory</option>
+                </select>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="size">Size</label>
+                <input type="number" id="size" name="size" class="form-control" value="{{ size }}" min="1" max="126">
+            </div>
+            <div class="form-group col-md-2">
+                <label for="index">Index</label>
+                <input type="number" id="index" name="index" class="form-control" value="{{ index }}" min="1" max="126">
+            </div>
+            <div class="form-group col-md-2">
+                <label for="sort_field">Sort Field</label>
+                <select id="sort_field" name="sort_field" class="form-control">
+                    <option value="pick_rate" {% if sort_field == 'pick_rate' %}selected{% endif %}>Pick Rate</option>
+                    <option value="ban_rate" {% if sort_field == 'ban_rate' %}selected{% endif %}>Ban Rate</option>
+                    <option value="win_rate" {% if sort_field == 'win_rate' %}selected{% endif %}>Win Rate</option>
+                </select>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="sort_order">Sort Order</label>
+                <select id="sort_order" name="sort_order" class="form-control">
+                    <option value="asc" {% if sort_order == 'asc' %}selected{% endif %}>Ascending</option>
+                    <option value="desc" {% if sort_order == 'desc' %}selected{% endif %}>Descending</option>
+                </select>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Filter</button>
+    </form>
+    <table class="table table-striped mt-4">
+        <thead class="thead-dark">
+            <tr>
+                <th>Hero</th>
+                <th>Appearance Rate</th>
+                <th>Ban Rate</th>
+                <th>Win Rate</th>
+                <th>Sub Heroes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in data.data.records %}
+            <tr>
+                <td>
+                    <img src="{{ record.data.main_hero.data.head }}" alt="{{ record.data.main_hero.data.name }}" width="50">
+                    {{ record.data.main_hero.data.name }}
+                </td>
+                <td>{{ record.data.main_hero_appearance_rate|floatformat:4 }}%</td>
+                <td>{{ record.data.main_hero_ban_rate|floatformat:4 }}%</td>
+                <td>{{ record.data.main_hero_win_rate|floatformat:4 }}%</td>
+                <td>
+                    <ul>
+                        {% for sub_hero in record.data.sub_hero %}
+                        <li>
+                            <img src="{{ sub_hero.hero.data.head }}" alt="Sub Hero" width="30">
+                            Win Rate Increase: {{ sub_hero.increase_win_rate|floatformat:4 }}%
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

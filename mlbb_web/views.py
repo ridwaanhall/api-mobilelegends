@@ -1,6 +1,10 @@
 import requests
 from django.shortcuts import render
 from django.http import JsonResponse
+from django.conf import settings
+
+
+LOCAL_URL = settings.LOCAL_URL
 
 # Create your views here.
 def simple_view(request):
@@ -40,7 +44,7 @@ def hero_rank_web(request):
     sort_field = request.GET.get('sort_field', 'win_rate')
     sort_order = request.GET.get('sort_order', 'desc')
 
-    response = requests.get(f'http://127.0.0.1:8000/api/hero-rank/?days={days}&rank={rank}&size={size}&index={index}&sort_field={sort_field}&sort_order={sort_order}')
+    response = requests.get(f'{LOCAL_URL}hero-rank/?days={days}&rank={rank}&size={size}&index={index}&sort_field={sort_field}&sort_order={sort_order}')
     if response.status_code != 200:
         return JsonResponse({'error': 'Data not found'}, status=404)
     data = response.json()
@@ -71,7 +75,7 @@ def hero_position_web(request):
     size = request.GET.get('size', '21')
     index = request.GET.get('index', '1')
 
-    response = requests.get(f'http://127.0.0.1:8000/api/hero-position/?role={role}&lane={lane}&size={size}&index={index}')
+    response = requests.get(f'{LOCAL_URL}hero-position/?role={role}&lane={lane}&size={size}&index={index}')
     data = response.json()
 
     # Map hero IDs to names

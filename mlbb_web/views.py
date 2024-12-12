@@ -99,3 +99,21 @@ def hero_position_web(request):
         'size': size,
         'index': index
     })
+
+def hero_detail_web(request, hero_id):
+    response = requests.get(f'{LOCAL_URL}hero-detail/{hero_id}/')
+    if response.status_code != 200:
+        return JsonResponse({'error': 'Data not found'}, status=404)
+    data = response.json()
+    if data is None or 'data' not in data or 'records' not in data['data']:
+        return JsonResponse({'error': 'Data not found'}, status=404)
+
+    # Extract the data inside records
+    records_data = data['data']['records'][0]['data']
+
+    # Rename 'skillcd&cost' to 'skillcd_cost' in the skill details
+    for skill in records_data['hero']['data']['heroskilllist']:
+        for skill_detail in skill['skilllist']:
+            skill_detail['skillcd_cost'] = skill_detail.pop('skillcd&cost')
+
+    return render(request, 'mlbb_web/hero-detail.html', {'data': records_data})

@@ -18,23 +18,22 @@
                 <h4>Basic Info</h4>
             </div>
             <div class="card-body">
-                <table class="table table-hover">
+                <table class="table table-hover table-bordered">
                     <tbody>
                         <tr>
                             <td>Role</td>
                             <td>
                                 {% for role in data.hero.data.sortid %}
-                                    <img src="{{ role.data.sort_icon }}" alt="{{ role.data.sort_title }}" width="30" height="30">
+                                    <img src="{{ role.data.sort_icon }}" alt="{{ role.data.sort_title }}" width="30" height="30" data-toggle="tooltip" title="{{ role.data.sort_title }}">
                                     {{ role.data.sort_title }}{% if not forloop.last %}, {% endif %}
                                 {% endfor %}
-                            </td>
                             </td>
                         </tr>
                         <tr>
                             <td>Lane</td>
                             <td>
                                 {% for lane in data.hero.data.roadsort %}
-                                    <img src="{{ lane.data.road_sort_icon }}" alt="{{ lane.data.road_sort_title }}" width="40" height="40">
+                                    <img src="{{ lane.data.road_sort_icon }}" alt="{{ lane.data.road_sort_title }}" width="40" height="40" data-toggle="tooltip" title="{{ lane.data.road_sort_title }}">
                                     {{ lane.data.road_sort_title }}{% if not forloop.last %}, {% endif %}
                                 {% endfor %}
                             </td>
@@ -49,7 +48,23 @@
                         </tr>
                         <tr>
                             <td>Difficulty</td>
-                            <td>{{ data.hero.data.difficulty }}</td>
+                            <td>
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" style="width: {{ data.hero.data.difficulty }}%;" aria-valuenow="{{ data.hero.data.difficulty }}" aria-valuemin="0" aria-valuemax="100">{{ data.hero.data.difficulty }}%</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Win Rate</td>
+                            <td>{{ stats.data.records.0.data.main_hero_win_rate }}%</td>
+                        </tr>
+                        <tr>
+                            <td>Ban Rate</td>
+                            <td>{{ stats.data.records.0.data.main_hero_ban_rate }}%</td>
+                        </tr>
+                        <tr>
+                            <td>Pick Rate</td>
+                            <td>{{ stats.data.records.0.data.main_hero_appearance_rate }}%</td>
                         </tr>
                     </tbody>
                 </table>

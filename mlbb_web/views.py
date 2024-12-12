@@ -116,4 +116,9 @@ def hero_detail_web(request, hero_id):
         for skill_detail in skill['skilllist']:
             skill_detail['skillcd_cost'] = skill_detail.pop('skillcd&cost')
 
+    # Rename '__data' to 'data' and 'numdescribe' to 'num_describe' in recommendmasterplan
+    for plan in records_data['hero']['data']['recommendmasterplan']:
+        plan['battleskill']['data'] = plan['battleskill'].pop('__data')
+        # plan['battleskill']['data']['num_describe'] = plan['battleskill']['data'].pop('numdescribe')
+
     return render(request, 'mlbb_web/hero-detail.html', {'data': records_data})

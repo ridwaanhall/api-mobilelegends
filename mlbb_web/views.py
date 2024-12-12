@@ -121,4 +121,16 @@ def hero_detail_web(request, hero_id):
         plan['battleskill']['data'] = plan['battleskill'].pop('__data')
         # plan['battleskill']['data']['num_describe'] = plan['battleskill']['data'].pop('numdescribe')
 
-    return render(request, 'mlbb_web/hero-detail.html', {'data': records_data_hero_detail})
+    response_hero_detail_stats = requests.get(f'{LOCAL_URL}hero-detail-stats/{hero_id}/')
+    if response_hero_detail_stats.status_code != 200:
+        return JsonResponse({'error': 'Data not found'}, status=404)
+    data_hero_detail_stats = response_hero_detail_stats.json()
+    if data_hero_detail_stats is None or 'data' not in data_hero_detail_stats or 'records' not in data_hero_detail_stats['data']:
+        return JsonResponse({'error': 'Data not found'}, status=404)
+    
+    for record_stats in data_hero_detail_stats['data']['records']:
+        record_stats['data']['main_hero_appearance_rate'] *= 100
+        record_stats['data']['main_hero_ban_rate'] *= 100
+        record_stats['data']['main_hero_win_rate'] *= 100
+
+    return render(request, 'mlbb_web/hero-detail.html', {'data': records_data_hero_detail, 'stats': data_hero_detail_stats})

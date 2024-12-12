@@ -57,7 +57,13 @@
                     <img src="{{ record.data.hero.data.smallmap }}" alt="{{ record.data.hero.data.name }}" width="50">
                     {{ record.data.hero.data.name }}
                 </td>
-                <td>{{ record.data.hero.data.sortid.0.data.sort_title }}</td>
+                <td>
+                    <ul>
+                        {% for sort in record.data.hero.data.sortid %}
+                        <li>{{ sort.data.sort_title }}</li>
+                        {% endfor %}
+                    </ul>
+                </td>
                 <td>
                     <ul>
                         {% for lane in record.data.hero.data.roadsort %}

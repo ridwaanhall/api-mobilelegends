@@ -43,8 +43,8 @@
         <thead>
             <tr>
                 <th>Hero</th>
-                <th>Role</th>
                 <th>Lane</th>
+                <th>Role</th>
                 <th>Assist</th>
                 <th>Strong Against</th>
                 <th>Weak Against</th>
@@ -59,17 +59,20 @@
                 </td>
                 <td>
                     <ul>
-                        {% for sort in record.data.hero.data.sortid %}
-                        <li>{{ sort.data.sort_title }}</li>
+                        {% for lane in record.data.hero.data.roadsort %}
+                        <li>
+                            <img src="{{ lane.data.road_sort_icon }}" alt="{{ lane.data.road_sort_title }}" width="30">
+                            {{ lane.data.road_sort_title }}
+                        </li>
                         {% endfor %}
                     </ul>
                 </td>
                 <td>
                     <ul>
-                        {% for lane in record.data.hero.data.roadsort %}
+                        {% for sort in record.data.hero.data.sortid %}
                         <li>
-                            <img src="{{ lane.data.road_sort_icon }}" alt="{{ lane.data.road_sort_title }}" width="30">
-                            {{ lane.data.road_sort_title }}
+                            <img src="{{ sort.data.sort_icon }}" alt="{{ sort.data.sort_title }}" width="30">
+                            {{ sort.data.sort_title }}
                         </li>
                         {% endfor %}
                     </ul>

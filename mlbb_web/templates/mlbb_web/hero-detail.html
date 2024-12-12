@@ -1,148 +1,104 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container">
-    <h1>Hero Detail</h1>
-    <div class="card mb-3">
-        
-        <div class="card-body">
-            <h5 class="card-title"><img src="https://wsrv.nl/?url={{ data.hero.data.head }}&w=50&h=50" alt="{{ data.hero.data.name }}">{{ data.hero.data.name }}</h5>
-            <p class="card-text">{{ data.hero.data.description }}</p>
-            <h4>Skills</h4>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Icon</th>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Cooldown & Cost</th>
-                        <th>Tags</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for skill in data.hero.data.heroskilllist %}
-                    {% for skill_detail in skill.skilllist %}
-                    <tr>
-                        <td><img src="{{ skill_detail.skillicon }}" alt="{{ skill_detail.skillname }}" width="30"></td>
-                        <td><strong>{{ skill_detail.skillname }}</strong></td>
-                        <td>{{ skill_detail.skilldesc|safe }}</td>
-                        <td>{{ skill_detail.skillcd_cost }}</td>
-                        <td>
-                            {% for tag in skill_detail.skilltag %}
-                                <span style="background-color: rgb({{ tag.tagrgb }}); padding: 2px 5px; border-radius: 3px;">{{ tag.tagname }}</span>
-                            {% endfor %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                    {% endfor %}
-                </tbody>
-            </table>
-            <h4>Recommend Master Plan</h4>
-            <h5 class="card-title"><img src="https://wsrv.nl/?url={{ data.hero.data.recommendmasterplan.0.face }}&w=50&h=50" alt="{{ data.hero.data.recommendmasterplan.0.name }}">{{ data.hero.data.recommendmasterplan.0.name }}</h5>
-            <p>{{ data.hero.data.recommendmasterplan.0.description }}</p>
-            <h5>Battle Skill</h5>
-            <p>{{ data.hero.data.recommendmasterplan.0.battleskill.data.numdescribe }}</p>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Icon</th>
-                        <th>Name</th>
-                        <th>Skill Desc</th>
-                        <th>Skill Desc Text</th>
-                        <th>Skill Desc Emblem</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><img src="{{ data.hero.data.recommendmasterplan.0.battleskill.data.skillicon }}" alt="{{ data.hero.data.recommendmasterplan.0.battleskill.data.skillname }}" width="30"></td>
-                        <td><strong>{{ data.hero.data.recommendmasterplan.0.battleskill.data.skillname }}</strong></td>
-                        <td>{{ data.hero.data.recommendmasterplan.0.battleskill.data.skilldesc|safe }}</td>
-                        <td>{{ data.hero.data.recommendmasterplan.0.battleskill.data.skilldesc_text|safe }}</td>
-                        <td>{{ data.hero.data.recommendmasterplan.0.battleskill.data.skilldescemblem|safe }}</td>
-                    </tr>
-                </tbody>
-            </table>
-            <h5>Emblem Plan</h5>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Icon</th>
-                        <th>Name</th>
-                        <th>Attributes</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><img src="{{ data.hero.data.recommendmasterplan.0.emblemplan.emblemplan.attriicon }}" alt="{{ data.hero.data.recommendmasterplan.0.emblemplan.emblemplan.emblemname }}" width="30"></td>
-                        <td><strong>{{ data.hero.data.recommendmasterplan.0.emblemplan.emblemplan.emblemname }}</strong></td>
-                        <td>{{ data.hero.data.recommendmasterplan.0.emblemplan.emblemplan.emblemattr.emblemattr|safe }}</td>
-                    </tr>
-                </tbody>
-            </table>
-            <h5>Emblem Skills</h5>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Icon</th>
-                        <th>Name</th>
-                        <th>Num Describe</th>
-                        <th>Description</th>
-                        <th>Skill Desc Text</th>
-                        <th>Skill Desc Emblem</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><img src="{{ data.hero.data.recommendmasterplan.0.emblemplan.giftid1.emblemskill.skillicon }}" alt="{{ data.hero.data.recommendmasterplan.0.emblemplan.giftid1.emblemskill.skillname }}" width="30"></td>
-                        <td><strong>{{ data.hero.data.recommendmasterplan.0.emblemplan.giftid1.emblemskill.skillname }}</strong></td>
-                        <td>{{ data.hero.data.recommendmasterplan.0.emblemplan.giftid1.emblemskill.numdescribe }}</td>
-                        <td>{{ data.hero.data.recommendmasterplan.0.emblemplan.giftid1.emblemskill.skilldesc|safe }}</td>
-                        <td>{{ data.hero.data.recommendmasterplan.0.emblemplan.giftid1.emblemskill.skilldesc_text|safe }}</td>
-                        <td>{{ data.hero.data.recommendmasterplan.0.emblemplan.giftid1.emblemskill.skilldescemblem|safe }}</td>
-                    </tr>
-                    <tr>
-                        <td><img src="{{ data.hero.data.recommendmasterplan.0.emblemplan.giftid2.emblemskill.skillicon }}" alt="{{ data.hero.data.recommendmasterplan.0.emblemplan.giftid2.emblemskill.skillname }}" width="30"></td>
-                        <td><strong>{{ data.hero.data.recommendmasterplan.0.emblemplan.giftid2.emblemskill.skillname }}</strong></td>
-                        <td>{{ data.hero.data.recommendmasterplan.0.emblemplan.giftid2.emblemskill.numdescribe }}</td>
-                        <td>{{ data.hero.data.recommendmasterplan.0.emblemplan.giftid2.emblemskill.skilldesc|safe }}</td>
-                        <td>{{ data.hero.data.recommendmasterplan.0.emblemplan.giftid2.emblemskill.skilldesc_text|safe }}</td>
-                        <td>{{ data.hero.data.recommendmasterplan.0.emblemplan.giftid2.emblemskill.skilldescemblem|safe }}</td>
-                    </tr>
-                    <tr>
-                        <td><img src="{{ data.hero.data.recommendmasterplan.0.emblemplan.giftid3.emblemskill.skillicon }}" alt="{{ data.hero.data.recommendmasterplan.0.emblemplan.giftid3.emblemskill.skillname }}" width="30"></td>
-                        <td><strong>{{ data.hero.data.recommendmasterplan.0.emblemplan.giftid3.emblemskill.skillname }}</strong></td>
-                        <td>{{ data.hero.data.recommendmasterplan.0.emblemplan.giftid3.emblemskill.numdescribe }}</td>
-                        <td>{{ data.hero.data.recommendmasterplan.0.emblemplan.giftid3.emblemskill.skilldesc|safe }}</td>
-                        <td>{{ data.hero.data.recommendmasterplan.0.emblemplan.giftid3.emblemskill.skilldesc_text|safe }}</td>
-                        <td>{{ data.hero.data.recommendmasterplan.0.emblemplan.giftid3.emblemskill.skilldescemblem|safe }}</td>
-                    </tr>
-                </tbody>
-            </table>
-            <h5>Equipment Plan</h5>
-            <div class="container mt-3">
-                <div class="list-group">
-                    {% for equipment in data.hero.data.recommendmasterplan.0.equiplist %}
-                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                        <div>
-                            <h5 class="mb-1">{{ equipment.equipname }}</h5>
-                            <p class="mb-1">
-                                {{ equipment.equipskill1|safe }}<br>
-                                {{ equipment.equipskill2|safe }}<br>
-                                {{ equipment.equipskill3|safe }}<br>
-                                {{ equipment.equipskill4|safe }}<br>
-                                {{ equipment.equipskill5|safe }}<br>
-                                {{ equipment.equipskill6|safe }}<br>
-                                {{ equipment.equipskill7|safe }}
-                            </p>
-                            <small class="text-muted">{{ equipment.equipskilldesc|safe }}<br>{{ equipment.equiptips|safe }}</small>
-                        </div>
-                        <img src="{{ equipment.equipicon }}" alt="{{ equipment.equipname }}" class="img-fluid rounded" style="max-width: 50px;">
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-            
+<h1>Hero Detail</h1>
+<div class="card mb-3">
+    <div class="row g-0">
+        <div class="col-md-4">
+            <img src="https://wsrv.nl/?url={{ data.hero.data.head }}&w=100&h=100" class="img-fluid rounded-start" alt="{{ data.hero.data.name }}">
         </div>
+        <div class="col-md-8">
+            <div class="card-body">
+                <h5 class="card-title">{{ data.hero.data.name }}</h5>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card mb-3">
+    <div class="card-header">
+        <h4>Skills</h4>
+    </div>
+    <div class="card-body">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Icon</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>CD & Cost</th>
+                    <th>Tags</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for skill in data.hero.data.heroskilllist %}
+                {% for skill_detail in skill.skilllist %}
+                <tr>
+                    <td><img src="{{ skill_detail.skillicon }}" alt="{{ skill_detail.skillname }}" width="30"></td>
+                    <td><strong>{{ skill_detail.skillname }}</strong></td>
+                    <td>{{ skill_detail.skilldesc|safe }}</td>
+                    <td>{{ skill_detail.skillcd_cost }}</td>
+                    <td>
+                        {% for tag in skill_detail.skilltag %}
+                            <span style="background-color: rgb({{ tag.tagrgb }}); padding: 2px 5px; border-radius: 3px;">{{ tag.tagname }}</span>
+                        {% endfor %}
+                    </td>
+                </tr>
+                {% endfor %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="card mb-3">
+    <div class="card-header">
+        <h4>Recommend Master Plan</h4>
+    </div>
+    <div class="card-body">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Photo</th>
+                    <th>Title</th>
+                    <th>Battle Skill</th>
+                    <th>Emblem Plan</th>
+                    <th>Emblem Skills</th>
+                    <th>Equipment Plan</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for plan in data.hero.data.recommendmasterplan %}
+                <tr>
+                    <td>
+                        <img src="{{ plan.face }}" alt="{{ plan.name }}" class="rounded-circle" width="50" height="50" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ plan.name }}">
+                    </td>
+                    <td><span class="badge text-bg-primary">{{ plan.title }}</span></td>
+                    <td>
+                        <img src="{{ plan.battleskill.data.skillicon }}" alt="{{ plan.battleskill.data.skillname }}" class="rounded-circle" width="50" height="50" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ plan.battleskill.data.skillname }}">
+                    </td>
+                    <td>
+                        <img src="{{ plan.emblemplan.emblemplan.attriicon }}" alt="{{ plan.emblemplan.emblemplan.emblemname }}" class="rounded-circle" width="50" height="50" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ plan.emblemplan.emblemplan.emblemname }}">
+                    </td>
+                    <td>
+                        <img src="{{ plan.emblemplan.giftid1.emblemskill.skillicon }}" alt="{{ plan.emblemplan.giftid1.emblemskill.skillname }}" class="rounded-circle" width="50" height="50" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ plan.emblemplan.giftid1.emblemskill.skillname }}">
+                        <img src="{{ plan.emblemplan.giftid2.emblemskill.skillicon }}" alt="{{ plan.emblemplan.giftid2.emblemskill.skillname }}" class="rounded-circle" width="50" height="50" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ plan.emblemplan.giftid2.emblemskill.skillname }}">
+                        <img src="{{ plan.emblemplan.giftid3.emblemskill.skillicon }}" alt="{{ plan.emblemplan.giftid3.emblemskill.skillname }}" class="rounded-circle" width="50" height="50" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ plan.emblemplan.giftid3.emblemskill.skillname }}">
+                    </td>
+                    <td>
+                        {% for equipment in plan.equiplist %}
+                        <img src="{{ equipment.equipicon }}" alt="{{ equipment.equipname }}" class="img-fluid rounded-circle" width="50" height="50" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ equipment.equipname }}">
+                        {% endfor %}
+                    </td>
+                    <td>{{ plan.description }}</td>
+                </tr>
+                {% comment %} <tr>
+                    <td colspan="6">
+                        {{ plan.description }}
+                    </td>
+                </tr> {% endcomment %}
+                {% endfor %}
+            </tbody>                
+        </table>
     </div>
 </div>
 {% endblock %}

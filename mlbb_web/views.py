@@ -11,7 +11,11 @@ def simple_view(request):
     data = {
         "code": 200,
         "status": "ok",
-        "message": "Hello ridwaanhall"
+        "message": "Hello ridwaanhall",
+        "data": {
+            "api-url": "https://api-pddikti.vercel.app/api/",
+            "web-url": "https://api-pddikti.vercel.app/"
+        }
     }
     return JsonResponse(data)
 

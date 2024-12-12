@@ -2,14 +2,57 @@
 
 {% block content %}
 <h1>Hero Detail</h1>
-<div class="card mb-3">
-    <div class="row g-0">
-        <div class="col-md-4">
-            <img src="https://wsrv.nl/?url={{ data.hero.data.head }}&w=100&h=100" class="img-fluid rounded-start" alt="{{ data.hero.data.name }}">
-        </div>
-        <div class="col-md-8">
+<div class="row">
+    <div class="col-md-3">
+        <div class="card mb-3">
+            <img src="https://wsrv.nl/?url={{ data.head_big }}" class="card-img-top" alt="{{ data.hero.data.name }}">
             <div class="card-body">
                 <h5 class="card-title">{{ data.hero.data.name }}</h5>
+                <p class="card-text">{{ data.hero.data.story }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-9">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h4>Basic Info</h4>
+            </div>
+            <div class="card-body">
+                <table class="table table-hover">
+                    <tbody>
+                        <tr>
+                            <td>Role</td>
+                            <td>
+                                {% for role in data.hero.data.sortid %}
+                                    <img src="{{ role.data.sort_icon }}" alt="{{ role.data.sort_title }}" width="30" height="30">
+                                    {{ role.data.sort_title }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </td>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Lane</td>
+                            <td>
+                                {% for lane in data.hero.data.roadsort %}
+                                    <img src="{{ lane.data.road_sort_icon }}" alt="{{ lane.data.road_sort_title }}" width="40" height="40">
+                                    {{ lane.data.road_sort_title }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Specialty</td>
+                            <td>
+                                {% for specialty in data.hero.data.speciality %}
+                                    <span class="badge {% if forloop.counter|divisibleby:2 %}text-bg-primary{% else %}text-bg-secondary{% endif %}">{{ specialty }}</span>{% if not forloop.last %} {% endif %}
+                                {% endfor %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Difficulty</td>
+                            <td>{{ data.hero.data.difficulty }}</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -63,7 +106,7 @@
                     <th>Emblem Plan</th>
                     <th>Emblem Skills</th>
                     <th>Equipment Plan</th>
-                    <th>Description</th>
+                    {% comment %} <th>Description</th> {% endcomment %}
                 </tr>
             </thead>
             <tbody>
@@ -89,15 +132,65 @@
                         <img src="{{ equipment.equipicon }}" alt="{{ equipment.equipname }}" class="img-fluid rounded-circle" width="50" height="50" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ equipment.equipname }}">
                         {% endfor %}
                     </td>
-                    <td>{{ plan.description }}</td>
+                    {% comment %} <td>{{ plan.description }}</td> {% endcomment %}
                 </tr>
-                {% comment %} <tr>
+                <tr>
                     <td colspan="6">
                         {{ plan.description }}
                     </td>
-                </tr> {% endcomment %}
+                </tr>
                 {% endfor %}
             </tbody>                
+        </table>
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-header">
+        <h4>Relations</h4>
+    </div>
+    <div class="card-body">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Hero</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Assist</td>
+                    <td>
+                        {% for hero in data.relation.assist.target_hero %}
+                            <img src="{{ hero.data.head }}" alt="{{ hero.data.name }}" class="rounded-circle" width="50" height="50" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ hero.data.name }}">
+                        {% endfor %}
+                    </td>
+                    <td>{{ data.relation.assist.desc }}</td>
+                </tr>
+                <tr>
+                    <td>Strong Against</td>
+                    <td>
+                        {% for hero in data.relation.strong.target_hero %}
+                            <img src="{{ hero.data.head }}" alt="{{ hero.data.name }}" class="rounded-circle" width="50" height="50" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ hero.data.name }}">
+                        {% endfor %}
+                    </td>
+                    <td>{{ data.relation.strong.desc }}</td>
+                </tr>
+                <tr>
+                    <td>Weak Against</td>
+                    <td>
+                        {% if data.relation.weak %}
+                            {% for hero in data.relation.weak.target_hero %}
+                                <img src="{{ hero.data.head }}" alt="{{ hero.data.name }}" class="rounded-circle" width="50" height="50" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ hero.data.name }}">
+                            {% endfor %}
+                        {% else %}
+                            No data available
+                        {% endif %}
+                    </td>
+                    <td>{{ data.relation.weak.desc }}</td>
+                </tr>
+            </tbody>
         </table>
     </div>
 </div>

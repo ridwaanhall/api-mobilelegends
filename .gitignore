@@ -108,3 +108,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+*.json

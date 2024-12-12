@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Hero Detail</h1>
+    <div class="card mb-3">
+        
+        <div class="card-body">
+            <h5 class="card-title"><img src="{{ data.head }}" alt="{{ data.hero.data.name }}">{{ data.hero.data.name }}</h5>
+            <p class="card-text">{{ data.hero.data.description }}</p>
+            <h6>Skills:</h6>
+            <ul>
+                {% for skill in data.hero.data.heroskilllist %}
+                {% for skill_detail in skill.skilllist %}
+                <li>
+                    <img src="{{ skill_detail.skillicon }}" alt="{{ skill_detail.skillname }}" width="30">
+                    <strong>{{ skill_detail.skillname }}</strong>: {{ skill_detail.skilldesc|safe }}
+                    <p>Cooldown & Cost: {{ skill_detail.skillcd_cost }}</p>                   
+                    <p>Tags:
+                        {% for tag in skill_detail.skilltag %}
+                            <span style="background-color: rgb({{ tag.tagrgb }}); padding: 2px 5px; border-radius: 3px;">{{ tag.tagname }}</span>
+                        {% endfor %}
+                    </p>
+                </li>
+                {% endfor %}
+                {% endfor %}
+            </ul>
+            <h6>Recommended Equipment:</h6>
+            <ul>
+                {% for equip in data.hero.data.equiplist %}
+                <li>
+                    <img src="{{ equip.equipicon }}" alt="{{ equip.equipname }}" width="30">
+                    <strong>{{ equip.equipname }}</strong>: {{ equip.equipskilldesc }}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

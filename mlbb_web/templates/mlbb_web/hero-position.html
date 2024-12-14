@@ -3,104 +3,121 @@
 {% block content %}
 <div class="container">
     <h1>Hero Position</h1>
-    <form method="get">
-        <div class="form-row">
-            <div class="form-group col-md-3">
-                <label for="role">Role</label>
-                <select id="role" name="role" class="form-control">
-                    <option value="all" {% if role == 'all' %}selected{% endif %}>All</option>
-                    <option value="tank" {% if role == 'tank' %}selected{% endif %}>Tank</option>
-                    <option value="fighter" {% if role == 'fighter' %}selected{% endif %}>Fighter</option>
-                    <option value="ass" {% if role == 'ass' %}selected{% endif %}>Assassin</option>
-                    <option value="mage" {% if role == 'mage' %}selected{% endif %}>Mage</option>
-                    <option value="mm" {% if role == 'mm' %}selected{% endif %}>Marksman</option>
-                    <option value="supp" {% if role == 'supp' %}selected{% endif %}>Support</option>
-                </select>
-            </div>
-            <div class="form-group col-md-3">
-                <label for="lane">Lane</label>
-                <select id="lane" name="lane" class="form-control">
-                    <option value="all" {% if lane == 'all' %}selected{% endif %}>All</option>
-                    <option value="exp" {% if lane == 'exp' %}selected{% endif %}>EXP</option>
-                    <option value="mid" {% if lane == 'mid' %}selected{% endif %}>Mid</option>
-                    <option value="roam" {% if lane == 'roam' %}selected{% endif %}>Roam</option>
-                    <option value="jungle" {% if lane == 'jungle' %}selected{% endif %}>Jungle</option>
-                    <option value="gold" {% if lane == 'gold' %}selected{% endif %}>Gold</option>
-                </select>
-            </div>
-            <div class="form-group col-md-3">
-                <label for="size">Size</label>
-                <input type="number" id="size" name="size" class="form-control" value="{{ size }}" min="1" max="126">
-            </div>
-            <div class="form-group col-md-3">
-                <label for="index">Index</label>
-                <input type="number" id="index" name="index" class="form-control" value="{{ index }}" min="1" max="126">
-            </div>
+    <div class="card mb-4">
+        <div class="card-header">
+            Filter Options
         </div>
-        <button type="submit" class="btn btn-primary">Filter</button>
-    </form>
-    <table class="table table-striped mt-4">
-        <thead>
-            <tr>
-                <th>Hero</th>
-                <th>Lane</th>
-                <th>Role</th>
-                <th>Assist</th>
-                <th>Strong Against</th>
-                <th>Weak Against</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for record in data.data.records %}
-            <tr>
-                <td>
-                    <img src="{{ record.data.hero.data.smallmap }}" alt="{{ record.data.hero.data.name }}" width="50">
-                    {{ record.data.hero.data.name }}
-                </td>
-                <td>
-                    <ul>
-                        {% for lane in record.data.hero.data.roadsort %}
-                        <li>
-                            <img src="{{ lane.data.road_sort_icon }}" alt="{{ lane.data.road_sort_title }}" width="30">
-                            {{ lane.data.road_sort_title }}
-                        </li>
-                        {% endfor %}
-                    </ul>
-                </td>
-                <td>
-                    <ul>
-                        {% for sort in record.data.hero.data.sortid %}
-                        <li>
-                            <img src="{{ sort.data.sort_icon }}" alt="{{ sort.data.sort_title }}" width="30">
-                            {{ sort.data.sort_title }}
-                        </li>
-                        {% endfor %}
-                    </ul>
-                </td>
-                <td>
-                    <ul>
-                        {% for assist in record.data.relation.assist.target_hero_id %}
-                        <li>{{ assist }}</li>
-                        {% endfor %}
-                    </ul>
-                </td>
-                <td>
-                    <ul>
-                        {% for strong in record.data.relation.strong.target_hero_id %}
-                        <li>{{ strong }}</li>
-                        {% endfor %}
-                    </ul>
-                </td>
-                <td>
-                    <ul>
-                        {% for weak in record.data.relation.weak.target_hero_id %}
-                        <li>{{ weak }}</li>
-                        {% endfor %}
-                    </ul>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+        <div class="card-body">
+            <form method="get">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label for="role" class="form-label">Role</label>
+                        <select id="role" name="role" class="form-select">
+                            <option value="all" {% if role == 'all' %}selected{% endif %}>All</option>
+                            <option value="tank" {% if role == 'tank' %}selected{% endif %}>Tank</option>
+                            <option value="fighter" {% if role == 'fighter' %}selected{% endif %}>Fighter</option>
+                            <option value="ass" {% if role == 'ass' %}selected{% endif %}>Assassin</option>
+                            <option value="mage" {% if role == 'mage' %}selected{% endif %}>Mage</option>
+                            <option value="mm" {% if role == 'mm' %}selected{% endif %}>Marksman</option>
+                            <option value="supp" {% if role == 'supp' %}selected{% endif %}>Support</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="lane" class="form-label">Lane</label>
+                        <select id="lane" name="lane" class="form-select">
+                            <option value="all" {% if lane == 'all' %}selected{% endif %}>All</option>
+                            <option value="exp" {% if lane == 'exp' %}selected{% endif %}>EXP</option>
+                            <option value="mid" {% if lane == 'mid' %}selected{% endif %}>Mid</option>
+                            <option value="roam" {% if lane == 'roam' %}selected{% endif %}>Roam</option>
+                            <option value="jungle" {% if lane == 'jungle' %}selected{% endif %}>Jungle</option>
+                            <option value="gold" {% if lane == 'gold' %}selected{% endif %}>Gold</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="size" class="form-label">Size</label>
+                        <input type="number" id="size" name="size" class="form-control" value="{{ size }}" min="1" max="126">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="index" class="form-label">Index</label>
+                        <input type="number" id="index" name="index" class="form-control" value="{{ index }}" min="1" max="126">
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header">
+            Hero Positions
+        </div>
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Hero</th>
+                        <th>Lane</th>
+                        <th>Role</th>
+                        <th>Assist</th>
+                        <th>Strong Against</th>
+                        <th>Weak Against</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in data.data.records %}
+                    <tr>
+                        <td>
+                            <img src="{{ record.data.hero.data.smallmap }}" alt="{{ record.data.hero.data.name }}" width="50">
+                            {{ record.data.hero.data.name }}
+                        </td>
+                        <td>
+                            <ul>
+                                {% for lane in record.data.hero.data.roadsort %}
+                                <li>
+                                    <img src="{{ lane.data.road_sort_icon }}" alt="{{ lane.data.road_sort_title }}" width="30">
+                                    {{ lane.data.road_sort_title }}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                {% for sort in record.data.hero.data.sortid %}
+                                <li>
+                                    <img src="{{ sort.data.sort_icon }}" alt="{{ sort.data.sort_title }}" width="30">
+                                    {{ sort.data.sort_title }}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                {% for assist in record.data.relation.assist.target_hero_id %}
+                                <li>{{ assist }}</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                {% for strong in record.data.relation.strong.target_hero_id %}
+                                <li>{{ strong }}</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                {% for weak in record.data.relation.weak.target_hero_id %}
+                                <li>{{ weak }}</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 {% endblock %}

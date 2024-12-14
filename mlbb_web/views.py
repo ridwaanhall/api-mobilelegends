@@ -2,22 +2,25 @@ import requests
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.conf import settings
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 
 PROD_URL = settings.PROD_URL
 
 # Create your views here.
+@api_view(['GET'])
 def simple_view(request):
     data = {
         "code": 200,
-        "status": "ok",
-        "message": "Hello ridwaanhall",
+        "status": "success",
+        "message": "Request processed successfully",
         "data": {
-            "api-url": "https://api-mobilelegends.vercel.app/api/",
-            "web-url": "https://api-mobilelegends.vercel.app/"
+            "api_url": "https://api-mobilelegends.vercel.app/api/",
+            "web_url": "https://api-mobilelegends.vercel.app/"
         }
     }
-    return JsonResponse(data)
+    return Response(data)
 
 HERO_NAME_DICT = {
     126: "Suyou", 125: "Zhuxin", 124: "Chip", 123: "Cici", 122: "Nolan", 121: "Ixia", 120: "Arlott", 119: "Novaria",

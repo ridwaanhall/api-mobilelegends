@@ -10,6 +10,9 @@
                     <a class="nav-link {% if request.resolver_match.url_name == 'root_redirect' %}active{% endif %}" aria-current="page" href="{% url 'root_redirect' %}">Docs</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'hero_list_web' %}active{% endif %}" href="{% url 'hero_list_web' %}">Hero List</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link {% if request.resolver_match.url_name == 'hero_rank_web' %}active{% endif %}" href="{% url 'hero_rank_web' %}">Hero Rank</a>
                 </li>
                 <li class="nav-item">

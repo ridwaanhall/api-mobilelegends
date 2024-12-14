@@ -44,6 +44,11 @@ HERO_NAME_DICT = {
     5: "Nana", 4: "Alice", 3: "Saber", 2: "Balmond", 1: "Miya"
 }
 
+def hero_list_web(request):
+    response = requests.get(f'{PROD_URL}hero-list/')
+    data = response.json()
+    return render(request, 'mlbb_web/hero-list.html', {'data': data})
+
 def hero_rank_web(request):
     days = request.GET.get('days', '1')
     rank = request.GET.get('rank', 'all')

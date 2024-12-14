@@ -48,14 +48,11 @@ def hero_rank_web(request):
     sort_field = request.GET.get('sort_field', 'win_rate')
     sort_order = request.GET.get('sort_order', 'desc')
 
-    try:
-        response = requests.get(f'{PROD_URL}hero-rank/?days={days}&rank={rank}&size={size}&index={index}&sort_field={sort_field}&sort_order={sort_order}')
-        response.raise_for_status()
-        data = response.json()
-        if data is None or 'data' not in data or 'records' not in data['data']:
-            return JsonResponse({'error': 'Data not found'}, status=404)
-    except requests.exceptions.RequestException as e:
-        print(f"Error fetching hero rank data: {e}")
+    response = requests.get(f'{PROD_URL}hero-rank/?days={days}&rank={rank}&size={size}&index={index}&sort_field={sort_field}&sort_order={sort_order}')
+    if response.status_code != 200:
+        return JsonResponse({'error': 'Data not found'}, status=404)
+    data = response.json()
+    if data is None or 'data' not in data or 'records' not in data['data']:
         return JsonResponse({'error': 'Data not found'}, status=404)
 
     # Convert rates to percentages

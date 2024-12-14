@@ -1,4 +1,6 @@
-# MLBB Hero Analytics API
+# MLBB Hero Analytics API and Website
+
+![Hero Rank Web](images/hero-rank.png)
 
 This project provides an API for fetching various analytics and data related to heroes in the game Mobile Legends: Bang Bang (MLBB). The API includes endpoints for hero rankings, positions, details, skill combinations, ratings, relationships, counter information, and compatibility.
 

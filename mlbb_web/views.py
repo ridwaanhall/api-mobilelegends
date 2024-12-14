@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from django.conf import settings
 
 
-LOCAL_URL = settings.LOCAL_URL
+PROD_URL = settings.PROD_URL
 
 # Create your views here.
 def simple_view(request):
@@ -48,7 +48,7 @@ def hero_rank_web(request):
     sort_field = request.GET.get('sort_field', 'win_rate')
     sort_order = request.GET.get('sort_order', 'desc')
 
-    response = requests.get(f'{LOCAL_URL}hero-rank/?days={days}&rank={rank}&size={size}&index={index}&sort_field={sort_field}&sort_order={sort_order}')
+    response = requests.get(f'{PROD_URL}hero-rank/?days={days}&rank={rank}&size={size}&index={index}&sort_field={sort_field}&sort_order={sort_order}')
     if response.status_code != 200:
         return JsonResponse({'error': 'Data not found'}, status=404)
     data = response.json()
@@ -79,7 +79,7 @@ def hero_position_web(request):
     size = request.GET.get('size', '21')
     index = request.GET.get('index', '1')
 
-    response = requests.get(f'{LOCAL_URL}hero-position/?role={role}&lane={lane}&size={size}&index={index}')
+    response = requests.get(f'{PROD_URL}hero-position/?role={role}&lane={lane}&size={size}&index={index}')
     data = response.json()
 
     # Map hero IDs to names
@@ -101,7 +101,7 @@ def hero_position_web(request):
     })
 
 def hero_detail_web(request, hero_id):
-    response_hero_detail = requests.get(f'{LOCAL_URL}hero-detail/{hero_id}/')
+    response_hero_detail = requests.get(f'{PROD_URL}hero-detail/{hero_id}/')
     if response_hero_detail.status_code != 200:
         return JsonResponse({'error': 'Data not found'}, status=404)
     data_hero_detail = response_hero_detail.json()
@@ -121,7 +121,7 @@ def hero_detail_web(request, hero_id):
         plan['battleskill']['data'] = plan['battleskill'].pop('__data')
         # plan['battleskill']['data']['num_describe'] = plan['battleskill']['data'].pop('numdescribe')
 
-    response_hero_detail_stats = requests.get(f'{LOCAL_URL}hero-detail-stats/{hero_id}/')
+    response_hero_detail_stats = requests.get(f'{PROD_URL}hero-detail-stats/{hero_id}/')
     if response_hero_detail_stats.status_code != 200:
         return JsonResponse({'error': 'Data not found'}, status=404)
     data_hero_detail_stats = response_hero_detail_stats.json()

@@ -13,8 +13,8 @@ def simple_view(request):
         "status": "ok",
         "message": "Hello ridwaanhall",
         "data": {
-            "api-url": "https://api-pddikti.vercel.app/api/",
-            "web-url": "https://api-pddikti.vercel.app/"
+            "api-url": "https://api-mobilelegends.vercel.app/api/",
+            "web-url": "https://api-mobilelegends.vercel.app/"
         }
     }
     return JsonResponse(data)

@@ -4,6 +4,7 @@ from . import views
 urlpatterns = [
     path('', views.DocsByRidwaanhall, name='root_redirect'),
     path('docs/', views.DocsByRidwaanhall, name='docs'),
+    path('hero-list/', views.hero_list, name='hero_list'),
     
     path('hero-rank/', views.hero_rank, name='hero_rank'),
     

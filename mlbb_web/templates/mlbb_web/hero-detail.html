@@ -19,10 +19,154 @@
         <div class="col-md-9">
             <div class="card mb-3">
                 <div class="card-header">
-                    <h4>Counters</h4>
+                    <ul class="nav nav-pills" id="counter" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="counter-relationship" data-bs-toggle="pill" data-bs-target="#pills-counter" type="button" role="tab" aria-controls="pills-counter" aria-selected="true">Counter Relationship</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="compatimibity" data-bs-toggle="pill" data-bs-target="#pills-compatibility" type="button" role="tab" aria-controls="pills-compatibility" aria-selected="false">Compatibility</button>
+                        </li>
+                    </ul>
                 </div>
                 <div class="card-body">
-
+                    <div class="tab-content" id="counterContent">
+                        <div class="tab-pane fade show active" id="pills-counter" role="tabpanel" aria-labelledby="counter-relationship" tabindex="0">
+                            <ul class="nav nav-tabs" id="counterRelationship" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="best-counters" data-bs-toggle="tab" data-bs-target="#best-counters-pane" type="button" role="tab" aria-controls="best-counters-pane" aria-selected="true">Best Counters</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="most-countered-by" data-bs-toggle="tab" data-bs-target="#most-countered-by-pane" type="button" role="tab" aria-controls="most-countered-by-pane" aria-selected="false">Most Countered by</button>
+                                </li>
+                            </ul>
+                            <div class="tab-content" id="counterRelationshipContent">
+                                <div class="tab-pane fade show active" id="best-counters-pane" role="tabpanel" aria-labelledby="best-counters" tabindex="0">
+                                    <table class="table table-hover border">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th class="text-center">Best Counters</th>
+                                                <th class="text-center">Counter Score</th>
+                                                <th class="text-center">Win Rate</th>
+                                                <th class="text-center">Pick Rate</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for sub_hero in counter.data.records.0.data.sub_hero %}
+                                            <tr>
+                                                <td>{{ sub_hero.hero_index }}</td>
+                                                <td class="text-center">
+                                                    <a href="{% url 'hero_detail_web' hero_id=sub_hero.heroid %}">
+                                                        <img src="{{ sub_hero.hero.data.head }}" alt="{{ sub_hero.heroid }}" class="rounded-circle" width="35" height="35" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ sub_hero.heroid }}">
+                                                    </a>
+                                                </td>
+                                                <td class="text-center"><strong>{{ sub_hero.increase_win_rate }}%</strong></td>
+                                                <td class="text-center">{{ sub_hero.hero_win_rate }}%</td>
+                                                <td class="text-center">{{ sub_hero.hero_appearance_rate }}%</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="tab-pane fade" id="most-countered-by-pane" role="tabpanel" aria-labelledby="most-countered-by" tabindex="0">
+                                    <table class="table table-hover border">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th class="text-center">Most Countered by</th>
+                                                <th class="text-center">Counter Score</th>
+                                                <th class="text-center">Win Rate</th>
+                                                <th class="text-center">Pick Rate</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for sub_hero_last in counter.data.records.0.data.sub_hero_last %}
+                                            <tr>
+                                                <td>{{ sub_hero_last.hero_index }}</td>
+                                                <td class="text-center">
+                                                    <a href="{% url 'hero_detail_web' hero_id=sub_hero_last.heroid %}">
+                                                        <img src="{{ sub_hero_last.hero.data.head }}" alt="{{ sub_hero_last.heroid }}" class="rounded-circle" width="35" height="35" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ sub_hero_last.heroid }}">
+                                                    </a>
+                                                </td>
+                                                <td class="text-center"><strong>{{ sub_hero_last.increase_win_rate }}%</strong></td>
+                                                <td class="text-center">{{ sub_hero_last.hero_win_rate }}%</td>
+                                                <td class="text-center">{{ sub_hero_last.hero_appearance_rate }}%</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="pills-compatibility" role="tabpanel" aria-labelledby="compatimibity" tabindex="0">
+                            <ul class="nav nav-tabs" id="compatibility" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="best-partners" data-bs-toggle="tab" data-bs-target="#best-partners-pane" type="button" role="tab" aria-controls="best-partners-pane" aria-selected="true">Best Partners</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="worst-partners" data-bs-toggle="tab" data-bs-target="#worst-partners-pane" type="button" role="tab" aria-controls="worst-partners-pane" aria-selected="false">Worst Partners</button>
+                                </li>
+                            </ul>
+                            <div class="tab-content" id="compatibilityContent">
+                                <div class="tab-pane fade show active" id="best-partners-pane" role="tabpanel" aria-labelledby="best-partners" tabindex="0">
+                                    <table class="table table-hover border">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th class="text-center">Best Partners</th>
+                                                <th class="text-center">Compatibility Score</th>
+                                                <th class="text-center">Win Rate</th>
+                                                <th class="text-center">Pick Rate</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for sub_hero in compatibility.data.records.0.data.sub_hero %}
+                                            <tr>
+                                                <td>{{ sub_hero.hero_index }}</td>
+                                                <td class="text-center">
+                                                    <a href="{% url 'hero_detail_web' hero_id=sub_hero.heroid %}">
+                                                        <img src="{{ sub_hero.hero.data.head }}" alt="{{ sub_hero.heroid }}" class="rounded-circle" width="35" height="35" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ sub_hero.heroid }}">
+                                                    </a>
+                                                </td>
+                                                <td class="text-center"><strong>{{ sub_hero.increase_win_rate }}%</strong></td>
+                                                <td class="text-center">{{ sub_hero.hero_win_rate }}%</td>
+                                                <td class="text-center">{{ sub_hero.hero_appearance_rate }}%</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="tab-pane fade" id="worst-partners-pane" role="tabpanel" aria-labelledby="worst-partners" tabindex="0">
+                                    <table class="table table-hover border">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th class="text-center">Worst Partners</th>
+                                                <th class="text-center">Compatibility Score</th>
+                                                <th class="text-center">Win Rate</th>
+                                                <th class="text-center">Pick Rate</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for sub_hero_last in compatibility.data.records.0.data.sub_hero_last %}
+                                            <tr>
+                                                <td>{{ sub_hero_last.hero_index }}</td>
+                                                <td class="text-center">
+                                                    <a href="{% url 'hero_detail_web' hero_id=sub_hero_last.heroid %}">
+                                                        <img src="{{ sub_hero_last.hero.data.head }}" alt="{{ sub_hero_last.heroid }}" class="rounded-circle" width="35" height="35" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ sub_hero_last.heroid }}">
+                                                    </a>
+                                                </td>
+                                                <td class="text-center"><strong>{{ sub_hero_last.increase_win_rate }}%</strong></td>
+                                                <td class="text-center">{{ sub_hero_last.hero_win_rate }}%</td>
+                                                <td class="text-center">{{ sub_hero_last.hero_appearance_rate }}%</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

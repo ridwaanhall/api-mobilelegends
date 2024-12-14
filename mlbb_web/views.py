@@ -7,6 +7,7 @@ from rest_framework.response import Response
 
 
 PROD_URL = settings.PROD_URL
+# LOCAL_URL = settings.LOCAL_URL
 
 # Create your views here.
 @api_view(['GET'])
@@ -136,4 +137,38 @@ def hero_detail_web(request, hero_id):
         record_stats['data']['main_hero_ban_rate'] *= 100
         record_stats['data']['main_hero_win_rate'] *= 100
 
-    return render(request, 'mlbb_web/hero-detail.html', {'data': records_data_hero_detail, 'stats': data_hero_detail_stats})
+    response_hero_counter = requests.get(f'{PROD_URL}hero-counter/{hero_id}/')
+    data_hero_counter = response_hero_counter.json()
+    if data_hero_counter is None or 'data' not in data_hero_counter or 'records' not in data_hero_counter['data']:
+        return JsonResponse({'error': 'Data not found'}, status=404)
+
+    for record in data_hero_counter['data']['records']:
+        record_data = record['data']
+        for sub_hero in record_data['sub_hero']:
+            sub_hero['hero_appearance_rate'] = round(sub_hero['hero_appearance_rate'] * 100, 2)
+            sub_hero['hero_win_rate'] = round(sub_hero['hero_win_rate'] * 100, 2)
+            sub_hero['increase_win_rate'] = round(sub_hero['increase_win_rate'] * 100, 2)
+            
+        for sub_hero_last in record_data['sub_hero_last']:
+            sub_hero_last['hero_appearance_rate'] = round(sub_hero_last['hero_appearance_rate'] * 100, 2)
+            sub_hero_last['hero_win_rate'] = round(sub_hero_last['hero_win_rate'] * 100, 2)
+            sub_hero_last['increase_win_rate'] = round(sub_hero_last['increase_win_rate'] * 100, 2)
+
+    response_hero_compatibility = requests.get(f'{PROD_URL}hero-compatibility/{hero_id}/')
+    data_hero_compatibility = response_hero_compatibility.json()
+    if data_hero_compatibility is None or 'data' not in data_hero_compatibility or 'records' not in data_hero_compatibility['data']:
+        return JsonResponse({'error': 'Data not found'}, status=404)
+    
+    for record in data_hero_compatibility['data']['records']:
+        record_data = record['data']
+        for sub_hero in record_data['sub_hero']:
+            sub_hero['hero_appearance_rate'] = round(sub_hero['hero_appearance_rate'] * 100, 2)
+            sub_hero['hero_win_rate'] = round(sub_hero['hero_win_rate'] * 100, 2)
+            sub_hero['increase_win_rate'] = round(sub_hero['increase_win_rate'] * 100, 2)
+            
+        for sub_hero_last in record_data['sub_hero_last']:
+            sub_hero_last['hero_appearance_rate'] = round(sub_hero_last['hero_appearance_rate'] * 100, 2)
+            sub_hero_last['hero_win_rate'] = round(sub_hero_last['hero_win_rate'] * 100, 2)
+            sub_hero_last['increase_win_rate'] = round(sub_hero_last['increase_win_rate'] * 100, 2)
+
+    return render(request, 'mlbb_web/hero-detail.html', {'data': records_data_hero_detail, 'stats': data_hero_detail_stats, 'counter': data_hero_counter, 'compatibility': data_hero_compatibility})

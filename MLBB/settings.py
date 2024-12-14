@@ -17,7 +17,7 @@ from decouple import config
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 MLBB_URL = config('MLBB_URL')
-LOCAL_URL = config('LOCAL_URL')
+# LOCAL_URL = config('LOCAL_URL')
 PROD_URL = config('PROD_URL')
 
 # Quick-start development settings - unsuitable for production

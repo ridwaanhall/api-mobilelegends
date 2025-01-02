@@ -38,12 +38,12 @@ def DocsByRidwaanhall(request):
                 },
                 "size": {
                     "description": "Number of records per page.",
-                    "possible_values": "From 1 to 126",
+                    "possible_values": "From 1 to 127",
                     "default": "20"
                 },
                 "index": {
                     "description": "Page index for pagination.",
-                    "possible_values": "From 1 to 126",
+                    "possible_values": "From 1 to 127",
                     "default": "1"
                 },
                 "sort_field": {
@@ -97,12 +97,12 @@ def DocsByRidwaanhall(request):
                 },
                 "size": {
                     "description": "Number of records per page.",
-                    "possible_values": "From 1 to 126",
+                    "possible_values": "From 1 to 127",
                     "default": "21"
                 },
                 "index": {
                     "description": "Page index for pagination.",
-                    "possible_values": "From 1 to 126",
+                    "possible_values": "From 1 to 127",
                     "default": "1"
                 }
             },
@@ -114,7 +114,7 @@ def DocsByRidwaanhall(request):
             "path_parameters": {
                 "hero_id": {
                     "description": "The ID of the hero whose details are to be fetched.",
-                    "possible_values": "From 1 to 126",
+                    "possible_values": "From 1 to 127",
                     "type": "integer",
                     "required": True
                 }
@@ -127,7 +127,7 @@ def DocsByRidwaanhall(request):
             "path_parameters": {
                 "main_heroid": {
                     "description": "The ID of the main hero whose detailed statistics are to be fetched.",
-                    "possible_values": "From 1 to 126",
+                    "possible_values": "From 1 to 127",
                     "type": "integer",
                     "required": True
                 }
@@ -140,7 +140,7 @@ def DocsByRidwaanhall(request):
             "path_parameters": {
                 "hero_id": {
                     "description": "The ID of the hero whose skill combinations are to be fetched.",
-                    "possible_values": "From 1 to 126",
+                    "possible_values": "From 1 to 127",
                     "type": "integer",
                     "required": True
                 }
@@ -153,7 +153,7 @@ def DocsByRidwaanhall(request):
             "path_parameters": {
                 "main_heroid": {
                     "description": "The ID of the main hero whose rating is to be fetched.",
-                    "possible_values": "From 1 to 126",
+                    "possible_values": "From 1 to 127",
                     "type": "integer",
                     "required": True
                 }
@@ -177,7 +177,7 @@ def DocsByRidwaanhall(request):
             "path_parameters": {
                 "hero_id": {
                     "description": "The ID of the hero whose relationships are to be fetched.",
-                    "possible_values": "From 1 to 126",
+                    "possible_values": "From 1 to 127",
                     "type": "integer",
                     "required": True
                 }
@@ -190,7 +190,7 @@ def DocsByRidwaanhall(request):
             "path_parameters": {
                 "main_heroid": {
                     "description": "The ID of the main hero whose counter information is to be fetched.",
-                    "possible_values": "From 1 to 126",
+                    "possible_values": "From 1 to 127",
                     "type": "integer",
                     "required": True
                 }
@@ -203,7 +203,7 @@ def DocsByRidwaanhall(request):
             "path_parameters": {
                 "main_heroid": {
                     "description": "The ID of the main hero whose compatibility information is to be fetched.",
-                    "possible_values": "From 1 to 126",
+                    "possible_values": "From 1 to 127",
                     "type": "integer",
                     "required": True
                 }
@@ -216,7 +216,7 @@ def DocsByRidwaanhall(request):
 @api_view(['GET'])
 def hero_list(request):
     return Response({
-    126: "Suyou", 125: "Zhuxin", 124: "Chip", 123: "Cici", 122: "Nolan", 121: "Ixia", 120: "Arlott", 119: "Novaria",
+    127: "Lukas", 126: "Suyou", 125: "Zhuxin", 124: "Chip", 123: "Cici", 122: "Nolan", 121: "Ixia", 120: "Arlott", 119: "Novaria",
     118: "Joy", 117: "Fredrinn", 116: "Julian", 115: "Xavier", 114: "Melissa", 113: "Yin", 112: "Floryn",
     111: "Edith", 110: "Valentina", 109: "Aamon", 108: "Aulus", 107: "Natan", 106: "Phoveus", 105: "Beatrix",
     104: "Gloo", 103: "Paquito", 102: "Mathilda", 101: "Yve", 100: "Brody", 99: "Barats", 98: "Khaleed",

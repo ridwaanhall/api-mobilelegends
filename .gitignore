@@ -110,3 +110,5 @@ dmypy.json
 .pyre/
 
 *.json
+
+static/

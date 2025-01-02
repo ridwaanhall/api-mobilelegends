@@ -11,37 +11,19 @@
             <table class="table table-hover">
                 <thead class="table-dark">
                     <tr>
+                        <th>ID</th>
                         <th>Hero</th>
-                        <th>Pick Rate</th>
-                        <th>Ban Rate</th>
-                        <th>Win Rate</th>
-                        <th>Sub Heroes</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for record in data.data.records %}
+                    {% for id, hero in data.items %}
                     <tr>
-                        <td>
-                            <img src="{{ record.data.main_hero.data.head }}" alt="{{ record.data.main_hero.data.name }}" width="50">
-                            {{ record.data.main_hero.data.name }}
-                        </td>
-                        <td>{{ record.data.main_hero_appearance_rate|floatformat:4 }}%</td>
-                        <td>{{ record.data.main_hero_ban_rate|floatformat:4 }}%</td>
-                        <td>{{ record.data.main_hero_win_rate|floatformat:4 }}%</td>
-                        <td>
-                            <ul>
-                                {% for sub_hero in record.data.sub_hero %}
-                                <li>
-                                    <img src="{{ sub_hero.hero.data.head }}" alt="Sub Hero" width="30">
-                                    Win Rate Increase: {{ sub_hero.increase_win_rate|floatformat:4 }}%
-                                </li>
-                                {% endfor %}
-                            </ul>
-                        </td>
+                        <td>{{ id }}</td>
+                        <td><a href="{% url 'hero_detail_web' hero_id=id %}">{{ hero }}</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>
-            </table>
+            </table>            
         </div>
     </div>
 </div>

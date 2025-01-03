@@ -27,7 +27,7 @@ PROD_URL = config('PROD_URL')
 SECRET_KEY = 'django-insecure-0dbenlez&b==-4l3*wn=emswc6)rsj)9dicawy!0da0ekoll=_'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     '.vercel.app',

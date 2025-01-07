@@ -6,6 +6,14 @@ This project provides an API for fetching various analytics and data related to 
 
 ![Hero Rank Web](images/hero-rank.png)
 
+## Summary of API Docs, APIs, and Website.
+
+```txt
+https://api-mobilelegends.vercel.app/api/"       # for testing an api
+https://mlbb-api-docs.vercel.app/"               # for read the documentations easy-to-understand
+https://api-mobilelegends.vercel.app/hero-rank/" # for website demo of APIs
+```
+
 ## Table of Contents
 
 - Endpoints

@@ -18,6 +18,7 @@ def simple_view(request):
         "message": "Request processed successfully",
         "data": {
             "api_url": "https://api-mobilelegends.vercel.app/api/",
+            "api_docs": "https://mlbb-api-docs.vercel.app/",
             "web_url": "https://api-mobilelegends.vercel.app/hero-rank/"
         }
     }

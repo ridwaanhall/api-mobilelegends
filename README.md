@@ -32,8 +32,8 @@ https://api-mobilelegends.vercel.app/hero-rank/" # for website demo of APIs
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/mlbb-hero-analytics-api.git
-   cd mlbb-hero-analytics-api
+   git clone https://github.com/ridwaanhall/api-mobilelegends.git
+   cd api-mobilelegends
    ```
 
 2. Create a virtual environment and activate it:

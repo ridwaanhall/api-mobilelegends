@@ -41,37 +41,6 @@ https://api-mobilelegends.vercel.app/hero-rank/" # for website demo of APIs
   - [Hero Counter](#hero-counter)
   - [Hero Compatibility](#hero-compatibility)
 
-## Setup
-
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/ridwaanhall/api-mobilelegends.git
-   cd api-mobilelegends
-   ```
-
-2. Create a virtual environment and activate it:
-
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-   ```
-
-3. Install the dependencies:
-
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. Set up your Django settings:
-   - Update the `MLBB_URL` in your `settings.py` file with the appropriate URL.
-
-5. Run the Django development server:
-
-   ```bash
-   python manage.py runserver
-   ```
-
 ## Usage
 
 Use the provided endpoints to fetch various analytics and data related to heroes in MLBB. Refer to the Endpoints section for detailed information on each endpoint and how to use them.

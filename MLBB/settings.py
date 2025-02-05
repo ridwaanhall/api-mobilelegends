@@ -24,17 +24,18 @@ PROD_URL = config('PROD_URL')
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-0dbenlez&b==-4l3*wn=emswc6)rsj)9dicawy!0da0ekoll=_'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = [
-    '.vercel.app',
-    'localhost',
-    '127.0.0.1',
-    '.ridwaanhall.me',
-]
+if DEBUG:
+    ALLOWED_HOSTS = []
+else:
+    ALLOWED_HOSTS = [
+        '.vercel.app',
+        '.ridwaanhall.me'
+    ]
 
 
 # Application definition

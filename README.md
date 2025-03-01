@@ -45,6 +45,10 @@ https://api-mobilelegends.vercel.app/hero-rank/" # for website demo of APIs
 
 Use the provided endpoints to fetch various analytics and data related to heroes in MLBB. Refer to the Endpoints section for detailed information on each endpoint and how to use them.
 
+## Discussion
+
+If you have any questions or would like to discuss this project, please join the conversation in our [GitHub Discussions](https://github.com/ridwaanhall/api-mobilelegends/discussions). We value your feedback and are here to help!
+
 ## License
 
 This project is licensed under the MIT License. See the LICENSE file for more details.

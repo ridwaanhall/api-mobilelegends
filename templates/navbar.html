@@ -1,4 +1,4 @@
-<nav class="bg-white dark:bg-gray-800 shadow-md sticky top-0 z-50">
+<nav class="bg-gray-800 shadow-md sticky top-0 z-50">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
             <div class="flex-shrink-0">
@@ -7,7 +7,7 @@
             <!-- Mobile menu button -->
             <div class="md:hidden">
                 <button type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500" aria-controls="mobile-menu" aria-expanded="false" id="mobile-menu-button">
-                    <span class="sr-only">Open main menu</span>
+                    <span class="sr-only">Open main menu</span> <!-- Keep hover:bg-gray-100 for contrast or change to hover:bg-gray-600 -->
                     <!-- Icon when menu is closed. -->
                     <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
@@ -20,13 +20,12 @@
             </div>
             <!-- Desktop Menu -->
             <div class="hidden md:flex md:items-center md:space-x-4">
-                <a href="https://mlbb-api-docs.vercel.app/" target="_blank" rel="noopener noreferrer" class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium">Docs</a>
-                <a href="{% url 'hero_list_web' %}" class="{% if request.resolver_match.url_name == 'hero_list_web' %}text-blue-600 dark:text-blue-400 border-b-2 border-blue-600{% else %}text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400{% endif %} px-3 py-2 rounded-md text-sm font-medium">Hero List</a>
-                <a href="{% url 'hero_rank_web' %}" class="{% if request.resolver_match.url_name == 'hero_rank_web' %}text-blue-600 dark:text-blue-400 border-b-2 border-blue-600{% else %}text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400{% endif %} px-3 py-2 rounded-md text-sm font-medium">Hero Rank</a>
-                <a href="{% url 'hero_position_web' %}" class="{% if request.resolver_match.url_name == 'hero_position_web' %}text-blue-600 dark:text-blue-400 border-b-2 border-blue-600{% else %}text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400{% endif %} px-3 py-2 rounded-md text-sm font-medium">Hero Position</a>
-                <a href="{% url 'hero_detail_web' hero_id=1 %}" class="{% if request.resolver_match.url_name == 'hero_detail_web' %}text-blue-600 dark:text-blue-400 border-b-2 border-blue-600{% else %}text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400{% endif %} px-3 py-2 rounded-md text-sm font-medium">Hero Detail</a>
-                <a href="https://github.com/ridwaanhall" target="_blank" rel="noopener noreferrer" class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium">GitHub</a>
-                <!-- Add Theme Toggle Button Here -->
+                <a href="https://mlbb-api-docs.vercel.app/" target="_blank" rel="noopener noreferrer" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium">Docs</a>
+                <a href="{% url 'hero_list_web' %}" class="{% if request.resolver_match.url_name == 'hero_list_web' %}text-blue-400 border-b-2 border-blue-600{% else %}text-gray-300 hover:text-blue-400{% endif %} px-3 py-2 rounded-md text-sm font-medium">Hero List</a>
+                <a href="{% url 'hero_rank_web' %}" class="{% if request.resolver_match.url_name == 'hero_rank_web' %}text-blue-400 border-b-2 border-blue-600{% else %}text-gray-300 hover:text-blue-400{% endif %} px-3 py-2 rounded-md text-sm font-medium">Hero Rank</a>
+                <a href="{% url 'hero_position_web' %}" class="{% if request.resolver_match.url_name == 'hero_position_web' %}text-blue-400 border-b-2 border-blue-600{% else %}text-gray-300 hover:text-blue-400{% endif %} px-3 py-2 rounded-md text-sm font-medium">Hero Position</a>
+                <a href="{% url 'hero_detail_web' hero_id=1 %}" class="{% if request.resolver_match.url_name == 'hero_detail_web' %}text-blue-400 border-b-2 border-blue-600{% else %}text-gray-300 hover:text-blue-400{% endif %} px-3 py-2 rounded-md text-sm font-medium">Hero Detail</a>
+                <a href="https://github.com/ridwaanhall" target="_blank" rel="noopener noreferrer" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium">GitHub</a>
             </div>
         </div>
     </div>
@@ -34,12 +33,12 @@
     <!-- Mobile menu, show/hide based on menu state. -->
     <div class="md:hidden hidden" id="mobile-menu">
         <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            <a href="https://mlbb-api-docs.vercel.app/" target="_blank" rel="noopener noreferrer" class="text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">Docs</a>
-            <a href="{% url 'hero_list_web' %}" class="{% if request.resolver_match.url_name == 'hero_list_web' %}bg-blue-50 dark:bg-gray-900 text-blue-700 dark:text-blue-300{% else %}text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-blue-600{% endif %} block px-3 py-2 rounded-md text-base font-medium">Hero List</a>
-            <a href="{% url 'hero_rank_web' %}" class="{% if request.resolver_match.url_name == 'hero_rank_web' %}bg-blue-50 dark:bg-gray-900 text-blue-700 dark:text-blue-300{% else %}text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-blue-600{% endif %} block px-3 py-2 rounded-md text-base font-medium">Hero Rank</a>
-            <a href="{% url 'hero_position_web' %}" class="{% if request.resolver_match.url_name == 'hero_position_web' %}bg-blue-50 dark:bg-gray-900 text-blue-700 dark:text-blue-300{% else %}text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-blue-600{% endif %} block px-3 py-2 rounded-md text-base font-medium">Hero Position</a>
-            <a href="{% url 'hero_detail_web' hero_id=1 %}" class="{% if request.resolver_match.url_name == 'hero_detail_web' %}bg-blue-50 dark:bg-gray-900 text-blue-700 dark:text-blue-300{% else %}text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-blue-600{% endif %} block px-3 py-2 rounded-md text-base font-medium">Hero Detail</a>
-            <a href="https://github.com/ridwaanhall" target="_blank" rel="noopener noreferrer" class="text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">GitHub</a>
+            <a href="https://mlbb-api-docs.vercel.app/" target="_blank" rel="noopener noreferrer" class="text-gray-300 hover:bg-gray-700 hover:text-blue-400 block px-3 py-2 rounded-md text-base font-medium">Docs</a>
+            <a href="{% url 'hero_list_web' %}" class="{% if request.resolver_match.url_name == 'hero_list_web' %}bg-gray-900 text-blue-300{% else %}text-gray-300 hover:bg-gray-700 hover:text-blue-400{% endif %} block px-3 py-2 rounded-md text-base font-medium">Hero List</a>
+            <a href="{% url 'hero_rank_web' %}" class="{% if request.resolver_match.url_name == 'hero_rank_web' %}bg-gray-900 text-blue-300{% else %}text-gray-300 hover:bg-gray-700 hover:text-blue-400{% endif %} block px-3 py-2 rounded-md text-base font-medium">Hero Rank</a>
+            <a href="{% url 'hero_position_web' %}" class="{% if request.resolver_match.url_name == 'hero_position_web' %}bg-gray-900 text-blue-300{% else %}text-gray-300 hover:bg-gray-700 hover:text-blue-400{% endif %} block px-3 py-2 rounded-md text-base font-medium">Hero Position</a>
+            <a href="{% url 'hero_detail_web' hero_id=1 %}" class="{% if request.resolver_match.url_name == 'hero_detail_web' %}bg-gray-900 text-blue-300{% else %}text-gray-300 hover:bg-gray-700 hover:text-blue-400{% endif %} block px-3 py-2 rounded-md text-base font-medium">Hero Detail</a>
+            <a href="https://github.com/ridwaanhall" target="_blank" rel="noopener noreferrer" class="text-gray-300 hover:bg-gray-700 hover:text-blue-400 block px-3 py-2 rounded-md text-base font-medium">GitHub</a>
         </div>
     </div>
     <script>

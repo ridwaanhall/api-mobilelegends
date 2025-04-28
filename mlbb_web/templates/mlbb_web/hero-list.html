@@ -1,29 +1,41 @@
-{% extends "base.html" %}
-
-{% block content %}
-<div class="container">
-    <h1>Hero List</h1>
-    <div class="card mt-4">
-        <div class="card-header">
-            Hero Lists
-        </div>
-        <div class="card-body">
-            <table class="table table-hover">
-                <thead class="table-dark">
+{% extends "base.html" %} {% block content %}
+<div class="max-w-5xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+    <h1 class="text-4xl font-extrabold text-center text-gray-100 mb-10 tracking-tight">Mobile Legends Hero Directory</h1>
+    <!-- Removed the H2 as the table itself represents the list -->
+    <div class="bg-gray-800 shadow-2xl rounded-xl overflow-hidden border border-gray-700">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-700">
+                <thead class="bg-gray-900/50">
                     <tr>
-                        <th>ID</th>
-                        <th>Hero</th>
+                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            ID
+                        </th>
+                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            Hero Name
+                        </th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="bg-gray-800 divide-y divide-gray-700">
                     {% for id, hero in data.items %}
+                    <tr class="hover:bg-gray-700/60 transition duration-150 ease-in-out even:bg-gray-800/50 odd:bg-gray-900/30">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-200 tabular-nums">
+                            {{ id }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                            <a href="{% url 'hero_detail_web' hero_id=id %}" class="text-indigo-400 hover:text-indigo-300 hover:underline font-semibold transition duration-150 ease-in-out">
+                                {{ hero }}
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
                     <tr>
-                        <td>{{ id }}</td>
-                        <td><a href="{% url 'hero_detail_web' hero_id=id %}">{{ hero }}</a></td>
+                        <td colspan="2" class="px-6 py-10 whitespace-nowrap text-sm text-center text-gray-500 italic">
+                            No heroes available at the moment.
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
-            </table>            
+            </table>
         </div>
     </div>
 </div>

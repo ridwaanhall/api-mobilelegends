@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
-<html lang="en" class=""> <!-- Add 'dark' class here or via JS for dark mode -->
+<html lang="en" class="dark">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,13 +24,7 @@
                 }
               }
             }
-            // Basic theme toggle example (add a button later)
-            // Or use prefers-color-scheme with darkMode: 'media'
-            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-              document.documentElement.classList.add('dark')
-            } else {
-              document.documentElement.classList.remove('dark')
-            }
+            // Theme is now always dark, no script needed here.
         </script>
         <!-- Open Graph Meta Tags for Social Media -->
         <meta property="og:title" content="MLBB Hero Information and Rankings">
@@ -49,16 +43,13 @@
         <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
         <style>
             /* Basic scrollbar styling for a cleaner look */
-            ::-webkit-scrollbar { width: 6px; height: 6px;}
-            ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
-            ::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; }
-            ::-webkit-scrollbar-thumb:hover { background: #555; }
-            html.dark ::-webkit-scrollbar-track { background: #2d3748; } /* gray-800 */
-            html.dark ::-webkit-scrollbar-thumb { background: #718096; } /* gray-500 */
-            html.dark ::-webkit-scrollbar-thumb:hover { background: #a0aec0; } /* gray-400 */
+            ::-webkit-scrollbar { width: 6px; height: 6px; }
+            ::-webkit-scrollbar-track { background: #2d3748; border-radius: 10px; } /* gray-800 */
+            ::-webkit-scrollbar-thumb { background: #718096; border-radius: 10px; } /* gray-500 */
+            ::-webkit-scrollbar-thumb:hover { background: #a0aec0; } /* gray-400 */
         </style>
     </head>
-    <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 antialiased min-h-screen flex flex-col">
+    <body class="bg-gray-900 text-gray-100 antialiased min-h-screen flex flex-col">
 
         {% include 'navbar.html' %}
 

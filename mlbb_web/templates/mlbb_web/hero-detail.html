@@ -4,6 +4,23 @@
 <div class="dark:bg-gray-900 dark:text-gray-200 min-h-screen p-6">
     <div class="container mx-auto">
         <h1 class="text-4xl font-bold mb-6 dark:text-white">{{ data.hero.data.name }}</h1>
+
+        <!-- Hero ID Search Form -->
+        <div class="mb-6 p-4 dark:bg-gray-800 rounded-lg shadow-md">
+            <form id="heroSearchForm" class="flex items-center space-x-2">
+                <label for="heroIdInput" class="sr-only">Hero ID:</label>
+                <input type="number" id="heroIdInput" name="hero_id" placeholder="Enter Hero ID (1-128)"
+                       class="dark:bg-gray-700 dark:text-gray-200 border dark:border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 flex-grow"
+                       min="1" max="128" required>
+                <button type="submit"
+                        class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-150 ease-in-out">
+                    Search
+                </button>
+            </form>
+            <p class="text-xs dark:text-gray-400 mt-1">Note: Enter a Hero ID between 1 and 128.</p>
+        </div>
+        <!-- End Hero ID Search Form -->
+
         <div class="flex flex-col lg:flex-row gap-6">
             <!-- Left Column: Hero Image and Story -->
             <div class="lg:w-1/4 w-full">
@@ -330,4 +347,28 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById('heroSearchForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        const heroIdInput = document.getElementById('heroIdInput');
+        const heroId = parseInt(heroIdInput.value, 10);
+
+        // Validate the ID
+        if (isNaN(heroId) || heroId < 1 || heroId > 128) {
+            alert('Please enter a valid Hero ID between 1 and 128.');
+            heroIdInput.focus();
+            return;
+        }
+
+        // Generate the base URL using Django's url tag with a placeholder
+        // Replace the placeholder '0' with the actual heroId
+        const baseUrl = "{% url 'hero_detail_web' hero_id=0 %}";
+        const targetUrl = baseUrl.replace('/0/', '/' + heroId + '/'); // Adjust replacement based on your URL structure
+
+        // Redirect to the hero detail page
+        window.location.href = targetUrl;
+    });
+</script>
 {% endblock %}

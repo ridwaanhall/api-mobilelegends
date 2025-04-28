@@ -79,7 +79,7 @@
                 <tbody class="bg-gray-800 divide-y divide-gray-700">
                     {% for record in data.data.records %}
                     <tr class="hover:bg-gray-700">
-                        <td class="px-6 py-4 whitespace-nowrap">
+                        <td class="px-6 py-4">
                             <div class="flex items-center">
                                 <div class="flex-shrink-0 h-12 w-12">
                                     <img class="h-12 w-12 rounded-full object-cover border-2 border-gray-600" src="{{ record.data.main_hero.data.head }}" alt="{{ record.data.main_hero.data.name }}">
@@ -92,12 +92,12 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{{ record.data.main_hero_appearance_rate|floatformat:2 }}%</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{{ record.data.main_hero_ban_rate|floatformat:2 }}%</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{{ record.data.main_hero_win_rate|floatformat:2 }}%</td>
-                        <td class="px-6 py-4 text-sm text-gray-300"> {# Removed whitespace-nowrap from td to allow wrapping #}
-                            <div class="flex items-center space-x-4 flex-wrap"> {# Added flex-wrap #}
+                        <td class="px-6 py-4 text-sm text-gray-300">
+                            <div class="flex items-center space-x-4 flex-wrap">
                                 {% for sub_hero in record.data.sub_hero %}
-                                <div class="flex items-center space-x-1 py-1"> {# Added py-1 for vertical spacing when wrapped #}
+                                <div class="flex items-center space-x-1 py-1">
                                     <img class="h-8 w-8 rounded-full object-cover border border-gray-600" src="{{ sub_hero.hero.data.head }}" alt="{{ sub_hero.hero.data.name }}">
-                                    <span class="text-xs text-gray-400 whitespace-nowrap">{{ sub_hero.hero.data.name }}: {{ sub_hero.increase_win_rate|floatformat:2 }}%</span> {# Added whitespace-nowrap here #}
+                                    <span class="text-xs text-gray-400">{{ sub_hero.hero.data.name }}: {{ sub_hero.increase_win_rate|floatformat:2 }}%</span>
                                 </div>
                                 {% empty %}
                                 <span class="text-xs text-gray-500">N/A</span>

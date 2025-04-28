@@ -1,168 +1,169 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container">
-    <h1>{{ data.hero.data.name }}</h1>
-    <div class="row">
-        <div class="col-md-3">
-            <div class="card mb-3">
-                <img src="https://wsrv.nl/?url={{ data.head_big }}" class="card-img-top" alt="{{ data.hero.data.name }}">
-                <div class="card-body">
-                    <blockquote class="blockquote mb-0">
-                        <p>{{ data.hero.data.story }}</p>
-                        <footer class="blockquote-footer">{{ data.hero.data.name }}</footer>
-                    </blockquote>
+<div class="dark:bg-gray-900 dark:text-gray-200 min-h-screen p-6">
+    <div class="container mx-auto">
+        <h1 class="text-4xl font-bold mb-6 dark:text-white">{{ data.hero.data.name }}</h1>
+        <div class="flex flex-col lg:flex-row gap-6">
+            <!-- Left Column: Hero Image and Story -->
+            <div class="lg:w-1/4 w-full">
+                <div class="dark:bg-gray-800 rounded-lg shadow-md overflow-hidden mb-6">
+                    <img src="https://wsrv.nl/?url={{ data.head_big }}" class="w-full h-auto" alt="{{ data.hero.data.name }}">
+                    <div class="p-4">
+                        <blockquote class="border-l-4 dark:border-gray-600 pl-4 italic dark:text-gray-400">
+                            <p class="mb-2">{{ data.hero.data.story }}</p>
+                            <footer class="text-sm dark:text-gray-500">- {{ data.hero.data.name }}</footer>
+                        </blockquote>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="col-md-9">
-            <div class="card mb-3">
-                <div class="card-header">
-                    <ul class="nav nav-pills" id="counter" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="counter-relationship" data-bs-toggle="pill" data-bs-target="#pills-counter" type="button" role="tab" aria-controls="pills-counter" aria-selected="true">Counter Relationship</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="compatimibity" data-bs-toggle="pill" data-bs-target="#pills-compatibility" type="button" role="tab" aria-controls="pills-compatibility" aria-selected="false">Compatibility</button>
-                        </li>
-                    </ul>
-                </div>
-                <div class="card-body">
-                    <div class="tab-content" id="counterContent">
-                        <div class="tab-pane fade show active" id="pills-counter" role="tabpanel" aria-labelledby="counter-relationship" tabindex="0">
-                            <ul class="nav nav-tabs" id="counterRelationship" role="tablist">
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link active" id="best-counters" data-bs-toggle="tab" data-bs-target="#best-counters-pane" type="button" role="tab" aria-controls="best-counters-pane" aria-selected="true">Best Counters</button>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link" id="most-countered-by" data-bs-toggle="tab" data-bs-target="#most-countered-by-pane" type="button" role="tab" aria-controls="most-countered-by-pane" aria-selected="false">Most Countered by</button>
-                                </li>
-                            </ul>
-                            <div class="tab-content" id="counterRelationshipContent">
-                                <div class="tab-pane fade show active" id="best-counters-pane" role="tabpanel" aria-labelledby="best-counters" tabindex="0">
-                                    <table class="table table-hover border">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th class="text-center">Best Counters</th>
-                                                <th class="text-center">Counter Score</th>
-                                                <th class="text-center">Win Rate</th>
-                                                <th class="text-center">Pick Rate</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for sub_hero in counter.data.records.0.data.sub_hero %}
-                                            <tr>
-                                                <td>{{ sub_hero.hero_index }}</td>
-                                                <td class="text-center">
-                                                    <a href="{% url 'hero_detail_web' hero_id=sub_hero.heroid %}">
-                                                        <img src="{{ sub_hero.hero.data.head }}" alt="{{ sub_hero.heroid }}" class="rounded-circle" width="35" height="35" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ sub_hero.heroid }}">
-                                                    </a>
-                                                </td>
-                                                <td class="text-center text-danger-emphasis"><strong>{{ sub_hero.increase_win_rate }}%</strong></td>
-                                                <td class="text-center">{{ sub_hero.hero_win_rate }}%</td>
-                                                <td class="text-center">{{ sub_hero.hero_appearance_rate }}%</td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
+            <!-- Right Column: Counters and Compatibility -->
+            <div class="lg:w-3/4 w-full">
+                <div class="dark:bg-gray-800 rounded-lg shadow-md mb-6">
+                    <div class="p-4 border-b dark:border-gray-700">
+                        <h2 class="text-2xl font-semibold dark:text-white">Counters & Compatibility</h2>
+                        <!-- Simplified Tab-like structure -->
+                    </div>
+                    <div class="p-4 space-y-6">
+                        <!-- Counter Relationship -->
+                        <div>
+                            <h3 class="text-xl font-semibold mb-3 dark:text-gray-300">Counter Relationship</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Best Counters -->
+                                <div>
+                                    <h4 class="text-lg font-medium mb-2 dark:text-gray-400">Best Counters</h4>
+                                    <div class="overflow-x-auto dark:bg-gray-700 rounded">
+                                        <table class="min-w-full divide-y dark:divide-gray-600">
+                                            <thead class="dark:bg-gray-600">
+                                                <tr>
+                                                    <th class="px-4 py-2 text-left text-xs font-medium dark:text-gray-300 uppercase tracking-wider">#</th>
+                                                    <th class="px-4 py-2 text-center text-xs font-medium dark:text-gray-300 uppercase tracking-wider">Hero</th>
+                                                    <th class="px-4 py-2 text-center text-xs font-medium dark:text-gray-300 uppercase tracking-wider">Score</th>
+                                                    <th class="px-4 py-2 text-center text-xs font-medium dark:text-gray-300 uppercase tracking-wider">Win Rate</th>
+                                                    <th class="px-4 py-2 text-center text-xs font-medium dark:text-gray-300 uppercase tracking-wider">Pick Rate</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="dark:bg-gray-700 divide-y dark:divide-gray-600">
+                                                {% for sub_hero in counter.data.records.0.data.sub_hero %}
+                                                <tr class="dark:hover:bg-gray-600">
+                                                    <td class="px-4 py-2 whitespace-nowrap text-sm dark:text-gray-300">{{ sub_hero.hero_index }}</td>
+                                                    <td class="px-4 py-2 whitespace-nowrap text-center">
+                                                        <a href="{% url 'hero_detail_web' hero_id=sub_hero.heroid %}" class="inline-block">
+                                                            <img src="{{ sub_hero.hero.data.head }}" alt="{{ sub_hero.heroid }}" class="rounded-full w-8 h-8 mx-auto" title="{{ sub_hero.heroid }}">
+                                                        </a>
+                                                    </td>
+                                                    <td class="px-4 py-2 whitespace-nowrap text-sm text-center dark:text-red-400 font-semibold">{{ sub_hero.increase_win_rate }}%</td>
+                                                    <td class="px-4 py-2 whitespace-nowrap text-sm text-center dark:text-gray-300">{{ sub_hero.hero_win_rate }}%</td>
+                                                    <td class="px-4 py-2 whitespace-nowrap text-sm text-center dark:text-gray-300">{{ sub_hero.hero_appearance_rate }}%</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
-                                <div class="tab-pane fade" id="most-countered-by-pane" role="tabpanel" aria-labelledby="most-countered-by" tabindex="0">
-                                    <table class="table table-hover border">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th class="text-center">Most Countered by</th>
-                                                <th class="text-center">Counter Score</th>
-                                                <th class="text-center">Win Rate</th>
-                                                <th class="text-center">Pick Rate</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for sub_hero_last in counter.data.records.0.data.sub_hero_last %}
-                                            <tr>
-                                                <td>{{ sub_hero_last.hero_index }}</td>
-                                                <td class="text-center">
-                                                    <a href="{% url 'hero_detail_web' hero_id=sub_hero_last.heroid %}">
-                                                        <img src="{{ sub_hero_last.hero.data.head }}" alt="{{ sub_hero_last.heroid }}" class="rounded-circle" width="35" height="35" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ sub_hero_last.heroid }}">
-                                                    </a>
-                                                </td>
-                                                <td class="text-center text-danger"><strong>{{ sub_hero_last.increase_win_rate }}%</strong></td>
-                                                <td class="text-center">{{ sub_hero_last.hero_win_rate }}%</td>
-                                                <td class="text-center">{{ sub_hero_last.hero_appearance_rate }}%</td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
+                                <!-- Most Countered By -->
+                                <div>
+                                    <h4 class="text-lg font-medium mb-2 dark:text-gray-400">Most Countered By</h4>
+                                     <div class="overflow-x-auto dark:bg-gray-700 rounded">
+                                        <table class="min-w-full divide-y dark:divide-gray-600">
+                                            <thead class="dark:bg-gray-600">
+                                                <tr>
+                                                    <th class="px-4 py-2 text-left text-xs font-medium dark:text-gray-300 uppercase tracking-wider">#</th>
+                                                    <th class="px-4 py-2 text-center text-xs font-medium dark:text-gray-300 uppercase tracking-wider">Hero</th>
+                                                    <th class="px-4 py-2 text-center text-xs font-medium dark:text-gray-300 uppercase tracking-wider">Score</th>
+                                                    <th class="px-4 py-2 text-center text-xs font-medium dark:text-gray-300 uppercase tracking-wider">Win Rate</th>
+                                                    <th class="px-4 py-2 text-center text-xs font-medium dark:text-gray-300 uppercase tracking-wider">Pick Rate</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="dark:bg-gray-700 divide-y dark:divide-gray-600">
+                                                {% for sub_hero_last in counter.data.records.0.data.sub_hero_last %}
+                                                <tr class="dark:hover:bg-gray-600">
+                                                    <td class="px-4 py-2 whitespace-nowrap text-sm dark:text-gray-300">{{ sub_hero_last.hero_index }}</td>
+                                                    <td class="px-4 py-2 whitespace-nowrap text-center">
+                                                        <a href="{% url 'hero_detail_web' hero_id=sub_hero_last.heroid %}" class="inline-block">
+                                                            <img src="{{ sub_hero_last.hero.data.head }}" alt="{{ sub_hero_last.heroid }}" class="rounded-full w-8 h-8 mx-auto" title="{{ sub_hero_last.heroid }}">
+                                                        </a>
+                                                    </td>
+                                                    <td class="px-4 py-2 whitespace-nowrap text-sm text-center dark:text-red-500 font-semibold">{{ sub_hero_last.increase_win_rate }}%</td>
+                                                    <td class="px-4 py-2 whitespace-nowrap text-sm text-center dark:text-gray-300">{{ sub_hero_last.hero_win_rate }}%</td>
+                                                    <td class="px-4 py-2 whitespace-nowrap text-sm text-center dark:text-gray-300">{{ sub_hero_last.hero_appearance_rate }}%</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="tab-pane fade" id="pills-compatibility" role="tabpanel" aria-labelledby="compatimibity" tabindex="0">
-                            <ul class="nav nav-tabs" id="compatibility" role="tablist">
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link active" id="best-partners" data-bs-toggle="tab" data-bs-target="#best-partners-pane" type="button" role="tab" aria-controls="best-partners-pane" aria-selected="true">Best Partners</button>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link" id="worst-partners" data-bs-toggle="tab" data-bs-target="#worst-partners-pane" type="button" role="tab" aria-controls="worst-partners-pane" aria-selected="false">Worst Partners</button>
-                                </li>
-                            </ul>
-                            <div class="tab-content" id="compatibilityContent">
-                                <div class="tab-pane fade show active" id="best-partners-pane" role="tabpanel" aria-labelledby="best-partners" tabindex="0">
-                                    <table class="table table-hover border">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th class="text-center">Best Partners</th>
-                                                <th class="text-center">Compatibility Score</th>
-                                                <th class="text-center">Win Rate</th>
-                                                <th class="text-center">Pick Rate</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for sub_hero in compatibility.data.records.0.data.sub_hero %}
-                                            <tr>
-                                                <td>{{ sub_hero.hero_index }}</td>
-                                                <td class="text-center">
-                                                    <a href="{% url 'hero_detail_web' hero_id=sub_hero.heroid %}">
-                                                        <img src="{{ sub_hero.hero.data.head }}" alt="{{ sub_hero.heroid }}" class="rounded-circle" width="35" height="35" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ sub_hero.heroid }}">
-                                                    </a>
-                                                </td>
-                                                <td class="text-center text-success-emphasis"><strong>{{ sub_hero.increase_win_rate }}%</strong></td>
-                                                <td class="text-center">{{ sub_hero.hero_win_rate }}%</td>
-                                                <td class="text-center">{{ sub_hero.hero_appearance_rate }}%</td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
+
+                        <!-- Compatibility -->
+                        <div>
+                            <h3 class="text-xl font-semibold mb-3 dark:text-gray-300">Compatibility</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Best Partners -->
+                                <div>
+                                    <h4 class="text-lg font-medium mb-2 dark:text-gray-400">Best Partners</h4>
+                                    <div class="overflow-x-auto dark:bg-gray-700 rounded">
+                                        <table class="min-w-full divide-y dark:divide-gray-600">
+                                            <thead class="dark:bg-gray-600">
+                                                <tr>
+                                                    <th class="px-4 py-2 text-left text-xs font-medium dark:text-gray-300 uppercase tracking-wider">#</th>
+                                                    <th class="px-4 py-2 text-center text-xs font-medium dark:text-gray-300 uppercase tracking-wider">Hero</th>
+                                                    <th class="px-4 py-2 text-center text-xs font-medium dark:text-gray-300 uppercase tracking-wider">Score</th>
+                                                    <th class="px-4 py-2 text-center text-xs font-medium dark:text-gray-300 uppercase tracking-wider">Win Rate</th>
+                                                    <th class="px-4 py-2 text-center text-xs font-medium dark:text-gray-300 uppercase tracking-wider">Pick Rate</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="dark:bg-gray-700 divide-y dark:divide-gray-600">
+                                                {% for sub_hero in compatibility.data.records.0.data.sub_hero %}
+                                                <tr class="dark:hover:bg-gray-600">
+                                                    <td class="px-4 py-2 whitespace-nowrap text-sm dark:text-gray-300">{{ sub_hero.hero_index }}</td>
+                                                    <td class="px-4 py-2 whitespace-nowrap text-center">
+                                                        <a href="{% url 'hero_detail_web' hero_id=sub_hero.heroid %}" class="inline-block">
+                                                            <img src="{{ sub_hero.hero.data.head }}" alt="{{ sub_hero.heroid }}" class="rounded-full w-8 h-8 mx-auto" title="{{ sub_hero.heroid }}">
+                                                        </a>
+                                                    </td>
+                                                    <td class="px-4 py-2 whitespace-nowrap text-sm text-center dark:text-green-400 font-semibold">{{ sub_hero.increase_win_rate }}%</td>
+                                                    <td class="px-4 py-2 whitespace-nowrap text-sm text-center dark:text-gray-300">{{ sub_hero.hero_win_rate }}%</td>
+                                                    <td class="px-4 py-2 whitespace-nowrap text-sm text-center dark:text-gray-300">{{ sub_hero.hero_appearance_rate }}%</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
-                                <div class="tab-pane fade" id="worst-partners-pane" role="tabpanel" aria-labelledby="worst-partners" tabindex="0">
-                                    <table class="table table-hover border">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th class="text-center">Worst Partners</th>
-                                                <th class="text-center">Compatibility Score</th>
-                                                <th class="text-center">Win Rate</th>
-                                                <th class="text-center">Pick Rate</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for sub_hero_last in compatibility.data.records.0.data.sub_hero_last %}
-                                            <tr>
-                                                <td>{{ sub_hero_last.hero_index }}</td>
-                                                <td class="text-center">
-                                                    <a href="{% url 'hero_detail_web' hero_id=sub_hero_last.heroid %}">
-                                                        <img src="{{ sub_hero_last.hero.data.head }}" alt="{{ sub_hero_last.heroid }}" class="rounded-circle" width="35" height="35" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ sub_hero_last.heroid }}">
-                                                    </a>
-                                                </td>
-                                                <td class="text-center text-danger"><strong>{{ sub_hero_last.increase_win_rate }}%</strong></td>
-                                                <td class="text-center">{{ sub_hero_last.hero_win_rate }}%</td>
-                                                <td class="text-center">{{ sub_hero_last.hero_appearance_rate }}%</td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
+                                <!-- Worst Partners -->
+                                <div>
+                                    <h4 class="text-lg font-medium mb-2 dark:text-gray-400">Worst Partners</h4>
+                                    <div class="overflow-x-auto dark:bg-gray-700 rounded">
+                                        <table class="min-w-full divide-y dark:divide-gray-600">
+                                            <thead class="dark:bg-gray-600">
+                                                <tr>
+                                                    <th class="px-4 py-2 text-left text-xs font-medium dark:text-gray-300 uppercase tracking-wider">#</th>
+                                                    <th class="px-4 py-2 text-center text-xs font-medium dark:text-gray-300 uppercase tracking-wider">Hero</th>
+                                                    <th class="px-4 py-2 text-center text-xs font-medium dark:text-gray-300 uppercase tracking-wider">Score</th>
+                                                    <th class="px-4 py-2 text-center text-xs font-medium dark:text-gray-300 uppercase tracking-wider">Win Rate</th>
+                                                    <th class="px-4 py-2 text-center text-xs font-medium dark:text-gray-300 uppercase tracking-wider">Pick Rate</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="dark:bg-gray-700 divide-y dark:divide-gray-600">
+                                                {% for sub_hero_last in compatibility.data.records.0.data.sub_hero_last %}
+                                                <tr class="dark:hover:bg-gray-600">
+                                                    <td class="px-4 py-2 whitespace-nowrap text-sm dark:text-gray-300">{{ sub_hero_last.hero_index }}</td>
+                                                    <td class="px-4 py-2 whitespace-nowrap text-center">
+                                                        <a href="{% url 'hero_detail_web' hero_id=sub_hero_last.heroid %}" class="inline-block">
+                                                            <img src="{{ sub_hero_last.hero.data.head }}" alt="{{ sub_hero_last.heroid }}" class="rounded-full w-8 h-8 mx-auto" title="{{ sub_hero_last.heroid }}">
+                                                        </a>
+                                                    </td>
+                                                    <td class="px-4 py-2 whitespace-nowrap text-sm text-center dark:text-red-500 font-semibold">{{ sub_hero_last.increase_win_rate }}%</td>
+                                                    <td class="px-4 py-2 whitespace-nowrap text-sm text-center dark:text-gray-300">{{ sub_hero_last.hero_win_rate }}%</td>
+                                                    <td class="px-4 py-2 whitespace-nowrap text-sm text-center dark:text-gray-300">{{ sub_hero_last.hero_appearance_rate }}%</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -171,201 +172,161 @@
             </div>
         </div>
 
-        {% comment %} <div class="col-md-9">
-            <div class="card mb-3">
-                <div class="card-header">
-                    <h4>Basic Info</h4>
-                </div>
-                <div class="card-body">
-                    <table class="table table-hover table-bordered">
-                        <tbody>
-                            <tr>
-                                <td>Role</td>
-                                <td>
-                                    {% for role in data.hero.data.sortid %}
-                                        <img src="{{ role.data.sort_icon }}" alt="{{ role.data.sort_title }}" width="30" height="30" data-toggle="tooltip" title="{{ role.data.sort_title }}">
-                                        {{ role.data.sort_title }}{% if not forloop.last %}, {% endif %}
-                                    {% endfor %}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Lane</td>
-                                <td>
-                                    {% for lane in data.hero.data.roadsort %}
-                                        <img src="{{ lane.data.road_sort_icon }}" alt="{{ lane.data.road_sort_title }}" width="40" height="40" data-toggle="tooltip" title="{{ lane.data.road_sort_title }}">
-                                        {{ lane.data.road_sort_title }}{% if not forloop.last %}, {% endif %}
-                                    {% endfor %}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Specialty</td>
-                                <td>
-                                    {% for specialty in data.hero.data.speciality %}
-                                        <span class="badge {% if forloop.counter|divisibleby:2 %}text-bg-primary{% else %}text-bg-secondary{% endif %}">{{ specialty }}</span>{% if not forloop.last %} {% endif %}
-                                    {% endfor %}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Difficulty</td>
-                                <td>
-                                    <div class="progress">
-                                        <div class="progress-bar" role="progressbar" style="width: {{ data.hero.data.difficulty }}%;" aria-valuenow="{{ data.hero.data.difficulty }}" aria-valuemin="0" aria-valuemax="100">{{ data.hero.data.difficulty }}%</div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Win Rate</td>
-                                <td>{{ stats.data.records.0.data.main_hero_win_rate }}%</td>
-                            </tr>
-                            <tr>
-                                <td>Ban Rate</td>
-                                <td>{{ stats.data.records.0.data.main_hero_ban_rate }}%</td>
-                            </tr>
-                            <tr>
-                                <td>Pick Rate</td>
-                                <td>{{ stats.data.records.0.data.main_hero_appearance_rate }}%</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+        <!-- Skills Section -->
+        <div class="dark:bg-gray-800 rounded-lg shadow-md mb-6 overflow-hidden">
+            <div class="p-4 border-b dark:border-gray-700">
+                <h4 class="text-xl font-semibold dark:text-white">Skills</h4>
             </div>
-        </div> {% endcomment %}
-    </div>
-    <div class="card mb-3">
-        <div class="card-header">
-            <h4>Skills</h4>
-        </div>
-        <div class="card-body">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>Icon</th>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>CD & Cost</th>
-                        <th>Tags</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for skill in data.hero.data.heroskilllist %}
-                    {% for skill_detail in skill.skilllist %}
-                    <tr>
-                        <td><img src="{{ skill_detail.skillicon }}" alt="{{ skill_detail.skillname }}" width="30"></td>
-                        <td><strong>{{ skill_detail.skillname }}</strong></td>
-                        <td>{{ skill_detail.skilldesc|safe }}</td>
-                        <td>{{ skill_detail.skillcd_cost }}</td>
-                        <td>
-                            {% for tag in skill_detail.skilltag %}
-                                <span style="background-color: rgb({{ tag.tagrgb }}); padding: 2px 5px; border-radius: 3px;">{{ tag.tagname }}</span>
-                            {% endfor %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <div class="card mb-3">
-        <div class="card-header">
-            <h4>Recommend Master Plan</h4>
-        </div>
-        <div class="card-body">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>Photo</th>
-                        <th>Title</th>
-                        <th>Battle Skill</th>
-                        <th>Emblem Plan</th>
-                        <th>Emblem Skills</th>
-                        <th>Equipment Plan</th>
-                        {% comment %} <th>Description</th> {% endcomment %}
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for plan in data.hero.data.recommendmasterplan %}
-                    <tr>
-                        <td>
-                            <img src="{{ plan.face }}" alt="{{ plan.name }}" class="rounded-circle" width="50" height="50" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ plan.name }}">
-                        </td>
-                        <td><span class="badge text-bg-primary">{{ plan.title }}</span></td>
-                        <td>
-                            <img src="{{ plan.battleskill.data.skillicon }}" alt="{{ plan.battleskill.data.skillname }}" class="rounded-circle" width="50" height="50" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ plan.battleskill.data.skillname }}">
-                        </td>
-                        <td>
-                            <img src="{{ plan.emblemplan.emblemplan.attriicon }}" alt="{{ plan.emblemplan.emblemplan.emblemname }}" class="rounded-circle" width="50" height="50" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ plan.emblemplan.emblemplan.emblemname }}">
-                        </td>
-                        <td>
-                            <img src="{{ plan.emblemplan.giftid1.emblemskill.skillicon }}" alt="{{ plan.emblemplan.giftid1.emblemskill.skillname }}" class="rounded-circle" width="50" height="50" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ plan.emblemplan.giftid1.emblemskill.skillname }}">
-                            <img src="{{ plan.emblemplan.giftid2.emblemskill.skillicon }}" alt="{{ plan.emblemplan.giftid2.emblemskill.skillname }}" class="rounded-circle" width="50" height="50" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ plan.emblemplan.giftid2.emblemskill.skillname }}">
-                            <img src="{{ plan.emblemplan.giftid3.emblemskill.skillicon }}" alt="{{ plan.emblemplan.giftid3.emblemskill.skillname }}" class="rounded-circle" width="50" height="50" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ plan.emblemplan.giftid3.emblemskill.skillname }}">
-                        </td>
-                        <td>
-                            {% for equipment in plan.equiplist %}
-                            <img src="{{ equipment.equipicon }}" alt="{{ equipment.equipname }}" class="img-fluid rounded-circle" width="50" height="50" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ equipment.equipname }}">
-                            {% endfor %}
-                        </td>
-                        {% comment %} <td>{{ plan.description }}</td> {% endcomment %}
-                    </tr>
-                    <tr>
-                        <td colspan="6">
-                            {{ plan.description }}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>                
-            </table>
-        </div>
-    </div>
-
-    <div class="card mb-3">
-        <div class="card-header">
-            <h4>Relations</h4>
-        </div>
-        <div class="card-body">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>Type</th>
-                        <th>Hero</th>
-                        <th>Description</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Assist</td>
-                        <td>
-                            {% for hero in data.relation.assist.target_hero %}
-                                <img src="{{ hero.data.head }}" alt="{{ hero.data.name }}" class="rounded-circle" width="50" height="50" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ hero.data.name }}">
-                            {% endfor %}
-                        </td>
-                        <td>{{ data.relation.assist.desc }}</td>
-                    </tr>
-                    <tr>
-                        <td>Strong Against</td>
-                        <td>
-                            {% for hero in data.relation.strong.target_hero %}
-                                <img src="{{ hero.data.head }}" alt="{{ hero.data.name }}" class="rounded-circle" width="50" height="50" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ hero.data.name }}">
-                            {% endfor %}
-                        </td>
-                        <td>{{ data.relation.strong.desc }}</td>
-                    </tr>
-                    <tr>
-                        <td>Weak Against</td>
-                        <td>
-                            {% if data.relation.weak %}
-                                {% for hero in data.relation.weak.target_hero %}
-                                    <img src="{{ hero.data.head }}" alt="{{ hero.data.name }}" class="rounded-circle" width="50" height="50" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ hero.data.name }}">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y dark:divide-gray-700">
+                    <thead class="dark:bg-gray-700">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium dark:text-gray-300 uppercase tracking-wider">Icon</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium dark:text-gray-300 uppercase tracking-wider">Name</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium dark:text-gray-300 uppercase tracking-wider">Description</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium dark:text-gray-300 uppercase tracking-wider">CD & Cost</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium dark:text-gray-300 uppercase tracking-wider">Tags</th>
+                        </tr>
+                    </thead>
+                    <tbody class="dark:bg-gray-800 divide-y dark:divide-gray-700">
+                        {% for skill in data.hero.data.heroskilllist %}
+                        {% for skill_detail in skill.skilllist %}
+                        <tr class="dark:hover:bg-gray-700">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <img src="{{ skill_detail.skillicon }}" alt="{{ skill_detail.skillname }}" class="w-8 h-8">
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium dark:text-gray-100">{{ skill_detail.skillname }}</td>
+                            <td class="px-6 py-4 text-sm dark:text-gray-300"><div class="prose prose-sm dark:prose-invert max-w-none">{{ skill_detail.skilldesc|safe }}</div></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm dark:text-gray-400">{{ skill_detail.skillcd_cost }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm dark:text-gray-300">
+                                {% for tag in skill_detail.skilltag %}
+                                    <span style="background-color: rgb({{ tag.tagrgb }}); color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; margin-right: 4px;">{{ tag.tagname }}</span>
                                 {% endfor %}
-                            {% else %}
-                                No data available
-                            {% endif %}
-                        </td>
-                        <td>{{ data.relation.weak.desc }}</td>
-                    </tr>
-                </tbody>
-            </table>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Recommend Master Plan Section -->
+        <div class="dark:bg-gray-800 rounded-lg shadow-md mb-6 overflow-hidden">
+            <div class="p-4 border-b dark:border-gray-700">
+                <h4 class="text-xl font-semibold dark:text-white">Recommend Master Plan</h4>
+            </div>
+            <div class="overflow-x-auto">
+                 <table class="min-w-full divide-y dark:divide-gray-700">
+                    <thead class="dark:bg-gray-700">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium dark:text-gray-300 uppercase tracking-wider">Pro Player</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium dark:text-gray-300 uppercase tracking-wider">Title</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium dark:text-gray-300 uppercase tracking-wider">Battle Skill</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium dark:text-gray-300 uppercase tracking-wider">Emblem</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium dark:text-gray-300 uppercase tracking-wider">Talents</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium dark:text-gray-300 uppercase tracking-wider">Equipment</th>
+                        </tr>
+                    </thead>
+                    <tbody class="dark:bg-gray-800 divide-y dark:divide-gray-700">
+                        {% for plan in data.hero.data.recommendmasterplan %}
+                        <tr class="dark:hover:bg-gray-700/50">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <img src="{{ plan.face }}" alt="{{ plan.name }}" class="rounded-full w-10 h-10 mr-3" title="{{ plan.name }}">
+                                    <span class="text-sm font-medium dark:text-gray-200">{{ plan.name }}</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full dark:bg-blue-800 dark:text-blue-100">{{ plan.title }}</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <img src="{{ plan.battleskill.data.skillicon }}" alt="{{ plan.battleskill.data.skillname }}" class="rounded-full w-10 h-10" title="{{ plan.battleskill.data.skillname }}">
+                            </td>
+                             <td class="px-6 py-4 whitespace-nowrap">
+                                <img src="{{ plan.emblemplan.emblemplan.attriicon }}" alt="{{ plan.emblemplan.emblemplan.emblemname }}" class="rounded-full w-10 h-10" title="{{ plan.emblemplan.emblemplan.emblemname }}">
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex space-x-1">
+                                    <img src="{{ plan.emblemplan.giftid1.emblemskill.skillicon }}" alt="{{ plan.emblemplan.giftid1.emblemskill.skillname }}" class="rounded-full w-10 h-10" title="{{ plan.emblemplan.giftid1.emblemskill.skillname }}">
+                                    <img src="{{ plan.emblemplan.giftid2.emblemskill.skillicon }}" alt="{{ plan.emblemplan.giftid2.emblemskill.skillname }}" class="rounded-full w-10 h-10" title="{{ plan.emblemplan.giftid2.emblemskill.skillname }}">
+                                    <img src="{{ plan.emblemplan.giftid3.emblemskill.skillicon }}" alt="{{ plan.emblemplan.giftid3.emblemskill.skillname }}" class="rounded-full w-10 h-10" title="{{ plan.emblemplan.giftid3.emblemskill.skillname }}">
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex space-x-1">
+                                    {% for equipment in plan.equiplist %}
+                                    <img src="{{ equipment.equipicon }}" alt="{{ equipment.equipname }}" class="rounded-md w-10 h-10" title="{{ equipment.equipname }}">
+                                    {% endfor %}
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="dark:bg-gray-750">
+                             <td colspan="6" class="px-6 py-3 text-sm dark:text-gray-400 italic">
+                                {{ plan.description }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Relations Section -->
+        <div class="dark:bg-gray-800 rounded-lg shadow-md mb-6 overflow-hidden">
+            <div class="p-4 border-b dark:border-gray-700">
+                <h4 class="text-xl font-semibold dark:text-white">Relations</h4>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y dark:divide-gray-700">
+                    <thead class="dark:bg-gray-700">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium dark:text-gray-300 uppercase tracking-wider">Type</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium dark:text-gray-300 uppercase tracking-wider">Hero(es)</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium dark:text-gray-300 uppercase tracking-wider">Description</th>
+                        </tr>
+                    </thead>
+                    <tbody class="dark:bg-gray-800 divide-y dark:divide-gray-700">
+                        <tr class="dark:hover:bg-gray-700">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium dark:text-gray-200">Assist</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex -space-x-2 overflow-hidden">
+                                    {% for hero in data.relation.assist.target_hero %}
+                                        <img src="{{ hero.data.head }}" alt="{{ hero.data.name }}" class="inline-block h-10 w-10 rounded-full ring-2 dark:ring-gray-800" title="{{ hero.data.name }}">
+                                    {% endfor %}
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-sm dark:text-gray-400">{{ data.relation.assist.desc }}</td>
+                        </tr>
+                        <tr class="dark:hover:bg-gray-700">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium dark:text-gray-200">Strong Against</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex -space-x-2 overflow-hidden">
+                                    {% for hero in data.relation.strong.target_hero %}
+                                         <img src="{{ hero.data.head }}" alt="{{ hero.data.name }}" class="inline-block h-10 w-10 rounded-full ring-2 dark:ring-gray-800" title="{{ hero.data.name }}">
+                                    {% endfor %}
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-sm dark:text-gray-400">{{ data.relation.strong.desc }}</td>
+                        </tr>
+                         <tr class="dark:hover:bg-gray-700">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium dark:text-gray-200">Weak Against</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                {% if data.relation.weak %}
+                                    <div class="flex -space-x-2 overflow-hidden">
+                                        {% for hero in data.relation.weak.target_hero %}
+                                            <img src="{{ hero.data.head }}" alt="{{ hero.data.name }}" class="inline-block h-10 w-10 rounded-full ring-2 dark:ring-gray-800" title="{{ hero.data.name }}">
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <span class="text-sm dark:text-gray-500">No data available</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4 text-sm dark:text-gray-400">{{ data.relation.weak.desc|default:"N/A" }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

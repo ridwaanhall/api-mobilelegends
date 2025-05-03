@@ -4,6 +4,15 @@
 
 This project provides an API for fetching various analytics and data related to heroes in the game Mobile Legends: Bang Bang (MLBB). The API includes endpoints for hero rankings, positions, details, skill combinations, ratings, relationships, counter information, and compatibility.
 
+## Summary of Base URL, API Docs, APIs, and Website
+
+```txt
+https://mlbb-stats.ridwaanhall.com/                # base url
+https://mlbb-stats-docs.ridwaanhall.com/           # documentations easy-to-understand
+https://mlbb-stats.ridwaanhall.com/api/            # testing an api
+https://mlbb-stats.ridwaanhall.com/hero-rank/      # for website demo of APIs
+```
+
 ## Discussion
 
 If you have any questions or would like to discuss this project, please join the conversation in our [GitHub Discussions](https://github.com/ridwaanhall/api-mobilelegends/discussions). We value your feedback and are here to help!
@@ -23,14 +32,6 @@ If you have any questions or would like to discuss this project, please join the
 ### Demo Website [Click here](https://api-mobilelegends.vercel.app/hero-rank/)
 
 ![Hero Rank Web](images/demo-website.png)
-
-## Summary of API Docs, APIs, and Website
-
-```txt
-https://mlbb-api-docs.vercel.app/"               # for read the documentations easy-to-understand
-https://api-mobilelegends.vercel.app/api/"       # for testing an api
-https://api-mobilelegends.vercel.app/hero-rank/" # for website demo of APIs
-```
 
 ## Available Endpoints
 

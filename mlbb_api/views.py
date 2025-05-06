@@ -8,209 +8,220 @@ MLBB_URL = settings.MLBB_URL
 # Create your views here.
 @api_view(['GET'])
 def DocsByRidwaanhall(request):
-    return Response([
+    return Response(
         {
-            "endpoint": "GET /api/hero-rank/",
-            "description": "This endpoint is used to fetch hero rankings based on various parameters such as days, rank, page size, page index, and sorting options.",
-            "query_parameters": {
-                "days": {
-                    "description": "Number of days for which the data is to be fetched.",
-                    "possible_values": [
-                        "1",
-                        "3",
-                        "7",
-                        "15",
-                        "30"
-                    ],
-                    "default": "1"
-                },
-                "rank": {
-                    "description": "Rank category for filtering the data.",
-                    "possible_values": [
-                        "all",
-                        "epic",
-                        "legend",
-                        "mythic",
-                        "honor",
-                        "glory"
-                    ],
-                    "default": "all"
-                },
-                "size": {
-                    "description": "Number of records per page.",
-                    "possible_values": "From 1 to 127",
-                    "default": "20"
-                },
-                "index": {
-                    "description": "Page index for pagination.",
-                    "possible_values": "From 1 to 127",
-                    "default": "1"
-                },
-                "sort_field": {
-                    "description": "Field by which the data should be sorted.",
-                    "possible_values": [
-                        "pick_rate",
-                        "ban_rate",
-                        "win_rate"
-                    ],
-                    "default": "win_rate"
-                },
-                "sort_order": {
-                    "description": "Order of sorting.",
-                    "possible_values": [
-                        "asc",
-                        "desc"
-                    ],
-                    "default": "desc"
-                }
-            },
-            "example_request": "GET /api/hero-rank/?days=7&rank=mythic&size=10&index=2&sort_field=pick_rate&sort_order=asc"
-        },
-        {
-            "endpoint": "GET /api/hero-position/",
-            "description": "This endpoint is used to fetch hero positions based on various parameters such as role, lane, page size, and page index.",
-            "query_parameters": {
-                "role": {
-                    "description": "Role category for filtering the data.",
-                    "possible_values": [
-                        "all",
-                        "tank",
-                        "fighter",
-                        "ass",
-                        "mage",
-                        "mm",
-                        "supp"
-                    ],
-                    "default": "all"
-                },
-                "lane": {
-                    "description": "Lane category for filtering the data.",
-                    "possible_values": [
-                        "all",
-                        "exp",
-                        "mid",
-                        "roam",
-                        "jungle",
-                        "gold"
-                    ],
-                    "default": "all"
-                },
-                "size": {
-                    "description": "Number of records per page.",
-                    "possible_values": "From 1 to 127",
-                    "default": "21"
-                },
-                "index": {
-                    "description": "Page index for pagination.",
-                    "possible_values": "From 1 to 127",
-                    "default": "1"
-                }
-            },
-            "example_request": "GET /api/hero-position/?role=tank&lane=mid&size=10&index=2"
-        },
-        {
-            "endpoint": "GET /api/hero-detail/<int:hero_id>/",
-            "description": "This endpoint is used to display details of a specific hero identified by `hero_id`.",
-            "path_parameters": {
-                "hero_id": {
-                    "description": "The ID of the hero whose details are to be fetched.",
-                    "possible_values": "From 1 to 127",
-                    "type": "integer",
-                    "required": True
-                }
-            },
-            "example_request": "GET /api/hero-detail/123/"
-        },
-        {
-            "endpoint": "GET /api/hero-detail-stats/<int:main_heroid>/",
-            "description": "This endpoint is used to display detailed statistics of a specific hero identified by `main_heroid`.",
-            "path_parameters": {
-                "main_heroid": {
-                    "description": "The ID of the main hero whose detailed statistics are to be fetched.",
-                    "possible_values": "From 1 to 127",
-                    "type": "integer",
-                    "required": True
-                }
-            },
-            "example_request": "GET /api/hero-detail-stats/123/"
-        },
-        {
-            "endpoint": "GET /api/hero-skill-combo/<int:hero_id>/",
-            "description": "This endpoint is used to display skill combinations of a specific hero identified by `hero_id`.",
-            "path_parameters": {
-                "hero_id": {
-                    "description": "The ID of the hero whose skill combinations are to be fetched.",
-                    "possible_values": "From 1 to 127",
-                    "type": "integer",
-                    "required": True
-                }
-            },
-            "example_request": "GET /api/hero-skill-combo/123/"
-        },
-        {
-            "endpoint": "GET /api/hero-rate/<int:main_heroid>/",
-            "description": "This endpoint is used to rate a specific hero identified by `main_heroid`.",
-            "path_parameters": {
-                "main_heroid": {
-                    "description": "The ID of the main hero whose rating is to be fetched.",
-                    "possible_values": "From 1 to 127",
-                    "type": "integer",
-                    "required": True
-                }
-            },
-            "query_parameters": {
-                "past-days": {
-                    "description": "Number of past days for which the data is to be fetched.",
-                    "possible_values": [
-                        "7",
-                        "15",
-                        "30"
-                    ],
-                    "default": "7"
-                }
-            },
-            "example_request": "GET /api/hero-rate/123/?past-days=15"
-        },
-        {
-            "endpoint": "GET /api/hero-relation/<int:hero_id>/",
-            "description": "This endpoint is used to display relationships of a specific hero identified by `hero_id`.",
-            "path_parameters": {
-                "hero_id": {
-                    "description": "The ID of the hero whose relationships are to be fetched.",
-                    "possible_values": "From 1 to 127",
-                    "type": "integer",
-                    "required": True
-                }
-            },
-            "example_request": "GET /api/hero-relation/123/"
-        },
-        {
-            "endpoint": "GET /api/hero-counter/<int:main_heroid>/",
-            "description": "This endpoint is used to display counter information of a specific hero identified by `main_heroid`.",
-            "path_parameters": {
-                "main_heroid": {
-                    "description": "The ID of the main hero whose counter information is to be fetched.",
-                    "possible_values": "From 1 to 127",
-                    "type": "integer",
-                    "required": True
-                }
-            },
-            "example_request": "GET /api/hero-counter/123/"
-        },
-        {
-            "endpoint": "GET /api/hero-compatibility/<int:main_heroid>/",
-            "description": "This endpoint is used to display compatibility information of a specific hero identified by `main_heroid`.",
-            "path_parameters": {
-                "main_heroid": {
-                    "description": "The ID of the main hero whose compatibility information is to be fetched.",
-                    "possible_values": "From 1 to 127",
-                    "type": "integer",
-                    "required": True
-                }
-            },
-            "example_request": "GET /api/hero-compatibility/123/"
+            "code": 200,
+            "status": "success",
+            "message": "Request processed successfully",
+            "data": {
+                "api_docs": "https://mlbb-stats-docs.ridwaanhall.com/",
+                "message": "Please visit api_docs for how can you set the API"
+            }
         }
-    ])
+    )
+    # return Response([
+    #     {
+    #         "endpoint": "GET /api/hero-rank/",
+    #         "description": "This endpoint is used to fetch hero rankings based on various parameters such as days, rank, page size, page index, and sorting options.",
+    #         "query_parameters": {
+    #             "days": {
+    #                 "description": "Number of days for which the data is to be fetched.",
+    #                 "possible_values": [
+    #                     "1",
+    #                     "3",
+    #                     "7",
+    #                     "15",
+    #                     "30"
+    #                 ],
+    #                 "default": "1"
+    #             },
+    #             "rank": {
+    #                 "description": "Rank category for filtering the data.",
+    #                 "possible_values": [
+    #                     "all",
+    #                     "epic",
+    #                     "legend",
+    #                     "mythic",
+    #                     "honor",
+    #                     "glory"
+    #                 ],
+    #                 "default": "all"
+    #             },
+    #             "size": {
+    #                 "description": "Number of records per page.",
+    #                 "possible_values": "From 1 to 127",
+    #                 "default": "20"
+    #             },
+    #             "index": {
+    #                 "description": "Page index for pagination.",
+    #                 "possible_values": "From 1 to 127",
+    #                 "default": "1"
+    #             },
+    #             "sort_field": {
+    #                 "description": "Field by which the data should be sorted.",
+    #                 "possible_values": [
+    #                     "pick_rate",
+    #                     "ban_rate",
+    #                     "win_rate"
+    #                 ],
+    #                 "default": "win_rate"
+    #             },
+    #             "sort_order": {
+    #                 "description": "Order of sorting.",
+    #                 "possible_values": [
+    #                     "asc",
+    #                     "desc"
+    #                 ],
+    #                 "default": "desc"
+    #             }
+    #         },
+    #         "example_request": "GET /api/hero-rank/?days=7&rank=mythic&size=10&index=2&sort_field=pick_rate&sort_order=asc"
+    #     },
+    #     {
+    #         "endpoint": "GET /api/hero-position/",
+    #         "description": "This endpoint is used to fetch hero positions based on various parameters such as role, lane, page size, and page index.",
+    #         "query_parameters": {
+    #             "role": {
+    #                 "description": "Role category for filtering the data.",
+    #                 "possible_values": [
+    #                     "all",
+    #                     "tank",
+    #                     "fighter",
+    #                     "ass",
+    #                     "mage",
+    #                     "mm",
+    #                     "supp"
+    #                 ],
+    #                 "default": "all"
+    #             },
+    #             "lane": {
+    #                 "description": "Lane category for filtering the data.",
+    #                 "possible_values": [
+    #                     "all",
+    #                     "exp",
+    #                     "mid",
+    #                     "roam",
+    #                     "jungle",
+    #                     "gold"
+    #                 ],
+    #                 "default": "all"
+    #             },
+    #             "size": {
+    #                 "description": "Number of records per page.",
+    #                 "possible_values": "From 1 to 127",
+    #                 "default": "21"
+    #             },
+    #             "index": {
+    #                 "description": "Page index for pagination.",
+    #                 "possible_values": "From 1 to 127",
+    #                 "default": "1"
+    #             }
+    #         },
+    #         "example_request": "GET /api/hero-position/?role=tank&lane=mid&size=10&index=2"
+    #     },
+    #     {
+    #         "endpoint": "GET /api/hero-detail/<int:hero_id>/",
+    #         "description": "This endpoint is used to display details of a specific hero identified by `hero_id`.",
+    #         "path_parameters": {
+    #             "hero_id": {
+    #                 "description": "The ID of the hero whose details are to be fetched.",
+    #                 "possible_values": "From 1 to 127",
+    #                 "type": "integer",
+    #                 "required": True
+    #             }
+    #         },
+    #         "example_request": "GET /api/hero-detail/123/"
+    #     },
+    #     {
+    #         "endpoint": "GET /api/hero-detail-stats/<int:main_heroid>/",
+    #         "description": "This endpoint is used to display detailed statistics of a specific hero identified by `main_heroid`.",
+    #         "path_parameters": {
+    #             "main_heroid": {
+    #                 "description": "The ID of the main hero whose detailed statistics are to be fetched.",
+    #                 "possible_values": "From 1 to 127",
+    #                 "type": "integer",
+    #                 "required": True
+    #             }
+    #         },
+    #         "example_request": "GET /api/hero-detail-stats/123/"
+    #     },
+    #     {
+    #         "endpoint": "GET /api/hero-skill-combo/<int:hero_id>/",
+    #         "description": "This endpoint is used to display skill combinations of a specific hero identified by `hero_id`.",
+    #         "path_parameters": {
+    #             "hero_id": {
+    #                 "description": "The ID of the hero whose skill combinations are to be fetched.",
+    #                 "possible_values": "From 1 to 127",
+    #                 "type": "integer",
+    #                 "required": True
+    #             }
+    #         },
+    #         "example_request": "GET /api/hero-skill-combo/123/"
+    #     },
+    #     {
+    #         "endpoint": "GET /api/hero-rate/<int:main_heroid>/",
+    #         "description": "This endpoint is used to rate a specific hero identified by `main_heroid`.",
+    #         "path_parameters": {
+    #             "main_heroid": {
+    #                 "description": "The ID of the main hero whose rating is to be fetched.",
+    #                 "possible_values": "From 1 to 127",
+    #                 "type": "integer",
+    #                 "required": True
+    #             }
+    #         },
+    #         "query_parameters": {
+    #             "past-days": {
+    #                 "description": "Number of past days for which the data is to be fetched.",
+    #                 "possible_values": [
+    #                     "7",
+    #                     "15",
+    #                     "30"
+    #                 ],
+    #                 "default": "7"
+    #             }
+    #         },
+    #         "example_request": "GET /api/hero-rate/123/?past-days=15"
+    #     },
+    #     {
+    #         "endpoint": "GET /api/hero-relation/<int:hero_id>/",
+    #         "description": "This endpoint is used to display relationships of a specific hero identified by `hero_id`.",
+    #         "path_parameters": {
+    #             "hero_id": {
+    #                 "description": "The ID of the hero whose relationships are to be fetched.",
+    #                 "possible_values": "From 1 to 127",
+    #                 "type": "integer",
+    #                 "required": True
+    #             }
+    #         },
+    #         "example_request": "GET /api/hero-relation/123/"
+    #     },
+    #     {
+    #         "endpoint": "GET /api/hero-counter/<int:main_heroid>/",
+    #         "description": "This endpoint is used to display counter information of a specific hero identified by `main_heroid`.",
+    #         "path_parameters": {
+    #             "main_heroid": {
+    #                 "description": "The ID of the main hero whose counter information is to be fetched.",
+    #                 "possible_values": "From 1 to 127",
+    #                 "type": "integer",
+    #                 "required": True
+    #             }
+    #         },
+    #         "example_request": "GET /api/hero-counter/123/"
+    #     },
+    #     {
+    #         "endpoint": "GET /api/hero-compatibility/<int:main_heroid>/",
+    #         "description": "This endpoint is used to display compatibility information of a specific hero identified by `main_heroid`.",
+    #         "path_parameters": {
+    #             "main_heroid": {
+    #                 "description": "The ID of the main hero whose compatibility information is to be fetched.",
+    #                 "possible_values": "From 1 to 127",
+    #                 "type": "integer",
+    #                 "required": True
+    #             }
+    #         },
+    #         "example_request": "GET /api/hero-compatibility/123/"
+    #     }
+    # ])
 
 # hero list
 @api_view(['GET'])

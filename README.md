@@ -21,15 +21,15 @@ If you have any questions or would like to discuss this project, please join the
 
 ### API Docs with Explanations and Example Usage
 
-[https://mlbb-api-docs.vercel.app/](https://mlbb-api-docs.vercel.app/)
+[https://mlbb-stats-docs.ridwaanhall.com/](https://mlbb-stats-docs.ridwaanhall.com/)
 
 ![API Docs](images/api-docs.png)
 
-### Testing an API [Click here](https://api-mobilelegends.vercel.app/api/)
+### Testing an API [Click here](https://mlbb-stats.ridwaanhall.com/api/)
 
 ![Testing an API](images/testing-api.png)
 
-### Demo Website [Click here](https://api-mobilelegends.vercel.app/hero-rank/)
+### Demo Website [Click here](https://mlbb-stats.ridwaanhall.com/hero-rank/)
 
 ![Hero Rank Web](images/demo-website.png)
 

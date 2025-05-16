@@ -36,15 +36,15 @@ If you have any questions or would like to discuss this project, please join the
 ## Available Endpoints
 
 - Endpoints
-  - [Hero Rank](#hero-rank)
-  - [Hero Position](#hero-position)
-  - [Hero Detail](#hero-detail)
-  - [Hero Detail Stats](#hero-detail-stats)
-  - [Hero Skill Combo](#hero-skill-combo)
-  - [Hero Rate](#hero-rate)
-  - [Hero Relation](#hero-relation)
-  - [Hero Counter](#hero-counter)
-  - [Hero Compatibility](#hero-compatibility)
+  - Hero Rank
+  - Hero Position
+  - Hero Detail
+  - Hero Detail Stats
+  - Hero Skill Combo
+  - Hero Rate
+  - Hero Relation
+  - Hero Counter
+  - Hero Compatibility
 
 ## Usage
 

@@ -69,9 +69,9 @@ By using this code, you **must** adhere to the following conditions:
 2. **Attribution Requirement** – Users **must** mention both:
    - **Moonton** as the developer and publisher of **Mobile Legends: Bang Bang**.
    - **ridwaanhall** as the creator of this MLBB Stats.
-3. **Visibility of Attribution** – The attribution to **Moonton** and **Ridwan Hall** must be clearly visible in any public-facing project or website that utilizes this API.
+3. **Visibility of Attribution** – The attribution to **Moonton** and **ridwaanhall** must be clearly visible in any public-facing project or website that utilizes this API.
 4. **Independent Project** – This project is **not affiliated, endorsed, or officially supported** by **Moonton**. All rights to **Mobile Legends: Bang Bang** and its assets belong to **Moonton**.
 
 Failure to comply with these terms may result in **restriction from using this code**.
 
-For more information, please visit [Mobile Legends](https://www.mobilelegends.com/) and [Ridwan Hall’s GitHub](https://github.com/ridwaanhall/api-mobilelegends).
+For more information, please visit [Mobile Legends](https://www.mobilelegends.com/) and [ridwaanhall’s GitHub](https://github.com/ridwaanhall/api-mobilelegends).

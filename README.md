@@ -51,5 +51,27 @@ If you have any questions or would like to discuss this project, please join the
 Use the provided endpoints to fetch various analytics and data related to heroes in MLBB. Refer to the Endpoints section for detailed information on each endpoint and how to use them.
 
 ## License
+This project follows the **BSD 3-Clause License**. Please refer to [LICENSE](https://github.com/ridwaanhall/api-mobilelegends/blob/main/LICENSE) for details.
 
-This project is licensed under the MIT License. See the LICENSE file for more details.
+## Attribution
+Special thanks to **Moonton** for developing **Mobile Legends: Bang Bang**. All rights to the game and its assets belong to **Moonton**.
+
+## Source
+For more information about **Mobile Legends: Bang Bang**, visit the official website: [Mobile Legends](https://www.mobilelegends.com).
+
+## Disclaimer
+
+This project is an independent redistribution of the **Mobile Legends: Bang Bang API** developed by **Moonton**. The purpose of this project is to make accessing the API easier through custom code and implementation.
+
+By using this code, you **must** adhere to the following conditions:
+
+1. **License Compliance** – Users must follow the **BSD 3-Clause License** terms, including proper attribution and distribution policies. See [LICENSE](https://github.com/ridwaanhall/api-mobilelegends/blob/main/LICENSE) for details.
+2. **Attribution Requirement** – Users **must** mention both:
+   - **Moonton** as the developer and publisher of **Mobile Legends: Bang Bang**.
+   - **ridwaanhall** as the creator of this MLBB Stats.
+3. **Visibility of Attribution** – The attribution to **Moonton** and **Ridwan Hall** must be clearly visible in any public-facing project or website that utilizes this API.
+4. **Independent Project** – This project is **not affiliated, endorsed, or officially supported** by **Moonton**. All rights to **Mobile Legends: Bang Bang** and its assets belong to **Moonton**.
+
+Failure to comply with these terms may result in **restriction from using this code**.
+
+For more information, please visit [Mobile Legends](https://www.mobilelegends.com/) and [Ridwan Hall’s GitHub](https://github.com/ridwaanhall/api-mobilelegends).

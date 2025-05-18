@@ -25,7 +25,7 @@ If you are using older versions, we strongly recommend upgrading to the supporte
 The security of our users and community is a top priority. If you discover a security vulnerability in this project, please follow these steps:
 
 1. **Confidential Disclosure:**  
-   Please do **not** create a public GitHub issue for security vulnerabilities. Instead, email us directly at [your-security-contact@example.com] with the details.
+   Please do **not** create a public GitHub issue for security vulnerabilities. Instead, email us directly at [hi@ridwaanhall.com] with the details.
 
 2. **Information to Include:**  
    - A clear and concise description of the vulnerability.

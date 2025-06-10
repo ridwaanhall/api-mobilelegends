@@ -5,7 +5,7 @@ Django==4.2.22
 djangorestframework==3.15.2
 idna==3.10
 python-decouple==3.8
-requests==2.32.3
+requests==2.32.4
 sqlparse==0.5.2
 tzdata==2024.2
 urllib3==2.2.3

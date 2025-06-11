@@ -1,5 +1,15 @@
 # MLBB Hero Analytics API and Website
 
+## 🌟 Your Support Means the World!
+
+Are you interested in the project I created and want to help keep it running? You can support me by becoming a sponsor! Your contributions will greatly assist in the development and maintenance of this project.
+
+[![Sponsor Me](https://img.shields.io/badge/-Sponsor%20Me-blue?style=for-the-badge)](https://github.com/sponsors/ridwaanhall/)
+
+Thank you for supporting my work! Together, we can create something amazing. 🚀
+
+## Description
+
 [![wakatime](https://wakatime.com/badge/user/018b799e-de53-4f7a-bb65-edc2df9f26d8/project/6f380e9e-ea7b-4326-8ec2-df979927fe68.svg)](https://wakatime.com/badge/user/018b799e-de53-4f7a-bb65-edc2df9f26d8/project/6f380e9e-ea7b-4326-8ec2-df979927fe68)
 
 This project provides an API for fetching various analytics and data related to heroes in the game Mobile Legends: Bang Bang (MLBB). The API includes endpoints for hero rankings, positions, details, skill combinations, ratings, relationships, counter information, and compatibility.

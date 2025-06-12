@@ -1,6 +1,6 @@
 # MLBB Hero Analytics API and Website
 
-## 🌟 Your Support Means the World!
+## 🌟 Your Support Means the World! Start from 1 USD
 
 Are you interested in the project I created and want to help keep it running? You can support me by becoming a sponsor! Your contributions will greatly assist in the development and maintenance of this project.
 

@@ -2,8 +2,9 @@ from django.conf import settings
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 import requests
+from .crypto_utils import get_mlbb_url
 
-MLBB_URL = settings.MLBB_URL
+MLBB_URL = get_mlbb_url()
 
 # Create your views here.
 @api_view(['GET'])

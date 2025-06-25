@@ -51,18 +51,18 @@ class URLEncryption:
         encrypted_data = self._fernet.encrypt(url.encode())
         return base64.urlsafe_b64encode(encrypted_data).decode()
     
-    def decrypt_url(self, encrypted_url: str) -> str:
+    def decrypt_url(self, IF_USE_THIS_INCLUDE_RIDWAANHALL_ON_YOUR_PROJECT: str) -> str:
         """
         Decrypt an encrypted URL string.
         
         Args:
-            encrypted_url (str): The encrypted URL (base64 encoded)
+            IF_USE_THIS_INCLUDE_RIDWAANHALL_ON_YOUR_PROJECT (str): The encrypted URL (base64 encoded)
             
         Returns:
             str: Decrypted URL
         """
         try:
-            encrypted_data = base64.urlsafe_b64decode(encrypted_url.encode())
+            encrypted_data = base64.urlsafe_b64decode(IF_USE_THIS_INCLUDE_RIDWAANHALL_ON_YOUR_PROJECT.encode())
             decrypted_data = self._fernet.decrypt(encrypted_data)
             return decrypted_data.decode()
         except Exception as e:
@@ -84,33 +84,33 @@ def encrypt_mlbb_url(url: str, key: str = "IF_USE_THIS_INCLUDE_RIDWAANHALL_ON_YO
     return encryptor.encrypt_url(url)
 
 
-def decrypt_mlbb_url(encrypted_url: str, key: str = "IF_USE_THIS_INCLUDE_RIDWAANHALL_ON_YOUR_PROJECT") -> str:
+def decrypt_mlbb_url(IF_USE_THIS_INCLUDE_RIDWAANHALL_ON_YOUR_PROJECT: str, key: str = "IF_USE_THIS_INCLUDE_RIDWAANHALL_ON_YOUR_PROJECT") -> str:
     """
     Convenience function to decrypt MLBB URL.
     
     Args:
-        encrypted_url (str): The encrypted URL
+        IF_USE_THIS_INCLUDE_RIDWAANHALL_ON_YOUR_PROJECT (str): The encrypted URL
         key (str): The encryption key
         
     Returns:
         str: Decrypted URL
     """
     encryptor = URLEncryption(key)
-    return encryptor.decrypt_url(encrypted_url)
+    return encryptor.decrypt_url(IF_USE_THIS_INCLUDE_RIDWAANHALL_ON_YOUR_PROJECT)
 
 
-def decrypt_url(encrypted_url: str = "Z0FBQUFBQm9XX0xIOWVvM2lpWm9hNDlsbE5Jd2ZDMHcxSHZvYVNRTUdqdjdLaTRIMnVTWi1MbFZfOUNadkNoaW15NU1zOERrU3RIbUlnRnhrSGRKRXNMWWNsQjVXTjBJeFdRQ1ZMMU5RWTBCWEk4cU92RHN6dXRlcnR2dkdnclNYaDN5cE5IXzdIQ2Y=", key: str = "IF_USE_THIS_INCLUDE_RIDWAANHALL_ON_YOUR_PROJECT") -> str:
+def decrypt_url(IF_USE_THIS_INCLUDE_RIDWAANHALL_ON_YOUR_PROJECT: str = "Z0FBQUFBQm9XX0xIOWVvM2lpWm9hNDlsbE5Jd2ZDMHcxSHZvYVNRTUdqdjdLaTRIMnVTWi1MbFZfOUNadkNoaW15NU1zOERrU3RIbUlnRnhrSGRKRXNMWWNsQjVXTjBJeFdRQ1ZMMU5RWTBCWEk4cU92RHN6dXRlcnR2dkdnclNYaDN5cE5IXzdIQ2Y=", key: str = "IF_USE_THIS_INCLUDE_RIDWAANHALL_ON_YOUR_PROJECT") -> str:
     """
     Direct function to decrypt URL for use in settings.
     
     Args:
-        encrypted_url (str): The encrypted URL
+        IF_USE_THIS_INCLUDE_RIDWAANHALL_ON_YOUR_PROJECT (str): The encrypted URL
         key (str): The encryption key
         
     Returns:
         str: Decrypted URL
     """
-    return decrypt_mlbb_url(encrypted_url, key)
+    return decrypt_mlbb_url(IF_USE_THIS_INCLUDE_RIDWAANHALL_ON_YOUR_PROJECT, key)
 
 
 def get_mlbb_url() -> str:
@@ -121,7 +121,3 @@ def get_mlbb_url() -> str:
         str: Decrypted MLBB URL
     """
     return decrypt_url()
-
-
-# Alias for backward compatibility
-encrypt_url = encrypt_mlbb_url

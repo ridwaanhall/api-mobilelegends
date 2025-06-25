@@ -7,7 +7,6 @@ from rest_framework.response import Response
 
 
 PROD_URL = settings.PROD_URL
-# LOCAL_URL = settings.LOCAL_URL
 
 # Create your views here.
 @api_view(['GET'])

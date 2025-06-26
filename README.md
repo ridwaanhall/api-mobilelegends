@@ -2,13 +2,34 @@
 
 [![wakatime](https://wakatime.com/badge/user/018b799e-de53-4f7a-bb65-edc2df9f26d8/project/6f380e9e-ea7b-4326-8ec2-df979927fe68.svg)](https://wakatime.com/badge/user/018b799e-de53-4f7a-bb65-edc2df9f26d8/project/6f380e9e-ea7b-4326-8ec2-df979927fe68)
 
-## 🌟 Your Support Means the World! Start from 1 USD
+## 🚨 URGENT: Service at Risk - Your Support Needed! 🚨
 
-Are you interested in the project I created and want to help keep it running? You can support me by becoming a sponsor! Your contributions will greatly assist in the development and maintenance of this project.
+### ⚠️ **DISCONTINUATION NOTICE: July 10, 2025** ⚠️
 
-[![Sponsor Me](https://img.shields.io/badge/-Sponsor%20Me-blue?style=for-the-badge)](https://github.com/sponsors/ridwaanhall/)
+**This free API service is at risk of being shut down!** 📉
 
-Thank you for supporting my work! Together, we can create something amazing. 🚀
+Due to overwhelming traffic costs and zero financial backing, this popular MLBB analytics service will be **permanently discontinued on July 10, 2025** unless we receive community support.
+
+### 💝 **Help Keep This Service Alive - We Need $50/Month, But You Can Start with Just $1!**
+
+**Monthly Target: $50 USD** to cover essential costs, but **every contribution matters** - even $1 helps us get closer to our goal!
+
+Your contribution directly helps:
+
+- 🔧 Maintain server infrastructure
+- 📊 Handle increasing API traffic
+- 🌐 Keep ridwaanhall.com operational
+- 🚀 Develop new features for the community
+
+### 🎯 **Take Action Now!**
+
+[![Become a Sponsor](https://img.shields.io/badge/💖%20Become%20a%20Sponsor-FF69B4?style=for-the-badge&logo=github-sponsors)](https://github.com/sponsors/ridwaanhall/)
+[![Buy Me a Coffee](https://img.shields.io/badge/☕%20Buy%20Me%20a%20Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](coff.ee/ridwaanhall)
+
+**Every dollar counts!** Together, we can ensure this valuable resource remains available for the entire MLBB community. 🤝✨
+
+---
+*Don't let this service disappear - your support makes the difference!* 🙏
 
 ## Description
 

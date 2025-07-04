@@ -2,6 +2,8 @@
 
 [![wakatime](https://wakatime.com/badge/user/018b799e-de53-4f7a-bb65-edc2df9f26d8/project/6f380e9e-ea7b-4326-8ec2-df979927fe68.svg)](https://wakatime.com/badge/user/018b799e-de53-4f7a-bb65-edc2df9f26d8/project/6f380e9e-ea7b-4326-8ec2-df979927fe68)
 
+>thanks for using this project! If you find it useful, please consider supporting its continued development and maintenance. Your contributions help keep the project alive and thriving.
+
 ## 🚨 URGENT: Service at Risk - Your Support Needed! 🚨
 
 ### ⚠️ **DISCONTINUATION NOTICE: July 10, 2025** ⚠️
@@ -30,47 +32,6 @@ Your contribution directly helps:
 
 ---
 *Don't let this service disappear - your support makes the difference!* 🙏
-
-## Description
-
-This project provides a comprehensive Django-based API and web interface for fetching various analytics and data related to heroes in the game Mobile Legends: Bang Bang (MLBB). The system includes secure URL encryption, RESTful API endpoints, and a modern web interface for hero rankings, positions, details, skill combinations, ratings, relationships, counter information, and compatibility.
-
-## 📚 API Documentation & Demo
-
-### Live Demo URLs
-
-```txt
-https://mlbb-stats.ridwaanhall.com/                # Base URL
-https://mlbb-stats-docs.ridwaanhall.com/           # API Documentation
-https://mlbb-stats.ridwaanhall.com/api/            # API Testing Interface
-https://mlbb-stats.ridwaanhall.com/hero-rank/      # Web Demo Interface
-```
-
-### API Docs with Explanations and Example Usage
-
-[https://mlbb-stats-docs.ridwaanhall.com/](https://mlbb-stats-docs.ridwaanhall.com/)
-
-![API Docs](images/api-docs.png)
-
-### Testing an API [Visit API Testing Interface](https://mlbb-stats.ridwaanhall.com/api/)
-
-### Demo Website [View Hero Rankings Demo](https://mlbb-stats.ridwaanhall.com/hero-rank/)
-
-![Hero Rank Web](images/demo-website.png)
-
-## 🔧 Available API Endpoints
-
-The API provides comprehensive MLBB hero analytics through the following endpoints:
-
-- **Hero Rank** - `/api/hero-rank/` - Get hero rankings by various criteria
-- **Hero Position** - `/api/hero-position/` - Get hero position analytics
-- **Hero Detail** - `/api/hero-detail/{hero_id}/` - Get detailed hero information
-- **Hero Detail Stats** - `/api/hero-detail-stats/{hero_id}/` - Get hero statistics
-- **Hero Skill Combo** - `/api/hero-skill-combo/{hero_id}/` - Get hero skill combinations
-- **Hero Rate** - `/api/hero-rate/{hero_id}/` - Get hero win/pick rates
-- **Hero Relation** - `/api/hero-relation/{hero_id}/` - Get hero relationships
-- **Hero Counter** - `/api/hero-counter/{hero_id}/` - Get hero counter information
-- **Hero Compatibility** - `/api/hero-compatibility/{hero_id}/` - Get hero compatibility data
 
 ## 📞 Support & Discussion
 

@@ -10,7 +10,7 @@ def DocsByRidwaanhall(request):
         {
             "code": 200,
             "status": "success",
-            "message": "This website is no longer maintained since no one support this project. if you want to continue this project, please support me in github sponsors. Thanks for using this project :)",
+            "message": "This website is no longer maintained as no one supports the project. If you'd like to continue it, please sponsor me on GitHub Sponsors. Thanks for using this project!",
             "data": {
                 "api_docs": "https://mlbb-stats-docs.ridwaanhall.com/",
                 "message": "Please visit api_docs for how can you set the API"

@@ -2,8 +2,9 @@ from django.conf import settings
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 import requests
+from .crypto_utils import get_mlbb_url
 
-MLBB_URL = "THANKS_FOR_USING_THIS_PROJECT_AND_USE_THIS_SERVICE"
+MLBB_URL = get_mlbb_url()
 
 # Create your views here.
 @api_view(['GET'])
@@ -14,8 +15,8 @@ def DocsByRidwaanhall(request):
             "status": "success",
             "message": "This website is no longer maintained since no one support this project. if you want to continue this project, please support me in github sponsors. Thanks for using this project :)",
             "data": {
-                "support me": "https://github.com/sponsors/ridwaanhall",
-                "website": "https://ridwaanhall.com",
+                "api_docs": "https://mlbb-stats-docs.ridwaanhall.com/",
+                "message": "Please visit api_docs for how can you set the API"
             }
         }
     )

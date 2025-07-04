@@ -6,11 +6,11 @@
 
 ## 🚨 URGENT: Service at Risk - Your Support Needed! 🚨
 
-### ⚠️ **DISCONTINUATION NOTICE: July 10, 2025** ⚠️
+### ⚠️ **DISCONTINUATION NOTICE: July 5, 2025** ⚠️
 
 **This free API service is at risk of being shut down!** 📉
 
-Due to overwhelming traffic costs and zero financial backing, this popular MLBB analytics service will be **permanently discontinued on July 10, 2025** unless we receive community support.
+Due to overwhelming traffic costs and zero financial backing, this popular MLBB analytics service will be **permanently discontinued on July 5, 2025** unless we receive community support.
 
 ### 💝 **Help Keep This Service Alive - We Need $50/Month, But You Can Start with Just $1!**
 

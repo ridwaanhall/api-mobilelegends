@@ -14,11 +14,10 @@ def simple_view(request):
     data = {
         "code": 200,
         "status": "success",
-        "message": "Request processed successfully",
+        "message": "This website is no longer maintained since no one support this project. if you want to continue this project, please support me in github sponsors. Thanks for using this project :)",
         "data": {
-            "api_docs": "https://mlbb-stats-docs.ridwaanhall.com/",
-            "api_url": "https://mlbb-stats.ridwaanhall.com/api/",
-            "web_url": "https://mlbb-stats.ridwaanhall.com/hero-rank/"
+            "support me": "https://github.com/sponsors/ridwaanhall",
+            "website": "https://ridwaanhall.com",
         }
     }
     return Response(data)

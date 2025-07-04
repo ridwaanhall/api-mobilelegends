@@ -16,7 +16,6 @@ from decouple import config
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Get the decrypted MLBB URL from crypto_utils
 PROD_URL = config('PROD_URL', default='https://mlbb-stats.ridwaanhall.com/api/')
 
 # Quick-start development settings - unsuitable for production

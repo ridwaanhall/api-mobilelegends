@@ -8,4 +8,4 @@ python-decouple==3.8
 requests==2.32.4
 sqlparse==0.5.2
 tzdata==2024.2
-urllib3==2.2.3
+urllib3==2.5.0

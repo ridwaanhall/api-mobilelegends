@@ -10,15 +10,15 @@
             <h3 class="text-lg font-semibold mb-2 text-gray-300">Search Another Hero</h3>
             <form id="heroSearchForm" class="flex items-center space-x-2">
             <label for="heroIdInput" class="sr-only">Hero ID:</label>
-            <input type="number" id="heroIdInput" name="hero_id" placeholder="Enter Hero ID (1-128)"
+            <input type="number" id="heroIdInput" name="hero_id" placeholder="Enter Hero ID (1-129)"
                    class="bg-gray-700 text-gray-200 border border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 flex-grow"
-                   min="1" max="128" required>
+                   min="1" max="129" required>
             <button type="submit"
                 class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-150 ease-in-out">
                 Search
             </button>
             </form>
-            <p class="text-xs text-gray-400 mt-1">Note: Enter a Hero ID between 1 and 128.</p>
+            <p class="text-xs text-gray-400 mt-1">Note: Enter a Hero ID between 1 and 129.</p>
         </div>
         <!-- End Hero ID Search Form -->
 
@@ -357,8 +357,8 @@
         const heroId = parseInt(heroIdInput.value, 10);
 
         // Validate the ID
-        if (isNaN(heroId) || heroId < 1 || heroId > 128) {
-            alert('Please enter a valid Hero ID between 1 and 128.');
+        if (isNaN(heroId) || heroId < 1 || heroId > 129) {
+            alert('Please enter a valid Hero ID between 1 and 129.');
             heroIdInput.focus();
             return;
         }

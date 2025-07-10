@@ -9,17 +9,38 @@ from rest_framework.response import Response
 PROD_URL = settings.PROD_URL
 # LOCAL_URL = settings.LOCAL_URL
 
+# Base decorator for web availability control
+def web_availability_required(view_func):
+    def wrapper(request, *args, **kwargs):
+        if not settings.IS_AVAILABLE:
+            status_info = settings.API_STATUS_MESSAGES['limited']
+            return JsonResponse({
+                'error': 'Service Unavailable',
+                'status': status_info['status'],
+                'message': status_info['message'],
+                'available_endpoints': ['Home page only']
+            }, status=503)
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
 # Create your views here.
 @api_view(['GET'])
 def simple_view(request):
+    status_info = settings.API_STATUS_MESSAGES['available'] if settings.IS_AVAILABLE else settings.API_STATUS_MESSAGES['limited']
+    
     data = {
         "code": 200,
         "status": "success",
         "message": "Request processed successfully",
+        "service_info": {
+            "status": status_info['status'],
+            "message": status_info['message'],
+            "available_endpoints": status_info['available_endpoints']
+        },
         "data": {
             "api_docs": "https://mlbb-stats-docs.ridwaanhall.com/",
             "api_url": "https://mlbb-stats.ridwaanhall.com/api/",
-            "web_url": "https://mlbb-stats.ridwaanhall.com/hero-rank/"
+            "web_url": "https://mlbb-stats.ridwaanhall.com/hero-rank/" if settings.IS_AVAILABLE else "Limited access mode"
         }
     }
     return Response(data)
@@ -45,11 +66,13 @@ HERO_NAME_DICT = {
     5: "Nana", 4: "Alice", 3: "Saber", 2: "Balmond", 1: "Miya"
 }
 
+@web_availability_required
 def hero_list_web(request):
     response = requests.get(f'{PROD_URL}hero-list/')
     data = response.json()
     return render(request, 'mlbb_web/hero-list.html', {'data': data})
 
+@web_availability_required
 def hero_rank_web(request):
     days = request.GET.get('days', '1')
     rank = request.GET.get('rank', 'all')
@@ -83,6 +106,7 @@ def hero_rank_web(request):
         'sort_order': sort_order
     })
 
+@web_availability_required
 def hero_position_web(request):
     role = request.GET.get('role', 'all')
     lane = request.GET.get('lane', 'all')
@@ -110,6 +134,7 @@ def hero_position_web(request):
         'index': index
     })
 
+@web_availability_required
 def hero_detail_web(request, hero_id):
     response_hero_detail = requests.get(f'{PROD_URL}hero-detail/{hero_id}/')
     if response_hero_detail.status_code != 200:

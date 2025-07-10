@@ -1,27 +1,80 @@
 from django.conf import settings
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 import requests
+import json
 
 MLBB_URL = settings.MLBB_URL
+
+# Base decorator for API availability control
+def api_availability_required(view_func):
+    def wrapper(request, *args, **kwargs):
+        if not settings.IS_AVAILABLE:
+            status_info = settings.API_STATUS_MESSAGES['limited']
+            return Response({
+                'error': 'Service Unavailable',
+                'status': status_info['status'],
+                'message': status_info['message'],
+                'available_endpoints': status_info['available_endpoints']
+            }, status=503)
+        return view_func(request, *args, **kwargs)
+    return wrapper
 
 # Create your views here.
 @api_view(['GET'])
 def DocsByRidwaanhall(request):
-    return Response(
-        {
-            "code": 200,
-            "status": "success",
-            "message": "Request processed successfully",
-            "data": {
-                "api_docs": "https://mlbb-stats-docs.ridwaanhall.com/",
-                "message": "Please visit api_docs for how can you set the API"
-            }
+    status_info = settings.API_STATUS_MESSAGES['available'] if settings.IS_AVAILABLE else settings.API_STATUS_MESSAGES['limited']
+    
+    response_data = {
+        'code': 200,
+        'status': 'success',
+        'message': 'Request processed successfully',
+        'api_info': {
+            'name': 'Mobile Legends: Bang Bang API',
+            'version': '1.0.0',
+            'developer': 'Ridwaanhall',
+            'status': status_info['status'],
+            'message': status_info['message'],
+            'available_endpoints': status_info['available_endpoints']
+        },
+        'data': {
+            'api_docs': 'https://mlbb-stats-docs.ridwaanhall.com/',
+            'documentation': _get_available_endpoints(request),
+            'message': 'Please visit api_docs for detailed API documentation'
         }
-    )
+    }
+    
+    return Response(response_data)
+
+def _get_available_endpoints(request):
+    """Get available endpoints based on API availability"""
+    base_url = request.build_absolute_uri('/api/')
+    
+    if settings.IS_AVAILABLE:
+        return {
+            'documentation': f'{base_url}',
+            'hero_list': f'{base_url}hero-list/',
+            'hero_rank': f'{base_url}hero-rank/',
+            'hero_position': f'{base_url}hero-position/',
+            'hero_detail': f'{base_url}hero-detail/{{hero_id}}/',
+            'hero_detail_stats': f'{base_url}hero-detail-stats/{{main_heroid}}/',
+            'hero_skill_combo': f'{base_url}hero-skill-combo/{{hero_id}}/',
+            'hero_rate': f'{base_url}hero-rate/{{main_heroid}}/',
+            'hero_relation': f'{base_url}hero-relation/{{hero_id}}/',
+            'hero_counter': f'{base_url}hero-counter/{{main_heroid}}/',
+            'hero_compatibility': f'{base_url}hero-compatibility/{{main_heroid}}/'
+        }
+    else:
+        return {
+            'documentation': f'{base_url}'
+        }
 
 # hero list
 @api_view(['GET'])
+@api_availability_required
 def hero_list(request):
     lang = request.query_params.get('lang', 'en')
     
@@ -76,6 +129,7 @@ def hero_list(request):
         return Response(heroes_en)
 
 @api_view(['GET'])
+@api_availability_required
 def hero_rank(request):
     url_1_day = f"{MLBB_URL}gms/source/2669606/2756567"
     url_3_days = f"{MLBB_URL}gms/source/2669606/2756568"
@@ -182,6 +236,7 @@ def hero_rank(request):
         }, status=response.status_code)
     
 @api_view(['GET'])
+@api_availability_required
 def hero_position(request):
     url_role_lane = f"{MLBB_URL}gms/source/2669606/2756564"
     
@@ -272,6 +327,8 @@ def hero_position(request):
         }, status=response.status_code)
 
 @api_view(['GET'])
+@api_view(['GET'])
+@api_availability_required
 def hero_detail(request, hero_id):
     url = f"{MLBB_URL}gms/source/2669606/2756564"
     
@@ -304,6 +361,7 @@ def hero_detail(request, hero_id):
         }, status=response.status_code)
 
 @api_view(['GET'])
+@api_availability_required
 def hero_detail_stats(request, main_heroid):
     url = f"{MLBB_URL}gms/source/2669606/2756567"
     
@@ -345,6 +403,7 @@ def hero_detail_stats(request, main_heroid):
         }, status=response.status_code)
 
 @api_view(['GET'])
+@api_availability_required
 def hero_skill_combo(request, hero_id):
     url = f"{MLBB_URL}gms/source/2669606/2674711"
     
@@ -377,6 +436,7 @@ def hero_skill_combo(request, hero_id):
         }, status=response.status_code)
     
 @api_view(['GET'])
+@api_availability_required
 def hero_rate(request, main_heroid):
     url_past_7_days  = f"{MLBB_URL}gms/source/2669606/2674709"
     url_past_15_days = f"{MLBB_URL}gms/source/2669606/2687909"
@@ -430,6 +490,7 @@ def hero_rate(request, main_heroid):
         }, status=response.status_code)
 
 @api_view(['GET'])
+@api_availability_required
 def hero_relation(request, hero_id):
     url = f"{MLBB_URL}gms/source/2669606/2756564"
     
@@ -463,6 +524,7 @@ def hero_relation(request, hero_id):
         }, status=response.status_code)
     
 @api_view(['GET'])
+@api_availability_required
 def hero_counter(request, main_heroid):
     url = f"{MLBB_URL}gms/source/2669606/2756569"
     
@@ -504,6 +566,7 @@ def hero_counter(request, main_heroid):
         }, status=response.status_code)
     
 @api_view(['GET'])
+@api_availability_required
 def hero_compatibility(request, main_heroid):
     url = f"{MLBB_URL}gms/source/2669606/2756569"
     

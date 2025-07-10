@@ -20,6 +20,24 @@ MLBB_URL = config('MLBB_URL')
 # LOCAL_URL = config('LOCAL_URL')
 PROD_URL = config('PROD_URL')
 
+# API Availability Control
+IS_AVAILABLE = config('IS_AVAILABLE', default=True, cast=bool)
+
+# API Status Messages
+API_STATUS_MESSAGES = {
+    'limited': {
+        'status': 'limited',
+        'message': 'API is currently in maintenance mode. Only documentation is available.',
+        'available_endpoints': ['Documentation']
+    },
+    'available': {
+        'status': 'available',
+        'message': 'All API endpoints are fully operational.',
+        'available_endpoints': ['All endpoints']
+    }
+}
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 

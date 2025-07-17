@@ -20,7 +20,7 @@
             </div>
             <!-- Desktop Menu -->
             <div class="hidden md:flex md:items-center md:space-x-4">
-                <a href="https://mlbb-api-docs.vercel.app/" target="_blank" rel="noopener noreferrer" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium">Docs</a>
+                <a href="https://mlbb-stats-docs.ridwaanhall.com/" target="_blank" rel="noopener noreferrer" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium">Docs</a>
                 <a href="{% url 'hero_list_web' %}" class="{% if request.resolver_match.url_name == 'hero_list_web' %}text-blue-400 border-b-2 border-blue-600{% else %}text-gray-300 hover:text-blue-400{% endif %} px-3 py-2 rounded-md text-sm font-medium">Hero List</a>
                 <a href="{% url 'hero_rank_web' %}" class="{% if request.resolver_match.url_name == 'hero_rank_web' %}text-blue-400 border-b-2 border-blue-600{% else %}text-gray-300 hover:text-blue-400{% endif %} px-3 py-2 rounded-md text-sm font-medium">Hero Rank</a>
                 <a href="{% url 'hero_position_web' %}" class="{% if request.resolver_match.url_name == 'hero_position_web' %}text-blue-400 border-b-2 border-blue-600{% else %}text-gray-300 hover:text-blue-400{% endif %} px-3 py-2 rounded-md text-sm font-medium">Hero Position</a>
@@ -33,7 +33,7 @@
     <!-- Mobile menu, show/hide based on menu state. -->
     <div class="md:hidden hidden" id="mobile-menu">
         <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            <a href="https://mlbb-api-docs.vercel.app/" target="_blank" rel="noopener noreferrer" class="text-gray-300 hover:bg-gray-700 hover:text-blue-400 block px-3 py-2 rounded-md text-base font-medium">Docs</a>
+            <a href="https://mlbb-stats-docs.ridwaanhall.com/" target="_blank" rel="noopener noreferrer" class="text-gray-300 hover:bg-gray-700 hover:text-blue-400 block px-3 py-2 rounded-md text-base font-medium">Docs</a>
             <a href="{% url 'hero_list_web' %}" class="{% if request.resolver_match.url_name == 'hero_list_web' %}bg-gray-900 text-blue-300{% else %}text-gray-300 hover:bg-gray-700 hover:text-blue-400{% endif %} block px-3 py-2 rounded-md text-base font-medium">Hero List</a>
             <a href="{% url 'hero_rank_web' %}" class="{% if request.resolver_match.url_name == 'hero_rank_web' %}bg-gray-900 text-blue-300{% else %}text-gray-300 hover:bg-gray-700 hover:text-blue-400{% endif %} block px-3 py-2 rounded-md text-base font-medium">Hero Rank</a>
             <a href="{% url 'hero_position_web' %}" class="{% if request.resolver_match.url_name == 'hero_position_web' %}bg-gray-900 text-blue-300{% else %}text-gray-300 hover:bg-gray-700 hover:text-blue-400{% endif %} block px-3 py-2 rounded-md text-base font-medium">Hero Position</a>

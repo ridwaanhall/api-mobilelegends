@@ -327,7 +327,6 @@ def hero_position(request):
         }, status=response.status_code)
 
 @api_view(['GET'])
-@api_view(['GET'])
 @api_availability_required
 def hero_detail(request, hero_id):
     url = f"{MLBB_URL}gms/source/2669606/2756564"

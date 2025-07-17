@@ -28,7 +28,7 @@ class CryptoManager:
 class BasePathProvider:
     """Provides the base path using encrypted key and secret."""
     RIDWAANHALL_KEY = (
-        b'gAAAAABoeT-lLhuQVXbSJl69DU2aaKr5yi1Ysm4bBfjB5ffkMSwBJWVUeylzU_yr9uo2z_Odsomt-Ya5X8eDrc9pbo1XP3LkZIE-fOG_Bql0Kuytth_S3d8='
+        b'gAAAAABoeVABaPKjWkRGpRV7c7bmRASNq4aZcN_cLGeeWU0OSNFtWLahn4mn9AYq4PqpkJKjA8rx4-Jk2oqjfLTB7l3u9tC_ufGi1x5IcdWrinV26tcdotw='
     )
     _SECRET_KEY = settings.SECRET_KEY
 

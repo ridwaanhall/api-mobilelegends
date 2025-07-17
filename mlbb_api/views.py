@@ -1,10 +1,10 @@
-
 from django.conf import settings
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 import requests
 import functools
 from typing import Any, Dict
+from mlbb_api.utils import BasePathProvider
 
 
 MLBB_URL = settings.MLBB_URL
@@ -47,7 +47,7 @@ def DocsByRidwaanhall(request):
         'message': 'Request processed successfully',
         'api_info': {
             'name': 'Mobile Legends: Bang Bang API',
-            'version': '1.0.2',
+            'version': '1.0.3',
             'developer': 'ridwaanhall',
             'status': status_info['status'],
             'message': status_info['message'],
@@ -143,11 +143,12 @@ def hero_rank(request):
     Returns hero statistics including win rate, pick rate, and ban rate across different rank tiers.
     Filter by days (1,3,7,15,30) and rank (all,epic,legend,mythic,honor,glory).
     """
-    url_1_day = f"{MLBB_URL}gms/source/2669606/2756567"
-    url_3_days = f"{MLBB_URL}gms/source/2669606/2756568"
-    url_7_days = f"{MLBB_URL}gms/source/2669606/2756569"
-    url_15_days = f"{MLBB_URL}gms/source/2669606/2756565"
-    url_30_days = f"{MLBB_URL}gms/source/2669606/2756570"
+    base_path = BasePathProvider.get_base_path()
+    url_1_day = f"{MLBB_URL}{base_path}/2756567"
+    url_3_days = f"{MLBB_URL}{base_path}/2756568"
+    url_7_days = f"{MLBB_URL}{base_path}/2756569"
+    url_15_days = f"{MLBB_URL}{base_path}/2756565"
+    url_30_days = f"{MLBB_URL}{base_path}/2756570"
     
     def create_rank_payload(rank_value):
         return {
@@ -249,7 +250,8 @@ def hero_position(request):
     Returns heroes based on their role (tank,fighter,ass,mage,mm,supp) and 
     lane position (exp,mid,roam,jungle,gold). Useful for team composition planning.
     """
-    url_role_lane = f"{MLBB_URL}gms/source/2669606/2756564"
+    base_path = BasePathProvider.get_base_path()
+    url_role_lane = f"{MLBB_URL}{base_path}/2756564"
     
     role_map = {
         'all': [
@@ -339,7 +341,8 @@ def hero_detail(request, hero_id):
     Returns detailed information about a hero including stats, abilities, and metadata.
     Provide the hero_id parameter to get information about heroes like Zetian (129), Kalea (128), etc.
     """
-    url = f"{MLBB_URL}gms/source/2669606/2756564"
+    base_path = BasePathProvider.get_base_path()
+    url = f"{MLBB_URL}{base_path}/2756564"
     
     payload = {
         "pageSize": 20,
@@ -371,7 +374,8 @@ def hero_detail_stats(request, main_heroid):
     Returns comprehensive statistics including win rates, pick rates, and performance metrics
     for a specific hero across different game modes and ranks.
     """
-    url = f"{MLBB_URL}gms/source/2669606/2756567"
+    base_path = BasePathProvider.get_base_path()
+    url = f"{MLBB_URL}{base_path}/2756567"
     
     payload = {
         "pageSize": 20,
@@ -412,7 +416,8 @@ def hero_skill_combo(request, hero_id):
     Returns optimal skill combinations, build paths, and strategic recommendations
     for the specified hero to maximize their effectiveness in matches.
     """
-    url = f"{MLBB_URL}gms/source/2669606/2674711"
+    base_path = BasePathProvider.get_base_path()
+    url = f"{MLBB_URL}{base_path}/2674711"
     
     payload = {
         "pageSize": 20,
@@ -444,9 +449,10 @@ def hero_rate(request, main_heroid):
     Returns win rates, pick rates, and ban rates for a specific hero over the past 7, 15, or 30 days.
     Useful for tracking hero meta trends and performance changes over time.
     """
-    url_past_7_days  = f"{MLBB_URL}gms/source/2669606/2674709"
-    url_past_15_days = f"{MLBB_URL}gms/source/2669606/2687909"
-    url_past_30_days = f"{MLBB_URL}gms/source/2669606/2690860"
+    base_path = BasePathProvider.get_base_path()
+    url_past_7_days  = f"{MLBB_URL}{base_path}/2674709"
+    url_past_15_days = f"{MLBB_URL}{base_path}/2687909"
+    url_past_30_days = f"{MLBB_URL}{base_path}/2690860"
     
     days = request.query_params.get('past-days', '7')
     lang = request.query_params.get('lang', 'en')
@@ -497,7 +503,8 @@ def hero_relation(request, hero_id):
     Returns information about hero relationships, including which heroes work well together
     and strategic combinations for team compositions.
     """
-    url = f"{MLBB_URL}gms/source/2669606/2756564"
+    base_path = BasePathProvider.get_base_path()
+    url = f"{MLBB_URL}{base_path}/2756564"
     
     payload = {
         "pageSize": 20,
@@ -530,7 +537,8 @@ def hero_counter(request, main_heroid):
     Returns a list of heroes that are effective against the specified hero,
     including win rates and strategic advantages for counter-picking.
     """
-    url = f"{MLBB_URL}gms/source/2669606/2756569"
+    base_path = BasePathProvider.get_base_path()
+    url = f"{MLBB_URL}{base_path}/2756569"
     
     payload = {
         "pageSize": 20,
@@ -578,7 +586,8 @@ def hero_compatibility(request, main_heroid):
     Returns heroes that have good synergy and compatibility with the specified hero,
     including team composition suggestions and strategic partnerships.
     """
-    url = f"{MLBB_URL}gms/source/2669606/2756569"
+    base_path = BasePathProvider.get_base_path()
+    url = f"{MLBB_URL}{base_path}/2756569"
     
     payload = {
         "pageSize": 20,

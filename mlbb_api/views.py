@@ -6,11 +6,13 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 import requests
 import json
+import functools
 
 MLBB_URL = settings.MLBB_URL
 
 # Base decorator for API availability control
 def api_availability_required(view_func):
+    @functools.wraps(view_func)
     def wrapper(request, *args, **kwargs):
         if not settings.IS_AVAILABLE:
             status_info = settings.API_STATUS_MESSAGES['limited']
@@ -76,6 +78,12 @@ def _get_available_endpoints(request):
 @api_view(['GET'])
 @api_availability_required
 def hero_list(request):
+    """
+    Hero List - Get all Mobile Legends heroes with their names and IDs
+    
+    Returns a complete list of heroes in English or Russian based on the 'lang' parameter.
+    Supports language localization with 'lang=ru' for Russian names.
+    """
     lang = request.query_params.get('lang', 'en')
     
     # English hero names (default)
@@ -131,6 +139,12 @@ def hero_list(request):
 @api_view(['GET'])
 @api_availability_required
 def hero_rank(request):
+    """
+    Hero Rank Statistics - Get hero performance rankings by rank tier
+    
+    Returns hero statistics including win rate, pick rate, and ban rate across different rank tiers.
+    Filter by days (1,3,7,15,30) and rank (all,epic,legend,mythic,honor,glory).
+    """
     url_1_day = f"{MLBB_URL}gms/source/2669606/2756567"
     url_3_days = f"{MLBB_URL}gms/source/2669606/2756568"
     url_7_days = f"{MLBB_URL}gms/source/2669606/2756569"
@@ -238,6 +252,12 @@ def hero_rank(request):
 @api_view(['GET'])
 @api_availability_required
 def hero_position(request):
+    """
+    Hero Position - Get heroes filtered by role and lane position
+    
+    Returns heroes based on their role (tank,fighter,ass,mage,mm,supp) and 
+    lane position (exp,mid,roam,jungle,gold). Useful for team composition planning.
+    """
     url_role_lane = f"{MLBB_URL}gms/source/2669606/2756564"
     
     role_map = {
@@ -329,6 +349,12 @@ def hero_position(request):
 @api_view(['GET'])
 @api_availability_required
 def hero_detail(request, hero_id):
+    """
+    Hero Detail - Get comprehensive information about a specific hero
+    
+    Returns detailed information about a hero including stats, abilities, and metadata.
+    Provide the hero_id parameter to get information about heroes like Zetian (129), Kalea (128), etc.
+    """
     url = f"{MLBB_URL}gms/source/2669606/2756564"
     
     payload = {
@@ -362,6 +388,12 @@ def hero_detail(request, hero_id):
 @api_view(['GET'])
 @api_availability_required
 def hero_detail_stats(request, main_heroid):
+    """
+    Hero Detail Statistics - Get detailed performance statistics for a specific hero
+    
+    Returns comprehensive statistics including win rates, pick rates, and performance metrics
+    for a specific hero across different game modes and ranks.
+    """
     url = f"{MLBB_URL}gms/source/2669606/2756567"
     
     payload = {
@@ -404,6 +436,12 @@ def hero_detail_stats(request, main_heroid):
 @api_view(['GET'])
 @api_availability_required
 def hero_skill_combo(request, hero_id):
+    """
+    Hero Skill Combo - Get recommended skill combinations and build guides
+    
+    Returns optimal skill combinations, build paths, and strategic recommendations
+    for the specified hero to maximize their effectiveness in matches.
+    """
     url = f"{MLBB_URL}gms/source/2669606/2674711"
     
     payload = {
@@ -437,6 +475,12 @@ def hero_skill_combo(request, hero_id):
 @api_view(['GET'])
 @api_availability_required
 def hero_rate(request, main_heroid):
+    """
+    Hero Rate Analysis - Get hero performance rates over different time periods
+    
+    Returns win rates, pick rates, and ban rates for a specific hero over the past 7, 15, or 30 days.
+    Useful for tracking hero meta trends and performance changes over time.
+    """
     url_past_7_days  = f"{MLBB_URL}gms/source/2669606/2674709"
     url_past_15_days = f"{MLBB_URL}gms/source/2669606/2687909"
     url_past_30_days = f"{MLBB_URL}gms/source/2669606/2690860"
@@ -491,6 +535,12 @@ def hero_rate(request, main_heroid):
 @api_view(['GET'])
 @api_availability_required
 def hero_relation(request, hero_id):
+    """
+    Hero Relation - Get hero relationships and synergy information
+    
+    Returns information about hero relationships, including which heroes work well together
+    and strategic combinations for team compositions.
+    """
     url = f"{MLBB_URL}gms/source/2669606/2756564"
     
     payload = {
@@ -525,6 +575,12 @@ def hero_relation(request, hero_id):
 @api_view(['GET'])
 @api_availability_required
 def hero_counter(request, main_heroid):
+    """
+    Hero Counter Analysis - Get heroes that counter the specified hero
+    
+    Returns a list of heroes that are effective against the specified hero,
+    including win rates and strategic advantages for counter-picking.
+    """
     url = f"{MLBB_URL}gms/source/2669606/2756569"
     
     payload = {
@@ -567,6 +623,12 @@ def hero_counter(request, main_heroid):
 @api_view(['GET'])
 @api_availability_required
 def hero_compatibility(request, main_heroid):
+    """
+    Hero Compatibility - Get heroes that work well with the specified hero
+    
+    Returns heroes that have good synergy and compatibility with the specified hero,
+    including team composition suggestions and strategic partnerships.
+    """
     url = f"{MLBB_URL}gms/source/2669606/2756569"
     
     payload = {

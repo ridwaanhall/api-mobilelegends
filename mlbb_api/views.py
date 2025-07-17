@@ -36,7 +36,7 @@ def DocsByRidwaanhall(request):
         'message': 'Request processed successfully',
         'api_info': {
             'name': 'Mobile Legends: Bang Bang API',
-            'version': '1.0.0',
+            'version': '1.0.2',
             'developer': 'Ridwaanhall',
             'status': status_info['status'],
             'message': status_info['message'],

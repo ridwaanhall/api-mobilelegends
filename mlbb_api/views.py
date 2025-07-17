@@ -1,18 +1,19 @@
 from django.conf import settings
-from rest_framework.decorators import api_view
+
+from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import AllowAny
 import requests
-import functools
 from typing import Any, Dict
 from mlbb_api.utils import BasePathProvider
 
 
 MLBB_URL = settings.MLBB_URL
 
-def api_availability_required(view_func):
-    """Decorator to check API availability."""
-    @functools.wraps(view_func)
-    def wrapper(request, *args, **kwargs):
+class APIAvailabilityMixin:
+    """Mixin to check API availability for class-based views."""
+    def dispatch(self, request, *args, **kwargs):
         if not settings.IS_AVAILABLE:
             status_info = settings.API_STATUS_MESSAGES['limited']
             return Response({
@@ -20,45 +21,47 @@ def api_availability_required(view_func):
                 'status': status_info['status'],
                 'message': status_info['message'],
                 'available_endpoints': status_info['available_endpoints']
-            }, status=503)
-        return view_func(request, *args, **kwargs)
-    return wrapper
-
-# --- Helpers ---
-def get_lang_header(lang: str) -> Dict[str, str]:
-    headers = {'Content-Type': 'application/json'}
-    if lang and lang != 'en':
-        headers['x-lang'] = lang
-    return headers
-
-def error_response(message: str, details: Any = None, status: int = 400) -> Response:
-    return Response({'error': message, 'details': details}, status=status)
+            }, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+        return super().dispatch(request, *args, **kwargs)
 
 
-@api_view(['GET'])
-def DocsByRidwaanhall(request):
-    """
-    API root and documentation endpoint.
-    """
-    status_info = settings.API_STATUS_MESSAGES['available'] if settings.IS_AVAILABLE else settings.API_STATUS_MESSAGES['limited']
-    return Response({
-        'code': 200,
-        'status': 'success',
-        'message': 'Request processed successfully',
-        'api_info': {
-            'name': 'Mobile Legends: Bang Bang API',
-            'version': '1.0.3',
-            'developer': 'ridwaanhall',
-            'status': status_info['status'],
-            'message': status_info['message'],
-            'available_endpoints': status_info['available_endpoints']
-        },
-        'data': {
-            'api_docs': 'https://mlbb-stats-docs.ridwaanhall.com/',
-            'documentation': _get_available_endpoints(request),
-            'message': 'Please visit api_docs for detailed API documentation'
-        }
-    })
+class MLBBHeaderBuilder:
+    @staticmethod
+    def get_lang_header(lang: str) -> Dict[str, str]:
+        headers = {'Content-Type': 'application/json'}
+        if lang and lang != 'en':
+            headers['x-lang'] = lang
+        return headers
+
+class ErrorResponseMixin:
+    @staticmethod
+    def error_response(message: str, details: Any = None, status_code: int = 400) -> Response:
+        return Response({'error': message, 'details': details}, status=status_code)
+
+
+class DocsByRidwaanhall(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        status_info = settings.API_STATUS_MESSAGES['available'] if settings.IS_AVAILABLE else settings.API_STATUS_MESSAGES['limited']
+        return Response({
+            'code': 200,
+            'status': 'success',
+            'message': 'Request processed successfully',
+            'api_info': {
+                'name': 'Mobile Legends: Bang Bang API',
+                'version': '1.0.3',
+                'developer': 'ridwaanhall',
+                'status': status_info['status'],
+                'message': status_info['message'],
+                'available_endpoints': status_info['available_endpoints']
+            },
+            'data': {
+                'api_docs': 'https://mlbb-stats-docs.ridwaanhall.com/',
+                'documentation': _get_available_endpoints(request),
+                'message': 'Please visit api_docs for detailed API documentation'
+            }
+        })
 
 
 def _get_available_endpoints(request) -> Dict[str, str]:
@@ -122,506 +125,331 @@ HEROES_RU = {
     5: "Нана", 4: "Алиса", 3: "Сабер", 2: "Бальмонд", 1: "Мия"
 }
 
-@api_view(['GET'])
-@api_availability_required
-def hero_list(request):
-    """
-    Get all Mobile Legends heroes with their names and IDs.
-    Supports language localization with 'lang=ru' for Russian names.
-    """
-    lang = request.query_params.get('lang', 'en')
-    if lang == 'ru':
-        return Response(HEROES_RU)
-    return Response(HEROES_EN)
 
-@api_view(['GET'])
-@api_availability_required
-def hero_rank(request):
-    """
-    Hero Rank Statistics - Get hero performance rankings by rank tier
+class HeroListView(APIAvailabilityMixin, APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        lang = request.GET.get('lang', 'en')
+        if lang == 'ru':
+            return Response(HEROES_RU)
+        return Response(HEROES_EN)
+
+
+class HeroRankView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        base_path = BasePathProvider.get_base_path()
+        url_1_day = f"{MLBB_URL}{base_path}/2756567"
+        url_3_days = f"{MLBB_URL}{base_path}/2756568"
+        url_7_days = f"{MLBB_URL}{base_path}/2756569"
+        url_15_days = f"{MLBB_URL}{base_path}/2756565"
+        url_30_days = f"{MLBB_URL}{base_path}/2756570"
+
+        def create_rank_payload(rank_value):
+            return {
+                "pageSize": 20,
+                "filters": [
+                    {"field": "bigrank", "operator": "eq", "value": rank_value},
+                    {"field": "match_type", "operator": "eq", "value": "0"}
+                ],
+                "sorts": [],
+                "pageIndex": 1,
+                "fields": [
+                    "main_hero",
+                    "main_hero_appearance_rate",
+                    "main_hero_ban_rate",
+                    "main_hero_channel",
+                    "main_hero_win_rate",
+                    "main_heroid",
+                    "data.sub_hero.hero",
+                    "data.sub_hero.hero_channel",
+                    "data.sub_hero.increase_win_rate",
+                    "data.sub_hero.heroid"
+                ]
+            }
+
+        all_rank = create_rank_payload("101")
+        epic_rank = create_rank_payload("5")
+        legend_rank = create_rank_payload("6")
+        mythic_rank = create_rank_payload("7")
+        honor_rank = create_rank_payload("8")
+        glory_rank = create_rank_payload("9")
+
+        days = request.GET.get('days', '1')
+        rank = request.GET.get('rank', 'all')
+        page_size = request.GET.get('size', '20')
+        page_index = request.GET.get('index', '1')
+        sort_field = request.GET.get('sort_field', 'win_rate')
+        sort_order = request.GET.get('sort_order', 'desc')
+        lang = request.GET.get('lang', 'en')
+
+        sort_field_map = {
+            'pick_rate': 'main_hero_appearance_rate',
+            'ban_rate': 'main_hero_ban_rate',
+            'win_rate': 'main_hero_win_rate'
+        }
+
+        url_map = {
+            '1': url_1_day,
+            '3': url_3_days,
+            '7': url_7_days,
+            '15': url_15_days,
+            '30': url_30_days
+        }
+
+        rank_map = {
+            'all': all_rank,
+            'epic': epic_rank,
+            'legend': legend_rank,
+            'mythic': mythic_rank,
+            'honor': honor_rank,
+            'glory': glory_rank
+        }
+
+        sort_field = sort_field_map.get(sort_field, 'main_hero_win_rate')
+        url = url_map.get(days, url_1_day)
+        payload = rank_map.get(rank, all_rank)
+
+        payload['pageSize'] = int(page_size)
+        payload['pageIndex'] = int(page_index)
+        payload['sorts'] = [
+            {"data": {"field": sort_field, "order": sort_order}, "type": "sequence"}
+        ]
+
+        headers = MLBBHeaderBuilder.get_lang_header(lang)
+        response = requests.post(url, json=payload, headers=headers)
+        if response.status_code == 200:
+            return Response(response.json())
+        return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
     
-    Returns hero statistics including win rate, pick rate, and ban rate across different rank tiers.
-    Filter by days (1,3,7,15,30) and rank (all,epic,legend,mythic,honor,glory).
-    """
-    base_path = BasePathProvider.get_base_path()
-    url_1_day = f"{MLBB_URL}{base_path}/2756567"
-    url_3_days = f"{MLBB_URL}{base_path}/2756568"
-    url_7_days = f"{MLBB_URL}{base_path}/2756569"
-    url_15_days = f"{MLBB_URL}{base_path}/2756565"
-    url_30_days = f"{MLBB_URL}{base_path}/2756570"
-    
-    def create_rank_payload(rank_value):
-        return {
+
+class HeroPositionView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        base_path = BasePathProvider.get_base_path()
+        url_role_lane = f"{MLBB_URL}{base_path}/2756564"
+
+        role_map = {
+            'all': [1, 2, 3, 4, 5, 6],
+            'tank': [1],
+            'fighter': [2],
+            'ass': [3],
+            'mage': [4],
+            'mm': [5],
+            'supp': [6]
+        }
+        lane_map = {
+            'all': [1, 2, 3, 4, 5],
+            'exp': [1],
+            'mid': [2],
+            'roam': [3],
+            'jungle': [4],
+            'gold': [5]
+        }
+
+        role = request.GET.get('role', 'all')
+        lane = request.GET.get('lane', 'all')
+        page_size = request.GET.get('size', '21')
+        page_index = request.GET.get('index', '1')
+        lang = request.GET.get('lang', 'en')
+
+        payload = {
+            "pageSize": int(page_size),
+            "filters": [
+                {"field": "<hero.data.sortid>", "operator": "hasAnyOf", "value": role_map.get(role, [1, 2, 3, 4, 5, 6])},
+                {"field": "<hero.data.roadsort>", "operator": "hasAnyOf", "value": lane_map.get(lane, [1, 2, 3, 4, 5])}
+            ],
+            "sorts": [
+                {"data": {"field": "hero_id", "order": "desc"}, "type": "sequence"}
+            ],
+            "pageIndex": int(page_index),
+            "fields": ["id", "hero_id", "hero.data.name", "hero.data.smallmap", "hero.data.sortid", "hero.data.roadsort"],
+            "object": []
+        }
+
+        headers = MLBBHeaderBuilder.get_lang_header(lang)
+        response = requests.post(url_role_lane, json=payload, headers=headers)
+        if response.status_code == 200:
+            return Response(response.json())
+        return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
+
+
+class HeroDetailView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, hero_id):
+        base_path = BasePathProvider.get_base_path()
+        url = f"{MLBB_URL}{base_path}/2756564"
+        payload = {
             "pageSize": 20,
             "filters": [
-                {
-                    "field": "bigrank",
-                    "operator": "eq",
-                    "value": rank_value
-                },
-                {
-                    "field": "match_type",
-                    "operator":"eq",
-                    "value": "0"
-                }
+                {"field": "hero_id", "operator": "eq", "value": hero_id}
             ],
             "sorts": [],
             "pageIndex": 1,
-            "fields": [
-                "main_hero",
-                "main_hero_appearance_rate",
-                "main_hero_ban_rate",
-                "main_hero_channel",
-                "main_hero_win_rate",
-                "main_heroid",
-                "data.sub_hero.hero",
-                "data.sub_hero.hero_channel",
-                "data.sub_hero.increase_win_rate",
-                "data.sub_hero.heroid"
-            ]
+            "object": []
         }
+        lang = request.GET.get('lang', 'en')
+        headers = MLBBHeaderBuilder.get_lang_header(lang)
+        response = requests.post(url, json=payload, headers=headers)
+        if response.status_code == 200:
+            return Response(response.json())
+        return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
 
-    all_rank = create_rank_payload("101")
-    epic_rank = create_rank_payload("5")
-    legend_rank = create_rank_payload("6")
-    mythic_rank = create_rank_payload("7")
-    honor_rank = create_rank_payload("8")
-    glory_rank = create_rank_payload("9")
-    
-    days = request.query_params.get('days', '1')
-    rank = request.query_params.get('rank', 'all')
-    page_size = request.query_params.get('size', '20')
-    page_index = request.query_params.get('index', '1')
-    sort_field = request.query_params.get('sort_field', 'win_rate')
-    sort_order = request.query_params.get('sort_order', 'desc')
-    lang = request.query_params.get('lang', 'en')
 
-    sort_field_map = {
-        'pick_rate': 'main_hero_appearance_rate',
-        'ban_rate': 'main_hero_ban_rate',
-        'win_rate': 'main_hero_win_rate'
-    }
+class HeroDetailStatsView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
+    permission_classes = [AllowAny]
 
-    url_map = {
-        '1': url_1_day,
-        '3': url_3_days,
-        '7': url_7_days,
-        '15': url_15_days,
-        '30': url_30_days
-    }
-
-    rank_map = {
-        'all': all_rank,
-        'epic': epic_rank,
-        'legend': legend_rank,
-        'mythic': mythic_rank,
-        'honor': honor_rank,
-        'glory': glory_rank
-    }
-
-    sort_field = sort_field_map.get(sort_field, 'main_hero_win_rate')
-    url = url_map.get(days, url_1_day)
-    payload = rank_map.get(rank, all_rank)
-    
-    payload['pageSize'] = int(page_size)
-    payload['pageIndex'] = int(page_index)
-    payload['sorts'] = [
-        {"data":
-            {
-                "field": sort_field,
-                "order": sort_order
-            },
-            "type": "sequence"
+    def get(self, request, main_heroid):
+        base_path = BasePathProvider.get_base_path()
+        url = f"{MLBB_URL}{base_path}/2756567"
+        payload = {
+            "pageSize": 20,
+            "filters": [
+                {"field": "main_heroid", "operator": "eq", "value": main_heroid},
+                {"field": "bigrank", "operator": "eq", "value": "101"},
+                {"field": "match_type", "operator": "eq", "value": "1"}
+            ],
+            "sorts": [],
+            "pageIndex": 1
         }
-    ]
+        lang = request.GET.get('lang', 'en')
+        headers = MLBBHeaderBuilder.get_lang_header(lang)
+        response = requests.post(url, json=payload, headers=headers)
+        if response.status_code == 200:
+            return Response(response.json())
+        return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
 
-    headers = get_lang_header(lang)
-    response = requests.post(url, json=payload, headers=headers)
-    if response.status_code == 200:
-        return Response(response.json())
-    return error_response('Failed to fetch data', response.text, status=response.status_code)
-    
-@api_view(['GET'])
-@api_availability_required
-def hero_position(request):
-    """
-    Hero Position - Get heroes filtered by role and lane position
-    
-    Returns heroes based on their role (tank,fighter,ass,mage,mm,supp) and 
-    lane position (exp,mid,roam,jungle,gold). Useful for team composition planning.
-    """
-    base_path = BasePathProvider.get_base_path()
-    url_role_lane = f"{MLBB_URL}{base_path}/2756564"
-    
-    role_map = {
-        'all': [
-            1, 
-            2, 
-            3, 
-            4, 
-            5, 
-            6
-        ],
-        'tank': [1],
-        'fighter': [2],
-        'ass': [3],
-        'mage': [4],
-        'mm': [5],
-        'supp': [6]
-    }
-    
-    lane_map = {
-        'all': [
-            1, 
-            2, 
-            3, 
-            4, 
-            5
-        ],
-        'exp': [1],
-        'mid': [2],
-        'roam': [3],
-        'jungle': [4],
-        'gold': [5]
-    }
-    
-    role = request.query_params.get('role', 'all')
-    lane = request.query_params.get('lane', 'all')
-    page_size = request.query_params.get('size', '21')
-    page_index = request.query_params.get('index', '1')
-    lang = request.query_params.get('lang', 'en')
-    
-    payload = {
-        "pageSize": int(page_size),
-        "filters": [
-            {
-                "field": "<hero.data.sortid>", 
-                "operator": "hasAnyOf", 
-                "value": role_map.get(role, [1, 2, 3, 4, 5, 6])
-            },
-            {
-                "field": "<hero.data.roadsort>", 
-                "operator": "hasAnyOf", 
-                "value": lane_map.get(lane, [1, 2, 3, 4, 5])
-            }
-        ],
-        "sorts": [
-            {
-                "data": 
-                    {
-                        "field": "hero_id", 
-                        "order": "desc"
-                    }, 
-                "type": "sequence"
-            }
-        ],
-        "pageIndex": int(page_index),
-        "fields": [
-            "id", "hero_id", 
-            "hero.data.name", 
-            "hero.data.smallmap", 
-            "hero.data.sortid", 
-            "hero.data.roadsort"
-        ],
-        "object": []
-    }
-    
-    headers = get_lang_header(lang)
-    response = requests.post(url_role_lane, json=payload, headers=headers)
-    if response.status_code == 200:
-        return Response(response.json())
-    return error_response('Failed to fetch data', response.text, status=response.status_code)
 
-@api_view(['GET'])
-@api_availability_required
-def hero_detail(request, hero_id):
-    """
-    Hero Detail - Get comprehensive information about a specific hero
-    
-    Returns detailed information about a hero including stats, abilities, and metadata.
-    Provide the hero_id parameter to get information about heroes like Zetian (129), Kalea (128), etc.
-    """
-    base_path = BasePathProvider.get_base_path()
-    url = f"{MLBB_URL}{base_path}/2756564"
-    
-    payload = {
-        "pageSize": 20,
-        "filters": [
-            {
-                "field": "hero_id", 
-                "operator": "eq", 
-                "value": hero_id
-            }
-        ],
-        "sorts": [],
-        "pageIndex": 1,
-        "object": []
-    }
-    
-    lang = request.query_params.get('lang', 'en')
-    headers = get_lang_header(lang)
-    response = requests.post(url, json=payload, headers=headers)
-    if response.status_code == 200:
-        return Response(response.json())
-    return error_response('Failed to fetch data', response.text, status=response.status_code)
+class HeroSkillComboView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
+    permission_classes = [AllowAny]
 
-@api_view(['GET'])
-@api_availability_required
-def hero_detail_stats(request, main_heroid):
-    """
-    Hero Detail Statistics - Get detailed performance statistics for a specific hero
+    def get(self, request, hero_id):
+        base_path = BasePathProvider.get_base_path()
+        url = f"{MLBB_URL}{base_path}/2674711"
+        payload = {
+            "pageSize": 20,
+            "filters": [
+                {"field": "hero_id", "operator": "eq", "value": hero_id}
+            ],
+            "sorts": [],
+            "pageIndex": 1,
+            "object": [2684183]
+        }
+        lang = request.GET.get('lang', 'en')
+        headers = MLBBHeaderBuilder.get_lang_header(lang)
+        response = requests.post(url, json=payload, headers=headers)
+        if response.status_code == 200:
+            return Response(response.json())
+        return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
     
-    Returns comprehensive statistics including win rates, pick rates, and performance metrics
-    for a specific hero across different game modes and ranks.
-    """
-    base_path = BasePathProvider.get_base_path()
-    url = f"{MLBB_URL}{base_path}/2756567"
-    
-    payload = {
-        "pageSize": 20,
-        "filters": [
-            {
-                "field": "main_heroid", 
-                "operator": "eq", 
-                "value": main_heroid
-            },
-            {
-                "field": "bigrank", 
-                "operator": "eq", 
-                "value": "101"
-            },
-            {
-                "field": "match_type",
-                "operator": "eq", 
-                "value": "1"
-            }
-        ],
-        "sorts": [],
-        "pageIndex": 1
-    }
 
-    lang = request.query_params.get('lang', 'en')
-    headers = get_lang_header(lang)
-    response = requests.post(url, json=payload, headers=headers)
-    if response.status_code == 200:
-        return Response(response.json())
-    return error_response('Failed to fetch data', response.text, status=response.status_code)
+class HeroRateView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
+    permission_classes = [AllowAny]
 
-@api_view(['GET'])
-@api_availability_required
-def hero_skill_combo(request, hero_id):
-    """
-    Hero Skill Combo - Get recommended skill combinations and build guides
-    
-    Returns optimal skill combinations, build paths, and strategic recommendations
-    for the specified hero to maximize their effectiveness in matches.
-    """
-    base_path = BasePathProvider.get_base_path()
-    url = f"{MLBB_URL}{base_path}/2674711"
-    
-    payload = {
-        "pageSize": 20,
-        "filters": [
-            {
-                "field": "hero_id", 
-                "operator": "eq", 
-                "value": hero_id
-            }
-        ],
-        "sorts": [],
-        "pageIndex": 1,
-        "object": [2684183]
-    }
+    def get(self, request, main_heroid):
+        base_path = BasePathProvider.get_base_path()
+        url_past_7_days  = f"{MLBB_URL}{base_path}/2674709"
+        url_past_15_days = f"{MLBB_URL}{base_path}/2687909"
+        url_past_30_days = f"{MLBB_URL}{base_path}/2690860"
 
-    lang = request.query_params.get('lang', 'en')
-    headers = get_lang_header(lang)
-    response = requests.post(url, json=payload, headers=headers)
-    if response.status_code == 200:
-        return Response(response.json())
-    return error_response('Failed to fetch data', response.text, status=response.status_code)
-    
-@api_view(['GET'])
-@api_availability_required
-def hero_rate(request, main_heroid):
-    """
-    Hero Rate Analysis - Get hero performance rates over different time periods
-    
-    Returns win rates, pick rates, and ban rates for a specific hero over the past 7, 15, or 30 days.
-    Useful for tracking hero meta trends and performance changes over time.
-    """
-    base_path = BasePathProvider.get_base_path()
-    url_past_7_days  = f"{MLBB_URL}{base_path}/2674709"
-    url_past_15_days = f"{MLBB_URL}{base_path}/2687909"
-    url_past_30_days = f"{MLBB_URL}{base_path}/2690860"
-    
-    days = request.query_params.get('past-days', '7')
-    lang = request.query_params.get('lang', 'en')
-    
-    url_map = {
-        '7': url_past_7_days,
-        '15': url_past_15_days,
-        '30': url_past_30_days
-    }
-    
-    url = url_map.get(days, url_past_7_days)
-    
-    payload = {
-        "pageSize": 20,
-        "filters": [
-            {
-                "field": "main_heroid", 
-                "operator": "eq", 
-                "value": main_heroid
-            },
-            {
-                "field": "bigrank", 
-                "operator": "eq", 
-                "value": "8"
-            },
-            {
-                "field": "match_type",
-                "operator": "eq",
-                "value": "1"
-            }
-        ],
-        "sorts": [],
-        "pageIndex": 1
-    }
-    
-    headers = get_lang_header(lang)
-    response = requests.post(url, json=payload, headers=headers)
-    if response.status_code == 200:
-        return Response(response.json())
-    return error_response('Failed to fetch data', response.text, status=response.status_code)
+        days = request.GET.get('past-days', '7')
+        lang = request.GET.get('lang', 'en')
 
-@api_view(['GET'])
-@api_availability_required
-def hero_relation(request, hero_id):
-    """
-    Hero Relation - Get hero relationships and synergy information
-    
-    Returns information about hero relationships, including which heroes work well together
-    and strategic combinations for team compositions.
-    """
-    base_path = BasePathProvider.get_base_path()
-    url = f"{MLBB_URL}{base_path}/2756564"
-    
-    payload = {
-        "pageSize": 20,
-        "filters": [
-            {
-                "field": "hero_id", 
-                "operator": "eq", 
-                "value": hero_id
-            }
-        ],
-        "sorts": [],
-        "pageIndex": 1,
-        "fields": ["hero.data.name"],
-        "object": []
-    }
+        url_map = {
+            '7': url_past_7_days,
+            '15': url_past_15_days,
+            '30': url_past_30_days
+        }
+        url = url_map.get(days, url_past_7_days)
 
-    lang = request.query_params.get('lang', 'en')
-    headers = get_lang_header(lang)
-    response = requests.post(url, json=payload, headers=headers)
-    if response.status_code == 200:
-        return Response(response.json())
-    return error_response('Failed to fetch data', response.text, status=response.status_code)
+        payload = {
+            "pageSize": 20,
+            "filters": [
+                {"field": "main_heroid", "operator": "eq", "value": main_heroid},
+                {"field": "bigrank", "operator": "eq", "value": "8"},
+                {"field": "match_type", "operator": "eq", "value": "1"}
+            ],
+            "sorts": [],
+            "pageIndex": 1
+        }
+        headers = MLBBHeaderBuilder.get_lang_header(lang)
+        response = requests.post(url, json=payload, headers=headers)
+        if response.status_code == 200:
+            return Response(response.json())
+        return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
+
+
+class HeroRelationView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, hero_id):
+        base_path = BasePathProvider.get_base_path()
+        url = f"{MLBB_URL}{base_path}/2756564"
+        payload = {
+            "pageSize": 20,
+            "filters": [
+                {"field": "hero_id", "operator": "eq", "value": hero_id}
+            ],
+            "sorts": [],
+            "pageIndex": 1,
+            "fields": ["hero.data.name"],
+            "object": []
+        }
+        lang = request.GET.get('lang', 'en')
+        headers = MLBBHeaderBuilder.get_lang_header(lang)
+        response = requests.post(url, json=payload, headers=headers)
+        if response.status_code == 200:
+            return Response(response.json())
+        return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
     
-@api_view(['GET'])
-@api_availability_required
-def hero_counter(request, main_heroid):
-    """
-    Hero Counter Analysis - Get heroes that counter the specified hero
+
+class HeroCounterView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, main_heroid):
+        base_path = BasePathProvider.get_base_path()
+        url = f"{MLBB_URL}{base_path}/2756569"
+        payload = {
+            "pageSize": 20,
+            "filters": [
+                {"field": "match_type", "operator": "eq", "value": "0"},
+                {"field": "main_heroid", "operator": "eq", "value": main_heroid},
+                {"field": "bigrank", "operator": "eq", "value": "7"}
+            ],
+            "sorts": [],
+            "pageIndex": 1
+        }
+        lang = request.GET.get('lang', 'en')
+        headers = MLBBHeaderBuilder.get_lang_header(lang)
+        response = requests.post(url, json=payload, headers=headers)
+        if response.status_code == 200:
+            return Response(response.json())
+        return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
     
-    Returns a list of heroes that are effective against the specified hero,
-    including win rates and strategic advantages for counter-picking.
-    """
-    base_path = BasePathProvider.get_base_path()
-    url = f"{MLBB_URL}{base_path}/2756569"
-    
-    payload = {
-        "pageSize": 20,
-        "filters": [
-            {
-                "field": "match_type",
-                "operator": "eq", 
-                 "value": "0"
-            },
-            {
-                "field": "main_heroid", 
-                "operator": "eq", 
-                "value": main_heroid
-            },
-            {
-                "field": "bigrank", 
-                "operator": "eq", 
-                "value": "7"
-            }
-        ],
-        "sorts": [],
-        "pageIndex": 1
-    }
-    
-    headers = {'Content-Type': 'application/json'}
-    lang = request.query_params.get('lang', 'en')
-    if lang != 'en':
-        headers['x-lang'] = lang
-    response = requests.post(url, json=payload, headers=headers)
-    
-    if response.status_code == 200:
-        return Response(response.json())
-    else:
-        return Response({
-            'error': 'Failed to fetch data', 
-            'details': response.text
-        }, status=response.status_code)
-    
-@api_view(['GET'])
-@api_availability_required
-def hero_compatibility(request, main_heroid):
-    """
-    Hero Compatibility - Get heroes that work well with the specified hero
-    
-    Returns heroes that have good synergy and compatibility with the specified hero,
-    including team composition suggestions and strategic partnerships.
-    """
-    base_path = BasePathProvider.get_base_path()
-    url = f"{MLBB_URL}{base_path}/2756569"
-    
-    payload = {
-        "pageSize": 20,
-        "filters": [
-            {
-                "field": "match_type", 
-                "operator": "eq", 
-                "value": "1"
-            },
-            {
-                "field": "main_heroid", 
-                "operator": "eq", 
-                "value": main_heroid
-            },
-            {
-                "field": "bigrank", 
-                "operator": "eq", 
-                "value": "7"
-            }
-        ],
-        "sorts": [],
-        "pageIndex": 1
-    }
-    
-    headers = {'Content-Type': 'application/json'}
-    lang = request.query_params.get('lang', 'en')
-    if lang != 'en':
-        headers['x-lang'] = lang
-    response = requests.post(url, json=payload, headers=headers)
-    
-    if response.status_code == 200:
-        return Response(response.json())
-    else:
-        return Response({
-            'error': 'Failed to fetch data', 
-            'details': response.text
-        }, status=response.status_code)
+
+class HeroCompatibilityView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, main_heroid):
+        base_path = BasePathProvider.get_base_path()
+        url = f"{MLBB_URL}{base_path}/2756569"
+        payload = {
+            "pageSize": 20,
+            "filters": [
+                {"field": "match_type", "operator": "eq", "value": "1"},
+                {"field": "main_heroid", "operator": "eq", "value": main_heroid},
+                {"field": "bigrank", "operator": "eq", "value": "7"}
+            ],
+            "sorts": [],
+            "pageIndex": 1
+        }
+        lang = request.GET.get('lang', 'en')
+        headers = MLBBHeaderBuilder.get_lang_header(lang)
+        response = requests.post(url, json=payload, headers=headers)
+        if response.status_code == 200:
+            return Response(response.json())
+        return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)

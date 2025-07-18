@@ -2,10 +2,9 @@ import requests
 from bs4 import BeautifulSoup
 from apps.mpl_api.utils import BasePathProvider
 
-
 import logging
 
-class MPLStandingsIDScraper:
+class MPLIDStandingsScraper:
 
     URL = BasePathProvider.get_mpl_id_path()
 
@@ -62,8 +61,7 @@ class MPLStandingsIDScraper:
         html = self.fetch_html()
         return self.parse_standings(html)
     
-    
-class MPLTeamIDScraper:
+class MPLIDTeamScraper:
     base_url = BasePathProvider.get_mpl_id_path()
     URL = f"{base_url}teams"
 
@@ -109,3 +107,67 @@ class MPLTeamIDScraper:
     def get_teams(self):
         html = self.fetch_html()
         return self.parse_teams(html)
+    
+class MPLIDTeamDetailScraper:
+    base_url = BasePathProvider.get_mpl_id_path()
+    URL = f"{base_url}team/{{team_id}}"
+
+    def __init__(self, team_id):
+        self.team_id = team_id
+        self.URL = self.URL.format(team_id=team_id)
+
+    def fetch_html(self):
+        response = requests.get(self.URL)
+        response.raise_for_status()
+        return response.text
+
+    def parse_team_details(self, html):
+        soup = BeautifulSoup(html, "html.parser")
+        result = {}
+
+        # Team name and logo
+        h4 = soup.find("h4", class_="d-flex")
+        if h4:
+            logo_tag = h4.find("img", class_="team-logo")
+            result["team_logo"] = logo_tag["src"].strip() if logo_tag else None
+            # The team name is the text after the img tag
+            name = h4.get_text(strip=True)
+            result["team_name"] = name
+
+        # Social media links
+        socmed_div = soup.find("div", class_="icon-socmed")
+        socmed = {}
+        if socmed_div:
+            for a in socmed_div.find_all("a", href=True):
+                href = a["href"]
+                icon = a.find("i")
+                if icon and icon.get("class"):
+                    for cls in icon["class"]:
+                        if "facebook" in cls:
+                            socmed["facebook"] = href
+                        elif "instagram" in cls:
+                            socmed["instagram"] = href
+                        elif "youtube" in cls:
+                            socmed["youtube"] = href
+        result["social_media"] = socmed
+
+        # Roster
+        roster = []
+        roster_section = soup.find("div", attrs={"data-ga-impression": "Section Roster Team Detail"})
+        if roster_section:
+            for player_div in roster_section.find_all("div", class_="col-md-3"):
+                player = {}
+                img_tag = player_div.find("img", alt=True, src=True)
+                player["player_image"] = img_tag["src"].strip() if img_tag else None
+                player_name_div = player_div.find("div", class_="player-name")
+                player["player_name"] = player_name_div.get_text(strip=True) if player_name_div else None
+                player_role_div = player_div.find("div", class_="player-role")
+                player["player_role"] = player_role_div.get_text(strip=True) if player_role_div else None
+                roster.append(player)
+        result["roster"] = roster
+
+        return result
+
+    def get_team_details(self):
+        html = self.fetch_html()
+        return self.parse_team_details(html)

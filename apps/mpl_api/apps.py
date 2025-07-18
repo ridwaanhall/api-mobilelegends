@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class MlbbApiConfig(AppConfig):
+class MplApiConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'mlbb_api'
+    name = 'apps.mpl_api'

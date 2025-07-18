@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny
 import requests
 from typing import Any, Dict
-from mlbb_api.utils import BasePathProvider
+from apps.mlbb_api.utils import BasePathProvider
 
 
 MLBB_URL = settings.MLBB_URL

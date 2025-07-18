@@ -87,8 +87,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     'rest_framework',
-    'mlbb_api',
-    'mlbb_web',
+    
+    'apps.mlbb_api',
+    'apps.mlbb_web',
+    'apps.mpl_api',
 ]
 
 MIDDLEWARE = [

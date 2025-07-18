@@ -18,5 +18,6 @@ from django.urls import path, include
 
 urlpatterns = [
     path('api/', include('apps.mlbb_api.urls')),
+    path('api/mpl/', include('apps.mpl_api.urls')),
     path('', include('apps.mlbb_web.urls')),
 ]

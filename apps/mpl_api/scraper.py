@@ -5,7 +5,7 @@ from apps.mpl_api.utils import BasePathProvider
 
 import logging
 
-class MPLStandingsScraper:
+class MPLStandingsIDScraper:
 
     URL = BasePathProvider.get_mpl_id_path()
 

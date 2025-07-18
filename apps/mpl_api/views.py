@@ -1,11 +1,11 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .scraper import MPLStandingsScraper
-from .serializers import MPLStandingSerializer
+from .scraper import MPLStandingsIDScraper
+from .serializers import MPLStandingIDSerializer
 
-class MPLStandingsAPIView(APIView):
+class MPLStandingsIdAPIView(APIView):
     def get(self, request):
-        scraper = MPLStandingsScraper()
+        scraper = MPLStandingsIDScraper()
         data = scraper.get_standings()
-        serializer = MPLStandingSerializer(data, many=True)
+        serializer = MPLStandingIDSerializer(data, many=True)
         return Response(serializer.data)

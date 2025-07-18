@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-class MPLStandingSerializer(serializers.Serializer):
+class MPLStandingIDSerializer(serializers.Serializer):
     rank = serializers.IntegerField()
     team_name = serializers.CharField()
     team_logo = serializers.URLField()

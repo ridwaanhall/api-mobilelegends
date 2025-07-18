@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import MPLStandingsAPIView
+from .views import MPLStandingsIdAPIView
 
 urlpatterns = [
-    path("standings/", MPLStandingsAPIView.as_view(), name="mpl-standings"),
+    path("id-mpl/standings/", MPLStandingsIdAPIView.as_view(), name="id-mpl-standings"),
 ]

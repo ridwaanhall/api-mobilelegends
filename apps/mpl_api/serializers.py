@@ -8,3 +8,9 @@ class MPLStandingIDSerializer(serializers.Serializer):
     match_wl = serializers.CharField()
     net_game_win = serializers.IntegerField()
     game_wl = serializers.CharField()
+    
+
+class MPLTeamIDSerializer(serializers.Serializer):
+    team_url = serializers.URLField()
+    team_logo = serializers.URLField()
+    team_name = serializers.CharField()

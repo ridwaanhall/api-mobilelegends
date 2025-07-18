@@ -61,3 +61,51 @@ class MPLStandingsIDScraper:
     def get_standings(self):
         html = self.fetch_html()
         return self.parse_standings(html)
+    
+    
+class MPLTeamIDScraper:
+    base_url = BasePathProvider.get_mpl_id_path()
+    URL = f"{base_url}teams"
+
+    def fetch_html(self):
+        response = requests.get(self.URL)
+        response.raise_for_status()
+        html = response.text
+        # Debug: log the first 500 characters of the HTML
+        logging.warning("Fetched HTML (first 500 chars):\n%s", html[:500])
+        return html
+
+    def parse_teams(self, html):
+        """
+        Scrape team cards from the teams section (team url, logo, and name).
+        Returns a list of dicts: { 'team_url', 'team_logo', 'team_name' }
+        """
+        soup = BeautifulSoup(html, "html.parser")
+        teams = []
+        # Find the main content div for teams
+        content_wrap = soup.find("div", class_="content-wrap")
+        if not content_wrap:
+            logging.warning("Teams content-wrap not found!")
+            return teams
+        # Find all team-card-outer divs
+        for card in content_wrap.find_all("div", class_="team-card-outer"):
+            a_tag = card.find("a", href=True)
+            if not a_tag:
+                continue
+            team_url = a_tag["href"].strip()
+            img_tag = card.find("img", alt=True, src=True)
+            team_logo = img_tag["src"].strip() if img_tag else None
+            # Team name is in .team-name-inner
+            name_div = card.find("div", class_="team-name-inner")
+            team_name = name_div.text.strip() if name_div else None
+            teams.append({
+                "team_url": team_url,
+                "team_logo": team_logo,
+                "team_name": team_name,
+            })
+        logging.warning("Parsed %d team cards", len(teams))
+        return teams
+    
+    def get_teams(self):
+        html = self.fetch_html()
+        return self.parse_teams(html)

@@ -171,3 +171,81 @@ class MPLIDTeamDetailScraper:
     def get_team_details(self):
         html = self.fetch_html()
         return self.parse_team_details(html)
+    
+class MPLIDTransferScraper:
+    base_url = BasePathProvider.get_mpl_id_path()
+    URL = f"{base_url}transfer"
+
+    def fetch_html(self):
+        response = requests.get(self.URL)
+        response.raise_for_status()
+        return response.text
+
+    def clean_team_name(self, name):
+        # Remove excessive whitespace and newlines, keep (MDL)/(MPL) if present
+        if not name:
+            return None
+        name = name.replace('\n', '').strip()
+        # Collapse multiple spaces
+        name = ' '.join(name.split())
+        return name
+
+    def parse_transfers(self, html):
+        soup = BeautifulSoup(html, "html.parser")
+        transfers = []
+        # Find all transfer cards
+        for card in soup.find_all("div", class_="transfer-card"):
+            transfer = {}
+
+            # Date
+            date_div = card.find("div", class_="col-lg-2")
+            transfer_date = date_div.get_text(strip=True) if date_div else None
+
+            # Player name and role
+            player_info_div = card.find("div", class_="col-lg-4")
+            player_name = None
+            player_role = None
+            if player_info_div:
+                name_div = player_info_div.find("div", style=lambda v: v and "font-weight: 600" in v)
+                role_div = player_info_div.find("div", style=lambda v: v and "font-size: .8rem;" in v)
+                player_name = name_div.get_text(strip=True) if name_div else None
+                player_role = role_div.get_text(strip=True) if role_div else None
+
+            # From team
+            from_team_div = card.find_all("div", class_="col-lg-5")
+            from_team_logo = None
+            from_team_name = None
+            to_team_logo = None
+            to_team_name = None
+            if len(from_team_div) >= 2:
+                from_team = from_team_div[0]
+                logo_tag = from_team.find("img", class_="logo")
+                from_team_logo = logo_tag["src"].strip() if logo_tag else None
+                name_div = from_team.find("div", class_="team-name")
+                from_team_name = self.clean_team_name(name_div.get_text()) if name_div else None
+
+                # To team
+                to_team = from_team_div[1]
+                logo_tag = to_team.find("img", class_="logo")
+                to_team_logo = logo_tag["src"].strip() if logo_tag else None
+                name_div = to_team.find("div", class_="team-name")
+                to_team_name = self.clean_team_name(name_div.get_text()) if name_div else None
+            else:
+                from_team_logo = from_team_name = to_team_logo = to_team_name = None
+
+            transfer.update({
+                "transfer_date": transfer_date,
+                "player_name": player_name,
+                "player_role": player_role,
+                "from_team_name": from_team_name,
+                "from_team_logo": from_team_logo,
+                "to_team_name": to_team_name,
+                "to_team_logo": to_team_logo,
+            })
+            transfers.append(transfer)
+        logging.warning("Parsed %d transfers", len(transfers))
+        return transfers
+
+    def get_transfers(self):
+        html = self.fetch_html()
+        return self.parse_transfers(html)

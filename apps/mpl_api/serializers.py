@@ -29,3 +29,12 @@ class MPLIDTeamDetailSerializer(serializers.Serializer):
     team_name = serializers.CharField(allow_null=True)
     social_media = MPLIDTeamSocialMediaSerializer()
     roster = MPLIDTeamPlayerSerializer(many=True)
+
+class MPLIDTransferSerializer(serializers.Serializer):
+    transfer_date = serializers.CharField(allow_null=True)
+    player_name = serializers.CharField(allow_null=True)
+    player_role = serializers.CharField(allow_null=True)
+    from_team_name = serializers.CharField(allow_null=True)
+    from_team_logo = serializers.URLField(allow_null=True)
+    to_team_name = serializers.CharField(allow_null=True)
+    to_team_logo = serializers.URLField(allow_null=True)

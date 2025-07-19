@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .scraper import MPLIDStandingsScraper, MPLIDTeamScraper, MPLIDTeamDetailScraper, MPLIDTransferScraper, MPLIDStatisticsScraper
-from .serializers import MPLIDStandingSerializer, MPLTeamIDSerializer, MPLIDTeamDetailSerializer, MPLIDTransferSerializer, MPLIDStatisticsSerializer
+from .scraper import MPLIDStandingsScraper, MPLIDTeamScraper, MPLIDTeamDetailScraper, MPLIDTransferScraper, MPLIDStatsScraper
+from .serializers import MPLIDStandingSerializer, MPLTeamIDSerializer, MPLIDTeamDetailSerializer, MPLIDTransferSerializer, MPLIDTeamStatSerializer, MPLIDPlayerStatsSerializer
 from rest_framework import status
 
 class MPLIDStandingsAPIView(APIView):
@@ -32,9 +32,16 @@ class MPLIDTransferAPIView(APIView):
         serializer = MPLIDTransferSerializer(data, many=True)
         return Response(serializer.data)
 
-class MPLIDStatisticsAPIView(APIView):
+class MPLIDStatsAPIView(APIView):
     def get(self, request):
-        scraper = MPLIDStatisticsScraper()
-        data = scraper.parse_team_statistics(scraper.fetch_html())
-        serializer = MPLIDStatisticsSerializer(data, many=True)
+        scraper = MPLIDStatsScraper()
+        data = scraper.parse_team_stats(scraper.fetch_html())
+        serializer = MPLIDTeamStatSerializer(data, many=True)
+        return Response(serializer.data)
+
+class MPLIDPlayerStatsAPIView(APIView):
+    def get(self, request):
+        scraper = MPLIDStatsScraper()
+        data = scraper.parse_player_stats(scraper.fetch_html())
+        serializer = MPLIDPlayerStatsSerializer(data, many=True)
         return Response(serializer.data)

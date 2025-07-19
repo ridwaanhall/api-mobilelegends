@@ -250,7 +250,7 @@ class MPLIDTransferScraper:
         html = self.fetch_html()
         return self.parse_transfers(html)
     
-class MPLIDStatisticsScraper:
+class MPLIDStatsScraper:
     base_url = BasePathProvider.get_mpl_id_path()
     URL = f"{base_url}statistics"
 
@@ -259,7 +259,7 @@ class MPLIDStatisticsScraper:
         response.raise_for_status()
         return response.text
 
-    def parse_team_statistics(self, html):
+    def parse_team_stats(self, html):
         soup = BeautifulSoup(html, "html.parser")
         team_stats = []
         # Find the team statistics table
@@ -311,3 +311,53 @@ class MPLIDStatisticsScraper:
             })
         logging.warning("Parsed %d team statistics rows", len(team_stats))
         return team_stats
+    
+    def parse_player_stats(self, html):
+        soup = BeautifulSoup(html, "html.parser")
+        player_stats = []
+        # Find the player statistics table
+        table = soup.find("table", class_="table-players-statistics")
+        if not table:
+            logging.warning("Player statistics table not found!")
+            return player_stats
+
+        for row in table.tbody.find_all("tr"):
+            cells = row.find_all("td")
+            if len(cells) < 11:
+                continue
+
+            # Player info (logo and name)
+            player_td = cells[0]
+            logo_img = player_td.find("img")
+            player_logo = logo_img["src"].strip() if logo_img and logo_img.has_attr("src") else None
+            name_div = player_td.find("div", class_="player-name")
+            player_name = name_div.get_text(strip=True) if name_div else None
+
+            def parse_int(val):
+                try:
+                    return int(val.replace(",", "").replace(".", ""))
+                except Exception:
+                    return 0
+
+            def parse_float(val):
+                try:
+                    return float(val.replace(",", ".").replace("%", "").strip())
+                except Exception:
+                    return 0.0
+
+            player_stats.append({
+                "player_name": player_name,
+                "player_logo": player_logo,
+                "lane": cells[1].get_text(strip=True),
+                "total_games": parse_int(cells[2].get_text(strip=True)),
+                "total_kills": parse_int(cells[3].get_text(strip=True)),
+                "avg_kills": parse_float(cells[4].get_text(strip=True)),
+                "total_deaths": parse_int(cells[5].get_text(strip=True)),
+                "avg_deaths": parse_float(cells[6].get_text(strip=True)),
+                "total_assists": parse_int(cells[7].get_text(strip=True)),
+                "avg_assists": parse_float(cells[8].get_text(strip=True)),
+                "avg_kda": parse_float(cells[9].get_text(strip=True)),
+                "kill_participation": cells[10].get_text(strip=True),
+            })
+        logging.warning("Parsed %d player statistics rows", len(player_stats))
+        return player_stats

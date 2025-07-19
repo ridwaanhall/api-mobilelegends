@@ -39,8 +39,7 @@ class MPLIDTransferSerializer(serializers.Serializer):
     to_team_name = serializers.CharField(allow_null=True)
     to_team_logo = serializers.URLField(allow_null=True)
 
-# Serializer for MPLIDStatisticsScraper
-class MPLIDStatisticsSerializer(serializers.Serializer):
+class MPLIDTeamStatSerializer(serializers.Serializer):
     team_name = serializers.CharField(allow_null=True)
     team_logo = serializers.URLField(allow_null=True)
     kills = serializers.IntegerField()
@@ -51,3 +50,17 @@ class MPLIDStatisticsSerializer(serializers.Serializer):
     lord = serializers.IntegerField()
     tortoise = serializers.IntegerField()
     tower = serializers.IntegerField()
+
+class MPLIDPlayerStatsSerializer(serializers.Serializer):
+    player_name = serializers.CharField(allow_null=True)
+    player_logo = serializers.URLField(allow_null=True)
+    lane = serializers.CharField(allow_null=True)
+    total_games = serializers.IntegerField()
+    total_kills = serializers.IntegerField()
+    avg_kills = serializers.FloatField()
+    total_deaths = serializers.IntegerField()
+    avg_deaths = serializers.FloatField()
+    total_assists = serializers.IntegerField()
+    avg_assists = serializers.FloatField()
+    avg_kda = serializers.FloatField()
+    kill_participation = serializers.CharField(allow_null=True)

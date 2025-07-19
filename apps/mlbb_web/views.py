@@ -102,7 +102,7 @@ def simple_view(request):
         "service_info": {
             "status": status_info['status'],
             "message": status_info['message'],
-            "version": "1.1.0",
+            "version": settings.API_VERSION,
             "author": "ridwaanhall",
             "available_endpoints": status_info['available_endpoints']
         },

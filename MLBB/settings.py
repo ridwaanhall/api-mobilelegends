@@ -37,6 +37,7 @@ API_STATUS_MESSAGES = {
     }
 }
 
+API_VERSION = config('API_VERSION', default='1.1.1')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/

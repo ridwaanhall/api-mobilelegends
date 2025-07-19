@@ -48,7 +48,7 @@ class DocsByRidwaanhall(APIView):
             'message': 'Request processed successfully',
             'api_info': {
                 'name': 'Mobile Legends: Bang Bang API',
-                'version': '1.1.0',
+                'version': settings.API_VERSION,
                 'developer': 'ridwaanhall',
                 'status': status_info['status'],
                 'message': status_info['message'],

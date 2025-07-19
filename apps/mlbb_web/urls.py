@@ -4,6 +4,7 @@ from . import views
 
 urlpatterns = [
     path('', views.simple_view, name='simple_view'),
+    path('favicon.ico', views.favicon_view, name='favicon'),
 ]
 
 # Add other web endpoints only if available

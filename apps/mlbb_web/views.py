@@ -1,6 +1,8 @@
 import requests
+import os
+from django.conf import settings as dj_settings
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import JsonResponse, FileResponse, Http404
 from django.conf import settings
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -21,6 +23,14 @@ def web_availability_required(view_func):
             }, status=503)
         return view_func(request, *args, **kwargs)
     return wrapper
+
+
+def favicon_view(request):
+    favicon_path = os.path.join(dj_settings.BASE_DIR, 'staticfiles', 'favicon.ico')
+    if os.path.exists(favicon_path):
+        return FileResponse(open(favicon_path, 'rb'), content_type='image/x-icon')
+    else:
+        raise Http404('Favicon not found')
 
 # Create your views here.
 @api_view(['GET'])

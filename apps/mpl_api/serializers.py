@@ -64,3 +64,11 @@ class MPLIDPlayerStatsSerializer(serializers.Serializer):
     avg_assists = serializers.FloatField()
     avg_kda = serializers.FloatField()
     kill_participation = serializers.CharField(allow_null=True)
+
+class MPLIDHeroStatsSerializer(serializers.Serializer):
+    hero_name = serializers.CharField(allow_null=True)
+    hero_logo = serializers.URLField(allow_null=True)
+    pick = serializers.IntegerField()
+    ban = serializers.IntegerField()
+    win = serializers.IntegerField()
+    win_rate = serializers.FloatField()

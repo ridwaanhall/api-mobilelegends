@@ -361,3 +361,47 @@ class MPLIDStatsScraper:
             })
         logging.warning("Parsed %d player statistics rows", len(player_stats))
         return player_stats
+    
+    def parse_hero_stats(self, html):
+        soup = BeautifulSoup(html, "html.parser")
+        hero_stats = []
+        # Find the hero statistics table
+        table = soup.find("table", id="table-heroes-statistics")
+        if not table:
+            logging.warning("Hero statistics table not found!")
+            return hero_stats
+
+        for row in table.tbody.find_all("tr"):
+            cells = row.find_all("td")
+            if len(cells) < 5:
+                continue
+
+            # Hero info (logo and name)
+            hero_td = cells[0]
+            logo_img = hero_td.find("img")
+            hero_logo = logo_img["src"].strip() if logo_img and logo_img.has_attr("src") else None
+            name_div = hero_td.find("div", class_="hero-name")
+            hero_name = name_div.get_text(strip=True) if name_div else None
+
+            def parse_int(val):
+                try:
+                    return int(val.replace(",", "").replace(".", "").replace(" ", ""))
+                except Exception:
+                    return 0
+
+            def parse_percent(val):
+                try:
+                    return float(val.replace("%", "").replace(",", ".").strip())
+                except Exception:
+                    return 0.0
+
+            hero_stats.append({
+                "hero_name": hero_name,
+                "hero_logo": hero_logo,
+                "pick": parse_int(cells[1].get_text(strip=True)),
+                "ban": parse_int(cells[2].get_text(strip=True)),
+                "win": parse_int(cells[3].get_text(strip=True)),
+                "win_rate": parse_percent(cells[4].get_text(strip=True)),
+            })
+        logging.warning("Parsed %d hero statistics rows", len(hero_stats))
+        return hero_stats

@@ -7,7 +7,6 @@ from rest_framework.response import Response
 
 
 PROD_URL = settings.PROD_URL
-# LOCAL_URL = settings.LOCAL_URL
 
 # Base decorator for web availability control
 def web_availability_required(view_func):
@@ -35,11 +34,18 @@ def simple_view(request):
         "service_info": {
             "status": status_info['status'],
             "message": status_info['message'],
+            "version": "1.1.0",
+            "author": "ridwaanhall",
+            "available_endpoints": status_info['available_endpoints']
+        },
+        "new_mpl_id_api": {
+            "status": status_info['status'],
+            "message": status_info['message'],
             "available_endpoints": status_info['available_endpoints']
         },
         "data": {
             "api_docs": "https://mlbb-stats-docs.ridwaanhall.com/",
-            "api_url": "https://mlbb-stats.ridwaanhall.com/api/",
+            "api_url": "https://mlbb-stats.ridwaanhall.com/api/" if settings.IS_AVAILABLE else "Limited access mode",
             "web_url": "https://mlbb-stats.ridwaanhall.com/hero-rank/" if settings.IS_AVAILABLE else "Limited access mode"
         }
     }

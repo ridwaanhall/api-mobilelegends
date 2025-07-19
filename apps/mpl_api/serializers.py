@@ -72,3 +72,15 @@ class MPLIDHeroStatsSerializer(serializers.Serializer):
     ban = serializers.IntegerField()
     win = serializers.IntegerField()
     win_rate = serializers.FloatField()
+    
+class MPLIDHeroPoolHeroSerializer(serializers.Serializer):
+    hero_logo = serializers.URLField(allow_null=True)
+    pick = serializers.IntegerField()
+    pick_rate = serializers.FloatField()
+
+class MPLIDHeroPoolsSerializer(serializers.Serializer):
+    player_name = serializers.CharField(allow_null=True)
+    team_logo = serializers.URLField(allow_null=True)
+    lane = serializers.CharField(allow_null=True)
+    total_heroes = serializers.IntegerField()
+    hero_pool = MPLIDHeroPoolHeroSerializer(many=True)

@@ -40,8 +40,16 @@ class MPLIDPlayerStatsAPIView(APIView):
         serializer = serializers.MPLIDPlayerStatsSerializer(data, many=True)
         return Response(serializer.data)
     
+
 class MPLIDHeroStatsAPIView(APIView):
     def get(self, request):
         data = scraper.MPLIDStatsScraper().parse_hero_stats(scraper.MPLIDStatsScraper().fetch_html())
         serializer = serializers.MPLIDHeroStatsSerializer(data, many=True)
+        return Response(serializer.data)
+
+
+class MPLIDHeroPoolsAPIView(APIView):
+    def get(self, request):
+        data = scraper.MPLIDStatsScraper().parse_hero_pools(scraper.MPLIDStatsScraper().fetch_html())
+        serializer = serializers.MPLIDHeroPoolsSerializer(data, many=True)
         return Response(serializer.data)

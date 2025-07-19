@@ -10,4 +10,5 @@ urlpatterns = [
     path('mplid/team-stats/', views.MPLIDTeamStatsAPIView.as_view(), name='mplid-team-stats'),
     path('mplid/player-stats/', views.MPLIDPlayerStatsAPIView.as_view(), name='mplid-player-stats'),
     path('mplid/hero-stats/', views.MPLIDHeroStatsAPIView.as_view(), name='mplid-hero-stats'),
+    path('mplid/hero-pools/', views.MPLIDHeroPoolsAPIView.as_view(), name='mplid-hero-pools'),
 ]

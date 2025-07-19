@@ -6,4 +6,5 @@ urlpatterns = [
     path('mplid/teams/', views.MPLIDTeamAPIView.as_view(), name='mplid-teams'),
     path('mplid/teams/<str:team_id>/', views.MPLIDTeamDetailAPIView.as_view(), name='mplid-team-detail'),
     path('mplid/transfers/', views.MPLIDTransferAPIView.as_view(), name='mplid-transfers'),
+    path('mplid/team-stats/', views.MPLIDStatisticsAPIView.as_view(), name='mplid-team-stats'),
 ]

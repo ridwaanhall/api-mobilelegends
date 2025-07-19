@@ -249,3 +249,65 @@ class MPLIDTransferScraper:
     def get_transfers(self):
         html = self.fetch_html()
         return self.parse_transfers(html)
+    
+class MPLIDStatisticsScraper:
+    base_url = BasePathProvider.get_mpl_id_path()
+    URL = f"{base_url}statistics"
+
+    def fetch_html(self):
+        response = requests.get(self.URL)
+        response.raise_for_status()
+        return response.text
+
+    def parse_team_statistics(self, html):
+        soup = BeautifulSoup(html, "html.parser")
+        team_stats = []
+        # Find the team statistics table
+        table = soup.find("table", id="table-team-statistics")
+        if not table:
+            logging.warning("Team statistics table not found!")
+            return team_stats
+
+        for row in table.tbody.find_all("tr"):
+            team_info_td = row.find("td", class_="team-info")
+            if not team_info_td:
+                continue
+
+            # Extract team logo
+            logo_div = team_info_td.find("div", class_="team-logo")
+            logo_img = logo_div.find("img") if logo_div else None
+            team_logo = logo_img["src"].strip() if logo_img and logo_img.has_attr("src") else None
+
+            # Extract team name (prefer d-lg-block for full name)
+            name_div = team_info_td.find("div", class_="team-name")
+            team_name = None
+            if name_div:
+                span_full = name_div.find("span", class_="d-none d-lg-block")
+                if span_full and span_full.text.strip():
+                    team_name = span_full.text.strip()
+                else:
+                    span_short = name_div.find("span", class_="d-lg-none")
+                    team_name = span_short.text.strip() if span_short else None
+
+            cells = row.find_all("td")
+            # cells[0] is team-info, the rest are team_stats
+            if len(cells) < 9:
+                continue  # Not enough columns
+
+            def parse_int(val):
+                return int(val.replace(",", "").replace(".", "")) if val else 0
+
+            team_stats.append({
+                "team_name": team_name,
+                "team_logo": team_logo,
+                "kills": parse_int(cells[1].text.strip()),
+                "deaths": parse_int(cells[2].text.strip()),
+                "assists": parse_int(cells[3].text.strip()),
+                "gold": parse_int(cells[4].text.strip()),
+                "damage": parse_int(cells[5].text.strip()),
+                "lord": parse_int(cells[6].text.strip()),
+                "tortoise": parse_int(cells[7].text.strip()),
+                "tower": parse_int(cells[8].text.strip()),
+            })
+        logging.warning("Parsed %d team statistics rows", len(team_stats))
+        return team_stats

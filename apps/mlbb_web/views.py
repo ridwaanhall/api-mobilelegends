@@ -7,6 +7,7 @@ from django.conf import settings
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from functools import wraps
+from typing import Dict
 
 PROD_URL = settings.PROD_URL
 
@@ -108,7 +109,8 @@ def simple_view(request):
         "new_mpl_id_api": {
             "status": status_info['status'],
             "message": status_info['message'],
-            "available_endpoints": status_info['available_endpoints']
+            "available_endpoints": status_info['available_endpoints'],
+            "mpl_id_endpoints": _get_new_mpl_id_endpoints(request)
         },
         "data": {
             "api_docs": "https://mlbb-stats-docs.ridwaanhall.com/",
@@ -117,6 +119,24 @@ def simple_view(request):
         }
     }
     return Response(data)
+
+def _get_new_mpl_id_endpoints(request) -> Dict[str, str]:
+    """Return new MPL ID endpoints based on API availability."""
+    base_url = request.build_absolute_uri('/api/mplid/')
+    if settings.IS_AVAILABLE:
+        return {
+            'standings': f'{base_url}standings/',
+            'teams': f'{base_url}teams/',
+            'team_detail': f'{base_url}teams/{{team_id}}/',
+            'transfers': f'{base_url}transfers/',
+            'team_stats': f'{base_url}team-stats/',
+            'player_stats': f'{base_url}player-stats/',
+            'hero_stats': f'{base_url}hero-stats/',
+            'hero_pools': f'{base_url}hero-pools/',
+            'player_pools': f'{base_url}player-pools/',
+            'standings_mvp': f'{base_url}standings-mvp/',
+        }
+    return {}
 
 def favicon_view(request):
     favicon_path = os.path.join(dj_settings.BASE_DIR, 'staticfiles', 'favicon.ico')

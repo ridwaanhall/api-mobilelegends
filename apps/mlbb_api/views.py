@@ -24,7 +24,6 @@ class APIAvailabilityMixin:
             }, status=status.HTTP_503_SERVICE_UNAVAILABLE)
         return super().dispatch(request, *args, **kwargs)
 
-
 class MLBBHeaderBuilder:
     @staticmethod
     def get_lang_header(lang: str) -> Dict[str, str]:
@@ -37,7 +36,6 @@ class ErrorResponseMixin:
     @staticmethod
     def error_response(message: str, details: Any = None, status_code: int = 400) -> Response:
         return Response({'error': message, 'details': details}, status=status_code)
-
 
 class DocsByRidwaanhall(APIView):
     permission_classes = [AllowAny]
@@ -101,7 +99,6 @@ def _get_available_endpoints(request) -> Dict[str, str]:
         }
     return {'documentation': f'{base_url}'}
 
-
 HEROES_EN = {
     129: "Zetian", 128: "Kalea", 127: "Lukas", 126: "Suyou", 125: "Zhuxin", 124: "Chip", 123: "Cici", 122: "Nolan", 121: "Ixia", 120: "Arlott", 119: "Novaria",
     118: "Joy", 117: "Fredrinn", 116: "Julian", 115: "Xavier", 114: "Melissa", 113: "Yin", 112: "Floryn",
@@ -143,7 +140,6 @@ HEROES_RU = {
     5: "Нана", 4: "Алиса", 3: "Сабер", 2: "Бальмонд", 1: "Мия"
 }
 
-
 class HeroListView(APIAvailabilityMixin, APIView):
     permission_classes = [AllowAny]
 
@@ -152,7 +148,6 @@ class HeroListView(APIAvailabilityMixin, APIView):
         if lang == 'ru':
             return Response(HEROES_RU)
         return Response(HEROES_EN)
-
 
 class HeroRankView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
     permission_classes = [AllowAny]
@@ -241,7 +236,6 @@ class HeroRankView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
         if response.status_code == 200:
             return Response(response.json())
         return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
-    
 
 class HeroPositionView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
     permission_classes = [AllowAny]
@@ -294,7 +288,6 @@ class HeroPositionView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
             return Response(response.json())
         return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
 
-
 class HeroDetailView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
     permission_classes = [AllowAny]
 
@@ -316,7 +309,6 @@ class HeroDetailView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
         if response.status_code == 200:
             return Response(response.json())
         return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
-
 
 class HeroDetailStatsView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
     permission_classes = [AllowAny]
@@ -341,7 +333,6 @@ class HeroDetailStatsView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
             return Response(response.json())
         return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
 
-
 class HeroSkillComboView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
     permission_classes = [AllowAny]
 
@@ -363,7 +354,6 @@ class HeroSkillComboView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
         if response.status_code == 200:
             return Response(response.json())
         return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
-    
 
 class HeroRateView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
     permission_classes = [AllowAny]
@@ -400,7 +390,6 @@ class HeroRateView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
             return Response(response.json())
         return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
 
-
 class HeroRelationView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
     permission_classes = [AllowAny]
 
@@ -423,7 +412,6 @@ class HeroRelationView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
         if response.status_code == 200:
             return Response(response.json())
         return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
-    
 
 class HeroCounterView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
     permission_classes = [AllowAny]
@@ -447,7 +435,6 @@ class HeroCounterView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
         if response.status_code == 200:
             return Response(response.json())
         return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
-    
 
 class HeroCompatibilityView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
     permission_classes = [AllowAny]

@@ -50,12 +50,13 @@ class DocsByRidwaanhall(APIView):
             'message': 'Request processed successfully',
             'api_info': {
                 'name': 'Mobile Legends: Bang Bang API',
-                'version': '1.0.3',
+                'version': '1.1.0',
                 'developer': 'ridwaanhall',
                 'status': status_info['status'],
                 'message': status_info['message'],
                 'available_endpoints': status_info['available_endpoints']
             },
+            'new_mpl_id_api': _get_new_mpl_id_endpoints(request),
             'data': {
                 'api_docs': 'https://mlbb-stats-docs.ridwaanhall.com/',
                 'documentation': _get_available_endpoints(request),
@@ -63,6 +64,23 @@ class DocsByRidwaanhall(APIView):
             }
         })
 
+def _get_new_mpl_id_endpoints(request) -> Dict[str, str]:
+    """Return new MPL ID endpoints based on API availability."""
+    base_url = request.build_absolute_uri('/api/mplid/')
+    if settings.IS_AVAILABLE:
+        return {
+            'standings': f'{base_url}standings/',
+            'teams': f'{base_url}teams/',
+            'team_detail': f'{base_url}teams/{{team_id}}/',
+            'transfers': f'{base_url}transfers/',
+            'team_stats': f'{base_url}team-stats/',
+            'player_stats': f'{base_url}player-stats/',
+            'hero_stats': f'{base_url}hero-stats/',
+            'hero_pools': f'{base_url}hero-pools/',
+            'player_pools': f'{base_url}player-pools/',
+            'standings_mvp': f'{base_url}standings-mvp/',
+        }
+    return {}
 
 def _get_available_endpoints(request) -> Dict[str, str]:
     """Return available endpoints based on API availability."""

@@ -566,11 +566,12 @@ class MPLIDStatsScraper:
 
             # Points
             point_div = card.find("div", class_="point")
-            point_text = point_div.get_text(strip=True) if point_div else ""
             point = None
-            if point_text:
+            if point_div:
                 try:
-                    point = int(point_text.split()[0])
+                    # Extract only the direct text (number), not the span
+                    point_text = point_div.find(text=True, recursive=False)
+                    point = int(point_text.strip()) if point_text and point_text.strip().isdigit() else None
                 except Exception:
                     point = None
 

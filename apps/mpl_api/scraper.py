@@ -469,3 +469,70 @@ class MPLIDStatsScraper:
             })
         logging.warning("Parsed %d hero pools rows", len(hero_pools))
         return hero_pools
+    
+    def parse_player_pools(self, html):
+        soup = BeautifulSoup(html, "html.parser")
+        player_pools = []
+        table = soup.find("table", id="table-player-pools")
+        if not table:
+            logging.warning("Player pools table not found!")
+            return player_pools
+
+        for row in table.tbody.find_all("tr"):
+            cells = row.find_all("td")
+            if len(cells) < 3:
+                continue
+
+            # Hero info
+            hero_td = cells[0]
+            hero_img = hero_td.find("img", class_="hero-image")
+            hero_logo = hero_img["src"].strip() if hero_img and hero_img.has_attr("src") else None
+            hero_name_div = hero_td.find("div", class_="hero-name")
+            hero_name = hero_name_div.get_text(strip=True) if hero_name_div else None
+
+            # Total
+            try:
+                total = int(cells[1].get_text(strip=True))
+            except Exception:
+                total = 0
+
+            # Players
+            players_cell = cells[2]
+            player_pool_outer = players_cell.find("div", class_="player-pool-outer")
+            players = []
+            if player_pool_outer:
+                for player_card in player_pool_outer.find_all("div", class_="player-pool-card"):
+                    player_img_outer = player_card.find("div", class_="player-pool-image-outer")
+                    player_img = player_img_outer.find("img", class_="player-pool-image") if player_img_outer else None
+                    player_logo = player_img["src"].strip() if player_img and player_img.has_attr("src") else None
+
+                    player_info_div = player_card.find("div", class_="player-pool-info")
+                    player_info = player_info_div.get_text(strip=True) if player_info_div else None
+
+                    pick_div = player_card.find("div", class_="player-pool-pick")
+                    try:
+                        pick = int(pick_div.get_text(strip=True)) if pick_div else 0
+                    except Exception:
+                        pick = 0
+
+                    count_div = player_card.find("div", class_="player-pool-count")
+                    try:
+                        pick_rate = float(count_div.get_text(strip=True).replace("%", "").replace(",", ".").strip()) if count_div else 0.0
+                    except Exception:
+                        pick_rate = 0.0
+
+                    players.append({
+                        "player_logo": player_logo,
+                        "player_info": player_info,
+                        "pick": pick,
+                        "pick_rate": pick_rate,
+                    })
+
+            player_pools.append({
+                "hero_name": hero_name,
+                "hero_logo": hero_logo,
+                "total": total,
+                "players": players,
+            })
+        logging.warning("Parsed %d player pools rows", len(player_pools))
+        return player_pools

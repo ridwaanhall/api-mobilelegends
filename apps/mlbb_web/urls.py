@@ -10,8 +10,8 @@ urlpatterns = [
 # Add other web endpoints only if available
 if settings.IS_AVAILABLE:
     urlpatterns.extend([
-        path('hero-list/', views.hero_list_web, name='hero_list_web'),
-        path('hero-rank/', views.hero_rank_web, name='hero_rank_web'),
-        path('hero-position/', views.hero_position_web, name='hero_position_web'),
-        path('hero-detail/<int:hero_id>/', views.hero_detail_web, name='hero_detail_web'),
+        path('hero-list/', views.MLBBWebViews.hero_list_web, name='hero_list_web'),
+        path('hero-rank/', views.MLBBWebViews.hero_rank_web, name='hero_rank_web'),
+        path('hero-position/', views.MLBBWebViews.hero_position_web, name='hero_position_web'),
+        path('hero-detail/<int:hero_id>/', views.MLBBWebViews.hero_detail_web, name='hero_detail_web'),
     ])

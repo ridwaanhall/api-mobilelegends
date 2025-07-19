@@ -57,3 +57,9 @@ class MPLIDPlayerPoolsAPIView(APIView):
         data = scraper.MPLIDStatsScraper().parse_player_pools(scraper.MPLIDStatsScraper().fetch_html())
         serializer = serializers.MPLIDPlayerPoolsSerializer(data, many=True)
         return Response(serializer.data)
+
+class MPLIDStandingsMVPAPIView(APIView):
+    def get(self, request):
+        data = scraper.MPLIDStatsScraper().parse_mvp_standings(scraper.MPLIDStatsScraper().fetch_html())
+        serializer = serializers.MPLIDStandingsMVPSerializer(data, many=True)
+        return Response(serializer.data)

@@ -536,3 +536,55 @@ class MPLIDStatsScraper:
             })
         logging.warning("Parsed %d player pools rows", len(player_pools))
         return player_pools
+    
+    def parse_mvp_standings(self, html):
+        soup = BeautifulSoup(html, "html.parser")
+        mvp_standings = []
+        # Find the MVP standings tab content
+        tab_content = soup.find("div", id="mvp-standings")
+        if not tab_content:
+            logging.warning("MVP standings tab content not found!")
+            return mvp_standings
+
+        # Find all MVP cards
+        for card in tab_content.find_all("div", class_="mvp-card"):
+            mvp = {}
+
+            # Team logo
+            team_logo_div = card.find("div", class_="team-logo")
+            team_logo_img = team_logo_div.find("img") if team_logo_div else None
+            team_logo = team_logo_img["src"].strip() if team_logo_img and team_logo_img.has_attr("src") else None
+
+            # Player image
+            player_image_div = card.find("div", class_="player-image")
+            player_image_img = player_image_div.find("img") if player_image_div else None
+            player_logo = player_image_img["src"].strip() if player_image_img and player_image_img.has_attr("src") else None
+
+            # Rank
+            rank_div = card.find("div", class_="rank")
+            rank = rank_div.get_text(strip=True).replace("#", "") if rank_div else None
+
+            # Points
+            point_div = card.find("div", class_="point")
+            point_text = point_div.get_text(strip=True) if point_div else ""
+            point = None
+            if point_text:
+                try:
+                    point = int(point_text.split()[0])
+                except Exception:
+                    point = None
+
+            # Player name
+            name_div = card.find("div", class_="mvp-ign")
+            player_name = name_div.get_text(strip=True) if name_div else None
+
+            mvp.update({
+                "rank": int(rank) if rank and rank.isdigit() else None,
+                "player_name": player_name,
+                "player_logo": player_logo,
+                "team_logo": team_logo,
+                "point": point,
+            })
+            mvp_standings.append(mvp)
+        logging.warning("Parsed %d MVP standings cards", len(mvp_standings))
+        return mvp_standings

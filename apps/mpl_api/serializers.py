@@ -96,3 +96,10 @@ class MPLIDPlayerPoolsSerializer(serializers.Serializer):
     hero_logo = serializers.URLField(allow_null=True)
     total = serializers.IntegerField()
     players = MPLIDPlayerPoolPlayerSerializer(many=True)
+    
+class MPLIDStandingsMVPSerializer(serializers.Serializer):
+    rank = serializers.IntegerField(allow_null=True)
+    player_name = serializers.CharField(allow_null=True)
+    player_logo = serializers.URLField(allow_null=True)
+    team_logo = serializers.URLField(allow_null=True)
+    point = serializers.IntegerField(allow_null=True)

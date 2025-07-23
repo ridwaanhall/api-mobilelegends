@@ -473,76 +473,116 @@ class WinRateView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
+        match_now = request.GET.get("match-now")
+        wr_now = request.GET.get("wr-now")
+        wr_future = request.GET.get("wr-future")
+
+        # Validate required parameters
+        missing_params = [
+            param for param, value in [
+                ("match-now", match_now),
+                ("wr-now", wr_now),
+                ("wr-future", wr_future)
+            ] if value is None or value == ""
+        ]
+        if missing_params:
+            return Response({
+                "status": "error",
+                "match_now": match_now,
+                "wr_now": wr_now,
+                "wr_future": wr_future,
+                "required_no_lose_matches": None,
+                "message": (
+                    f"Missing required parameter(s): {', '.join(missing_params)}. "
+                    "Please provide all required parameters: match-now, wr-now, and wr-future."
+                )
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Validate and convert input types
         try:
-            match_now = int(request.GET.get("match-now", "100"))
-            wr_now = float(request.GET.get("wr-now", "50"))
-            wr_future = float(request.GET.get("wr-future", "80"))
-        except ValueError:
-            return Response({
-                "status": "error",
-                "match_now": request.GET.get("match-now"),
-                "wr_now": request.GET.get("wr-now"),
-                "wr_future": request.GET.get("wr-future"),
-                "required_no_lose_matches": None,
-                "message": "Invalid input. Please provide numeric values for match-now, wr-now, and wr-future."
-            }, status=status.HTTP_400_BAD_REQUEST)
-
-        if not (0 <= wr_now <= 100 and 0 < wr_future <= 100):
+            if "." in str(match_now):
+                raise ValueError("match-now must be an integer (no decimals allowed).")
+            match_now_int = int(match_now)
+            wr_now_float = float(wr_now)
+            wr_future_float = float(wr_future)
+        except ValueError as e:
             return Response({
                 "status": "error",
                 "match_now": match_now,
                 "wr_now": wr_now,
                 "wr_future": wr_future,
                 "required_no_lose_matches": None,
-                "message": "Win rates must be between 0 and 100 (exclusive for 0 in wr_future)."
+                "message": str(e) or "Invalid input. Ensure match-now is an integer and wr-now, wr-future are numeric values."
             }, status=status.HTTP_400_BAD_REQUEST)
 
-        if wr_future <= wr_now:
+        # Business logic validations
+        if match_now_int < 0:
             return Response({
                 "status": "error",
-                "match_now": match_now,
-                "wr_now": wr_now,
-                "wr_future": wr_future,
+                "match_now": match_now_int,
+                "wr_now": wr_now_float,
+                "wr_future": wr_future_float,
                 "required_no_lose_matches": None,
-                "message": "Future win rate must be greater than current win rate."
+                "message": "match-now must be a non-negative integer."
             }, status=status.HTTP_400_BAD_REQUEST)
 
-        current_wins = match_now * wr_now / 100.0
+        if not (0 <= wr_now_float <= 100) or not (0 < wr_future_float <= 100):
+            return Response({
+                "status": "error",
+                "match_now": match_now_int,
+                "wr_now": wr_now_float,
+                "wr_future": wr_future_float,
+                "required_no_lose_matches": None,
+                "message": "Win rates must be between 0 and 100 (wr-future must be greater than 0)."
+            }, status=status.HTTP_400_BAD_REQUEST)
 
-        denominator = (wr_future / 100.0) - 1.0
-        numerator = current_wins - match_now * (wr_future / 100.0)
+        if wr_future_float <= wr_now_float:
+            return Response({
+                "status": "error",
+                "match_now": match_now_int,
+                "wr_now": wr_now_float,
+                "wr_future": wr_future_float,
+                "required_no_lose_matches": None,
+                "message": "The target win rate (wr-future) must be greater than the current win rate (wr-now)."
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Calculation
+        current_wins = match_now_int * wr_now_float / 100.0
+        wr_future_ratio = wr_future_float / 100.0
+        denominator = wr_future_ratio - 1.0
+        numerator = current_wins - match_now_int * wr_future_ratio
 
         if denominator == 0:
             return Response({
                 "status": "error",
-                "match_now": match_now,
-                "wr_now": wr_now,
-                "wr_future": wr_future,
+                "match_now": match_now_int,
+                "wr_now": wr_now_float,
+                "wr_future": wr_future_float,
                 "required_no_lose_matches": None,
-                "message": f"It is not possible to reach a {wr_future}% win rate with a finite number of matches."
+                "message": f"It is not possible to reach a {wr_future_float}% win rate with a finite number of matches."
             }, status=status.HTTP_400_BAD_REQUEST)
 
         required_matches = numerator / denominator
-        required_matches = int(required_matches) + (1 if required_matches % 1 > 0 else 0)
+        required_matches_int = int(required_matches) + (1 if required_matches % 1 > 0 else 0)
 
-        if required_matches < 0:
+        if required_matches_int < 0:
             return Response({
                 "status": "error",
-                "match_now": match_now,
-                "wr_now": wr_now,
-                "wr_future": wr_future,
+                "match_now": match_now_int,
+                "wr_now": wr_now_float,
+                "wr_future": wr_future_float,
                 "required_no_lose_matches": None,
-                "message": "The target win rate is not achievable with only consecutive wins."
+                "message": "The target win rate cannot be achieved with only consecutive wins from your current record."
             }, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({
             "status": "success",
-            "match_now": match_now,
-            "wr_now": wr_now,
-            "wr_future": wr_future,
-            "required_no_lose_matches": required_matches,
+            "match_now": match_now_int,
+            "wr_now": wr_now_float,
+            "wr_future": wr_future_float,
+            "required_no_lose_matches": required_matches_int,
             "message": (
-                f"To achieve a win rate of {wr_future}%, "
-                f"you need {required_matches} consecutive wins without any losses."
+                f"To achieve a win rate of {wr_future_float}%, "
+                f"you need {required_matches_int} consecutive wins without any losses."
             )
         }, status=status.HTTP_200_OK)

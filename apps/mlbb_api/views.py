@@ -506,13 +506,15 @@ class WinRateView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
             wr_now_float = float(wr_now)
             wr_future_float = float(wr_future)
         except ValueError as e:
+            import logging
+            logging.error(f"Input validation error: {e}")
             return Response({
                 "status": "error",
                 "match_now": match_now,
                 "wr_now": wr_now,
                 "wr_future": wr_future,
                 "required_no_lose_matches": None,
-                "message": str(e) or "Invalid input. Ensure match-now is an integer and wr-now, wr-future are numeric values."
+                "message": "Invalid input. Ensure match-now is an integer and wr-now, wr-future are numeric values."
             }, status=status.HTTP_400_BAD_REQUEST)
 
         # Business logic validations

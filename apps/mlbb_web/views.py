@@ -106,6 +106,7 @@ def simple_view(request):
             "author": "ridwaanhall",
             "available_endpoints": status_info['available_endpoints']
         },
+        'new_mlbb_api': _get_new_mlbb_api_endpoints(request),
         "new_mpl_id_api": {
             "status": status_info['status'],
             "message": status_info['message'],
@@ -119,6 +120,15 @@ def simple_view(request):
         }
     }
     return Response(data)
+
+def _get_new_mlbb_api_endpoints(request) -> Dict[str, str]:
+    """Return new MLBB API endpoints based on API availability."""
+    base_url = request.build_absolute_uri('/api/')
+    if settings.IS_AVAILABLE:
+        return {
+            'win_rate': f'{base_url}win-rate/?match-now=100&wr-now=50&wr-future=75',
+        }
+    return {}
 
 def _get_new_mpl_id_endpoints(request) -> Dict[str, str]:
     """Return new MPL ID endpoints based on API availability."""

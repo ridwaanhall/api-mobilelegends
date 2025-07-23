@@ -54,6 +54,7 @@ class DocsByRidwaanhall(APIView):
                 'message': status_info['message'],
                 'available_endpoints': status_info['available_endpoints']
             },
+            'new_mlbb_api': _get_new_mlbb_api_endpoints(request),
             'new_mpl_id_api': _get_new_mpl_id_endpoints(request),
             'data': {
                 'api_docs': 'https://mlbb-stats-docs.ridwaanhall.com/',
@@ -61,6 +62,15 @@ class DocsByRidwaanhall(APIView):
                 'message': 'Please visit api_docs for detailed API documentation'
             }
         })
+
+def _get_new_mlbb_api_endpoints(request) -> Dict[str, str]:
+    """Return new MLBB API endpoints based on API availability."""
+    base_url = request.build_absolute_uri('/api/')
+    if settings.IS_AVAILABLE:
+        return {
+            'win_rate': f'{base_url}win-rate/?match-now=100&wr-now=50&wr-future=75',
+        }
+    return {}
 
 def _get_new_mpl_id_endpoints(request) -> Dict[str, str]:
     """Return new MPL ID endpoints based on API availability."""
@@ -458,3 +468,81 @@ class HeroCompatibilityView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
         if response.status_code == 200:
             return Response(response.json())
         return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
+
+class WinRateView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        try:
+            match_now = int(request.GET.get("match-now", "100"))
+            wr_now = float(request.GET.get("wr-now", "50"))
+            wr_future = float(request.GET.get("wr-future", "80"))
+        except ValueError:
+            return Response({
+                "status": "error",
+                "match_now": request.GET.get("match-now"),
+                "wr_now": request.GET.get("wr-now"),
+                "wr_future": request.GET.get("wr-future"),
+                "required_no_lose_matches": None,
+                "message": "Invalid input. Please provide numeric values for match-now, wr-now, and wr-future."
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        if not (0 <= wr_now <= 100 and 0 < wr_future <= 100):
+            return Response({
+                "status": "error",
+                "match_now": match_now,
+                "wr_now": wr_now,
+                "wr_future": wr_future,
+                "required_no_lose_matches": None,
+                "message": "Win rates must be between 0 and 100 (exclusive for 0 in wr_future)."
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        if wr_future <= wr_now:
+            return Response({
+                "status": "error",
+                "match_now": match_now,
+                "wr_now": wr_now,
+                "wr_future": wr_future,
+                "required_no_lose_matches": None,
+                "message": "Future win rate must be greater than current win rate."
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        current_wins = match_now * wr_now / 100.0
+
+        denominator = (wr_future / 100.0) - 1.0
+        numerator = current_wins - match_now * (wr_future / 100.0)
+
+        if denominator == 0:
+            return Response({
+                "status": "error",
+                "match_now": match_now,
+                "wr_now": wr_now,
+                "wr_future": wr_future,
+                "required_no_lose_matches": None,
+                "message": f"It is not possible to reach a {wr_future}% win rate with a finite number of matches."
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        required_matches = numerator / denominator
+        required_matches = int(required_matches) + (1 if required_matches % 1 > 0 else 0)
+
+        if required_matches < 0:
+            return Response({
+                "status": "error",
+                "match_now": match_now,
+                "wr_now": wr_now,
+                "wr_future": wr_future,
+                "required_no_lose_matches": None,
+                "message": "The target win rate is not achievable with only consecutive wins."
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({
+            "status": "success",
+            "match_now": match_now,
+            "wr_now": wr_now,
+            "wr_future": wr_future,
+            "required_no_lose_matches": required_matches,
+            "message": (
+                f"To achieve a win rate of {wr_future}%, "
+                f"you need {required_matches} consecutive wins without any losses."
+            )
+        }, status=status.HTTP_200_OK)

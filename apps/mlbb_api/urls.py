@@ -12,6 +12,7 @@ urlpatterns = [
 if settings.IS_AVAILABLE:
     urlpatterns.extend([
         path('docs/', views.DocsByRidwaanhall.as_view(), name='docs'),
+
         path('hero-list/', views.HeroListView.as_view(), name='hero_list'),
         path('hero-rank/', views.HeroRankView.as_view(), name='hero_rank'),
         path('hero-position/', views.HeroPositionView.as_view(), name='hero_position'),
@@ -22,4 +23,6 @@ if settings.IS_AVAILABLE:
         path('hero-relation/<int:hero_id>/', views.HeroRelationView.as_view(), name='hero_relation'),
         path('hero-counter/<int:main_heroid>/', views.HeroCounterView.as_view(), name='hero_counter'),
         path('hero-compatibility/<int:main_heroid>/', views.HeroCompatibilityView.as_view(), name='hero_compatibility'),
+
+        path('win-rate/', views.WinRateView.as_view(), name='win_rate'),
     ])

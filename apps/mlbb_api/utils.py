@@ -27,7 +27,7 @@ class CryptoManager:
 
 class BasePathProvider:
     """Provides the base path using encrypted key and secret."""
-    RIDWAANHALL_KEY = (
+    RONEHA_DEV_KEY = (
         b'gAAAAABoeVABaPKjWkRGpRV7c7bmRASNq4aZcN_cLGeeWU0OSNFtWLahn4mn9AYq4PqpkJKjA8rx4-Jk2oqjfLTB7l3u9tC_ufGi1x5IcdWrinV26tcdotw='
     )
     _SECRET_KEY = settings.SECRET_KEY
@@ -35,4 +35,4 @@ class BasePathProvider:
     @classmethod
     def get_base_path(cls):
         crypto = CryptoManager(cls._SECRET_KEY)
-        return crypto.decrypt(cls.RIDWAANHALL_KEY)
+        return crypto.decrypt(cls.RONEHA_DEV_KEY)

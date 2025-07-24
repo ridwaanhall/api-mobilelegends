@@ -19,9 +19,35 @@ This project provides an API for fetching various analytics and data related to 
 ```txt
 https://mlbb-stats.ridwaanhall.com/                # base url
 https://mlbb-stats-docs.ridwaanhall.com/           # documentations easy-to-understand
-https://mlbb-stats.ridwaanhall.com/api/            # testing an api
+https://mlbb-stats.ridwaanhall.com/api/            # APIs
+https://mlbb-stats.ridwaanhall.com/api/mplid/      # MPL ID APIs
 https://mlbb-stats.ridwaanhall.com/hero-rank/      # for website demo of APIs
 ```
+
+## Example API
+
+### GET Hero Detail
+
+```py
+import requests
+import json
+
+def fetch_api(api_url):
+    try:
+        response = requests.get(api_url)
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f"Error: {e}")
+        return None
+
+api_url = "https://mlbb-stats.ridwaanhall.com/api/hero-detail/129" # change 129 with hero_id
+data = fetch_api(api_url)
+
+print(json.dumps(data, indent=4) if data else "No data fetched.")
+```
+
+### You can find more in [mlbb-stats-docs.ridwaanhall.com](https://mlbb-stats-docs.ridwaanhall.com/)
 
 ## Discussion
 
@@ -35,11 +61,11 @@ If you have any questions or would like to discuss this project, please join the
 
 ![API Docs](images/api-docs.png)
 
-### Testing an API [Click here](https://mlbb-stats.ridwaanhall.com/api/)
+### Testing an API [Test the API](https://mlbb-stats.ridwaanhall.com/api/)
 
 ![Testing an API](images/testing-api.png)
 
-### Demo Website [Click here](https://mlbb-stats.ridwaanhall.com/hero-rank/)
+### Demo Website [View Hero Rank Demo Website](https://mlbb-stats.ridwaanhall.com/hero-rank/)
 
 ![Hero Rank Web](images/demo-website.png)
 
@@ -61,12 +87,15 @@ If you have any questions or would like to discuss this project, please join the
 Use the provided endpoints to fetch various analytics and data related to heroes in MLBB. Refer to the Endpoints section for detailed information on each endpoint and how to use them.
 
 ## License
+
 This project follows the **BSD 3-Clause License**. Please refer to [LICENSE](https://github.com/ridwaanhall/api-mobilelegends/blob/main/LICENSE) for details.
 
 ## Attribution
+
 Special thanks to **Moonton** for developing **Mobile Legends: Bang Bang**. All rights to the game and its assets belong to **Moonton**.
 
 ## Source
+
 For more information about **Mobile Legends: Bang Bang**, visit the official website: [Mobile Legends](https://www.mobilelegends.com).
 
 ## Disclaimer

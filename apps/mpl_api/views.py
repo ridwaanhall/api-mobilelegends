@@ -4,6 +4,22 @@ from . import scraper
 from . import serializers
 from rest_framework import status
 
+class MPLIDApiListAPIView(APIView):
+    def get(self, request):
+        api_list = [
+            {"name": "Standings", "url": request.build_absolute_uri('/api/mplid/standings/')},
+            {"name": "Teams", "url": request.build_absolute_uri('/api/mplid/teams/')},
+            {"name": "Team Detail", "url": request.build_absolute_uri('/api/mplid/teams/<team_id>/')},
+            {"name": "Transfers", "url": request.build_absolute_uri('/api/mplid/transfers/')},
+            {"name": "Team Stats", "url": request.build_absolute_uri('/api/mplid/team-stats/')},
+            {"name": "Player Stats", "url": request.build_absolute_uri('/api/mplid/player-stats/')},
+            {"name": "Hero Stats", "url": request.build_absolute_uri('/api/mplid/hero-stats/')},
+            {"name": "Hero Pools", "url": request.build_absolute_uri('/api/mplid/hero-pools/')},
+            {"name": "Player Pools", "url": request.build_absolute_uri('/api/mplid/player-pools/')},
+            {"name": "Standings MVP", "url": request.build_absolute_uri('/api/mplid/standings-mvp/')},
+        ]
+        return Response(api_list, status=status.HTTP_200_OK)
+
 class MPLIDStandingsAPIView(APIView):
     def get(self, request):
         data = scraper.MPLIDStandingsScraper().get_standings()

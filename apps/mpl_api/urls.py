@@ -2,6 +2,8 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path('mplid/', views.MPLIDApiListAPIView.as_view(), name='mplid-api-list'),
+
     path('mplid/standings/', views.MPLIDStandingsAPIView.as_view(), name='mplid-standings'),
     path('mplid/teams/', views.MPLIDTeamAPIView.as_view(), name='mplid-teams'),
     path('mplid/teams/<str:team_id>/', views.MPLIDTeamDetailAPIView.as_view(), name='mplid-team-detail'),

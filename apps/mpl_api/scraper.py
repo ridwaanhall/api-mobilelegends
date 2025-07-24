@@ -6,7 +6,7 @@ import logging
 
 class MPLIDStandingsScraper:
 
-    URL = BasePathProvider.get_mpl_id_path()
+    URL = BasePathProvider.get_mpl_id_path() + "home"
 
     def fetch_html(self):
         response = requests.get(self.URL)

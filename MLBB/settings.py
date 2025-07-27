@@ -21,7 +21,7 @@ MLBB_URL = config('MLBB_URL')
 PROD_URL = config('PROD_URL')
 
 # API Availability Control
-IS_AVAILABLE = config('IS_AVAILABLE', default=True, cast=bool)
+IS_AVAILABLE = config('IS_AVAILABLE', default=False, cast=bool)
 
 # API Status Messages
 API_STATUS_MESSAGES = {

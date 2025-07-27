@@ -102,6 +102,7 @@ def simple_view(request):
         "service_info": {
             "status": status_info['status'],
             "message": status_info['message'],
+            "read_more": "https://ridwaanhall.com/blog/how-usage-monitoring-sustains-mlbb-stats-and-api-pddikti/",
             "version": settings.API_VERSION,
             "author": "ridwaanhall",
             "available_endpoints": status_info['available_endpoints']
@@ -115,8 +116,8 @@ def simple_view(request):
         },
         "data": {
             "api_docs": "https://mlbb-stats-docs.ridwaanhall.com/",
-            "api_url": "https://mlbb-stats.ridwaanhall.com/api/" if settings.IS_AVAILABLE else "Limited access mode",
-            "web_url": "https://mlbb-stats.ridwaanhall.com/hero-rank/" if settings.IS_AVAILABLE else "Limited access mode"
+            "api_url": "https://mlbb-stats.ridwaanhall.com/api/" if settings.IS_AVAILABLE else "https://ridwaanhall.com/blog/how-usage-monitoring-sustains-mlbb-stats-and-api-pddikti/",
+            "web_url": "https://mlbb-stats.ridwaanhall.com/hero-rank/" if settings.IS_AVAILABLE else "https://ridwaanhall.com/blog/how-usage-monitoring-sustains-mlbb-stats-and-api-pddikti/"
         }
     }
     return Response(data)

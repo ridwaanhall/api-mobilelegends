@@ -28,16 +28,18 @@ API_STATUS_MESSAGES = {
     'limited': {
         'status': 'limited',
         'message': 'API is currently in maintenance mode. Only documentation is available.',
+        'support_message': 'You can support us by donating from $1 USD (target: $500 USD) to help enhance API performance and handle high request volumes.',
         'available_endpoints': ['Documentation']
     },
     'available': {
         'status': 'available',
         'message': 'All API endpoints are fully operational.',
+        'support_message': 'You can support us by donating from $1 USD (target: $500 USD) to help enhance API performance and handle high request volumes.',
         'available_endpoints': ['All endpoints']
     }
 }
 
-API_VERSION = config('API_VERSION', default='1.1.2')
+API_VERSION = config('API_VERSION', default='1.1.3')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/

@@ -43,25 +43,44 @@ class DocsByRidwaanhall(APIView):
     def get(self, request):
         status_info = settings.API_STATUS_MESSAGES['available'] if settings.IS_AVAILABLE else settings.API_STATUS_MESSAGES['limited']
         return Response({
-            'code': 200,
-            'status': 'success',
-            'message': 'Request processed successfully',
-            'api_info': {
-                'name': 'Mobile Legends: Bang Bang API',
-                'version': settings.API_VERSION,
-                'developer': 'ridwaanhall',
-                'status': status_info['status'],
-                'message': status_info['message'],
-                'available_endpoints': status_info['available_endpoints']
+            "code": 200,
+            "status": "success",
+            "message": "Request processed successfully",
+            "meta": {
+                "version": settings.API_VERSION,
+                "author": "ridwaanhall",
+                "support": {
+                    "status": status_info['status'],
+                    "message": status_info['message'],
+                    "support_message": settings.SUPPORT_DETAILS['support_message'],
+                    "donation_link": settings.SUPPORT_DETAILS['donation_link']
+                },
+                "available_endpoints": status_info['available_endpoints']
             },
-            'new_mlbb_api': _get_new_mlbb_api_endpoints(request),
-            'new_mpl_id_api': _get_new_mpl_id_endpoints(request),
-            'data': {
-                'api_docs': 'https://mlbb-stats-docs.ridwaanhall.com/',
-                'documentation': _get_available_endpoints(request),
-                'message': 'Please visit api_docs for detailed API documentation'
+            "services": {
+                "mlbb_api": {
+                    "status": status_info['status'],
+                    "message": "MLBB API is currently under maintenance." if not settings.IS_AVAILABLE else "MLBB API is online.",
+                    "endpoints": _get_available_endpoints(request)
+                },
+                "mpl_id": {
+                    "status": status_info['status'],
+                    "message": "MPL ID API is currently under maintenance." if not settings.IS_AVAILABLE else "MPL ID API is online.",
+                    "endpoints": _get_new_mpl_id_endpoints(request)
+                },
+                "mlbb_new_api": {
+                    "status": status_info['status'],
+                    "message": "MLBB new API is currently under maintenance." if not settings.IS_AVAILABLE else "MLBB API is online.",
+                    "endpoints": _get_new_mlbb_api_endpoints(request)
+                },
+                
+            },
+            "links": {
+                "api_url": "https://mlbb-stats.ridwaanhall.com/api/" if settings.IS_AVAILABLE else "https://ridwaanhall.com/blog/how-usage-monitoring-sustains-mlbb-stats-and-api-pddikti/",
+                "web_url": "https://mlbb-stats.ridwaanhall.com/hero-rank/" if settings.IS_AVAILABLE else "https://ridwaanhall.com/blog/how-usage-monitoring-sustains-mlbb-stats-and-api-pddikti/",
+                "docs": "https://mlbb-stats-docs.ridwaanhall.com/" if settings.IS_AVAILABLE else "https://ridwaanhall.com/blog/how-usage-monitoring-sustains-mlbb-stats-and-api-pddikti/",
             }
-        })
+        }, status=status.HTTP_200_OK)
 
 def _get_new_mlbb_api_endpoints(request) -> Dict[str, str]:
     """Return new MLBB API endpoints based on API availability."""

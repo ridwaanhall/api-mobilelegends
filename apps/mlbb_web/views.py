@@ -95,34 +95,45 @@ class MLBBWebService:
 @api_view(['GET'])
 def simple_view(request):
     status_info = settings.API_STATUS_MESSAGES['available'] if settings.IS_AVAILABLE else settings.API_STATUS_MESSAGES['limited']
-    data = {
+    return Response({
         "code": 200,
         "status": "success",
         "message": "Request processed successfully",
-        "service_info": {
-            "status": status_info['status'],
-            "message": status_info['message'],
-            "read_more": "https://ridwaanhall.com/blog/how-usage-monitoring-sustains-mlbb-stats-and-api-pddikti/",
-            "support_message": "You can support us by donating from $1 USD (target: $500 USD) to help enhance API performance and handle high request volumes.",
+        "meta": {
             "version": settings.API_VERSION,
             "author": "ridwaanhall",
+            "support": {
+                "status": status_info['status'],
+                "message": status_info['message'],
+                "support_message": settings.SUPPORT_DETAILS['support_message'],
+                "donation_link": settings.SUPPORT_DETAILS['donation_link']
+            },
             "available_endpoints": status_info['available_endpoints']
         },
-        'new_mlbb_api': _get_new_mlbb_api_endpoints(request),
-        "new_mpl_id_api": {
-            "status": status_info['status'],
-            "message": status_info['message'],
-            "available_endpoints": status_info['available_endpoints'],
-            "mpl_id_endpoints": _get_new_mpl_id_endpoints(request)
+        "services": {
+            "mlbb_api": {
+                "status": status_info['status'],
+                "message": "MLBB API is currently under maintenance." if not settings.IS_AVAILABLE else "MLBB API is online.",
+                "endpoints": _get_available_endpoints(request)
+            },
+            "mpl_id": {
+                "status": status_info['status'],
+                "message": "MPL ID API is currently under maintenance." if not settings.IS_AVAILABLE else "MPL ID API is online.",
+                "endpoints": _get_new_mpl_id_endpoints(request)
+            },
+            "mlbb_new_api": {
+                "status": status_info['status'],
+                "message": "MLBB new API is currently under maintenance." if not settings.IS_AVAILABLE else "MLBB new API is online.",
+                "endpoints": _get_new_mlbb_api_endpoints(request)
+            },
+            
         },
-        "data": {
-            "donate": "https://github.com/sponsors/ridwaanhall",
-            "api_docs": "https://mlbb-stats-docs.ridwaanhall.com/",
+        "links": {
             "api_url": "https://mlbb-stats.ridwaanhall.com/api/" if settings.IS_AVAILABLE else "https://ridwaanhall.com/blog/how-usage-monitoring-sustains-mlbb-stats-and-api-pddikti/",
-            "web_url": "https://mlbb-stats.ridwaanhall.com/hero-rank/" if settings.IS_AVAILABLE else "https://ridwaanhall.com/blog/how-usage-monitoring-sustains-mlbb-stats-and-api-pddikti/"
+            "web_url": "https://mlbb-stats.ridwaanhall.com/hero-rank/" if settings.IS_AVAILABLE else "https://ridwaanhall.com/blog/how-usage-monitoring-sustains-mlbb-stats-and-api-pddikti/",
+            "docs": "https://mlbb-stats-docs.ridwaanhall.com/" if settings.IS_AVAILABLE else "https://ridwaanhall.com/blog/how-usage-monitoring-sustains-mlbb-stats-and-api-pddikti/",
         }
-    }
-    return Response(data)
+    })
 
 def _get_new_mlbb_api_endpoints(request) -> Dict[str, str]:
     """Return new MLBB API endpoints based on API availability."""
@@ -150,6 +161,25 @@ def _get_new_mpl_id_endpoints(request) -> Dict[str, str]:
             'standings_mvp': f'{base_url}standings-mvp/',
         }
     return {}
+
+def _get_available_endpoints(request) -> Dict[str, str]:
+    """Return available endpoints based on API availability."""
+    base_url = request.build_absolute_uri('/api/')
+    if settings.IS_AVAILABLE:
+        return {
+            'documentation': f'{base_url}',
+            'hero_list': f'{base_url}hero-list/',
+            'hero_rank': f'{base_url}hero-rank/',
+            'hero_position': f'{base_url}hero-position/',
+            'hero_detail': f'{base_url}hero-detail/{{hero_id}}/',
+            'hero_detail_stats': f'{base_url}hero-detail-stats/{{main_heroid}}/',
+            'hero_skill_combo': f'{base_url}hero-skill-combo/{{hero_id}}/',
+            'hero_rate': f'{base_url}hero-rate/{{main_heroid}}/',
+            'hero_relation': f'{base_url}hero-relation/{{hero_id}}/',
+            'hero_counter': f'{base_url}hero-counter/{{main_heroid}}/',
+            'hero_compatibility': f'{base_url}hero-compatibility/{{main_heroid}}/'
+        }
+    return {'documentation': f'{base_url}'}
 
 def favicon_view(request):
     favicon_path = os.path.join(dj_settings.BASE_DIR, 'staticfiles', 'favicon.ico')

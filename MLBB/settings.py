@@ -32,7 +32,7 @@ SUPPORT_DETAILS = {
 API_STATUS_MESSAGES = {
     'limited': {
         'status': 'limited',
-        'message': 'API is currently in maintenance mode.',
+        'message': 'API is currently in maintenance mode. Will available August 28, 2025.',
         'available_endpoints': ['Base API']
     },
     'available': {

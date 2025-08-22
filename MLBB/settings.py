@@ -21,7 +21,7 @@ MLBB_URL = config('MLBB_URL')
 PROD_URL = config('PROD_URL')
 
 # API Availability Control
-IS_AVAILABLE = config('IS_AVAILABLE', default=False, cast=bool)
+IS_AVAILABLE = config('IS_AVAILABLE', default=True, cast=bool)
 
 SUPPORT_DETAILS = {
     'support_message': 'You can support us by donating from $1 USD (target: $500 USD) to help enhance API performance and handle high request volumes.',

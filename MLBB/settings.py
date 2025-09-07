@@ -4,10 +4,6 @@ from decouple import config
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-MLBB_URL = config('MLBB_URL')
-# LOCAL_URL = config('LOCAL_URL')
-PROD_URL = config('PROD_URL')
-
 # API Availability Control
 IS_AVAILABLE = config('IS_AVAILABLE', default=True, cast=bool)
 
@@ -30,7 +26,7 @@ API_STATUS_MESSAGES = {
     }
 }
 
-API_VERSION = config('API_VERSION', default='1.1.4')
+API_VERSION = config('API_VERSION', default='1.1.5')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -38,8 +34,16 @@ API_VERSION = config('API_VERSION', default='1.1.4')
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY')
 
+MLBB_URL = config('MLBB_URL')
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
+
+# Set base URL based on DEBUG mode
+if DEBUG:
+    PROD_URL = 'http://127.0.0.1:8000/api/'
+else:
+    PROD_URL = config('PROD_URL')
 
 if DEBUG:
     ALLOWED_HOSTS = []

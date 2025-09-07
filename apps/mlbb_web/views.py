@@ -192,7 +192,7 @@ class MLBBWebViews:
     @staticmethod
     @web_availability_required
     def hero_list_web(request):
-        data = MLBBWebService.get_json(f'{PROD_URL}hero-list/')
+        data = MLBBWebService.get_json(f'{PROD_URL}hero-list-new/')
         return render(request, 'mlbb_web/hero-list.html', {'data': data})
 
     @staticmethod

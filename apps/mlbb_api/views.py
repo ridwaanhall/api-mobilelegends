@@ -116,6 +116,7 @@ def _get_available_endpoints(request) -> Dict[str, str]:
         return {
             'documentation': f'{base_url}',
             'hero_list': f'{base_url}hero-list/',
+            'hero_list_new': f'{base_url}hero-list-new/',
             'hero_rank': f'{base_url}hero-rank/',
             'hero_position': f'{base_url}hero-position/',
             'hero_detail': f'{base_url}hero-detail/{{hero_id}}/',
@@ -177,6 +178,41 @@ class HeroListView(APIAvailabilityMixin, APIView):
         if lang == 'ru':
             return Response(HEROES_RU)
         return Response(HEROES_EN)
+
+class HeroListNewView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        base_path = BasePathProvider.get_base_path()
+        url_hero_list_new = f"{MLBB_URL}{base_path}/2756564"
+
+        lang = request.GET.get('lang', 'en')
+
+        payload = {
+            "pageSize": 10000,
+            "sorts": [
+                {
+                    "data": {
+                        "field": "hero_id",
+                        "order": "desc"
+                    },
+                    "type": "sequence"
+                }
+            ],
+            "pageIndex": 1,
+            "fields": [
+                "hero_id",
+                "hero.data.head",
+                "hero.data.name",
+                "hero.data.smallmap",
+            ]
+        }
+
+        headers = MLBBHeaderBuilder.get_lang_header(lang)
+        response = requests.post(url_hero_list_new, json=payload, headers=headers)
+        if response.status_code == 200:
+            return Response(response.json())
+        return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
 
 class HeroRankView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
     permission_classes = [AllowAny]

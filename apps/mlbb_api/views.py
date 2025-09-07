@@ -317,6 +317,117 @@ class HeroPositionView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
             return Response(response.json())
         return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
 
+class HeroRecommendationView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        base_path = BasePathProvider.get_base_path()
+        url_1_day = f"{MLBB_URL}{base_path}/2756567"
+        url_3_days = f"{MLBB_URL}{base_path}/2756568"
+        url_7_days = f"{MLBB_URL}{base_path}/2756569"
+        url_15_days = f"{MLBB_URL}{base_path}/2756565"
+        url_30_days = f"{MLBB_URL}{base_path}/2756570"
+
+        role_map = {
+            'all': [1, 2, 3, 4, 5, 6],
+            'tank': [1],
+            'fighter': [2],
+            'ass': [3],
+            'mage': [4],
+            'mm': [5],
+            'supp': [6]
+        }
+        lane_map = {
+            'all': [1, 2, 3, 4, 5],
+            'exp': [1],
+            'mid': [2],
+            'roam': [3],
+            'jungle': [4],
+            'gold': [5]
+        }
+
+        role = request.GET.get('role', 'all')
+        lane = request.GET.get('lane', 'all')
+
+        def create_rank_payload(rank_value):
+            return {
+                "pageSize": 20,
+                "filters": [
+                    {"field": "bigrank", "operator": "eq", "value": rank_value},
+                    {"field": "match_type", "operator": "eq", "value": "0"},
+                    {"field": "<hero.data.sortid>", "operator": "hasAnyOf", "value": role_map.get(role, [1, 2, 3, 4, 5, 6])},
+                    {"field": "<hero.data.roadsort>", "operator": "hasAnyOf", "value": lane_map.get(lane, [1, 2, 3, 4, 5])}
+                ],
+                "sorts": [],
+                "pageIndex": 1,
+                "fields": [
+                    "main_hero",
+                    "main_hero_appearance_rate",
+                    "main_hero_ban_rate",
+                    "main_hero_channel",
+                    "main_hero_win_rate",
+                    "main_heroid",
+                    "data.sub_hero.hero",
+                    "data.sub_hero.hero_channel",
+                    "data.sub_hero.increase_win_rate",
+                    "data.sub_hero.heroid"
+                ]
+            }
+
+        all_rank = create_rank_payload("101")
+        epic_rank = create_rank_payload("5")
+        legend_rank = create_rank_payload("6")
+        mythic_rank = create_rank_payload("7")
+        honor_rank = create_rank_payload("8")
+        glory_rank = create_rank_payload("9")
+
+        days = request.GET.get('days', '1')
+        rank = request.GET.get('rank', 'all')
+        page_size = request.GET.get('size', '20')
+        page_index = request.GET.get('index', '1')
+        sort_field = request.GET.get('sort_field', 'win_rate')
+        sort_order = request.GET.get('sort_order', 'desc')
+        lang = request.GET.get('lang', 'en')
+
+        sort_field_map = {
+            'pick_rate': 'main_hero_appearance_rate',
+            'ban_rate': 'main_hero_ban_rate',
+            'win_rate': 'main_hero_win_rate'
+        }
+
+        url_map = {
+            '1': url_1_day,
+            '3': url_3_days,
+            '7': url_7_days,
+            '15': url_15_days,
+            '30': url_30_days
+        }
+
+        rank_map = {
+            'all': all_rank,
+            'epic': epic_rank,
+            'legend': legend_rank,
+            'mythic': mythic_rank,
+            'honor': honor_rank,
+            'glory': glory_rank
+        }
+
+        sort_field = sort_field_map.get(sort_field, 'main_hero_win_rate')
+        url = url_map.get(days, url_1_day)
+        payload = rank_map.get(rank, all_rank)
+
+        payload['pageSize'] = int(page_size)
+        payload['pageIndex'] = int(page_index)
+        payload['sorts'] = [
+            {"data": {"field": sort_field, "order": sort_order}, "type": "sequence"}
+        ]
+
+        headers = MLBBHeaderBuilder.get_lang_header(lang)
+        response = requests.post(url, json=payload, headers=headers)
+        if response.status_code == 200:
+            return Response(response.json())
+        return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
+
 class HeroDetailView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
     permission_classes = [AllowAny]
 

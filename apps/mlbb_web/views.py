@@ -141,6 +141,7 @@ def _get_new_mlbb_api_endpoints(request) -> Dict[str, str]:
     if settings.IS_AVAILABLE:
         return {
             'win_rate': f'{base_url}win-rate/?match-now=100&wr-now=50&wr-future=75',
+            'hero_list_new': f'{base_url}hero-list-new/',
         }
     return {}
 
@@ -169,6 +170,7 @@ def _get_available_endpoints(request) -> Dict[str, str]:
         return {
             'documentation': f'{base_url}',
             'hero_list': f'{base_url}hero-list/',
+            'hero_list_new': f'{base_url}hero-list-new/',
             'hero_rank': f'{base_url}hero-rank/',
             'hero_position': f'{base_url}hero-position/',
             'hero_detail': f'{base_url}hero-detail/{{hero_id}}/',

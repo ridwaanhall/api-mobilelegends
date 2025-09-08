@@ -5,13 +5,13 @@ from . import views
 
 
 urlpatterns = [
-    path('', views.DocsByRidwaanhall.as_view(), name='root_redirect'),
+    path('', views.MlbbApiEndpoints.as_view(), name='root_redirect'),
 ]
 
 # Add other API endpoints only if available
 if settings.IS_AVAILABLE:
     urlpatterns.extend([
-        path('docs/', views.DocsByRidwaanhall.as_view(), name='docs'),
+        path('docs/', views.MlbbApiEndpoints.as_view(), name='docs'),
 
         path('hero-list/', views.HeroListView.as_view(), name='hero_list'),
         path('hero-list-new/', views.HeroListNewView.as_view(), name='hero_list_new'),

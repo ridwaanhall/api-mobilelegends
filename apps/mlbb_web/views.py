@@ -93,7 +93,7 @@ class MLBBWebService:
             MLBBWebService.round_rates(sub_hero, ['hero_appearance_rate', 'hero_win_rate', 'increase_win_rate'])
 
 @api_view(['GET'])
-def simple_view(request):
+def mlbb_api_endpoint_view(request):
     status_info = settings.API_STATUS_MESSAGES['available'] if settings.IS_AVAILABLE else settings.API_STATUS_MESSAGES['limited']
     return Response({
         "code": 200,
@@ -123,7 +123,7 @@ def simple_view(request):
             },
             "mlbb_new_api": {
                 "status": status_info['status'],
-                "message": "MLBB new API is currently under maintenance." if not settings.IS_AVAILABLE else "MLBB new API is online.",
+                "message": "MLBB new API is currently under maintenance." if not settings.IS_AVAILABLE else "MLBB API is online.",
                 "endpoints": _get_new_mlbb_api_endpoints(request)
             }
         },

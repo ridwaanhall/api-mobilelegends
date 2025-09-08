@@ -71,16 +71,7 @@ If you have any questions or would like to discuss this project, please join the
 
 ## Available Endpoints
 
-- Endpoints
-  - Hero Rank
-  - Hero Position
-  - Hero Detail
-  - Hero Detail Stats
-  - Hero Skill Combo
-  - Hero Rate
-  - Hero Relation
-  - Hero Counter
-  - Hero Compatibility
+Visit this site to view [mlbb-stats.ridwaanhall.com](https://mlbb-stats.ridwaanhall.com)
 
 ## Usage
 

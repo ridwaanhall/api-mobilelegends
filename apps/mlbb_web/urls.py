@@ -3,7 +3,6 @@ from django.conf import settings
 from . import views
 
 urlpatterns = [
-    path('', views.mlbb_api_endpoint_view, name='simple_view'),
     path('favicon.ico', views.favicon_view, name='favicon'),
 ]
 

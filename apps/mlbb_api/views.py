@@ -37,7 +37,7 @@ class ErrorResponseMixin:
     def error_response(message: str, details: Any = None, status_code: int = 400) -> Response:
         return Response({'error': message, 'details': details}, status=status_code)
 
-class DocsByRidwaanhall(APIView):
+class MlbbApiEndpoints(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
@@ -88,6 +88,7 @@ def _get_new_mlbb_api_endpoints(request) -> Dict[str, str]:
     if settings.IS_AVAILABLE:
         return {
             'win_rate': f'{base_url}win-rate/?match-now=100&wr-now=50&wr-future=75',
+            'hero_list_new': f'{base_url}hero-list-new/',
         }
     return {}
 

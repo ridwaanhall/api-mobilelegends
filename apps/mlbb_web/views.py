@@ -125,8 +125,7 @@ def simple_view(request):
                 "status": status_info['status'],
                 "message": "MLBB new API is currently under maintenance." if not settings.IS_AVAILABLE else "MLBB new API is online.",
                 "endpoints": _get_new_mlbb_api_endpoints(request)
-            },
-            
+            }
         },
         "links": {
             "api_url": "https://mlbb-stats.ridwaanhall.com/api/" if settings.IS_AVAILABLE else "https://ridwaanhall.com/blog/how-usage-monitoring-sustains-mlbb-stats-and-api-pddikti/",

@@ -14,6 +14,7 @@ if settings.IS_AVAILABLE:
         path('docs/', views.DocsByRidwaanhall.as_view(), name='docs'),
 
         path('hero-list/', views.HeroListView.as_view(), name='hero_list'),
+        path('hero-list-new/', views.HeroListNewView.as_view(), name='hero_list_new'),
         path('hero-rank/', views.HeroRankView.as_view(), name='hero_rank'),
         path('hero-position/', views.HeroPositionView.as_view(), name='hero_position'),
         path('hero-detail/<int:hero_id>/', views.HeroDetailView.as_view(), name='hero_detail'),

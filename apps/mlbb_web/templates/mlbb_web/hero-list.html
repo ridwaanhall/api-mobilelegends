@@ -11,25 +11,39 @@
                             ID
                         </th>
                         <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            Head
+                        </th>
+                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                             Hero Name
+                        </th>
+                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            Action
                         </th>
                     </tr>
                 </thead>
                 <tbody class="bg-gray-800 divide-y divide-gray-700">
-                    {% for id, hero in data.items %}
+                    {% for record in data.data.records %}
                     <tr class="hover:bg-gray-700/60 transition duration-150 ease-in-out even:bg-gray-800/50 odd:bg-gray-900/30">
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-200 tabular-nums">
-                            {{ id }}
+                            {{ record.data.hero_id }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <a href="{% url 'hero_detail_web' hero_id=record.data.hero_id %}">
+                                <img src="{{ record.data.hero.data.head }}" alt="{{ record.data.hero.data.name }}" class="w-12 h-12 rounded-lg object-cover border border-gray-600 hover:border-indigo-400 transition duration-150 ease-in-out cursor-pointer">
+                            </a>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                            <a href="{% url 'hero_detail_web' hero_id=id %}" class="text-indigo-400 hover:text-indigo-300 hover:underline font-semibold transition duration-150 ease-in-out">
-                                {{ hero }}
+                            {{ record.data.hero.data.name }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            <a href="{% url 'hero_detail_web' hero_id=record.data.hero_id %}" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                                Show Detail
                             </a>
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="2" class="px-6 py-10 whitespace-nowrap text-sm text-center text-gray-500 italic">
+                        <td colspan="4" class="px-6 py-10 whitespace-nowrap text-sm text-center text-gray-500 italic">
                             No heroes available at the moment.
                         </td>
                     </tr>

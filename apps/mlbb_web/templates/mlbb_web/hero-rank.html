@@ -82,7 +82,9 @@
                         <td class="px-6 py-4">
                             <div class="flex items-center">
                                 <div class="flex-shrink-0 h-12 w-12">
-                                    <img class="h-12 w-12 rounded-full object-cover border-2 border-gray-600" src="{{ record.data.main_hero.data.head }}" alt="{{ record.data.main_hero.data.name }}">
+                                    <a href="{% url 'hero_detail_web' hero_id=record.data.main_heroid %}">
+                                        <img class="h-12 w-12 rounded-full object-cover border-2 border-gray-600 hover:opacity-80 transition-opacity" src="{{ record.data.main_hero.data.head }}" alt="{{ record.data.main_hero.data.name }}">
+                                    </a>
                                 </div>
                                 <div class="ml-4">
                                     <div class="text-sm font-medium text-gray-100">{{ record.data.main_hero.data.name }}</div>
@@ -96,7 +98,9 @@
                             <div class="flex items-center space-x-4 flex-wrap">
                                 {% for sub_hero in record.data.sub_hero %}
                                 <div class="flex items-center space-x-1 py-1">
-                                    <img class="h-8 w-8 rounded-full object-cover border border-gray-600" src="{{ sub_hero.hero.data.head }}" alt="{{ sub_hero.hero.data.name }}">
+                                    <a href="{% url 'hero_detail_web' hero_id=sub_hero.heroid %}">
+                                        <img class="h-8 w-8 rounded-full object-cover border border-gray-600" src="{{ sub_hero.hero.data.head }}" alt="{{ sub_hero.hero.data.name }}">
+                                    </a>
                                     <span class="text-xs text-gray-400">{{ sub_hero.hero.data.name }}: {{ sub_hero.increase_win_rate|floatformat:2 }}%</span>
                                 </div>
                                 {% empty %}

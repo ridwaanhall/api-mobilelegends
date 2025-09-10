@@ -12,7 +12,7 @@ Below are the dependencies and their versions currently supported and maintained
 | cffi                   | 1.17.1       | ✅         |
 | charset-normalizer     | 3.4.0        | ✅         |
 | cryptography           | 45.0.4       | ✅         |
-| Django                 | 5.2.4        | ✅         |
+| Django                 | 5.2.6        | ✅         |
 | djangorestframework    | 3.15.2       | ✅         |
 | idna                   | 3.10         | ✅         |
 | pycparser              | 2.22         | ✅         |

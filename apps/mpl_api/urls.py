@@ -20,4 +20,9 @@ if settings.IS_AVAILABLE:
         path('mplid/hero-pools/', views.MPLIDHeroPoolsAPIView.as_view(), name='mplid-hero-pools'),
         path('mplid/player-pools/', views.MPLIDPlayerPoolsAPIView.as_view(), name='mplid-player-pools'),
         path('mplid/standings-mvp/', views.MPLIDStandingsMVPAPIView.as_view(), name='mplid-standings-mvp'),
+        
+        # Schedule endpoints
+        path('mplid/schedule/', views.MPLIDScheduleAPIView.as_view(), name='mplid-schedule'),
+        path('mplid/schedule/week/', views.MPLIDScheduleAllWeeksAPIView.as_view(), name='mplid-schedule-weeks'),
+        path('mplid/schedule/week/<int:week_number>/', views.MPLIDScheduleWeekAPIView.as_view(), name='mplid-schedule-week'),
     ])

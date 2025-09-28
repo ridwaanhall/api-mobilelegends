@@ -103,3 +103,31 @@ class MPLIDStandingsMVPSerializer(serializers.Serializer):
     player_logo = serializers.URLField(allow_null=True)
     team_logo = serializers.URLField(allow_null=True)
     point = serializers.IntegerField(allow_null=True)
+
+
+class MPLIDScheduleTeamSerializer(serializers.Serializer):
+    name = serializers.CharField(allow_null=True)
+    logo = serializers.URLField(allow_null=True)
+    score = serializers.IntegerField(allow_null=True)
+
+
+class MPLIDScheduleMatchSerializer(serializers.Serializer):
+    match_id = serializers.IntegerField(allow_null=True)
+    match_date = serializers.CharField(allow_null=True)
+    match_time = serializers.CharField(allow_null=True)
+    team1 = MPLIDScheduleTeamSerializer()
+    team2 = MPLIDScheduleTeamSerializer()
+    replay_link = serializers.URLField(allow_null=True)
+    status = serializers.CharField(allow_null=True)
+
+
+class MPLIDScheduleWeekSerializer(serializers.Serializer):
+    week = serializers.IntegerField()
+    matches = MPLIDScheduleMatchSerializer(many=True)
+
+
+class MPLIDScheduleAllSerializer(serializers.Serializer):
+    """Serializer for all weeks schedule data"""
+    def to_representation(self, instance):
+        # instance is a dict with week_1, week_2, etc. keys
+        return instance

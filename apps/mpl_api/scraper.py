@@ -589,3 +589,207 @@ class MPLIDStatsScraper:
             mvp_standings.append(mvp)
         logging.warning("Parsed %d MVP standings cards", len(mvp_standings))
         return mvp_standings
+
+class MPLIDScheduleScraper:
+    base_url = BasePathProvider.get_mpl_id_path()
+    URL = f"{base_url}schedule"
+
+    def fetch_html(self):
+        response = requests.get(self.URL)
+        response.raise_for_status()
+        return response.text
+
+    def parse_schedule(self, html):
+        soup = BeautifulSoup(html, "html.parser")
+        schedule_data = {}
+        
+        # Debug: Log the beginning of HTML to see what we're working with
+        logging.warning("HTML preview (first 500 chars): %s", html[:500])
+        
+        # First find the outer-tabs-schedule container
+        outer_tabs = soup.find("div", class_="outer-tabs-schedule")
+        if not outer_tabs:
+            logging.warning("outer-tabs-schedule div not found! Trying to find week panels directly...")
+            # Fallback to direct search
+            week_panels = soup.find_all("div", id=lambda x: x and x.startswith("t-week-"))
+        else:
+            logging.warning("Found outer-tabs-schedule container")
+            # Find all week tabs within the outer container
+            week_panels = outer_tabs.find_all("div", id=lambda x: x and x.startswith("t-week-"))
+        
+        logging.warning("Found %d week panels", len(week_panels))
+        
+        if not week_panels:
+            # Try alternative selectors for week panels
+            week_panels = soup.find_all("div", class_=lambda x: x and "week" in str(x).lower())
+            logging.warning("Alternative search found %d potential week panels", len(week_panels))
+        
+        for panel in week_panels:
+            week_id = panel.get("id")
+            if not week_id:
+                continue
+                
+            week_number = week_id.replace("t-week-", "")
+            logging.warning("Processing week panel: %s", week_id)
+            
+            matches = []
+            current_date = None
+            
+            # Try multiple approaches to find matches
+            # Approach 1: Look for column containers
+            col_containers = panel.find_all("div", class_=lambda x: x and "col-lg-" in str(x))
+            logging.warning("Found %d column containers in week %s", len(col_containers), week_number)
+            
+            for col_container in col_containers:
+                # Look for date divs first
+                date_divs = col_container.find_all("div", class_="match date")
+                logging.warning("Found %d date divs in column", len(date_divs))
+                
+                for date_div in date_divs:
+                    current_date = date_div.get_text(strip=True)
+                    logging.warning("Processing date: %s", current_date)
+                    
+                    # Find the parent div that contains this date and the matches
+                    parent_div = date_div.parent
+                    if parent_div:
+                        # Find all match divs in this parent (excluding the date div)
+                        # Look for divs with class starting with "match position-relative"
+                        match_divs = parent_div.find_all("div", class_=lambda x: x and "match position-relative" in str(x))
+                        logging.warning("Found %d match divs for date %s", len(match_divs), current_date)
+                        
+                        for match_div in match_divs:
+                            match_data = self._parse_single_match(match_div, current_date)
+                            if match_data:
+                                matches.append(match_data)
+                                logging.warning("Successfully parsed match: %s vs %s", 
+                                              match_data['team1']['name'], match_data['team2']['name'])
+            
+            # Approach 2: If no matches found, try direct search in the panel
+            if not matches:
+                logging.warning("No matches found in columns, trying direct search in panel")
+                all_match_divs = panel.find_all("div", class_=lambda x: x and "match position-relative" in str(x))
+                logging.warning("Found %d match divs directly in panel", len(all_match_divs))
+                
+                for match_div in all_match_divs:
+                    # Try to find the closest date
+                    date_elem = match_div.find_previous("div", class_="match date")
+                    if date_elem:
+                        current_date = date_elem.get_text(strip=True)
+                    
+                    match_data = self._parse_single_match(match_div, current_date or "Date not found")
+                    if match_data:
+                        matches.append(match_data)
+                        logging.warning("Successfully parsed match from direct search: %s vs %s", 
+                                      match_data['team1']['name'], match_data['team2']['name'])
+            
+            schedule_data[f"week_{week_number}"] = {
+                "week": int(week_number),
+                "matches": matches
+            }
+            logging.warning("Week %s completed with %d matches", week_number, len(matches))
+        
+        logging.warning("Parsed schedule for %d weeks, total matches across all weeks: %d", 
+                       len(schedule_data), sum(len(week['matches']) for week in schedule_data.values()))
+        return schedule_data
+    
+    def _parse_single_match(self, match_div, match_date):
+        """Parse a single match from the match div"""
+        try:
+            # Debug: Log the match div HTML structure
+            logging.warning("Parsing match div: %s", str(match_div)[:200] + "...")
+            
+            # Find the main content div that contains team info
+            main_content = match_div.find("div", class_="d-flex flex-row justify-content-between align-items-center")
+            if not main_content:
+                logging.warning("Main content div not found")
+                return None
+            
+            # Team 1 info - look for team1 class within main content
+            # Based on the HTML structure: "team team1 d-flex flex-column justify-content-center align-items-center"
+            team1_div = main_content.find("div", class_=lambda x: x and "team" in str(x) and "team1" in str(x))
+            if not team1_div:
+                logging.warning("Team1 div not found in main content")
+                return None
+            
+            team1_logo_img = team1_div.find("img")
+            team1_logo = team1_logo_img["src"] if team1_logo_img else None
+            team1_name_div = team1_div.find("div", class_="name")
+            team1_name = team1_name_div.get_text(strip=True) if team1_name_div else None
+            
+            # Team 2 info - look for team2 class within main content
+            team2_div = main_content.find("div", class_=lambda x: x and "team" in str(x) and "team2" in str(x))
+            if not team2_div:
+                logging.warning("Team2 div not found in main content")
+                return None
+                
+            team2_logo_img = team2_div.find("img")
+            team2_logo = team2_logo_img["src"] if team2_logo_img else None
+            team2_name_div = team2_div.find("div", class_="name")
+            team2_name = team2_name_div.get_text(strip=True) if team2_name_div else None
+            
+            logging.warning("Found teams: %s vs %s", team1_name, team2_name)
+            
+            # Scores - they appear as two separate divs with class "score font-primary" within main_content
+            score_divs = main_content.find_all("div", class_="score font-primary")
+            team1_score = None
+            team2_score = None
+            if len(score_divs) >= 2:
+                try:
+                    team1_score = int(score_divs[0].get_text(strip=True))
+                    team2_score = int(score_divs[1].get_text(strip=True))
+                except (ValueError, IndexError):
+                    pass
+            
+            # Match time - look in the time div within main_content
+            time_div = main_content.find("div", class_="time")
+            match_time = None
+            if time_div:
+                time_text_div = time_div.find("div", style=lambda x: x and "letter-spacing" in str(x))
+                match_time = time_text_div.get_text(strip=True) if time_text_div else None
+            
+            # Match details ID (for future use)
+            detail_link = match_div.find("a", onclick=lambda x: x and "openMatchDetail" in x)
+            match_id = None
+            if detail_link:
+                onclick_text = detail_link.get("onclick", "")
+                # Extract match ID from onclick="openMatchDetail(875)"
+                import re
+                match_id_match = re.search(r'openMatchDetail\((\d+)\)', onclick_text)
+                if match_id_match:
+                    match_id = int(match_id_match.group(1))
+            
+            # Replay link
+            replay_link_tag = match_div.find("a", class_="button-watch replay")
+            replay_link = replay_link_tag["href"] if replay_link_tag else None
+            
+            # Determine match status
+            status = "scheduled"
+            if team1_score is not None and team2_score is not None:
+                status = "completed"
+            elif replay_link:
+                status = "completed"  # Has replay link, so it's completed
+            
+            return {
+                "match_id": match_id,
+                "match_date": match_date,
+                "match_time": match_time,
+                "team1": {
+                    "name": team1_name,
+                    "logo": team1_logo,
+                    "score": team1_score
+                },
+                "team2": {
+                    "name": team2_name,
+                    "logo": team2_logo,
+                    "score": team2_score
+                },
+                "replay_link": replay_link,
+                "status": status
+            }
+        except Exception as e:
+            logging.warning("Error parsing match: %s", str(e))
+            return None
+    
+    
+
+

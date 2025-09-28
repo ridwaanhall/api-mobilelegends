@@ -632,7 +632,8 @@ class MPLIDScheduleScraper:
             week_number = week_id.replace("t-week-", "")
             logging.warning("Processing week panel: %s", week_id)
             
-            matches = []
+            # Dictionary to group matches by date
+            matches_by_date = {}
             current_date = None
             
             # Try multiple approaches to find matches
@@ -691,12 +692,18 @@ class MPLIDScheduleScraper:
                         for match_div in match_divs:
                             match_data = self._parse_single_match(match_div, current_date)
                             if match_data:
-                                matches.append(match_data)
+                                # Group matches by date
+                                date_key = match_data['match_date']
+                                if date_key not in matches_by_date:
+                                    matches_by_date[date_key] = []
+                                # Remove date from individual match since it's now the key
+                                match_data_without_date = {k: v for k, v in match_data.items() if k != 'match_date'}
+                                matches_by_date[date_key].append(match_data_without_date)
                                 logging.warning("Successfully parsed match: %s vs %s", 
                                               match_data['team1']['name'], match_data['team2']['name'])
             
             # Approach 2: If no matches found, try direct search in the panel
-            if not matches:
+            if not matches_by_date:
                 logging.warning("No matches found in columns, trying direct search in panel")
                 all_match_divs = panel.find_all("div", class_=lambda x: x and "match position-relative" in str(x))
                 logging.warning("Found %d match divs directly in panel", len(all_match_divs))
@@ -738,19 +745,45 @@ class MPLIDScheduleScraper:
                     
                     match_data = self._parse_single_match(match_div, current_date or "Date not found")
                     if match_data:
-                        matches.append(match_data)
+                        # Group matches by date
+                        date_key = match_data['match_date']
+                        if date_key not in matches_by_date:
+                            matches_by_date[date_key] = []
+                        # Remove date from individual match since it's now the key
+                        match_data_without_date = {k: v for k, v in match_data.items() if k != 'match_date'}
+                        matches_by_date[date_key].append(match_data_without_date)
                         logging.warning("Successfully parsed match from direct search: %s vs %s", 
                                       match_data['team1']['name'], match_data['team2']['name'])
             
+            # Convert matches_by_date to the desired structure
+            matches_data = []
+            for date, matches_list in matches_by_date.items():
+                matches_data.append({
+                    "match_date": date,
+                    "matches": matches_list
+                })
+            
             schedule_data[f"week_{week_number}"] = {
                 "week": int(week_number),
-                "matches": matches
+                "matches": matches_data
             }
-            logging.warning("Week %s completed with %d matches", week_number, len(matches))
+            total_matches = sum(len(date_matches['matches']) for date_matches in matches_data)
+            logging.warning("Week %s completed with %d matches across %d dates", week_number, total_matches, len(matches_data))
+        
+        # Calculate total matches across all weeks and dates  
+        total_matches = 0
+        for week_data in schedule_data.values():
+            for date_matches in week_data['matches']:
+                total_matches += len(date_matches['matches'])
         
         logging.warning("Parsed schedule for %d weeks, total matches across all weeks: %d", 
-                       len(schedule_data), sum(len(week['matches']) for week in schedule_data.values()))
+                       len(schedule_data), total_matches)
         return schedule_data
+    
+    def get_schedule(self):
+        """Get the schedule data"""
+        html = self.fetch_html()
+        return self.parse_schedule(html)
     
     def _parse_single_match(self, match_div, match_date):
         """Parse a single match from the match div"""
@@ -831,7 +864,7 @@ class MPLIDScheduleScraper:
             
             return {
                 "match_id": match_id,
-                "match_date": match_date,
+                "match_date": match_date,  # Keep this for grouping logic, will be removed later
                 "match_time": match_time,
                 "team1": {
                     "name": team1_name,

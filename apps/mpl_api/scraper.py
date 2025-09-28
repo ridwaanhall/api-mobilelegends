@@ -641,12 +641,43 @@ class MPLIDScheduleScraper:
             logging.warning("Found %d column containers in week %s", len(col_containers), week_number)
             
             for col_container in col_containers:
-                # Look for date divs first
+                # Look for date divs first - try multiple selectors
                 date_divs = col_container.find_all("div", class_="match date")
+                
+                # If no date divs found with basic selector, try more specific selectors
+                if not date_divs:
+                    date_divs = col_container.find_all("div", class_=lambda x: x and "match" in str(x) and "date" in str(x))
+                
+                # Alternative: look for divs containing typical date patterns
+                if not date_divs:
+                    all_divs = col_container.find_all("div")
+                    for div in all_divs:
+                        text = div.get_text(strip=True)
+                        # Check if text looks like a date (contains month names in Indonesian)
+                        if any(month in text.lower() for month in ['januari', 'februari', 'maret', 'april', 'mei', 'juni', 
+                                                                  'juli', 'agustus', 'september', 'oktober', 'november', 'desember',
+                                                                  'senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu', 'minggu']):
+                            date_divs.append(div)
+                            break
+                            
                 logging.warning("Found %d date divs in column", len(date_divs))
                 
                 for date_div in date_divs:
-                    current_date = date_div.get_text(strip=True)
+                    # Handle nested div structure for date text
+                    # Check if there's an inner div with the actual date text
+                    inner_divs = date_div.find_all("div")
+                    if inner_divs:
+                        # Get text from the innermost div that contains actual date text
+                        for inner_div in inner_divs:
+                            inner_text = inner_div.get_text(strip=True)
+                            if inner_text and len(inner_text) > 5:  # Basic check for date-like content
+                                current_date = inner_text
+                                break
+                        else:
+                            # Fallback to the outer div text
+                            current_date = date_div.get_text(strip=True)
+                    else:
+                        current_date = date_div.get_text(strip=True)
                     logging.warning("Processing date: %s", current_date)
                     
                     # Find the parent div that contains this date and the matches
@@ -671,10 +702,39 @@ class MPLIDScheduleScraper:
                 logging.warning("Found %d match divs directly in panel", len(all_match_divs))
                 
                 for match_div in all_match_divs:
-                    # Try to find the closest date
+                    # Try to find the closest date - use multiple approaches
                     date_elem = match_div.find_previous("div", class_="match date")
+                    
+                    # If not found, try more specific selectors
+                    if not date_elem:
+                        date_elem = match_div.find_previous("div", class_=lambda x: x and "match" in str(x) and "date" in str(x))
+                    
+                    # If still not found, look for any previous div with date-like content
+                    if not date_elem:
+                        prev_divs = match_div.find_all_previous("div")
+                        for div in prev_divs:
+                            text = div.get_text(strip=True)
+                            if any(month in text.lower() for month in ['januari', 'februari', 'maret', 'april', 'mei', 'juni', 
+                                                                      'juli', 'agustus', 'september', 'oktober', 'november', 'desember',
+                                                                      'senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu', 'minggu']):
+                                date_elem = div
+                                break
+                    
                     if date_elem:
-                        current_date = date_elem.get_text(strip=True)
+                        # Handle nested div structure for date text
+                        inner_divs = date_elem.find_all("div")
+                        if inner_divs:
+                            # Get text from the innermost div that contains actual date text
+                            for inner_div in inner_divs:
+                                inner_text = inner_div.get_text(strip=True)
+                                if inner_text and len(inner_text) > 5:  # Basic check for date-like content
+                                    current_date = inner_text
+                                    break
+                            else:
+                                # Fallback to the outer div text
+                                current_date = date_elem.get_text(strip=True)
+                        else:
+                            current_date = date_elem.get_text(strip=True)
                     
                     match_data = self._parse_single_match(match_div, current_date or "Date not found")
                     if match_data:

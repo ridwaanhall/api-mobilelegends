@@ -113,7 +113,6 @@ class MPLIDScheduleTeamSerializer(serializers.Serializer):
 
 class MPLIDScheduleMatchSerializer(serializers.Serializer):
     match_id = serializers.IntegerField(allow_null=True)
-    match_date = serializers.CharField(allow_null=True)
     match_time = serializers.CharField(allow_null=True)
     team1 = MPLIDScheduleTeamSerializer()
     team2 = MPLIDScheduleTeamSerializer()
@@ -121,9 +120,14 @@ class MPLIDScheduleMatchSerializer(serializers.Serializer):
     status = serializers.CharField(allow_null=True)
 
 
+class MPLIDScheduleDateGroupSerializer(serializers.Serializer):
+    match_date = serializers.CharField(allow_null=True)
+    matches = MPLIDScheduleMatchSerializer(many=True)
+
+
 class MPLIDScheduleWeekSerializer(serializers.Serializer):
     week = serializers.IntegerField()
-    matches = MPLIDScheduleMatchSerializer(many=True)
+    matches = MPLIDScheduleDateGroupSerializer(many=True)
 
 
 class MPLIDScheduleAllSerializer(serializers.Serializer):

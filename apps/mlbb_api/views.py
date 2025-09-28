@@ -107,6 +107,9 @@ def _get_new_mpl_id_endpoints(request) -> Dict[str, str]:
             'hero_pools': f'{base_url}hero-pools/',
             'player_pools': f'{base_url}player-pools/',
             'standings_mvp': f'{base_url}standings-mvp/',
+            'schedule': f'{base_url}schedule/',
+            'schedule_week': f'{base_url}schedule/week/{{week_number}}/',
+            'schedule_all_weeks': f'{base_url}schedule/week/',
         }
     return {}
 

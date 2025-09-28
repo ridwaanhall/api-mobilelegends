@@ -17,6 +17,9 @@ class MPLIDApiListAPIView(APIView):
             {"name": "Hero Pools", "url": request.build_absolute_uri('/api/mplid/hero-pools/')},
             {"name": "Player Pools", "url": request.build_absolute_uri('/api/mplid/player-pools/')},
             {"name": "Standings MVP", "url": request.build_absolute_uri('/api/mplid/standings-mvp/')},
+            {"name": "Schedule (All)", "url": request.build_absolute_uri('/api/mplid/schedule/')},
+            {"name": "Schedule by Week", "url": request.build_absolute_uri('/api/mplid/schedule/week/<week_number>/')},
+            {"name": "All Weeks", "url": request.build_absolute_uri('/api/mplid/schedule/week/')},
         ]
         return Response(api_list, status=status.HTTP_200_OK)
 
@@ -78,4 +81,47 @@ class MPLIDStandingsMVPAPIView(APIView):
     def get(self, request):
         data = scraper.MPLIDStatsScraper().parse_mvp_standings(scraper.MPLIDStatsScraper().fetch_html())
         serializer = serializers.MPLIDStandingsMVPSerializer(data, many=True)
+        return Response(serializer.data)
+
+class MPLIDScheduleAPIView(APIView):
+    def get(self, request):
+        data = scraper.MPLIDScheduleScraper().parse_schedule(scraper.MPLIDScheduleScraper().fetch_html())
+        serializer = serializers.MPLIDScheduleAllSerializer(data)
+        return Response(serializer.data)
+
+
+class MPLIDScheduleWeekAPIView(APIView):
+    def get(self, request, week_number):
+        try:
+            week_num = int(week_number)
+            schedule_scraper = scraper.MPLIDScheduleScraper()
+            html = schedule_scraper.fetch_html()
+            all_data = schedule_scraper.parse_schedule(html)
+            
+            week_key = f"week_{week_num}"
+            if week_key not in all_data:
+                return Response(
+                    {"error": f"Week {week_num} not found"}, 
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            
+            data = all_data[week_key]
+            serializer = serializers.MPLIDScheduleWeekSerializer(data)
+            return Response(serializer.data)
+        except ValueError:
+            return Response(
+                {"error": "Invalid week number"}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+
+class MPLIDScheduleAllWeeksAPIView(APIView):
+    def get(self, request):
+        schedule_scraper = scraper.MPLIDScheduleScraper()
+        html = schedule_scraper.fetch_html()
+        all_data = schedule_scraper.parse_schedule(html)
+        
+        # Convert dict values to list for serialization
+        data = list(all_data.values())
+        serializer = serializers.MPLIDScheduleWeekSerializer(data, many=True)
         return Response(serializer.data)

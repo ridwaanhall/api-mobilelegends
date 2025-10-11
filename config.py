@@ -27,7 +27,7 @@ API_STATUS_MESSAGES = {
     }
 }
 
-API_VERSION = config('API_VERSION', default='1.2.0')
+API_VERSION = config('API_VERSION', default='2.0.0')
 
 # Security Settings
 SECRET_KEY = config('SECRET_KEY')

@@ -9,7 +9,8 @@ IS_AVAILABLE = config('IS_AVAILABLE', default=True, cast=bool)
 
 SUPPORT_DETAILS = {
     'support_message': 'You can support us by donating from $1 USD (target: $500 USD) to help enhance API performance and handle high request volumes.',
-    'donation_link': 'https://github.com/sponsors/ridwaanhall'
+    'github_sponsors': 'https://github.com/sponsors/ridwaanhall',
+    'buymeacoffee': 'https://www.buymeacoffee.com/ridwaanhall',
 }
 
 # API Status Messages
@@ -26,7 +27,7 @@ API_STATUS_MESSAGES = {
     }
 }
 
-API_VERSION = config('API_VERSION', default='1.2.0')
+API_VERSION = config('API_VERSION', default='1.3.0')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/

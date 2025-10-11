@@ -183,3 +183,59 @@ This FastAPI migration maintains all original attributions:
 - **ridwaanhall** - Creator of MLBB Stats API
 
 All API data and assets remain the property of Moonton.
+
+## MPL ID API Configuration
+
+### Important Note
+
+The MPL ID API endpoints (`/api/mplid/*`) require the **correct production SECRET_KEY** to work properly. 
+
+**Why?** The MPL ID scraper classes use encrypted tokens to access external MPL ID data sources. These tokens can only be decrypted with the correct SECRET_KEY that was used to encrypt them.
+
+### Behavior in Different Environments
+
+1. **Production (with correct SECRET_KEY)**:
+   - All MPL ID endpoints work normally
+   - Returns actual MPL ID data (standings, teams, stats, etc.)
+
+2. **Development/Test (with wrong/test SECRET_KEY)**:
+   - MPL ID endpoints are visible in `/docs` and `/redoc`
+   - Calling any MPL ID endpoint returns HTTP 503 with a helpful message:
+     ```json
+     {
+       "detail": {
+         "error": "Service Unavailable",
+         "message": "MPL ID API requires proper SECRET_KEY configuration...",
+         "service": "MPL ID API",
+         "help": "Please ensure the correct SECRET_KEY environment variable is set."
+       }
+     }
+     ```
+
+### Troubleshooting MPL ID Endpoints
+
+**Problem**: Getting 404 error for `/api/mplid/teams/` or other MPL ID endpoints
+
+**Solutions**:
+
+1. **Check if `IS_AVAILABLE=True` in your environment variables**
+   - MPL ID router only loads when `IS_AVAILABLE=True`
+   
+2. **Verify Django and dependencies are installed**:
+   ```bash
+   pip install django djangorestframework beautifulsoup4 whitenoise
+   ```
+
+3. **Check server logs** for router loading status:
+   - Look for: `INFO:main:MPL ID router loaded successfully`
+   - If you see errors, the router failed to load
+
+4. **Restart the application** after changing environment variables
+
+5. **For production use**: Ensure the correct SECRET_KEY is set in Vercel/deployment environment
+
+### Testing MPL ID Endpoints Locally
+
+To test MPL ID functionality locally, you need the production SECRET_KEY. Contact the repository owner for the key if you need to test these endpoints.
+
+Alternatively, the endpoints will show in the API documentation but return 503 errors, which is expected behavior in development.

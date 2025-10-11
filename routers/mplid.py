@@ -4,14 +4,39 @@ from typing import List, Dict, Any
 
 router = APIRouter(prefix="/mplid", tags=["MPL ID API"])
 
+# Global variable to cache scraper module or error
+_scraper_module = None
+_scraper_error = None
+
 
 def get_scraper_module():
     """Lazy import of scraper module to avoid import-time errors"""
-    import sys
-    import os
-    sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'apps'))
-    from mpl_api import scraper, serializers
-    return scraper, serializers
+    global _scraper_module, _scraper_error
+    
+    if _scraper_module is not None:
+        return _scraper_module
+    
+    if _scraper_error is not None:
+        raise _scraper_error
+    
+    try:
+        import sys
+        import os
+        sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'apps'))
+        from mpl_api import scraper, serializers
+        _scraper_module = (scraper, serializers)
+        return _scraper_module
+    except Exception as e:
+        _scraper_error = HTTPException(
+            status_code=503,
+            detail={
+                "error": "Service Unavailable",
+                "message": "MPL ID API requires proper SECRET_KEY configuration. This endpoint is not available in development/test mode.",
+                "service": "MPL ID API",
+                "help": "Please ensure the correct SECRET_KEY environment variable is set."
+            }
+        )
+        raise _scraper_error
 
 
 def serialize_data(serializer_class, data, many=False):
@@ -45,8 +70,8 @@ async def mplid_api_list(request: Request):
 @router.get("/standings/")
 async def mplid_standings():
     """Get MPL ID standings"""
+    scraper, serializers = get_scraper_module()
     try:
-        scraper, serializers = get_scraper_module()
         data = scraper.MPLIDStandingsScraper().get_standings()
         return serialize_data(serializers.MPLIDStandingSerializer, data, many=True)
     except Exception as e:
@@ -56,8 +81,8 @@ async def mplid_standings():
 @router.get("/teams/")
 async def mplid_teams():
     """Get MPL ID teams"""
+    scraper, serializers = get_scraper_module()
     try:
-        scraper, serializers = get_scraper_module()
         data = scraper.MPLIDTeamScraper().get_teams()
         return serialize_data(serializers.MPLTeamIDSerializer, data, many=True)
     except Exception as e:
@@ -67,8 +92,8 @@ async def mplid_teams():
 @router.get("/teams/{team_id}/")
 async def mplid_team_detail(team_id: str):
     """Get MPL ID team details"""
+    scraper, serializers = get_scraper_module()
     try:
-        scraper, serializers = get_scraper_module()
         data = scraper.MPLIDTeamDetailScraper(team_id).get_team_details()
         return serialize_data(serializers.MPLIDTeamDetailSerializer, data)
     except Exception as e:
@@ -78,8 +103,8 @@ async def mplid_team_detail(team_id: str):
 @router.get("/transfers/")
 async def mplid_transfers():
     """Get MPL ID transfers"""
+    scraper, serializers = get_scraper_module()
     try:
-        scraper, serializers = get_scraper_module()
         data = scraper.MPLIDTransferScraper().get_transfers()
         return serialize_data(serializers.MPLIDTransferSerializer, data, many=True)
     except Exception as e:
@@ -89,8 +114,8 @@ async def mplid_transfers():
 @router.get("/team-stats/")
 async def mplid_team_stats():
     """Get MPL ID team stats"""
+    scraper, serializers = get_scraper_module()
     try:
-        scraper, serializers = get_scraper_module()
         data = scraper.MPLIDTeamStatsScraper().get_team_stats()
         return serialize_data(serializers.MPLIDTeamStatSerializer, data, many=True)
     except Exception as e:
@@ -100,8 +125,8 @@ async def mplid_team_stats():
 @router.get("/player-stats/")
 async def mplid_player_stats():
     """Get MPL ID player stats"""
+    scraper, serializers = get_scraper_module()
     try:
-        scraper, serializers = get_scraper_module()
         data = scraper.MPLIDPlayerStatsScraper().get_player_stats()
         return serialize_data(serializers.MPLIDPlayerStatSerializer, data, many=True)
     except Exception as e:
@@ -111,8 +136,8 @@ async def mplid_player_stats():
 @router.get("/hero-stats/")
 async def mplid_hero_stats():
     """Get MPL ID hero stats"""
+    scraper, serializers = get_scraper_module()
     try:
-        scraper, serializers = get_scraper_module()
         data = scraper.MPLIDHeroStatsScraper().get_hero_stats()
         return serialize_data(serializers.MPLIDHeroStatSerializer, data, many=True)
     except Exception as e:
@@ -122,8 +147,8 @@ async def mplid_hero_stats():
 @router.get("/hero-pools/")
 async def mplid_hero_pools():
     """Get MPL ID hero pools"""
+    scraper, serializers = get_scraper_module()
     try:
-        scraper, serializers = get_scraper_module()
         data = scraper.MPLIDHeroPoolsScraper().get_hero_pools()
         return serialize_data(serializers.MPLIDHeroPoolSerializer, data, many=True)
     except Exception as e:
@@ -133,8 +158,8 @@ async def mplid_hero_pools():
 @router.get("/player-pools/")
 async def mplid_player_pools():
     """Get MPL ID player pools"""
+    scraper, serializers = get_scraper_module()
     try:
-        scraper, serializers = get_scraper_module()
         data = scraper.MPLIDPlayerPoolsScraper().get_player_pools()
         return serialize_data(serializers.MPLIDPlayerPoolSerializer, data, many=True)
     except Exception as e:
@@ -144,8 +169,8 @@ async def mplid_player_pools():
 @router.get("/standings-mvp/")
 async def mplid_standings_mvp():
     """Get MPL ID standings MVP"""
+    scraper, serializers = get_scraper_module()
     try:
-        scraper, serializers = get_scraper_module()
         data = scraper.MPLIDStandingsMVPScraper().get_standings_mvp()
         return serialize_data(serializers.MPLIDStandingsMVPSerializer, data, many=True)
     except Exception as e:
@@ -155,8 +180,8 @@ async def mplid_standings_mvp():
 @router.get("/schedule/")
 async def mplid_schedule():
     """Get MPL ID schedule"""
+    scraper, serializers = get_scraper_module()
     try:
-        scraper, serializers = get_scraper_module()
         data = scraper.MPLIDScheduleScraper().get_schedule()
         return serialize_data(serializers.MPLIDScheduleSerializer, data, many=True)
     except Exception as e:
@@ -166,8 +191,8 @@ async def mplid_schedule():
 @router.get("/schedule/week/")
 async def mplid_schedule_all_weeks():
     """Get all MPL ID schedule weeks"""
+    scraper, serializers = get_scraper_module()
     try:
-        scraper, serializers = get_scraper_module()
         data = scraper.MPLIDScheduleAllWeeksScraper().get_schedule_weeks()
         return serialize_data(serializers.MPLIDScheduleWeekSerializer, data, many=True)
     except Exception as e:
@@ -177,8 +202,8 @@ async def mplid_schedule_all_weeks():
 @router.get("/schedule/week/{week_number}/")
 async def mplid_schedule_week(week_number: int):
     """Get MPL ID schedule for specific week"""
+    scraper, serializers = get_scraper_module()
     try:
-        scraper, serializers = get_scraper_module()
         data = scraper.MPLIDScheduleWeekScraper(week_number).get_schedule_week()
         return serialize_data(serializers.MPLIDScheduleSerializer, data, many=True)
     except Exception as e:

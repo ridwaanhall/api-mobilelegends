@@ -6,7 +6,7 @@ from fastapi.openapi.docs import get_swagger_ui_html, get_redoc_html
 from fastapi.openapi.utils import get_openapi
 import logging
 import config
-from routers import mlbb
+from routers import mlbb, additional
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -30,8 +30,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include routers
+# Include routers with proper tags for documentation sections
 app.include_router(mlbb.router, prefix="/api", tags=["MLBB API"])
+app.include_router(additional.router, prefix="/api", tags=["Additional API"])
 
 # Conditionally include MPL ID router if available
 if config.IS_AVAILABLE:
@@ -42,7 +43,7 @@ if config.IS_AVAILABLE:
         import django
         django.setup()
         from routers import mplid
-        app.include_router(mplid.router, prefix="/api", tags=["MPL ID"])
+        app.include_router(mplid.router, prefix="/api", tags=["MPL ID API"])
     except Exception as e:
         logger.warning(f"MPL ID router not available: {e}")
 
@@ -53,7 +54,7 @@ async def root():
     return RedirectResponse(url="/api/")
 
 
-@app.get("/health", tags=["Health"])
+@app.get("/health", tags=["Health Check"])
 async def health_check():
     """Health check endpoint"""
     return {

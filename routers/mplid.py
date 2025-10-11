@@ -9,7 +9,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'apps'))
 
 from mpl_api import scraper, serializers
 
-router = APIRouter(prefix="/mplid", tags=["MPL ID"])
+router = APIRouter(prefix="/mplid", tags=["MPL ID API"])
 
 
 def serialize_data(serializer_class, data, many=False):

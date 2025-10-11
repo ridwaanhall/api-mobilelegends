@@ -10,49 +10,6 @@ router = APIRouter()
 
 MLBB_URL = config.MLBB_URL
 
-# Hero dictionaries
-HEROES_EN = {
-    129: "Zetian", 128: "Kalea", 127: "Lukas", 126: "Suyou", 125: "Zhuxin", 124: "Chip", 123: "Cici", 122: "Nolan", 121: "Ixia", 120: "Arlott", 119: "Novaria",
-    118: "Joy", 117: "Fredrinn", 116: "Julian", 115: "Xavier", 114: "Melissa", 113: "Yin", 112: "Floryn",
-    111: "Edith", 110: "Valentina", 109: "Aamon", 108: "Aulus", 107: "Natan", 106: "Phoveus", 105: "Beatrix",
-    104: "Gloo", 103: "Paquito", 102: "Mathilda", 101: "Yve", 100: "Brody", 99: "Barats", 98: "Khaleed",
-    97: "Benedetta", 96: "Luo Yi", 95: "Yu Zhong", 94: "Popol and Kupa", 93: "Atlas", 92: "Carmilla",
-    91: "Cecilion", 90: "Silvanna", 89: "Wanwan", 88: "Masha", 87: "Baxia", 86: "Lylia", 85: "Dyrroth",
-    84: "Ling", 83: "X.Borg", 82: "Terizla", 81: "Esmeralda", 80: "Guinevere", 79: "Granger", 78: "Khufra",
-    77: "Badang", 76: "Faramis", 75: "Kadita", 74: "Minsitthar", 73: "Harith", 72: "Thamuz", 71: "Kimmy",
-    70: "Belerick", 69: "Hanzo", 68: "Lunox", 67: "Leomord", 66: "Vale", 65: "Claude", 64: "Aldous",
-    63: "Selena", 62: "Kaja", 61: "Chang'e", 60: "Hanabi", 59: "Uranus", 58: "Martis", 57: "Valir",
-    56: "Gusion", 55: "Angela", 54: "Jawhead", 53: "Lesley", 52: "Pharsa", 51: "Helcurt", 50: "Zhask",
-    49: "Hylos", 48: "Diggie", 47: "Lancelot", 46: "Odette", 45: "Argus", 44: "Grock", 43: "Irithel",
-    42: "Harley", 41: "Gatotkaca", 40: "Karrie", 39: "Roger", 38: "Vexana", 37: "Lapu-Lapu", 36: "Aurora",
-    35: "Hilda", 34: "Estes", 33: "Cyclops", 32: "Johnson", 31: "Moskov", 30: "Yi Sun-shin", 29: "Ruby",
-    28: "Alpha", 27: "Sun", 26: "Chou", 25: "Kagura", 24: "Natalia", 23: "Gord", 22: "Freya", 21: "Hayabusa",
-    20: "Lolita", 19: "Minotaur", 18: "Layla", 17: "Fanny", 16: "Zilong", 15: "Eudora", 14: "Rafaela",
-    13: "Clint", 12: "Bruno", 11: "Bane", 10: "Franco", 9: "Akai", 8: "Karina", 7: "Alucard", 6: "Tigreal",
-    5: "Nana", 4: "Alice", 3: "Saber", 2: "Balmond", 1: "Miya"
-}
-
-HEROES_RU = {
-    129: "Зетянь", 128: "Калея", 127: "Лукас", 126: "Су Ё", 125: "Чжусинь", 124: "Чип", 123: "Чичи", 122: "Нолан", 121: "Иксия", 120: "Арлотт", 119: "Новария",
-    118: "Джой", 117: "Фредринн", 116: "Джулиан", 115: "Ксавьер", 114: "Мелисса", 113: "Инь", 112: "Флорин",
-    111: "Эдит", 110: "Валентина", 109: "Эймон", 108: "Аулус", 107: "Натан", 106: "Фовиус", 105: "Беатрис",
-    104: "Глу", 103: "Пакито", 102: "Матильда", 101: "Ив", 100: "Броуди", 99: "Бартс", 98: "Халид",
-    97: "Бенедетта", 96: "Ло-Йи", 95: "Чонг", 94: "Пополь и Купа", 93: "Атлас", 92: "Кармилла",
-    91: "Сесилион", 90: "Сильванна", 89: "Ванван", 88: "Маша", 87: "Баксия", 86: "Лилия", 85: "Дариус",
-    84: "Линг", 83: "Икс.Борг", 82: "Теризла", 81: "Эсмеральда", 80: "Гвиневра", 79: "Грейнджер", 78: "Хуфра",
-    77: "Баданг", 76: "Фарамис", 75: "Кадита", 74: "Минситтар", 73: "Харит", 72: "Тамуз", 71: "Кимми",
-    70: "Белерик", 69: "Ханзо", 68: "Люнокс", 67: "Леоморд", 66: "Вэйл", 65: "Клауд", 64: "Алдос",
-    63: "Селена", 62: "Кайя", 61: "Чан'Э", 60: "Ханаби", 59: "Уранус", 58: "Мартис", 57: "Валир",
-    56: "Госсен", 55: "Ангела", 54: "Кусака", 53: "Лесли", 52: "Фаша", 51: "Хелкарт", 50: "Заск",
-    49: "Хилос", 48: "Дигги", 47: "Ланселот", 46: "Одетта", 45: "Аргус", 44: "Грок", 43: "Иритель",
-    42: "Харли", 41: "Гатоткача", 40: "Кэрри", 39: "Роджер", 38: "Вексана", 37: "Лапу-Лапу", 36: "Аврора",
-    35: "Хильда", 34: "Эстес", 33: "Циклоп", 32: "Джонсон", 31: "Москов", 30: "Ли Сун Син", 29: "Руби",
-    28: "Альфа", 27: "Сан", 26: "Чу", 25: "Кагура", 24: "Наталья", 23: "Горд", 22: "Фрейя", 21: "Хаябуса",
-    20: "Лолита", 19: "Минотавр", 18: "Лейла", 17: "Фанни", 16: "Зилонг", 15: "Эйдора", 14: "Рафаэль",
-    13: "Клинт", 12: "Бруно", 11: "Бэйн", 10: "Франко", 9: "Акай", 8: "Карина", 7: "Алукард", 6: "Тигрил",
-    5: "Нана", 4: "Алиса", 3: "Сабер", 2: "Бальмонд", 1: "Мия"
-}
-
 
 def check_availability():
     """Check if API is available"""
@@ -76,7 +33,6 @@ def _get_available_endpoints(request: Request) -> Dict[str, str]:
         return {
             'documentation': f'{base_url}',
             'hero_list': f'{base_url}hero-list/',
-            'hero_list_new': f'{base_url}hero-list-new/',
             'hero_rank': f'{base_url}hero-rank/',
             'hero_position': f'{base_url}hero-position/',
             'hero_detail': f'{base_url}hero-detail/{{hero_id}}/',
@@ -96,29 +52,6 @@ def _get_new_mlbb_api_endpoints(request: Request) -> Dict[str, str]:
     if config.IS_AVAILABLE:
         return {
             'win_rate': f'{base_url}win-rate/?match-now=100&wr-now=50&wr-future=75',
-            'hero_list_new': f'{base_url}hero-list-new/',
-        }
-    return {}
-
-
-def _get_new_mpl_id_endpoints(request: Request) -> Dict[str, str]:
-    """Return new MPL ID endpoints based on API availability."""
-    base_url = str(request.base_url) + 'api/mplid/'
-    if config.IS_AVAILABLE:
-        return {
-            'standings': f'{base_url}standings/',
-            'teams': f'{base_url}teams/',
-            'team_detail': f'{base_url}teams/{{team_id}}/',
-            'transfers': f'{base_url}transfers/',
-            'team_stats': f'{base_url}team-stats/',
-            'player_stats': f'{base_url}player-stats/',
-            'hero_stats': f'{base_url}hero-stats/',
-            'hero_pools': f'{base_url}hero-pools/',
-            'player_pools': f'{base_url}player-pools/',
-            'standings_mvp': f'{base_url}standings-mvp/',
-            'schedule': f'{base_url}schedule/',
-            'schedule_week': f'{base_url}schedule/week/{{week_number}}/',
-            'schedule_all_weeks': f'{base_url}schedule/week/',
         }
     return {}
 
@@ -148,11 +81,6 @@ async def api_endpoints(request: Request):
                 "message": "MLBB API is currently under maintenance." if not config.IS_AVAILABLE else "MLBB API is online.",
                 "endpoints": _get_available_endpoints(request)
             },
-            "mpl_id": {
-                "status": status_info['status'],
-                "message": "MPL ID API is currently under maintenance." if not config.IS_AVAILABLE else "MPL ID API is online.",
-                "endpoints": _get_new_mpl_id_endpoints(request)
-            },
             "mlbb_new_api": {
                 "status": status_info['status'],
                 "message": "MLBB new API is currently under maintenance." if not config.IS_AVAILABLE else "MLBB API is online.",
@@ -174,15 +102,6 @@ async def api_docs(request: Request):
 
 
 @router.get("/hero-list/")
-async def hero_list(lang: str = Query(default="en")):
-    """Get hero list in specified language"""
-    check_availability()
-    if lang == 'ru':
-        return HEROES_RU
-    return HEROES_EN
-
-
-@router.get("/hero-list-new/")
 async def hero_list_new(lang: str = Query(default="en")):
     """Get new hero list from MLBB API"""
     check_availability()

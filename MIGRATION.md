@@ -93,7 +93,6 @@ The API provides **3 organized sections**:
 - `/api/` - API documentation and endpoint listing
 - `/api/docs/` - Docs endpoint
 - `/api/hero-list/` - Hero list (supports EN/RU languages)
-- `/api/hero-list-new/` - New hero list from MLBB API
 - `/api/hero-rank/` - Hero rankings with filters
 - `/api/hero-position/` - Heroes by role and lane
 - `/api/hero-detail/{hero_id}` - Detailed hero information

@@ -36,9 +36,14 @@ app.include_router(mlbb.router, prefix="/api", tags=["MLBB API"])
 # Conditionally include MPL ID router if available
 if config.IS_AVAILABLE:
     try:
+        # Only import if Django is configured
+        import os
+        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'MLBB.settings')
+        import django
+        django.setup()
         from routers import mplid
         app.include_router(mplid.router, prefix="/api", tags=["MPL ID"])
-    except ImportError as e:
+    except Exception as e:
         logger.warning(f"MPL ID router not available: {e}")
 
 

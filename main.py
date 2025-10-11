@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 # Initialize FastAPI app
 app = FastAPI(
     title="Mobile Legends API",
-    description="Mobile Legends Bang Bang API for hero data, statistics, and MPL ID information",
+    description="Mobile Legends Bang Bang API for hero data and statistics",
     version=config.API_VERSION,
     docs_url=None,  # We'll create custom docs
     redoc_url=None,  # We'll create custom redoc
@@ -33,25 +33,6 @@ app.add_middleware(
 # Include routers with proper tags for documentation sections
 app.include_router(mlbb.router, prefix="/api", tags=["MLBB API"])
 app.include_router(additional.router, prefix="/api", tags=["Additional API"])
-
-# Include MPL ID router (endpoints will work when Django is properly configured)
-if config.IS_AVAILABLE:
-    try:
-        # Set up Django before importing the router
-        import os
-        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'MLBB.settings')
-        import django
-        django.setup()
-        
-        # Now import and include the router
-        from routers import mplid
-        app.include_router(mplid.router, prefix="/api")
-        logger.info("MPL ID router loaded successfully")
-    except Exception as e:
-        logger.warning(f"MPL ID router could not be loaded: {e}")
-        # Still log the error for debugging but don't fail the app
-        import traceback
-        logger.debug(traceback.format_exc())
 
 
 @app.get("/", include_in_schema=False)

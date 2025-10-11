@@ -105,11 +105,11 @@ async def api_docs(request: Request):
 
 
 @router.get("/hero-list/")
-async def hero_list_new(lang: str = Query(default="en")):
+async def hero_list(lang: str = Query(default="en")):
     """Get new hero list from MLBB API"""
     check_availability()
     base_path = BasePathProvider.get_base_path()
-    url_hero_list_new = f"{MLBB_URL}{base_path}/2756564"
+    url_hero_list = f"{MLBB_URL}{base_path}/2756564"
 
     payload = {
         "pageSize": 10000,
@@ -132,7 +132,7 @@ async def hero_list_new(lang: str = Query(default="en")):
     }
 
     headers = MLBBHeaderBuilder.get_lang_header(lang)
-    response = requests.post(url_hero_list_new, json=payload, headers=headers)
+    response = requests.post(url_hero_list, json=payload, headers=headers)
     if response.status_code == 200:
         return response.json()
     raise HTTPException(status_code=response.status_code, detail={'error': 'Failed to fetch data', 'details': response.text})

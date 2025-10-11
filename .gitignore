@@ -58,6 +58,7 @@ coverage.xml
 *.log
 local_settings.py
 db.sqlite3
+db.sqlite3-journal
 
 # Flask stuff:
 instance/
@@ -112,6 +113,9 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-*.json
-
+# Django static files
 static/
+staticfiles/
+
+# Keep vercel.json
+!vercel.json

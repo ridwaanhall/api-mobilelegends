@@ -34,18 +34,24 @@ app.add_middleware(
 app.include_router(mlbb.router, prefix="/api", tags=["MLBB API"])
 app.include_router(additional.router, prefix="/api", tags=["Additional API"])
 
-# Conditionally include MPL ID router if available
+# Include MPL ID router (endpoints will work when Django is properly configured)
 if config.IS_AVAILABLE:
     try:
-        # Only import if Django is configured
+        # Set up Django before importing the router
         import os
         os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'MLBB.settings')
         import django
         django.setup()
+        
+        # Now import and include the router
         from routers import mplid
-        app.include_router(mplid.router, prefix="/api", tags=["MPL ID API"])
+        app.include_router(mplid.router, prefix="/api")
+        logger.info("MPL ID router loaded successfully")
     except Exception as e:
-        logger.warning(f"MPL ID router not available: {e}")
+        logger.warning(f"MPL ID router could not be loaded: {e}")
+        # Still log the error for debugging but don't fail the app
+        import traceback
+        logger.debug(traceback.format_exc())
 
 
 @app.get("/", include_in_schema=False)

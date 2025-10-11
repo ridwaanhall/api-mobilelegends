@@ -91,6 +91,9 @@ async def api_endpoints(request: Request):
             "api_url": "https://mlbb-stats.ridwaanhall.com/api/" if config.IS_AVAILABLE else "https://ridwaanhall.com/blog/how-usage-monitoring-sustains-mlbb-stats-and-api-pddikti/",
             "web_url": "https://mlbb-stats.ridwaanhall.com/hero-rank/" if config.IS_AVAILABLE else "https://ridwaanhall.com/blog/how-usage-monitoring-sustains-mlbb-stats-and-api-pddikti/",
             "docs": "https://mlbb-stats-docs.ridwaanhall.com/" if config.IS_AVAILABLE else "https://ridwaanhall.com/blog/how-usage-monitoring-sustains-mlbb-stats-and-api-pddikti/",
+            "FastAPI Docs": "https://mlbb-stats.ridwaanhall.com/docs" if config.IS_AVAILABLE else "https://ridwaanhall.com/blog/how-usage-monitoring-sustains-mlbb-stats-and-api-pddikti/",
+            "ReDoc": "https://mlbb-stats.ridwaanhall.com/redoc" if config.IS_AVAILABLE else "https://ridwaanhall.com/blog/how-usage-monitoring-sustains-mlbb-stats-and-api-pddikti/",
+            "github": "https://github.com/ridwaanhall/api-mobilelegends" if config.IS_AVAILABLE else "https://ridwaanhall.com/blog/how-usage-monitoring-sustains-mlbb-stats-and-api-pddikti/",
         }
     }
 

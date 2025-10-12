@@ -102,7 +102,15 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                             <ul class="list-disc list-inside">
                                 {% for assist in record.data.relation.assist.target_hero_id %}
-                                <li>{{ assist }}</li> {# Consider fetching hero names if IDs aren't user-friendly #}
+                                <li>
+                                    {% if assist.id != 0 %}
+                                        <a href="{% url 'hero_detail_web' hero_id=assist.id %}" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 hover:underline">
+                                            {{ assist.name }}
+                                        </a>
+                                    {% else %}
+                                        <span class="text-gray-400">{{ assist.name }}</span>
+                                    {% endif %}
+                                </li>
                                 {% empty %}
                                 <li>-</li>
                                 {% endfor %}
@@ -111,7 +119,15 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                             <ul class="list-disc list-inside">
                                 {% for strong in record.data.relation.strong.target_hero_id %}
-                                <li>{{ strong }}</li> {# Consider fetching hero names #}
+                                <li>
+                                    {% if strong.id != 0 %}
+                                        <a href="{% url 'hero_detail_web' hero_id=strong.id %}" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 hover:underline">
+                                            {{ strong.name }}
+                                        </a>
+                                    {% else %}
+                                        <span class="text-gray-400">{{ strong.name }}</span>
+                                    {% endif %}
+                                </li>
                                 {% empty %}
                                 <li>-</li>
                                 {% endfor %}
@@ -120,7 +136,15 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                             <ul class="list-disc list-inside">
                                 {% for weak in record.data.relation.weak.target_hero_id %}
-                                <li>{{ weak }}</li> {# Consider fetching hero names #}
+                                <li>
+                                    {% if weak.id != 0 %}
+                                        <a href="{% url 'hero_detail_web' hero_id=weak.id %}" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 hover:underline">
+                                            {{ weak.name }}
+                                        </a>
+                                    {% else %}
+                                        <span class="text-gray-400">{{ weak.name }}</span>
+                                    {% endif %}
+                                </li>
                                 {% empty %}
                                 <li>-</li>
                                 {% endfor %}

@@ -34,11 +34,11 @@
                 </div>
                 <div>
                     <label for="size" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Size</label>
-                    <input type="number" id="size" name="size" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-200" value="{{ size }}" min="1" max="126">
+                    <input type="number" id="size" name="size" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-200" value="{{ size }}" min="1">
                 </div>
                 <div>
                     <label for="index" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Index</label>
-                    <input type="number" id="index" name="index" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-200" value="{{ index }}" min="1" max="126">
+                    <input type="number" id="index" name="index" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-200" value="{{ index }}" min="1">
                 </div>
             </div>
             <div class="mt-6">
@@ -70,7 +70,9 @@
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex items-center">
                                 <div class="flex-shrink-0 h-12 w-12">
-                                    <img class="h-12 w-12 rounded-full object-cover" src="{{ record.data.hero.data.smallmap }}" alt="{{ record.data.hero.data.name }}">
+                                    <a href="{% url 'hero_detail_web' hero_id=record.data.hero_id %}">
+                                        <img class="h-12 w-12 rounded-full object-cover" src="{{ record.data.hero.data.smallmap }}" alt="{{ record.data.hero.data.name }}">
+                                    </a>
                                 </div>
                                 <div class="ml-4">
                                     <div class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ record.data.hero.data.name }}</div>

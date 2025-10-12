@@ -1,12 +1,31 @@
 # MLBB Hero Analytics API and Website
 
-## 🌟 Your Support Means the World! Start from 1 USD
+## 🌟 Support My Work
 
-Are you interested in the project I created and want to help keep it running? You can support me by becoming a sponsor! Your contributions will greatly assist in the development and maintenance of this project.
+<p align="center">
+    If my projects sparked value—or your wallet’s begging for a diet—drop your funds here. I catch, I thank, I build.
+</p>
 
-[![Sponsor Me](https://img.shields.io/badge/-Sponsor%20Me-blue?style=for-the-badge)](https://github.com/sponsors/ridwaanhall/)
+<p align="center">
+    <a href="https://github.com/sponsors/ridwaanhall/">
+        <img src="https://img.shields.io/badge/-Sponsor%20Me-blue?style=for-the-badge&logo=github&logoColor=white" alt="Sponsor Me" />
+    </a>
+    <a href="https://buymeacoffee.com/ridwaanhall">
+        <img src="https://img.shields.io/badge/-Buy%20Me%20a%20Coffee-yellow?style=for-the-badge&logo=buy-me-a-coffee&logoColor=white" alt="Buy Me a Coffee" />
+    </a>
+    <a href="https://saweria.co/ridwaanhall">
+        <img src="https://img.shields.io/badge/-Saweria-orange?style=for-the-badge" alt="Saweria" />
+    </a>
+    <a href="https://sociabuzz.com/ridwaanhall/support">
+        <img src="https://img.shields.io/badge/-Sociabuzz-red?style=for-the-badge" alt="Sociabuzz" />
+    </a>
+</p>
 
-Thank you for supporting my work! Together, we can create something amazing. 🚀
+<p align="center">
+    No gimmicks—just real support and real appreciation.
+    <br />
+    Supporters get a name drop on GitHub and a louder voice in shaping future features.
+</p>
 
 ## Description
 

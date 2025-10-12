@@ -162,9 +162,18 @@ class MLBBWebService:
         hero_names = get_hero_names_dict()
         for relation_type in relation_types:
             for i, hero_id in enumerate(record['data']['relation'][relation_type]['target_hero_id']):
-                record['data']['relation'][relation_type]['target_hero_id'][i] = (
-                    hero_names.get(hero_id, 'Unknown') if hero_id != 0 else 'Unknown'
-                )
+                if hero_id != 0:
+                    # Create an object with both ID and name for template use
+                    record['data']['relation'][relation_type]['target_hero_id'][i] = {
+                        'id': hero_id,
+                        'name': hero_names.get(hero_id, 'Unknown')
+                    }
+                else:
+                    # For unknown heroes (ID = 0)
+                    record['data']['relation'][relation_type]['target_hero_id'][i] = {
+                        'id': 0,
+                        'name': 'Unknown'
+                    }
 
     @staticmethod
     def rename_skill_fields(skilllist):

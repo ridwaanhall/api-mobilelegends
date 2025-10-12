@@ -15,15 +15,15 @@ A professional FastAPI-based REST API for Mobile Legends Bang Bang hero data, st
 
 ## 📋 Table of Contents
 
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [Usage](#usage)
-- [API Endpoints](#api-endpoints)
-- [Development](#development)
-- [Testing](#testing)
-- [Deployment](#deployment)
-- [Contributing](#contributing)
-- [License](#license)
+- [Installation](#-installation)
+- [Configuration](#️-configuration)
+- [Usage](#-usage)
+- [API Endpoints](#-api-endpoints)
+- [Development](#️-development)
+- [Testing](#-testing)
+- [Deployment](#-deployment)
+- [Contributing](#-contributing)
+- [License](#-license)
 
 ## 🔧 Installation
 
@@ -35,23 +35,27 @@ A professional FastAPI-based REST API for Mobile Legends Bang Bang hero data, st
 ### Setup
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/ridwaanhall/api-mobilelegends.git
 cd api-mobilelegends
 ```
 
 2. Create and activate a virtual environment:
+
 ```bash
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
 3. Install dependencies:
+
 ```bash
 pip install -r requirements.txt
 ```
 
 4. Create a `.env` file:
+
 ```bash
 cp .env.example .env
 ```
@@ -127,10 +131,12 @@ docker run -p 8000:8000 --env-file .env mlbb-api
 ### Available Endpoints
 
 #### General
+
 - `GET /` - API information and available endpoints
 - `GET /health` - Health check endpoint
 
 #### Hero Endpoints
+
 - `GET /api/hero-list/` - Get complete hero list
 - `GET /api/hero-rank/` - Get hero rankings by win rate, pick rate, ban rate
 - `GET /api/hero-position/` - Get heroes by role and lane
@@ -143,6 +149,7 @@ docker run -p 8000:8000 --env-file .env mlbb-api
 - `GET /api/hero-compatibility/{main_heroid}` - Get hero compatibility
 
 #### Utility Endpoints
+
 - `GET /api/win-rate/` - Calculate required matches to reach target win rate
 
 ### Query Parameters
@@ -157,7 +164,7 @@ Most endpoints support these common parameters:
 
 ### Project Structure
 
-```
+```txt
 api-mobilelegends/
 ├── app/
 │   ├── __init__.py
@@ -210,6 +217,7 @@ api-mobilelegends/
 ### Code Style
 
 This project follows:
+
 - PEP 8 style guide
 - Type hints for all functions
 - Docstrings for all modules, classes, and functions

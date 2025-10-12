@@ -53,7 +53,8 @@ class MlbbApiEndpoints(APIView):
                     "status": status_info['status'],
                     "message": status_info['message'],
                     "support_message": settings.SUPPORT_DETAILS['support_message'],
-                    "donation_link": settings.SUPPORT_DETAILS['donation_link']
+                    "github_sponsors": settings.SUPPORT_DETAILS['github_sponsors'],
+                    "buymeacoffee": settings.SUPPORT_DETAILS['buymeacoffee'],
                 },
                 "available_endpoints": status_info['available_endpoints']
             },

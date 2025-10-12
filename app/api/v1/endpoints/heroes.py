@@ -45,7 +45,7 @@ def check_api_availability() -> None:
 async def get_hero_list(
     lang: str = Query(
         default="en",
-        description="Language code (e.g., en, id, zh)",
+        description="Language code (e.g., en, id, ru)",
         example="en"
     )
 ) -> Dict[str, Any]:

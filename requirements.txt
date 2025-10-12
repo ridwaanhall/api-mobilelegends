@@ -1,12 +1,27 @@
+# Production Dependencies
+
+# FastAPI and server
+fastapi==0.115.4
+uvicorn[standard]==0.32.0
+
+# HTTP client
+requests==2.32.4
+
+# Security and encryption
+cryptography==45.0.4
+
+# Configuration
+python-decouple==3.8
+pydantic==2.10.4
+pydantic-settings==2.7.0
+
+# Standard library backports
+typing_extensions==4.14.1
+
+# Core dependencies
 certifi==2024.8.30
 cffi==1.17.1
 charset-normalizer==3.4.0
-cryptography==45.0.4
-fastapi==0.115.4
 idna==3.10
 pycparser==2.22
-python-decouple==3.8
-requests==2.32.4
-typing_extensions==4.14.1
 urllib3==2.5.0
-uvicorn==0.32.0

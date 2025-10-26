@@ -5,7 +5,7 @@ from decouple import config
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # API Availability Control
-IS_AVAILABLE = config('IS_AVAILABLE', default=True, cast=bool)
+IS_AVAILABLE = config('IS_AVAILABLE', default=False, cast=bool)
 
 SUPPORT_DETAILS = {
     'support_message': 'You can support us by donating from $1 USD (target: $500 USD) to help enhance API performance and handle high request volumes.',
@@ -39,7 +39,7 @@ SECRET_KEY = config('SECRET_KEY')
 MLBB_URL = config('MLBB_URL')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=True, cast=bool)
+DEBUG = config('DEBUG', default=False, cast=bool)
 
 # Set base URL based on DEBUG mode
 if DEBUG:

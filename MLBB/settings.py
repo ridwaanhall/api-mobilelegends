@@ -39,7 +39,7 @@ SECRET_KEY = config('SECRET_KEY')
 MLBB_URL = config('MLBB_URL')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = config('DEBUG', default=True, cast=bool)
 
 # Set base URL based on DEBUG mode
 if DEBUG:

@@ -41,7 +41,7 @@ MLBB_URL = config('MLBB_URL')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-# Set base URL based on DEBUG mode time
+# Set base URL based on DEBUG mode
 if DEBUG:
     PROD_URL = 'http://127.0.0.1:8000/api/'
 else:

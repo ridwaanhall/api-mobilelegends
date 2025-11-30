@@ -16,7 +16,7 @@ if settings.IS_AVAILABLE:
         path('hero-list/', views.HeroListView.as_view(), name='hero_list'),
         path('hero-rank/', views.HeroRankView.as_view(), name='hero_rank'),
         path('hero-position/', views.HeroPositionView.as_view(), name='hero_position'),
-        path('hero-detail/<int:hero_id>/', views.HeroDetailView.as_view(), name='hero_detail'),
+        path('hero-detail/<str:hero_identifier>/', views.HeroDetailView.as_view(), name='hero_detail'),
         path('hero-detail-stats/<int:main_heroid>/', views.HeroDetailStatsView.as_view(), name='hero_detail_stats'),
         path('hero-skill-combo/<int:hero_id>/', views.HeroSkillComboView.as_view(), name='hero_skill_combo'),
         path('hero-rate/<int:main_heroid>/', views.HeroRateView.as_view(), name='hero_rate'),

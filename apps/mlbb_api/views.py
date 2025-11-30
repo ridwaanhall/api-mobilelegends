@@ -32,6 +32,58 @@ class MLBBHeaderBuilder:
             headers['x-lang'] = lang
         return headers
 
+class HeroNameHelper:
+    @staticmethod
+    def normalize_name(name: str) -> str:
+        """Normalize hero name by removing special characters and converting to lowercase."""
+        import re
+        # Remove special characters and spaces, convert to lowercase
+        normalized = re.sub(r'[^a-zA-Z0-9]', '', name.lower())
+        return normalized
+    
+    @staticmethod
+    def get_hero_id_by_name(hero_name: str, lang: str = 'en') -> int:
+        """Get hero ID by searching through hero list with normalized name."""
+        base_path = BasePathProvider.get_base_path()
+        url_hero_list = f"{MLBB_URL}{base_path}/2756564"
+        
+        payload = {
+            "pageSize": 10000,
+            "sorts": [
+                {
+                    "data": {
+                        "field": "hero_id",
+                        "order": "desc"
+                    },
+                    "type": "sequence"
+                }
+            ],
+            "pageIndex": 1,
+            "fields": [
+                "hero_id",
+                "hero.data.head",
+                "hero.data.name",
+                "hero.data.smallmap",
+            ]
+        }
+        
+        headers = MLBBHeaderBuilder.get_lang_header(lang)
+        response = requests.post(url_hero_list, json=payload, headers=headers)
+        
+        if response.status_code == 200:
+            data = response.json()
+            normalized_search_name = HeroNameHelper.normalize_name(hero_name)
+            
+            for record in data.get('data', {}).get('records', []):
+                hero_data = record.get('data', {}).get('hero', {}).get('data', {})
+                hero_actual_name = hero_data.get('name', '')
+                normalized_actual_name = HeroNameHelper.normalize_name(hero_actual_name)
+                
+                if normalized_actual_name == normalized_search_name:
+                    return record.get('data', {}).get('hero_id')
+        
+        return None
+
 class ErrorResponseMixin:
     @staticmethod
     def error_response(message: str, details: Any = None, status_code: int = 400) -> Response:
@@ -122,13 +174,13 @@ def _get_available_endpoints(request) -> Dict[str, str]:
             'hero_list': f'{base_url}hero-list/',
             'hero_rank': f'{base_url}hero-rank/',
             'hero_position': f'{base_url}hero-position/',
-            'hero_detail': f'{base_url}hero-detail/{{hero_id}}/',
-            'hero_detail_stats': f'{base_url}hero-detail-stats/{{main_heroid}}/',
-            'hero_skill_combo': f'{base_url}hero-skill-combo/{{hero_id}}/',
-            'hero_rate': f'{base_url}hero-rate/{{main_heroid}}/',
-            'hero_relation': f'{base_url}hero-relation/{{hero_id}}/',
-            'hero_counter': f'{base_url}hero-counter/{{main_heroid}}/',
-            'hero_compatibility': f'{base_url}hero-compatibility/{{main_heroid}}/'
+            'hero_detail': f'{base_url}hero-detail/{{hero_id_or_name}}/',
+            'hero_detail_stats': f'{base_url}hero-detail-stats/{{hero_id_or_name}}/',
+            'hero_skill_combo': f'{base_url}hero-skill-combo/{{hero_id_or_name}}/',
+            'hero_rate': f'{base_url}hero-rate/{{hero_id_or_name}}/',
+            'hero_relation': f'{base_url}hero-relation/{{hero_id_or_name}}/',
+            'hero_counter': f'{base_url}hero-counter/{{hero_id_or_name}}/',
+            'hero_compatibility': f'{base_url}hero-compatibility/{{hero_id_or_name}}/'
         }
     return {'documentation': f'{base_url}'}
 
@@ -309,7 +361,22 @@ class HeroPositionView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
 class HeroDetailView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
     permission_classes = [AllowAny]
 
-    def get(self, request, hero_id):
+    def get(self, request, hero_identifier):
+        lang = request.GET.get('lang', 'en')
+        
+        # Check if hero_identifier is numeric (ID) or string (name)
+        try:
+            hero_id = int(hero_identifier)
+        except ValueError:
+            # It's a name, so we need to get the ID first
+            hero_id = HeroNameHelper.get_hero_id_by_name(hero_identifier, lang)
+            if hero_id is None:
+                return self.error_response(
+                    'Hero not found', 
+                    f'No hero found with name: {hero_identifier}', 
+                    status_code=404
+                )
+        
         base_path = BasePathProvider.get_base_path()
         url = f"{MLBB_URL}{base_path}/2756564"
         payload = {
@@ -321,7 +388,6 @@ class HeroDetailView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
             "pageIndex": 1,
             "object": []
         }
-        lang = request.GET.get('lang', 'en')
         headers = MLBBHeaderBuilder.get_lang_header(lang)
         response = requests.post(url, json=payload, headers=headers)
         if response.status_code == 200:
@@ -331,20 +397,34 @@ class HeroDetailView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
 class HeroDetailStatsView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
     permission_classes = [AllowAny]
 
-    def get(self, request, main_heroid):
+    def get(self, request, hero_identifier):
+        lang = request.GET.get('lang', 'en')
+        
+        # Check if hero_identifier is numeric (ID) or string (name)
+        try:
+            hero_id = int(hero_identifier)
+        except ValueError:
+            # It's a name, so we need to get the ID first
+            hero_id = HeroNameHelper.get_hero_id_by_name(hero_identifier, lang)
+            if hero_id is None:
+                return self.error_response(
+                    'Hero not found', 
+                    f'No hero found with name: {hero_identifier}', 
+                    status_code=404
+                )
+        
         base_path = BasePathProvider.get_base_path()
         url = f"{MLBB_URL}{base_path}/2756567"
         payload = {
             "pageSize": 20,
             "filters": [
-                {"field": "main_heroid", "operator": "eq", "value": main_heroid},
+                {"field": "main_heroid", "operator": "eq", "value": hero_id},
                 {"field": "bigrank", "operator": "eq", "value": "101"},
                 {"field": "match_type", "operator": "eq", "value": "1"}
             ],
             "sorts": [],
             "pageIndex": 1
         }
-        lang = request.GET.get('lang', 'en')
         headers = MLBBHeaderBuilder.get_lang_header(lang)
         response = requests.post(url, json=payload, headers=headers)
         if response.status_code == 200:
@@ -354,7 +434,22 @@ class HeroDetailStatsView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
 class HeroSkillComboView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
     permission_classes = [AllowAny]
 
-    def get(self, request, hero_id):
+    def get(self, request, hero_identifier):
+        lang = request.GET.get('lang', 'en')
+        
+        # Check if hero_identifier is numeric (ID) or string (name)
+        try:
+            hero_id = int(hero_identifier)
+        except ValueError:
+            # It's a name, so we need to get the ID first
+            hero_id = HeroNameHelper.get_hero_id_by_name(hero_identifier, lang)
+            if hero_id is None:
+                return self.error_response(
+                    'Hero not found', 
+                    f'No hero found with name: {hero_identifier}', 
+                    status_code=404
+                )
+        
         base_path = BasePathProvider.get_base_path()
         url = f"{MLBB_URL}{base_path}/2674711"
         payload = {
@@ -366,7 +461,6 @@ class HeroSkillComboView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
             "pageIndex": 1,
             "object": [2684183]
         }
-        lang = request.GET.get('lang', 'en')
         headers = MLBBHeaderBuilder.get_lang_header(lang)
         response = requests.post(url, json=payload, headers=headers)
         if response.status_code == 200:
@@ -376,14 +470,28 @@ class HeroSkillComboView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
 class HeroRateView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
     permission_classes = [AllowAny]
 
-    def get(self, request, main_heroid):
+    def get(self, request, hero_identifier):
+        lang = request.GET.get('lang', 'en')
+        
+        # Check if hero_identifier is numeric (ID) or string (name)
+        try:
+            hero_id = int(hero_identifier)
+        except ValueError:
+            # It's a name, so we need to get the ID first
+            hero_id = HeroNameHelper.get_hero_id_by_name(hero_identifier, lang)
+            if hero_id is None:
+                return self.error_response(
+                    'Hero not found', 
+                    f'No hero found with name: {hero_identifier}', 
+                    status_code=404
+                )
+        
         base_path = BasePathProvider.get_base_path()
         url_past_7_days  = f"{MLBB_URL}{base_path}/2674709"
         url_past_15_days = f"{MLBB_URL}{base_path}/2687909"
         url_past_30_days = f"{MLBB_URL}{base_path}/2690860"
 
         days = request.GET.get('past-days', '7')
-        lang = request.GET.get('lang', 'en')
 
         url_map = {
             '7': url_past_7_days,
@@ -395,7 +503,7 @@ class HeroRateView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
         payload = {
             "pageSize": 20,
             "filters": [
-                {"field": "main_heroid", "operator": "eq", "value": main_heroid},
+                {"field": "main_heroid", "operator": "eq", "value": hero_id},
                 {"field": "bigrank", "operator": "eq", "value": "8"},
                 {"field": "match_type", "operator": "eq", "value": "1"}
             ],
@@ -411,7 +519,22 @@ class HeroRateView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
 class HeroRelationView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
     permission_classes = [AllowAny]
 
-    def get(self, request, hero_id):
+    def get(self, request, hero_identifier):
+        lang = request.GET.get('lang', 'en')
+        
+        # Check if hero_identifier is numeric (ID) or string (name)
+        try:
+            hero_id = int(hero_identifier)
+        except ValueError:
+            # It's a name, so we need to get the ID first
+            hero_id = HeroNameHelper.get_hero_id_by_name(hero_identifier, lang)
+            if hero_id is None:
+                return self.error_response(
+                    'Hero not found', 
+                    f'No hero found with name: {hero_identifier}', 
+                    status_code=404
+                )
+        
         base_path = BasePathProvider.get_base_path()
         url = f"{MLBB_URL}{base_path}/2756564"
         payload = {
@@ -424,7 +547,6 @@ class HeroRelationView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
             "fields": ["hero.data.name"],
             "object": []
         }
-        lang = request.GET.get('lang', 'en')
         headers = MLBBHeaderBuilder.get_lang_header(lang)
         response = requests.post(url, json=payload, headers=headers)
         if response.status_code == 200:
@@ -434,20 +556,34 @@ class HeroRelationView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
 class HeroCounterView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
     permission_classes = [AllowAny]
 
-    def get(self, request, main_heroid):
+    def get(self, request, hero_identifier):
+        lang = request.GET.get('lang', 'en')
+        
+        # Check if hero_identifier is numeric (ID) or string (name)
+        try:
+            hero_id = int(hero_identifier)
+        except ValueError:
+            # It's a name, so we need to get the ID first
+            hero_id = HeroNameHelper.get_hero_id_by_name(hero_identifier, lang)
+            if hero_id is None:
+                return self.error_response(
+                    'Hero not found', 
+                    f'No hero found with name: {hero_identifier}', 
+                    status_code=404
+                )
+        
         base_path = BasePathProvider.get_base_path()
         url = f"{MLBB_URL}{base_path}/2756569"
         payload = {
             "pageSize": 20,
             "filters": [
                 {"field": "match_type", "operator": "eq", "value": "0"},
-                {"field": "main_heroid", "operator": "eq", "value": main_heroid},
+                {"field": "main_heroid", "operator": "eq", "value": hero_id},
                 {"field": "bigrank", "operator": "eq", "value": "7"}
             ],
             "sorts": [],
             "pageIndex": 1
         }
-        lang = request.GET.get('lang', 'en')
         headers = MLBBHeaderBuilder.get_lang_header(lang)
         response = requests.post(url, json=payload, headers=headers)
         if response.status_code == 200:
@@ -457,20 +593,34 @@ class HeroCounterView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
 class HeroCompatibilityView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
     permission_classes = [AllowAny]
 
-    def get(self, request, main_heroid):
+    def get(self, request, hero_identifier):
+        lang = request.GET.get('lang', 'en')
+        
+        # Check if hero_identifier is numeric (ID) or string (name)
+        try:
+            hero_id = int(hero_identifier)
+        except ValueError:
+            # It's a name, so we need to get the ID first
+            hero_id = HeroNameHelper.get_hero_id_by_name(hero_identifier, lang)
+            if hero_id is None:
+                return self.error_response(
+                    'Hero not found', 
+                    f'No hero found with name: {hero_identifier}', 
+                    status_code=404
+                )
+        
         base_path = BasePathProvider.get_base_path()
         url = f"{MLBB_URL}{base_path}/2756569"
         payload = {
             "pageSize": 20,
             "filters": [
                 {"field": "match_type", "operator": "eq", "value": "1"},
-                {"field": "main_heroid", "operator": "eq", "value": main_heroid},
+                {"field": "main_heroid", "operator": "eq", "value": hero_id},
                 {"field": "bigrank", "operator": "eq", "value": "7"}
             ],
             "sorts": [],
             "pageIndex": 1
         }
-        lang = request.GET.get('lang', 'en')
         headers = MLBBHeaderBuilder.get_lang_header(lang)
         response = requests.post(url, json=payload, headers=headers)
         if response.status_code == 200:

@@ -28,7 +28,7 @@ API_STATUS_MESSAGES = {
     }
 }
 
-API_VERSION = config('API_VERSION', default='1.5.1')
+API_VERSION = config('API_VERSION', default='1.5.0')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -56,24 +56,24 @@ else:
     ]
 
 # Security settings for production
-# if not DEBUG:
-#     # HTTPS Security
-#     SECURE_SSL_REDIRECT = True
-#     SECURE_HSTS_SECONDS = 31536000  # 1 year
-#     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-#     SECURE_HSTS_PRELOAD = True
+if not DEBUG:
+    # HTTPS Security
+    SECURE_SSL_REDIRECT = True
+    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
     
-#     # Cookie Security
-#     SESSION_COOKIE_SECURE = True
-#     CSRF_COOKIE_SECURE = True
+    # Cookie Security
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
     
-#     # Additional security settings
-#     SECURE_CONTENT_TYPE_NOSNIFF = True
-#     SECURE_BROWSER_XSS_FILTER = True
-#     X_FRAME_OPTIONS = 'DENY'
+    # Additional security settings
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_BROWSER_XSS_FILTER = True
+    X_FRAME_OPTIONS = 'DENY'
     
-#     # Force HTTPS for all requests
-#     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    # Force HTTPS for all requests
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
 # Application definition

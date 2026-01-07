@@ -92,7 +92,7 @@ INSTALLED_APPS = [
     'apps.mlbb_api',
     'apps.mlbb_web',
     'apps.mpl_api',
-    'apps.academy',
+    'apps.academy_api',
 ]
 
 MIDDLEWARE = [

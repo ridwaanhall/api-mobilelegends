@@ -1,3 +1,74 @@
-from django.shortcuts import render
+from django.conf import settings
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import AllowAny
+import requests
+from typing import Any, Dict
+from apps.academy_api.utils import BasePathProvider
+
+
+from django.conf import settings
+
+MLBB_URL = settings.MLBB_URL
+
+class APIAvailabilityMixin:
+    """Mixin to check API availability for class-based views."""
+    def dispatch(self, request, *args, **kwargs):
+        if not settings.IS_AVAILABLE:
+            status_info = settings.API_STATUS_MESSAGES['limited']
+            return Response({
+                'error': 'Service Unavailable',
+                'status': status_info['status'],
+                'message': status_info['message'],
+                'available_endpoints': status_info['available_endpoints']
+            }, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+        return super().dispatch(request, *args, **kwargs)
 
 # Create your views here.
+class MLBBHeaderBuilder:
+    @staticmethod
+    def get_lang_header(lang: str) -> Dict[str, str]:
+        headers = {'Content-Type': 'application/json'}
+        if lang and lang != 'en':
+            headers['x-lang'] = lang
+        return headers
+
+
+class ErrorResponseMixin:
+    @staticmethod
+    def error_response(message: str, details: Any = None, status_code: int = 400) -> Response:
+        return Response({'error': message, 'details': details}, status=status_code)
+    
+
+class HeroListView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        base_path = BasePathProvider.get_base_path_academy()
+        url_hero_list = f"{MLBB_URL}{base_path}/2766683"
+
+        lang = request.GET.get('lang', 'en')
+
+        payload = {
+            "pageSize": 200,
+            "pageIndex": 1,
+            "filters": [],
+            "sorts": [],
+            "fields": [
+                "head",
+                "head_big",
+                "hero.data.name",
+                "hero.data.roadsort",
+                "hero_id",
+                "painting"
+            ],
+            "object": [2667538]
+        }
+
+        headers = MLBBHeaderBuilder.get_lang_header(lang)
+        response = requests.post(url_hero_list, json=payload, headers=headers)
+        if response.status_code == 200:
+            return Response(response.json())
+        return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)

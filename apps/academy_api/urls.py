@@ -13,5 +13,5 @@ if settings.IS_AVAILABLE:
         path('academy/equipment/', views.EquipmentView.as_view(), name='academy_equipment'),
         path('academy/version/', views.VersionView.as_view(), name='academy_version'),
         path('academy/recommended/', views.RecommendedView.as_view(), name='academy_recommended'),
-        path('academy/recommended-detail/', views.RecommendedDetailView.as_view(), name='academy_recommended_detail'),
+        path('academy/recommended/<int:recommended_id>/', views.RecommendedDetailView.as_view(), name='academy_recommended_detail'),
     ])

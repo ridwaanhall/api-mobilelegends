@@ -217,13 +217,14 @@ class RecommendedView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
 class RecommendedDetailView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
     permission_classes = [AllowAny]
 
-    def get(self, request):
+    def get(self, request, recommended_id):
         base_path = BasePathProvider.get_base_path_academy()
         url_version = f"{MLBB_URL}{base_path}/2718124"
 
         lang = request.GET.get('lang', 'en')
-        # page = int(request.GET.get('page', 1))
-        recommended_id = request.GET.get('id', '')
+
+        if not recommended_id:
+            return self.error_response('Missing recommended id', status_code=status.HTTP_400_BAD_REQUEST)
         
         payload = {
             "pageSize": 20,

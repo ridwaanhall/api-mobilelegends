@@ -72,3 +72,27 @@ class HeroListView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
         if response.status_code == 200:
             return Response(response.json())
         return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
+    
+    
+class EquipmentListView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        base_path = BasePathProvider.get_base_path_academy()
+        url_equipment_list = f"{MLBB_URL}{base_path}/2713995"
+
+        lang = request.GET.get('lang', 'en')
+        # page = int(request.GET.get('page', 1))
+
+        payload = {
+            "pageSize":200,
+            "pageIndex": 1,
+            "filters":[],
+            "sorts":[]
+        }
+
+        headers = MLBBHeaderBuilder.get_lang_header(lang)
+        response = requests.post(url_equipment_list, json=payload, headers=headers)
+        if response.status_code == 200:
+            return Response(response.json())
+        return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)

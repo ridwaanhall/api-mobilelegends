@@ -9,6 +9,7 @@ urlpatterns = []
 # Add other API endpoints only if available
 if settings.IS_AVAILABLE:
     urlpatterns.extend([
-        path('academy/hero-list/', views.HeroListView.as_view(), name='academy_hero_list'),
-        path('academy/equipment/', views.EquipmentListView.as_view(), name='academy_equipment_list'),
+        path('academy/hero/', views.HeroView.as_view(), name='academy_hero'),
+        path('academy/equipment/', views.EquipmentView.as_view(), name='academy_equipment'),
+        path('academy/version/', views.VersionView.as_view(), name='academy_version'),
     ])

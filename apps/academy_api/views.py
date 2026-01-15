@@ -42,12 +42,12 @@ class ErrorResponseMixin:
         return Response({'error': message, 'details': details}, status=status_code)
     
 
-class HeroListView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
+class HeroView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
         base_path = BasePathProvider.get_base_path_academy()
-        url_hero_list = f"{MLBB_URL}{base_path}/2766683"
+        url_hero = f"{MLBB_URL}{base_path}/2766683"
 
         lang = request.GET.get('lang', 'en')
 
@@ -68,18 +68,18 @@ class HeroListView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
         }
 
         headers = MLBBHeaderBuilder.get_lang_header(lang)
-        response = requests.post(url_hero_list, json=payload, headers=headers)
+        response = requests.post(url_hero, json=payload, headers=headers)
         if response.status_code == 200:
             return Response(response.json())
         return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
     
     
-class EquipmentListView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
+class EquipmentView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
         base_path = BasePathProvider.get_base_path_academy()
-        url_equipment_list = f"{MLBB_URL}{base_path}/2713995"
+        url_equipment = f"{MLBB_URL}{base_path}/2713995"
 
         lang = request.GET.get('lang', 'en')
         # page = int(request.GET.get('page', 1))
@@ -92,7 +92,46 @@ class EquipmentListView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
         }
 
         headers = MLBBHeaderBuilder.get_lang_header(lang)
-        response = requests.post(url_equipment_list, json=payload, headers=headers)
+        response = requests.post(url_equipment, json=payload, headers=headers)
+        if response.status_code == 200:
+            return Response(response.json())
+        return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
+    
+    
+class VersionView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        base_path = BasePathProvider.get_base_path_academy()
+        url_version = f"{MLBB_URL}{base_path}/2718124"
+
+        lang = request.GET.get('lang', 'en')
+        
+        payload = {
+            "pageSize": 20,
+            "pageIndex": 1,
+            "filters": [
+                {
+                    "field": "formId",
+                    "operator": "eq",
+                    "value": 2777742
+                }
+            ],
+            "sorts": [
+                {
+                    "data": {
+                        "field": "createdAt",
+                        "order": "desc"
+                    },
+                    "type": "sequence"
+                }
+            ],
+            "type": "form.item.all",
+            "object": [2675413]
+        }
+
+        headers = MLBBHeaderBuilder.get_lang_header(lang)
+        response = requests.post(url_version, json=payload, headers=headers)
         if response.status_code == 200:
             return Response(response.json())
         return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)

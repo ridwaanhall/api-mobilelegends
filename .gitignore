@@ -1,6 +1,8 @@
 src/
 node_modules/
 simple.html
+coba.py
+ende.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

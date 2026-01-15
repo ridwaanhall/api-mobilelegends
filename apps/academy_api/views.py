@@ -135,3 +135,80 @@ class VersionView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
         if response.status_code == 200:
             return Response(response.json())
         return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
+    
+    
+class RecommendedView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        base_path = BasePathProvider.get_base_path_academy()
+        url_version = f"{MLBB_URL}{base_path}/2718124"
+
+        lang = request.GET.get('lang', 'en')
+        page = int(request.GET.get('page', 1))
+        
+        payload = {
+            "pageSize": 10,
+            "pageIndex": page,
+            "filters": [
+                {
+                    "field": "formId",
+                    "operator": "eq",
+                    "value": 2737553
+                },
+                {
+                    "field": "data.state",
+                    "operator": "eq",
+                    "value": "release"
+                },
+                {
+                    "field": "data.channels",
+                    "operator": "in",
+                    "value": ["recommend"]
+                },
+                {
+                    "field": "uin",
+                    "operator": "contain",
+                    "value": "/.*/"
+                },
+                {
+                    "field": "data.data.game_version",
+                    "operator": "contain",
+                    "value": "/.*/"
+                },
+                {
+                    "field": "data.data.language",
+                    "operator": "eq",
+                    "value": lang
+                },
+                {
+                    "field": "createdAt",
+                    "operator": "gte",
+                    "value": 1
+                }
+            ],
+            "sorts": [
+                {
+                    "data": {
+                        "field": "dynamic.hot",
+                        "order": "desc"
+                    },
+                    "type": "sequence"
+                },
+                {
+                    "data": {
+                        "field": "createdAt",
+                        "order": "desc"
+                    },
+                    "type": "sequence"
+                }
+            ],
+            "type": "form.item.all",
+            "object": [2675413]
+        }
+
+        headers = MLBBHeaderBuilder.get_lang_header(lang)
+        response = requests.post(url_version, json=payload, headers=headers)
+        if response.status_code == 200:
+            return Response(response.json())
+        return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)

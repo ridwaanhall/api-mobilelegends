@@ -12,4 +12,5 @@ if settings.IS_AVAILABLE:
         path('academy/hero/', views.HeroView.as_view(), name='academy_hero'),
         path('academy/equipment/', views.EquipmentView.as_view(), name='academy_equipment'),
         path('academy/version/', views.VersionView.as_view(), name='academy_version'),
+        path('academy/recommended/', views.RecommendedView.as_view(), name='academy_recommended'),
     ])

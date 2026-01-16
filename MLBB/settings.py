@@ -17,9 +17,10 @@ SUPPORT_DETAILS = {
     'id_zone_adv': 'advanced server: 1149309666 (57060)',
 }
 
-API_BASE_URL = config('API_BASE_URL', default='https://mlbb-stats.rone.dev/api/')
-WEB_BASE_URL = config('WEB_BASE_URL', default='https://mlbb-stats.rone.dev/')
-DOCS_BASE_URL = config('DOCS_BASE_URL', default='https://mlbb-stats-docs.rone.dev/')
+WEB_BASE_URL = config('WEB_BASE_URL', default='https://mlbb-stats.ridwaanhall.com/')
+API_BASE_URL = config('API_BASE_URL', default=f'{WEB_BASE_URL}api/')
+DOCS_BASE_URL = config('DOCS_BASE_URL', default='https://mlbb-stats-docs.ridwaanhall.com/')
+
 MAINTENANCE_INFO_URL = config(
     'MAINTENANCE_INFO_URL',
     default='https://ridwaanhall.com/blog/how-usage-monitoring-sustains-mlbb-stats-and-api-pddikti/'
@@ -72,7 +73,7 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 if DEBUG:
     PROD_URL = 'http://127.0.0.1:8000/api/'
 else:
-    PROD_URL = config('PROD_URL')
+    PROD_URL = config('PROD_URL', default=API_BASE_URL)
 
 if DEBUG:
     ALLOWED_HOSTS = []
@@ -80,6 +81,7 @@ else:
     ALLOWED_HOSTS = [
         '.vercel.app',
         '.ridwaanhall.com',
+        '.rone.dev',
     ]
 
 # Security settings for production

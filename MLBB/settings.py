@@ -37,6 +37,7 @@ API_VERSION = config('API_VERSION', default='1.5.0')
 SECRET_KEY = config('SECRET_KEY')
 
 MLBB_URL = config('MLBB_URL')
+MLBB_URL_V2 = config('MLBB_URL_V2')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)

@@ -32,4 +32,6 @@ if settings.IS_AVAILABLE:
         path('academy/guide/<int:hero_id>/teammates/', views.HeroGuideTeammatesView.as_view(), name='academy_hero_guide_teammates'),
         path('academy/guide/<int:hero_id>/trends/', views.HeroGuideTrendsView.as_view(), name='academy_hero_guide_trends'),
         path('academy/guide/<int:hero_id>/recommended/', views.RecommendedHeroView.as_view(), name='academy_hero_guide_recommended'),
+        
+        path('academy/hero-ratings/', views.HeroRatingsView.as_view(), name='academy_hero_ratings'),
     ])

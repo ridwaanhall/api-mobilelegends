@@ -30,9 +30,17 @@ class BasePathProvider:
     RONEHA_DEV_KEY = (
         b'gAAAAABpaSKzi3z9M7b34iNDxcorLbqIM4CPoZ9-7a8oRpsPPyOUp9V9_ryz73YtFxetZnSCeN-45aLRCAMCZ0BuSPFaMBi1KOXC8b9IYEoc_7ugqf08F8s='
     )
+    RONEHA_DEV_KEY_V2 = (
+        b'gAAAAABpai4vioAXeSKebTbTHF4axGxoDSpemtjS9eO7mr-ZSmAQW4L88-GD50EMTT_lOXIMceQC-HsJ_P0f2_22t-d43e6srAl1UxQfuAN3MjeqjB4-Kd0='
+    )
     _SECRET_KEY = settings.SECRET_KEY
 
     @classmethod
     def get_base_path_academy(cls):
         crypto = CryptoManager(cls._SECRET_KEY)
         return crypto.decrypt(cls.RONEHA_DEV_KEY)
+
+    @classmethod
+    def get_base_path_ratings(cls):
+        crypto = CryptoManager(cls._SECRET_KEY)
+        return crypto.decrypt(cls.RONEHA_DEV_KEY_V2)

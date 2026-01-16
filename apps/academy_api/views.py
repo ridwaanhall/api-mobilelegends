@@ -12,6 +12,7 @@ from apps.academy_api.utils import BasePathProvider
 from django.conf import settings
 
 MLBB_URL = settings.MLBB_URL
+MLBB_URL_V2 = settings.MLBB_URL_V2
 
 class APIAvailabilityMixin:
     """Mixin to check API availability for class-based views."""
@@ -860,6 +861,23 @@ class RecommendedHeroView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
 
         headers = MLBBHeaderBuilder.get_lang_header(lang)
         response = requests.post(url_version, json=payload, headers=headers)
+        if response.status_code == 200:
+            return Response(response.json())
+        return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
+
+
+class HeroRatingsView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        base_path = BasePathProvider.get_base_path_ratings()
+        url_hero_ratings = f"{MLBB_URL_V2}{base_path}?offset=0"
+        
+        lang = request.GET.get('lang', 'en')
+
+        headers = MLBBHeaderBuilder.get_lang_header(lang)
+        
+        response = requests.get(url_hero_ratings, headers=headers)
         if response.status_code == 200:
             return Response(response.json())
         return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)

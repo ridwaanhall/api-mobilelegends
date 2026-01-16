@@ -116,6 +116,40 @@ class HeroStatsView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
         return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
     
     
+class HeroLaneView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, hero_id):
+        base_path = BasePathProvider.get_base_path_academy()
+        url_hero_lane = f"{MLBB_URL}{base_path}/2766683"
+
+        lang = request.GET.get('lang', 'en')
+        
+        if not hero_id:
+            return self.error_response('Missing hero id', status_code=status.HTTP_400_BAD_REQUEST)
+
+        payload = {
+            "pageSize": 20,
+            "pageIndex": 1,
+            "filters": [
+                {
+                    "field": "hero_id",
+                    "operator": "eq",
+                    "value": hero_id
+                }
+            ],
+            "sorts": [],
+            "fields": ["hero_id", "hero.data.roadsort"],
+            "object": []
+        }
+
+        headers = MLBBHeaderBuilder.get_lang_header(lang)
+        response = requests.post(url_hero_lane, json=payload, headers=headers)
+        if response.status_code == 200:
+            return Response(response.json())
+        return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
+    
+    
 class RolesView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
     permission_classes = [AllowAny]
 

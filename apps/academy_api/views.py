@@ -256,3 +256,54 @@ class RecommendedDetailView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
         if response.status_code == 200:
             return Response(response.json())
         return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
+
+
+class GuideView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
+    '''
+    Docstring for GuideView
+    This similar to hero list but get filtered by roles and lanes.
+    '''
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        base_path = BasePathProvider.get_base_path_academy()
+        url_guide = f"{MLBB_URL}{base_path}/2766683"
+
+        lang = request.GET.get('lang', 'en')
+        
+        size = request.GET.get('size', 2000)
+        page = request.GET.get('page', 1)
+
+        payload = {
+            "pageSize": size,
+            "pageIndex": page,
+            "filters": [
+                {
+                    "field": "<hero.data.sortid>",
+                    "operator": "hasAnyOf",
+                    "value": [1, 2, 3, 4, 5, 6]
+                },
+                {
+                    "field": "<hero.data.roadsort>",
+                    "operator": "hasAnyOf",
+                    "value": [1, 2, 3, 4, 5]
+                }
+            ],
+            "sorts": [
+                {
+                    "data": {
+                        "field": "hero_id",
+                        "order": "desc"
+                    },
+                    "type": "sequence"
+                }
+            ],
+            "fields": ["head", "hero_id", "hero.data.name"],
+            "object": []
+        }
+
+        headers = MLBBHeaderBuilder.get_lang_header(lang)
+        response = requests.post(url_guide, json=payload, headers=headers)
+        if response.status_code == 200:
+            return Response(response.json())
+        return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)

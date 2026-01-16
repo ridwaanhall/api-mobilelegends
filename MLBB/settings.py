@@ -12,6 +12,8 @@ SUPPORT_DETAILS = {
     'github_sponsors': 'https://github.com/sponsors/ridwaanhall',
     'buymeacoffee': 'https://www.buymeacoffee.com/ridwaanhall',
     'donation_link': 'https://github.com/sponsors/ridwaanhall',
+    'id_zone_ori': 'original server: 688700997 (8742)',
+    'id_zone_adv': 'advanced server: 1149309666 (57060)',
 }
 
 # API Status Messages

@@ -34,4 +34,5 @@ if settings.IS_AVAILABLE:
         path('academy/guide/<int:hero_id>/recommended/', views.RecommendedHeroView.as_view(), name='academy_hero_guide_recommended'),
         
         path('academy/hero-ratings/', views.HeroRatingsView.as_view(), name='academy_hero_ratings'),
+        path('academy/hero-ratings/<str:subject>/', views.HeroRatingsSubjectView.as_view(), name='academy_hero_ratings_subject'),
     ])

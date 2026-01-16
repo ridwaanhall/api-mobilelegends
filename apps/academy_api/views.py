@@ -747,3 +747,56 @@ class HeroGuideTeammatesView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
             return Response(response.json())
         return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
     
+    
+class HeroGuideTrendsView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, hero_id, lane_id):
+        base_path = BasePathProvider.get_base_path_academy()
+        url_hero_trends = f"{MLBB_URL}{base_path}/2777028"
+
+        lang = request.GET.get('lang', 'en')
+        
+        if not hero_id or not lane_id:
+            return self.error_response('Missing hero id or lane id', status_code=status.HTTP_400_BAD_REQUEST)
+        
+        RANK_MAP = {
+            'all': '101',
+            'epic': '5',
+            'legend': '6',
+            'mythic': '7',
+            'honor': '8',
+            'glory': '9',
+        }
+        
+        rank = request.GET.get('rank', 'all')  # Default to 'All' rank
+        rank_value = RANK_MAP.get(rank.lower(), '101')
+
+        payload = {
+            "pageSize": 20,
+            "pageIndex": 1,
+            "filters": [
+                {
+                    "field": "heroid",
+                    "operator": "eq",
+                    "value": hero_id
+                },
+                {
+                    "field": "big_rank",
+                    "operator": "eq",
+                    "value": rank_value
+                },
+                {
+                    "field": "real_road",
+                    "operator": "eq",
+                    "value": lane_id
+                }
+            ],
+            "sorts": []
+        }
+
+        headers = MLBBHeaderBuilder.get_lang_header(lang)
+        response = requests.post(url_hero_trends, json=payload, headers=headers)
+        if response.status_code == 200:
+            return Response(response.json())
+        return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)

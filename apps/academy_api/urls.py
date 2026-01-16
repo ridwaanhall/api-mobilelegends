@@ -30,4 +30,5 @@ if settings.IS_AVAILABLE:
         path('academy/guide/<int:hero_id>/builds/', views.HeroGuideBuildsView.as_view(), name='academy_hero_guide_builds'),
         path('academy/guide/<int:hero_id>/counters/', views.HeroGuideCountersView.as_view(), name='academy_hero_guide_counters'),
         path('academy/guide/<int:hero_id>/teammates/', views.HeroGuideTeammatesView.as_view(), name='academy_hero_guide_teammates'),
+        path('academy/guide/<int:hero_id>/trends/<int:lane_id>/', views.HeroGuideTrendsView.as_view(), name='academy_hero_guide_trends'),
     ])

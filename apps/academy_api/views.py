@@ -535,14 +535,14 @@ class HeroGuideLaneView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
 class HeroGuideTimeWinRateView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
     permission_classes = [AllowAny]
 
-    def get(self, request, hero_id):
+    def get(self, request, hero_id, lane_id):
         base_path = BasePathProvider.get_base_path_academy()
         url_hero_time_winrate = f"{MLBB_URL}{base_path}/2777027"
 
         lang = request.GET.get('lang', 'en')
         
-        if not hero_id:
-            return self.error_response('Missing hero id', status_code=status.HTTP_400_BAD_REQUEST)
+        if not hero_id or not lane_id:
+            return self.error_response('Missing hero id or lane id', status_code=status.HTTP_400_BAD_REQUEST)
 
         RANK_MAP = {
             'all': '101',
@@ -573,7 +573,7 @@ class HeroGuideTimeWinRateView(APIAvailabilityMixin, ErrorResponseMixin, APIView
                 {
                     "field": "real_road",
                     "operator": "eq",
-                    "value": "2"
+                    "value": lane_id
                 }
             ],
             "sorts": []
@@ -751,14 +751,14 @@ class HeroGuideTeammatesView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
 class HeroGuideTrendsView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
     permission_classes = [AllowAny]
 
-    def get(self, request, hero_id, lane_id):
+    def get(self, request, hero_id):
         base_path = BasePathProvider.get_base_path_academy()
-        url_hero_trends = f"{MLBB_URL}{base_path}/2777028"
+        url_hero_trends = f"{MLBB_URL}{base_path}/2755185"
 
         lang = request.GET.get('lang', 'en')
         
-        if not hero_id or not lane_id:
-            return self.error_response('Missing hero id or lane id', status_code=status.HTTP_400_BAD_REQUEST)
+        if not hero_id:
+            return self.error_response('Missing hero id', status_code=status.HTTP_400_BAD_REQUEST)
         
         RANK_MAP = {
             'all': '101',
@@ -777,19 +777,19 @@ class HeroGuideTrendsView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
             "pageIndex": 1,
             "filters": [
                 {
-                    "field": "heroid",
+                    "field": "main_heroid",
                     "operator": "eq",
                     "value": hero_id
                 },
                 {
-                    "field": "big_rank",
+                    "field": "bigrank",
                     "operator": "eq",
                     "value": rank_value
                 },
                 {
-                    "field": "real_road",
+                    "field": "match_type",
                     "operator": "eq",
-                    "value": lane_id
+                    "value": 1
                 }
             ],
             "sorts": []

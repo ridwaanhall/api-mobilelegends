@@ -26,9 +26,9 @@ if settings.IS_AVAILABLE:
         path('academy/guide/', views.GuideView.as_view(), name='academy_guide'),
         path('academy/guide/<int:hero_id>/stats/', views.HeroGuideStatsView.as_view(), name='academy_hero_guide_stats'),
         path('academy/guide/<int:hero_id>/lane/', views.HeroGuideLaneView.as_view(), name='academy_hero_guide_lane'),
-        path('academy/guide/<int:hero_id>/time-win-rate/', views.HeroGuideTimeWinRateView.as_view(), name='academy_hero_guide_time_win_rate'),
+        path('academy/guide/<int:hero_id>/time-win-rate/<int:lane_id>/', views.HeroGuideTimeWinRateView.as_view(), name='academy_hero_guide_time_win_rate'),
         path('academy/guide/<int:hero_id>/builds/', views.HeroGuideBuildsView.as_view(), name='academy_hero_guide_builds'),
         path('academy/guide/<int:hero_id>/counters/', views.HeroGuideCountersView.as_view(), name='academy_hero_guide_counters'),
         path('academy/guide/<int:hero_id>/teammates/', views.HeroGuideTeammatesView.as_view(), name='academy_hero_guide_teammates'),
-        path('academy/guide/<int:hero_id>/trends/<int:lane_id>/', views.HeroGuideTrendsView.as_view(), name='academy_hero_guide_trends'),
+        path('academy/guide/<int:hero_id>/trends/', views.HeroGuideTrendsView.as_view(), name='academy_hero_guide_trends'),
     ])

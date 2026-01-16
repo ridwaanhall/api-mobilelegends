@@ -753,50 +753,48 @@ class HeroGuideTrendsView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
 
     def get(self, request, hero_id):
         base_path = BasePathProvider.get_base_path_academy()
-        url_hero_trends = f"{MLBB_URL}{base_path}/2755185"
 
-        lang = request.GET.get('lang', 'en')
-        
-        if not hero_id:
-            return self.error_response('Missing hero id', status_code=status.HTTP_400_BAD_REQUEST)
-        
-        RANK_MAP = {
-            'all': '101',
-            'epic': '5',
-            'legend': '6',
-            'mythic': '7',
-            'honor': '8',
-            'glory': '9',
+        DAYS_MAP = {
+            "7": "2755185",
+            "15": "2755186",
+            "30": "2755187",
         }
-        
-        rank = request.GET.get('rank', 'all')  # Default to 'All' rank
-        rank_value = RANK_MAP.get(rank.lower(), '101')
+
+        # ambil dari query string, default ke "7"
+        days = request.GET.get("days", "7")
+        day_value = DAYS_MAP.get(days, DAYS_MAP["7"])
+        url_hero_trends = f"{MLBB_URL}{base_path}/{day_value}"
+
+        lang = request.GET.get("lang", "en")
+
+        if not hero_id:
+            return self.error_response("Missing hero id", status_code=status.HTTP_400_BAD_REQUEST)
+
+        RANK_MAP = {
+            "all": "101",
+            "epic": "5",
+            "legend": "6",
+            "mythic": "7",
+            "honor": "8",
+            "glory": "9",
+        }
+
+        rank = request.GET.get("rank", "all")
+        rank_value = RANK_MAP.get(rank.lower(), "101")
 
         payload = {
             "pageSize": 20,
             "pageIndex": 1,
             "filters": [
-                {
-                    "field": "main_heroid",
-                    "operator": "eq",
-                    "value": hero_id
-                },
-                {
-                    "field": "bigrank",
-                    "operator": "eq",
-                    "value": rank_value
-                },
-                {
-                    "field": "match_type",
-                    "operator": "eq",
-                    "value": 1
-                }
+                {"field": "main_heroid", "operator": "eq", "value": hero_id},
+                {"field": "bigrank", "operator": "eq", "value": rank_value},
+                {"field": "match_type", "operator": "eq", "value": 1},
             ],
-            "sorts": []
+            "sorts": [],
         }
 
         headers = MLBBHeaderBuilder.get_lang_header(lang)
         response = requests.post(url_hero_trends, json=payload, headers=headers)
         if response.status_code == 200:
             return Response(response.json())
-        return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
+        return self.error_response("Failed to fetch data", response.text, status_code=response.status_code)

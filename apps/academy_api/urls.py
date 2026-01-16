@@ -12,6 +12,7 @@ if settings.IS_AVAILABLE:
         path('academy/version/', views.VersionView.as_view(), name='academy_version'),
         
         path('academy/heroes/', views.HeroesView.as_view(), name='academy_heroes'),
+        path('academy/heroes/<int:hero_id>/stats/', views.HeroStatsView.as_view(), name='academy_hero_stats'),
         
         path('academy/roles/', views.RolesView.as_view(), name='academy_roles'),
         

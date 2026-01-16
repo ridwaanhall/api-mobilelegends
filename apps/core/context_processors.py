@@ -6,3 +6,8 @@ def base_urls(request):
         "API_BASE_URL": settings.API_BASE_URL,
         "DOCS_BASE_URL": settings.DOCS_BASE_URL,
     }
+
+def site_title(request):
+    return {
+        "SITE_TITLE": settings.SITE_TITLE,
+    }

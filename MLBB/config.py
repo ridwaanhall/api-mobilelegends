@@ -13,6 +13,8 @@ SUPPORT_DETAILS = {
     'id_zone_adv': 'advanced server: 1149309666 (57060)',
 }
 
+SITE_TITLE = "API Mobile Legends"
+
 WEB_BASE_URL = config('WEB_BASE_URL', default='https://mlbb-stats.rone.dev/')
 API_BASE_URL = config('API_BASE_URL', default=f'{WEB_BASE_URL}api/')
 DOCS_BASE_URL = config('DOCS_BASE_URL', default='https://mlbb-stats-docs.rone.dev/')

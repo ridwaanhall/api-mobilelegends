@@ -1,7 +1,11 @@
 {% extends "rest_framework/base.html" %}
 
+{% block title %}
+    {{ name }} – {{ SITE_TITLE }}
+{% endblock %}
+
 {% block branding %}
     <a class='navbar-brand' rel="nofollow" href='{{ WEB_BASE_URL }}api/'>
-        API Mobile Legends
+        {{ SITE_TITLE }}
     </a>
 {% endblock %}

@@ -42,7 +42,7 @@ class ErrorResponseMixin:
         return Response({'error': message, 'details': details}, status=status_code)
     
 
-class HeroView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
+class HeroesView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):

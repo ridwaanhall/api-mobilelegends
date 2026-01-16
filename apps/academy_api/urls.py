@@ -11,7 +11,7 @@ if settings.IS_AVAILABLE:
     urlpatterns.extend([
         path('academy/version/', views.VersionView.as_view(), name='academy_version'),
         
-        path('academy/hero/', views.HeroView.as_view(), name='academy_hero'),
+        path('academy/heroes/', views.HeroesView.as_view(), name='academy_heroes'),
         
         path('academy/roles/', views.RolesView.as_view(), name='academy_roles'),
         

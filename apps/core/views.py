@@ -44,7 +44,7 @@ def _get_mlbb_stats_endpoints(request) -> Dict[str, str]:
     """Return available endpoints based on API availability."""
     if settings.IS_AVAILABLE:
         return {
-            'documentation': '/api/',
+            'documentation': settings.DOCS_BASE_URL,
             'hero_list': '/api/hero-list/',
             'hero_rank': '/api/hero-rank/',
             'hero_position': '/api/hero-position/',
@@ -56,7 +56,7 @@ def _get_mlbb_stats_endpoints(request) -> Dict[str, str]:
             'hero_counter': '/api/hero-counter/{hero_id_or_name}/',
             'hero_compatibility': '/api/hero-compatibility/{hero_id_or_name}/'
         }
-    return {'documentation': '/api/'}
+    return {'documentation': settings.DOCS_BASE_URL}
 
 
 def _get_mlbb_academy_endpoints(request) -> Dict[str, str]:
@@ -153,6 +153,6 @@ class MlbbApiEndpoints(APIView):
             "links": {
                 "api_url": base_api_url if settings.IS_AVAILABLE else settings.MAINTENANCE_INFO_URL,
                 "web_url": f"{base_web_url}hero-rank/" if settings.IS_AVAILABLE else settings.MAINTENANCE_INFO_URL,
-                "docs": base_docs_url if settings.IS_AVAILABLE else settings.MAINTENANCE_INFO_URL,
+                "docs": base_docs_url,
             }
         }, status=status.HTTP_200_OK)

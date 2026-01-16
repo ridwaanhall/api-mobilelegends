@@ -5,7 +5,7 @@ from decouple import config
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # API Availability Control
-IS_AVAILABLE = config('IS_AVAILABLE', default=True, cast=bool)
+IS_AVAILABLE = config('IS_AVAILABLE', default=False, cast=bool)
 DATE_AVAILABLE = config('DATE_AVAILABLE', default='February 11, 2026')
 
 SUPPORT_DETAILS = {
@@ -17,9 +17,9 @@ SUPPORT_DETAILS = {
     'id_zone_adv': 'advanced server: 1149309666 (57060)',
 }
 
-WEB_BASE_URL = config('WEB_BASE_URL', default='https://mlbb-stats.ridwaanhall.com/')
+WEB_BASE_URL = config('WEB_BASE_URL', default='https://mlbb-stats.rone.dev/')
 API_BASE_URL = config('API_BASE_URL', default=f'{WEB_BASE_URL}api/')
-DOCS_BASE_URL = config('DOCS_BASE_URL', default='https://mlbb-stats-docs.ridwaanhall.com/')
+DOCS_BASE_URL = config('DOCS_BASE_URL', default='https://mlbb-stats-docs.rone.dev/')
 
 MAINTENANCE_INFO_URL = config(
     'MAINTENANCE_INFO_URL',
@@ -80,7 +80,6 @@ if DEBUG:
 else:
     ALLOWED_HOSTS = [
         '.vercel.app',
-        '.ridwaanhall.com',
         '.rone.dev',
     ]
 

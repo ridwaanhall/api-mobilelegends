@@ -9,12 +9,11 @@
 
       {% block meta %}
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-        <meta name="robots" content="NONE,NOARCHIVE" />
+        <meta name="robots" content="index, follow" />
       {% endblock %}
 
       <title>{% block title %}{% if name %}{{ name }} – {% endif %}{{ SITE_TITLE }}{% endblock %}</title>
       <meta name="description" content="{% if name %}{{ name }}{% else %}API documentation{% endif %} for {{ SITE_TITLE }}.">
-      <meta name="robots" content="index, follow">
       <link rel="canonical" href="{{ request.build_absolute_uri }}">
       <meta property="og:title" content="{% if name %}{{ name }} – {% endif %}{{ SITE_TITLE }}">
       <meta property="og:description" content="{% if name %}{{ name }}{% else %}API documentation{% endif %} for {{ SITE_TITLE }}.">

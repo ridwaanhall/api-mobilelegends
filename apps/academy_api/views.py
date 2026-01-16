@@ -270,6 +270,122 @@ class HeroBuildsView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
         return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
     
     
+class HeroCountersView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, hero_id):
+        base_path = BasePathProvider.get_base_path_academy()
+        url_hero_counters = f"{MLBB_URL}{base_path}/2777391"
+
+        lang = request.GET.get('lang', 'en')
+        
+        if not hero_id:
+            return self.error_response('Missing hero id', status_code=status.HTTP_400_BAD_REQUEST)
+        
+        RANK_MAP = {
+            'all': '101',
+            'epic': '5',
+            'legend': '6',
+            'mythic': '7',
+            'honor': '8',
+            'glory': '9',
+        }
+        
+        rank = request.GET.get('rank', 'all')  # Default to 'All' rank
+        rank_value = RANK_MAP.get(rank.lower(), '101')
+
+        payload = {
+            "pageSize": 3,
+            "pageIndex": 1,
+            "filters": [
+                {
+                    "field": "main_heroid",
+                    "operator": "eq",
+                    "value": hero_id
+                },
+                {
+                    "field": "big_rank",
+                    "operator": "eq",
+                    "value": rank_value
+                },
+                {
+                    "field": "camp_type",
+                    "operator": "eq",
+                    "value": 0
+                }
+            ],
+            "sorts": []
+        }
+
+        headers = MLBBHeaderBuilder.get_lang_header(lang)
+        response = requests.post(url_hero_counters, json=payload, headers=headers)
+        if response.status_code == 200:
+            return Response(response.json())
+        return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
+    
+    
+class HeroTeammatesView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, hero_id):
+        base_path = BasePathProvider.get_base_path_academy()
+        url_hero_counters = f"{MLBB_URL}{base_path}/2777391"
+
+        lang = request.GET.get('lang', 'en')
+        
+        if not hero_id:
+            return self.error_response('Missing hero id', status_code=status.HTTP_400_BAD_REQUEST)
+        
+        RANK_MAP = {
+            'all': '101',
+            'epic': '5',
+            'legend': '6',
+            'mythic': '7',
+            'honor': '8',
+            'glory': '9',
+        }
+        
+        rank = request.GET.get('rank', 'all')  # Default to 'All' rank
+        rank_value = RANK_MAP.get(rank.lower(), '101')
+
+        payload = {
+            "pageSize": 3,
+            "pageIndex": 1,
+            "filters": [
+                {
+                    "field": "main_heroid",
+                    "operator": "eq",
+                    "value": hero_id
+                },
+                {
+                    "field": "big_rank",
+                    "operator": "eq",
+                    "value": rank_value
+                },
+                {
+                    "field": "camp_type",
+                    "operator": "eq",
+                    "value": 1
+                }
+            ],
+            "sorts": [
+                {
+                    "data": {
+                        "field": "increase_win_rate",
+                        "order": "asc"
+                    },
+                    "type": "sequence"
+                }
+            ]
+        }
+
+        headers = MLBBHeaderBuilder.get_lang_header(lang)
+        response = requests.post(url_hero_counters, json=payload, headers=headers)
+        if response.status_code == 200:
+            return Response(response.json())
+        return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
+    
+    
 class RolesView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
     permission_classes = [AllowAny]
 

@@ -17,6 +17,29 @@ SUPPORT_DETAILS = {
     'id_zone_adv': 'advanced server: 1149309666 (57060)',
 }
 
+API_BASE_URL = config('API_BASE_URL', default='https://mlbb-stats.rone.dev/api/')
+WEB_BASE_URL = config('WEB_BASE_URL', default='https://mlbb-stats.rone.dev/')
+DOCS_BASE_URL = config('DOCS_BASE_URL', default='https://mlbb-stats-docs.rone.dev/')
+MAINTENANCE_INFO_URL = config(
+    'MAINTENANCE_INFO_URL',
+    default='https://ridwaanhall.com/blog/how-usage-monitoring-sustains-mlbb-stats-and-api-pddikti/'
+)
+
+DONATION_MIN = config('DONATION_MIN', default=1, cast=int)
+DONATION_TARGET = config('DONATION_TARGET', default=500, cast=int)
+DONATION_CURRENCY = config('DONATION_CURRENCY', default='USD')
+
+SUPPORT_STATUS_MESSAGES = {
+    'limited': config(
+        'SUPPORT_MESSAGE_LIMITED',
+        default='API is currently in maintenance mode. Donations help cover hosting and performance scaling.'
+    ),
+    'available': config(
+        'SUPPORT_MESSAGE_AVAILABLE',
+        default='All API endpoints are fully operational. Donations help cover hosting and performance scaling.'
+    ),
+}
+
 # API Status Messages
 API_STATUS_MESSAGES = {
     'limited': {

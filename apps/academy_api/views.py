@@ -281,12 +281,12 @@ class GuideView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
                 {
                     "field": "<hero.data.sortid>",
                     "operator": "hasAnyOf",
-                    "value": [1, 2, 3, 4, 5, 6]
+                    "value": [1, 2, 3, 4, 5, 6] # 1 = Tank (t), 2 = Fighter (f), 3 = Assassin (a), 4 = Mage (m), 5 = Marksman (mm), 6 = Support (s)
                 },
                 {
                     "field": "<hero.data.roadsort>",
                     "operator": "hasAnyOf",
-                    "value": [1, 2, 3, 4, 5]
+                    "value": [1, 2, 3, 4, 5] # 1 = EXP (e), 2 =  Mid (m), 3 = Roam (r), 4 = Jungle (j), 5 = Gold (g)
                 }
             ],
             "sorts": [

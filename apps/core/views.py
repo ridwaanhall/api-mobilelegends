@@ -59,6 +59,35 @@ def _get_mlbb_stats_endpoints(request) -> Dict[str, str]:
     return {'documentation': f'{base_url}'}
 
 
+def _get_mlbb_academy_endpoints(request) -> Dict[str, str]:
+    """Return MLBB Academy endpoints based on API availability."""
+    base_url = request.build_absolute_uri('/api/academy/')
+    if settings.IS_AVAILABLE:
+        return {
+            'version': f'{base_url}version/',
+            'heroes': f'{base_url}heroes/',
+            'roles': f'{base_url}roles/',
+            'equipment': f'{base_url}equipment/',
+            'equipment_details': f'{base_url}equipment-details/',
+            'spells': f'{base_url}spells/',
+            'emblems': f'{base_url}emblems/',
+            'recommended': f'{base_url}recommended/',
+            'recommended_detail': f'{base_url}recommended/{{recommended_id}}/',
+            'guide': f'{base_url}guide/',
+            'guide_stats': f'{base_url}guide/{{hero_id}}/stats/',
+            'guide_lane': f'{base_url}guide/{{hero_id}}/lane/',
+            'guide_time_win_rate': f'{base_url}guide/{{hero_id}}/time-win-rate/{{lane_id}}/',
+            'guide_builds': f'{base_url}guide/{{hero_id}}/builds/',
+            'guide_counters': f'{base_url}guide/{{hero_id}}/counters/',
+            'guide_teammates': f'{base_url}guide/{{hero_id}}/teammates/',
+            'guide_trends': f'{base_url}guide/{{hero_id}}/trends/',
+            'guide_recommended': f'{base_url}guide/{{hero_id}}/recommended/',
+            'hero_ratings': f'{base_url}hero-ratings/',
+            'hero_ratings_subject': f'{base_url}hero-ratings/{{subject}}/',
+        }
+    return {}
+
+
 class MlbbApiEndpoints(APIView):
     permission_classes = [AllowAny]
 
@@ -85,6 +114,11 @@ class MlbbApiEndpoints(APIView):
                     "status": status_info['status'],
                     "message": "MLBB API is currently under maintenance." if not settings.IS_AVAILABLE else "MLBB API is online.",
                     "endpoints": _get_mlbb_stats_endpoints(request)
+                },
+                "mlbb_academy": {
+                    "status": status_info['status'],
+                    "message": "MLBB Academy API is currently under maintenance." if not settings.IS_AVAILABLE else "MLBB Academy API is online.",
+                    "endpoints": _get_mlbb_academy_endpoints(request)
                 },
                 "mpl_id": {
                     "status": status_info['status'],

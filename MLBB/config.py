@@ -1,7 +1,7 @@
 from decouple import config
 
 # API Availability Control
-IS_AVAILABLE = config('IS_AVAILABLE', default=True, cast=bool)
+IS_AVAILABLE = config('IS_AVAILABLE', default=False, cast=bool)
 DATE_AVAILABLE = config('DATE_AVAILABLE', default='February 11, 2026')
 
 SUPPORT_DETAILS = {

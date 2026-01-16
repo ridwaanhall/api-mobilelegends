@@ -21,10 +21,9 @@ import os
 from django.conf import settings
 from django.shortcuts import render
 from django.http import JsonResponse, FileResponse, Http404
-from functools import wraps
-from typing import Dict
 from django.core.cache import cache
 import logging
+from apps.core.utils import web_availability_required
 
 logger = logging.getLogger(__name__)
 
@@ -122,20 +121,6 @@ def get_hero_cache_info():
         'cache_active': False,
         'heroes': {}
     }
-
-def web_availability_required(view_func):
-    @wraps(view_func)
-    def wrapper(request, *args, **kwargs):
-        if not settings.IS_AVAILABLE:
-            status_info = settings.API_STATUS_MESSAGES['limited']
-            return JsonResponse({
-                'error': 'Service Unavailable',
-                'status': status_info['status'],
-                'message': status_info['message'],
-                'available_endpoints': ['Home page only']
-            }, status=503)
-        return view_func(request, *args, **kwargs)
-    return wrapper
 
 class MLBBWebService:
     @staticmethod

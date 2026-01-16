@@ -5,43 +5,13 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 import requests
-from typing import Any, Dict
 from apps.academy_api.utils import BasePathProvider
-
-
-from django.conf import settings
+from apps.core.utils import APIAvailabilityMixin, MLBBHeaderBuilder, ErrorResponseMixin
 
 MLBB_URL = settings.MLBB_URL
 MLBB_URL_V2 = settings.MLBB_URL_V2
 
-class APIAvailabilityMixin:
-    """Mixin to check API availability for class-based views."""
-    def dispatch(self, request, *args, **kwargs):
-        if not settings.IS_AVAILABLE:
-            status_info = settings.API_STATUS_MESSAGES['limited']
-            return Response({
-                'error': 'Service Unavailable',
-                'status': status_info['status'],
-                'message': status_info['message'],
-                'available_endpoints': status_info['available_endpoints']
-            }, status=status.HTTP_503_SERVICE_UNAVAILABLE)
-        return super().dispatch(request, *args, **kwargs)
-
 # Create your views here.
-class MLBBHeaderBuilder:
-    @staticmethod
-    def get_lang_header(lang: str) -> Dict[str, str]:
-        headers = {'Content-Type': 'application/json'}
-        if lang and lang != 'en':
-            headers['x-lang'] = lang
-        return headers
-
-
-class ErrorResponseMixin:
-    @staticmethod
-    def error_response(message: str, details: Any = None, status_code: int = 400) -> Response:
-        return Response({'error': message, 'details': details}, status=status_code)
-    
 
 class HeroesView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
     permission_classes = [AllowAny]

@@ -6,6 +6,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # API Availability Control
 IS_AVAILABLE = config('IS_AVAILABLE', default=True, cast=bool)
+DATE_AVAILABLE = config('DATE_AVAILABLE', default='February 11, 2026')
 
 SUPPORT_DETAILS = {
     'support_message': 'You can support us by donating from $1 USD (target: $500 USD) to help enhance API performance and handle high request volumes.',
@@ -20,7 +21,7 @@ SUPPORT_DETAILS = {
 API_STATUS_MESSAGES = {
     'limited': {
         'status': 'limited',
-        'message': 'API is currently in maintenance mode. Will available August 28, 2025.',
+        'message': f'API is currently in maintenance mode. Will available {DATE_AVAILABLE}.',
         'available_endpoints': ['Base API']
     },
     'available': {
@@ -30,7 +31,7 @@ API_STATUS_MESSAGES = {
     }
 }
 
-API_VERSION = config('API_VERSION', default='1.5.0')
+API_VERSION = config('API_VERSION', default='1.6.0')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -92,6 +93,7 @@ INSTALLED_APPS = [
     
     'rest_framework',
     
+    'apps.core',
     'apps.mlbb_api',
     'apps.mlbb_web',
     'apps.mpl_api',

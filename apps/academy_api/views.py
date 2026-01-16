@@ -273,6 +273,39 @@ class GuideView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
         
         size = request.GET.get('size', 2000)
         page = request.GET.get('page', 1)
+        
+        ROLE_MAP = {
+            't': 1,
+            'f': 2,
+            'a': 3,
+            'm': 4,
+            'mm': 5,
+            's': 6
+        }
+        
+        LANE_MAP = {
+            'e': 1,
+            'm': 2,
+            'r': 3,
+            'j': 4,
+            'g': 5
+        }
+        
+        role_param = request.GET.get('role', None)
+        lane_param = request.GET.get('lane', None)
+        
+        role_values = []
+        if role_param:
+            roles = role_param.split(',')
+            for role in roles:
+                if role in ROLE_MAP:
+                    role_values.append(ROLE_MAP[role])
+        lane_values = []
+        if lane_param:
+            lanes = lane_param.split(',')
+            for lane in lanes:
+                if lane in LANE_MAP:
+                    lane_values.append(LANE_MAP[lane])
 
         payload = {
             "pageSize": size,
@@ -281,12 +314,12 @@ class GuideView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
                 {
                     "field": "<hero.data.sortid>",
                     "operator": "hasAnyOf",
-                    "value": [1, 2, 3, 4, 5, 6] # 1 = Tank (t), 2 = Fighter (f), 3 = Assassin (a), 4 = Mage (m), 5 = Marksman (mm), 6 = Support (s)
+                    "value": role_values if role_values else [1, 2, 3, 4, 5, 6] # 1 = Tank (t), 2 = Fighter (f), 3 = Assassin (a), 4 = Mage (m), 5 = Marksman (mm), 6 = Support (s)
                 },
                 {
                     "field": "<hero.data.roadsort>",
                     "operator": "hasAnyOf",
-                    "value": [1, 2, 3, 4, 5] # 1 = EXP (e), 2 =  Mid (m), 3 = Roam (r), 4 = Jungle (j), 5 = Gold (g)
+                    "value": lane_values if lane_values else [1, 2, 3, 4, 5] # 1 = EXP (e), 2 =  Mid (m), 3 = Roam (r), 4 = Jungle (j), 5 = Gold (g)
                 }
             ],
             "sorts": [

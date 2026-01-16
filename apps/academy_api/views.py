@@ -74,7 +74,63 @@ class HeroView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
         return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
     
     
+class RolesView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        base_path = BasePathProvider.get_base_path_academy()
+        url_roles = f"{MLBB_URL}{base_path}/2740642"
+
+        lang = request.GET.get('lang', 'en')
+
+        payload = {
+            "pageSize": 50,
+            "pageIndex": 1,
+            "filters": [],
+            "sorts": [
+                {
+                    "data": {
+                        "field": "emblem_id",
+                        "order": "asc"
+                    },
+                    "type": "sequence"
+                }
+            ],
+            "object": []
+        }
+
+        headers = MLBBHeaderBuilder.get_lang_header(lang)
+        response = requests.post(url_roles, json=payload, headers=headers)
+        if response.status_code == 200:
+            return Response(response.json())
+        return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
+    
+    
 class EquipmentView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        base_path = BasePathProvider.get_base_path_academy()
+        url_equipment = f"{MLBB_URL}{base_path}/2775075"
+
+        lang = request.GET.get('lang', 'en')
+        # page = int(request.GET.get('page', 1))
+
+        payload = {
+            "pageSize": 200,
+            "pageIndex": 1,
+            "filters": [],
+            "sorts": []
+        }
+
+        headers = MLBBHeaderBuilder.get_lang_header(lang)
+        response = requests.post(url_equipment, json=payload, headers=headers)
+        if response.status_code == 200:
+            return Response(response.json())
+        return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
+    
+    
+class EquipmentDetailsView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
@@ -93,6 +149,52 @@ class EquipmentView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
 
         headers = MLBBHeaderBuilder.get_lang_header(lang)
         response = requests.post(url_equipment, json=payload, headers=headers)
+        if response.status_code == 200:
+            return Response(response.json())
+        return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
+    
+    
+class SpellsView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        base_path = BasePathProvider.get_base_path_academy()
+        url_spell = f"{MLBB_URL}{base_path}/2718122"
+
+        lang = request.GET.get('lang', 'en')
+        
+        payload = {
+            "pageSize": 200,
+            "pageIndex": 1,
+            "filters": [],
+            "sorts": []
+        }
+
+        headers = MLBBHeaderBuilder.get_lang_header(lang)
+        response = requests.post(url_spell, json=payload, headers=headers)
+        if response.status_code == 200:
+            return Response(response.json())
+        return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
+    
+    
+class EmblemsView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        base_path = BasePathProvider.get_base_path_academy()
+        url_emblem = f"{MLBB_URL}{base_path}/2718121"
+
+        lang = request.GET.get('lang', 'en')
+        
+        payload = {
+            "pageSize": 50,
+            "pageIndex": 1,
+            "filters": [],
+            "sorts": []
+        }
+
+        headers = MLBBHeaderBuilder.get_lang_header(lang)
+        response = requests.post(url_emblem, json=payload, headers=headers)
         if response.status_code == 200:
             return Response(response.json())
         return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)

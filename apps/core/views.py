@@ -1,6 +1,7 @@
 from typing import Dict
 
 from django.utils import timezone
+from datetime import timezone as dt_timezone
 
 from django.conf import settings
 from rest_framework import status
@@ -92,7 +93,7 @@ class MlbbApiEndpoints(APIView):
     def get(self, request):
         status_info = settings.API_STATUS_MESSAGES['available'] if settings.IS_AVAILABLE else settings.API_STATUS_MESSAGES['limited']
         status_key = 'available' if settings.IS_AVAILABLE else 'limited'
-        timestamp = timezone.now().astimezone(timezone.utc).isoformat().replace('+00:00', 'Z')
+        timestamp = timezone.now().astimezone(dt_timezone.utc).isoformat().replace('+00:00', 'Z')
         base_api_url = settings.API_BASE_URL.rstrip('/') + '/'
         base_web_url = settings.WEB_BASE_URL.rstrip('/') + '/'
         base_docs_url = settings.DOCS_BASE_URL.rstrip('/') + '/'

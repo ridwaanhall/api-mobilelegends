@@ -1,5 +1,14 @@
 {% extends "base.html" %}
 
+{% block title %}Hero Rank – {{ SITE_TITLE }}{% endblock %}
+{% block meta_description %}Explore MLBB hero rankings with filters for days, rank tiers, and win rates.{% endblock %}
+{% block canonical_url %}{{ WEB_BASE_URL }}hero-rank/{% endblock %}
+{% block og_title %}Hero Rank – {{ SITE_TITLE }}{% endblock %}
+{% block og_description %}Explore MLBB hero rankings with filters for days, rank tiers, and win rates.{% endblock %}
+{% block og_url %}{{ WEB_BASE_URL }}hero-rank/{% endblock %}
+{% block twitter_title %}Hero Rank – {{ SITE_TITLE }}{% endblock %}
+{% block twitter_description %}Explore MLBB hero rankings with filters for days, rank tiers, and win rates.{% endblock %}
+
 {% block content %}
 <div class="container mx-auto px-4 py-8 bg-gray-900 text-gray-200 min-h-screen">
     <h1 class="text-3xl font-bold mb-6 text-gray-100">Hero Rank</h1>

@@ -1,9 +1,11 @@
 from typing import Dict
+from urllib.parse import urljoin
 
 from django.utils import timezone
 from datetime import timezone as dt_timezone
 
 from django.conf import settings
+from django.http import HttpResponse
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -156,3 +158,44 @@ class MlbbApiEndpoints(APIView):
                 "docs": base_docs_url,
             }
         }, status=status.HTTP_200_OK)
+
+
+def robots_txt(request):
+    sitemap_url = urljoin(settings.WEB_BASE_URL, 'sitemap.xml')
+    content = "\n".join([
+        "User-agent: *",
+        "Allow: /",
+        f"Sitemap: {sitemap_url}",
+    ])
+    return HttpResponse(content, content_type="text/plain")
+
+
+def sitemap_xml(request):
+    base_url = settings.WEB_BASE_URL.rstrip('/') + '/'
+    lastmod = timezone.now().date().isoformat()
+    url_entries = [
+        ("", "weekly", "1.0"),
+        ("hero-list/", "daily", "0.9"),
+        ("hero-rank/", "daily", "0.9"),
+        ("hero-position/", "daily", "0.8"),
+        ("hero-detail/1/", "weekly", "0.6"),
+        ("api/", "weekly", "0.5"),
+        ("api/docs/", "weekly", "0.3"),
+    ]
+    urls_xml = "\n".join([
+        "  <url>\n"
+        f"    <loc>{urljoin(base_url, path)}</loc>\n"
+        f"    <lastmod>{lastmod}</lastmod>\n"
+        f"    <changefreq>{freq}</changefreq>\n"
+        f"    <priority>{priority}</priority>\n"
+        "  </url>"
+        for path, freq, priority in url_entries
+    ])
+
+    content = (
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+        "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n"
+        f"{urls_xml}\n"
+        "</urlset>"
+    )
+    return HttpResponse(content, content_type="application/xml")

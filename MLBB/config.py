@@ -14,10 +14,12 @@ SUPPORT_DETAILS = {
 }
 
 SITE_TITLE = "API Mobile Legends"
+TWITTER_HANDLE = config('TWITTER_HANDLE', default='@ridwaanhall')
 
 WEB_BASE_URL = config('WEB_BASE_URL', default='https://mlbb-stats.rone.dev/')
 API_BASE_URL = config('API_BASE_URL', default=f'{WEB_BASE_URL}api/')
 DOCS_BASE_URL = config('DOCS_BASE_URL', default='https://mlbb-stats-docs.rone.dev/')
+OG_IMAGE_URL = config('OG_IMAGE_URL', default=f'{WEB_BASE_URL}static/favicon.ico')
 
 MAINTENANCE_INFO_URL = config(
     'MAINTENANCE_INFO_URL',

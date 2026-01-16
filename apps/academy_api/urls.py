@@ -12,12 +12,6 @@ if settings.IS_AVAILABLE:
         path('academy/version/', views.VersionView.as_view(), name='academy_version'),
         
         path('academy/heroes/', views.HeroesView.as_view(), name='academy_heroes'),
-        path('academy/heroes/<int:hero_id>/stats/', views.HeroStatsView.as_view(), name='academy_hero_stats'),
-        path('academy/heroes/<int:hero_id>/lane/', views.HeroLaneView.as_view(), name='academy_hero_lane'),
-        path('academy/heroes/<int:hero_id>/time-win-rate/', views.HeroTimeWinRateView.as_view(), name='academy_hero_time_win_rate'),
-        path('academy/heroes/<int:hero_id>/builds/', views.HeroBuildsView.as_view(), name='academy_hero_builds'),
-        path('academy/heroes/<int:hero_id>/counters/', views.HeroCountersView.as_view(), name='academy_hero_counters'),
-        path('academy/heroes/<int:hero_id>/teammates/', views.HeroTeammatesView.as_view(), name='academy_hero_teammates'),
         
         path('academy/roles/', views.RolesView.as_view(), name='academy_roles'),
         
@@ -30,4 +24,10 @@ if settings.IS_AVAILABLE:
         path('academy/recommended/<int:recommended_id>/', views.RecommendedDetailView.as_view(), name='academy_recommended_detail'),
         
         path('academy/guide/', views.GuideView.as_view(), name='academy_guide'),
+        path('academy/guide/<int:hero_id>/stats/', views.HeroGuideStatsView.as_view(), name='academy_hero_guide_stats'),
+        path('academy/guide/<int:hero_id>/lane/', views.HeroGuideLaneView.as_view(), name='academy_hero_guide_lane'),
+        path('academy/guide/<int:hero_id>/time-win-rate/', views.HeroGuideTimeWinRateView.as_view(), name='academy_hero_guide_time_win_rate'),
+        path('academy/guide/<int:hero_id>/builds/', views.HeroGuideBuildsView.as_view(), name='academy_hero_guide_builds'),
+        path('academy/guide/<int:hero_id>/counters/', views.HeroGuideCountersView.as_view(), name='academy_hero_guide_counters'),
+        path('academy/guide/<int:hero_id>/teammates/', views.HeroGuideTeammatesView.as_view(), name='academy_hero_guide_teammates'),
     ])

@@ -73,319 +73,7 @@ class HeroesView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
             return Response(response.json())
         return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
     
-    
-class HeroStatsView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
-    permission_classes = [AllowAny]
 
-    def get(self, request, hero_id):
-        base_path = BasePathProvider.get_base_path_academy()
-        url_hero_stats = f"{MLBB_URL}{base_path}/2755183"
-
-        lang = request.GET.get('lang', 'en')
-        
-        if not hero_id:
-            return self.error_response('Missing hero id', status_code=status.HTTP_400_BAD_REQUEST)
-        
-        RANK_MAP = {
-            'all': '101',
-            'epic': '5',
-            'legend': '6',
-            'mythic': '7',
-            'honor': '8',
-            'glory': '9',
-        }
-
-        rank = request.GET.get('rank', 'all')  # Default to 'All' rank
-        rank_value = RANK_MAP.get(rank.lower(), '101')
-        
-        payload = {
-            "pageSize": 20,
-            "pageIndex": 1,
-            "filters": [
-                {
-                    "field": "main_heroid",
-                    "operator": "eq",
-                    "value": hero_id
-                },
-                {
-                    "field": "bigrank",
-                    "operator": "eq",
-                    "value": rank_value
-                },
-                {
-                    "field": "match_type",
-                    "operator": "eq",
-                    "value": 1
-                }
-            ],
-            "sorts": []
-        }
-
-        headers = MLBBHeaderBuilder.get_lang_header(lang)
-        response = requests.post(url_hero_stats, json=payload, headers=headers)
-        if response.status_code == 200:
-            return Response(response.json())
-        return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
-    
-    
-class HeroLaneView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
-    permission_classes = [AllowAny]
-
-    def get(self, request, hero_id):
-        base_path = BasePathProvider.get_base_path_academy()
-        url_hero_lane = f"{MLBB_URL}{base_path}/2766683"
-
-        lang = request.GET.get('lang', 'en')
-        
-        if not hero_id:
-            return self.error_response('Missing hero id', status_code=status.HTTP_400_BAD_REQUEST)
-
-        payload = {
-            "pageSize": 20,
-            "pageIndex": 1,
-            "filters": [
-                {
-                    "field": "hero_id",
-                    "operator": "eq",
-                    "value": hero_id
-                }
-            ],
-            "sorts": [],
-            "fields": ["hero_id", "hero.data.roadsort"],
-            "object": []
-        }
-
-        headers = MLBBHeaderBuilder.get_lang_header(lang)
-        response = requests.post(url_hero_lane, json=payload, headers=headers)
-        if response.status_code == 200:
-            return Response(response.json())
-        return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
-    
-    
-class HeroTimeWinRateView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
-    permission_classes = [AllowAny]
-
-    def get(self, request, hero_id):
-        base_path = BasePathProvider.get_base_path_academy()
-        url_hero_time_winrate = f"{MLBB_URL}{base_path}/2777027"
-
-        lang = request.GET.get('lang', 'en')
-        
-        if not hero_id:
-            return self.error_response('Missing hero id', status_code=status.HTTP_400_BAD_REQUEST)
-
-        RANK_MAP = {
-            'all': '101',
-            'epic': '5',
-            'legend': '6',
-            'mythic': '7',
-            'honor': '8',
-            'glory': '9',
-        }
-
-        rank = request.GET.get('rank', 'all')  # Default to 'All' rank
-        rank_value = RANK_MAP.get(rank.lower(), '101')
-
-        payload = {
-            "pageSize": 20,
-            "pageIndex": 1,
-            "filters": [
-                {
-                    "field": "heroid",
-                    "operator": "eq",
-                    "value": hero_id
-                },
-                {
-                    "field": "big_rank",
-                    "operator": "eq",
-                    "value": rank_value
-                },
-                {
-                    "field": "real_road",
-                    "operator": "eq",
-                    "value": "2"
-                }
-            ],
-            "sorts": []
-        }
-
-        headers = MLBBHeaderBuilder.get_lang_header(lang)
-        response = requests.post(url_hero_time_winrate, json=payload, headers=headers)
-        if response.status_code == 200:
-            return Response(response.json())
-        return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
-    
-    
-class HeroBuildsView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
-    permission_classes = [AllowAny]
-
-    def get(self, request, hero_id):
-        base_path = BasePathProvider.get_base_path_academy()
-        url_hero_builds = f"{MLBB_URL}{base_path}/2776688"
-
-        lang = request.GET.get('lang', 'en')
-        
-        if not hero_id:
-            return self.error_response('Missing hero id', status_code=status.HTTP_400_BAD_REQUEST)
-        
-        RANK_MAP = {
-            'all': '101',
-            'epic': '5',
-            'legend': '6',
-            'mythic': '7',
-            'honor': '8',
-            'glory': '9',
-        }
-
-        rank = request.GET.get('rank', 'all')  # Default to 'All' rank
-        rank_value = RANK_MAP.get(rank.lower(), '101')
-
-        payload = {
-            "pageSize": 20,
-            "pageIndex": 1,
-            "filters": [
-                {
-                    "field": "heroid",
-                    "operator": "eq",
-                    "value": hero_id
-                },
-                {
-                    "field": "real_road",
-                    "operator": "eq",
-                    "value": "2"
-                },
-                {
-                    "field": "big_rank",
-                    "operator": "eq",
-                    "value": rank_value
-                }
-            ],
-            "sorts": []
-        }
-
-        headers = MLBBHeaderBuilder.get_lang_header(lang)
-        response = requests.post(url_hero_builds, json=payload, headers=headers)
-        if response.status_code == 200:
-            return Response(response.json())
-        return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
-    
-    
-class HeroCountersView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
-    permission_classes = [AllowAny]
-
-    def get(self, request, hero_id):
-        base_path = BasePathProvider.get_base_path_academy()
-        url_hero_counters = f"{MLBB_URL}{base_path}/2777391"
-
-        lang = request.GET.get('lang', 'en')
-        
-        if not hero_id:
-            return self.error_response('Missing hero id', status_code=status.HTTP_400_BAD_REQUEST)
-        
-        RANK_MAP = {
-            'all': '101',
-            'epic': '5',
-            'legend': '6',
-            'mythic': '7',
-            'honor': '8',
-            'glory': '9',
-        }
-        
-        rank = request.GET.get('rank', 'all')  # Default to 'All' rank
-        rank_value = RANK_MAP.get(rank.lower(), '101')
-
-        payload = {
-            "pageSize": 3,
-            "pageIndex": 1,
-            "filters": [
-                {
-                    "field": "main_heroid",
-                    "operator": "eq",
-                    "value": hero_id
-                },
-                {
-                    "field": "big_rank",
-                    "operator": "eq",
-                    "value": rank_value
-                },
-                {
-                    "field": "camp_type",
-                    "operator": "eq",
-                    "value": 0
-                }
-            ],
-            "sorts": []
-        }
-
-        headers = MLBBHeaderBuilder.get_lang_header(lang)
-        response = requests.post(url_hero_counters, json=payload, headers=headers)
-        if response.status_code == 200:
-            return Response(response.json())
-        return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
-    
-    
-class HeroTeammatesView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
-    permission_classes = [AllowAny]
-
-    def get(self, request, hero_id):
-        base_path = BasePathProvider.get_base_path_academy()
-        url_hero_counters = f"{MLBB_URL}{base_path}/2777391"
-
-        lang = request.GET.get('lang', 'en')
-        
-        if not hero_id:
-            return self.error_response('Missing hero id', status_code=status.HTTP_400_BAD_REQUEST)
-        
-        RANK_MAP = {
-            'all': '101',
-            'epic': '5',
-            'legend': '6',
-            'mythic': '7',
-            'honor': '8',
-            'glory': '9',
-        }
-        
-        rank = request.GET.get('rank', 'all')  # Default to 'All' rank
-        rank_value = RANK_MAP.get(rank.lower(), '101')
-
-        payload = {
-            "pageSize": 3,
-            "pageIndex": 1,
-            "filters": [
-                {
-                    "field": "main_heroid",
-                    "operator": "eq",
-                    "value": hero_id
-                },
-                {
-                    "field": "big_rank",
-                    "operator": "eq",
-                    "value": rank_value
-                },
-                {
-                    "field": "camp_type",
-                    "operator": "eq",
-                    "value": 1
-                }
-            ],
-            "sorts": [
-                {
-                    "data": {
-                        "field": "increase_win_rate",
-                        "order": "asc"
-                    },
-                    "type": "sequence"
-                }
-            ]
-        }
-
-        headers = MLBBHeaderBuilder.get_lang_header(lang)
-        response = requests.post(url_hero_counters, json=payload, headers=headers)
-        if response.status_code == 200:
-            return Response(response.json())
-        return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
-    
-    
 class RolesView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
     permission_classes = [AllowAny]
 
@@ -754,3 +442,308 @@ class GuideView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
         if response.status_code == 200:
             return Response(response.json())
         return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
+    
+    
+class HeroGuideStatsView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, hero_id):
+        base_path = BasePathProvider.get_base_path_academy()
+        url_hero_stats = f"{MLBB_URL}{base_path}/2755183"
+
+        lang = request.GET.get('lang', 'en')
+        
+        if not hero_id:
+            return self.error_response('Missing hero id', status_code=status.HTTP_400_BAD_REQUEST)
+        
+        RANK_MAP = {
+            'all': '101',
+            'epic': '5',
+            'legend': '6',
+            'mythic': '7',
+            'honor': '8',
+            'glory': '9',
+        }
+
+        rank = request.GET.get('rank', 'all')  # Default to 'All' rank
+        rank_value = RANK_MAP.get(rank.lower(), '101')
+        
+        payload = {
+            "pageSize": 20,
+            "pageIndex": 1,
+            "filters": [
+                {
+                    "field": "main_heroid",
+                    "operator": "eq",
+                    "value": hero_id
+                },
+                {
+                    "field": "bigrank",
+                    "operator": "eq",
+                    "value": rank_value
+                },
+                {
+                    "field": "match_type",
+                    "operator": "eq",
+                    "value": 1
+                }
+            ],
+            "sorts": []
+        }
+
+        headers = MLBBHeaderBuilder.get_lang_header(lang)
+        response = requests.post(url_hero_stats, json=payload, headers=headers)
+        if response.status_code == 200:
+            return Response(response.json())
+        return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
+    
+    
+class HeroGuideLaneView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, hero_id):
+        base_path = BasePathProvider.get_base_path_academy()
+        url_hero_lane = f"{MLBB_URL}{base_path}/2766683"
+
+        lang = request.GET.get('lang', 'en')
+        
+        if not hero_id:
+            return self.error_response('Missing hero id', status_code=status.HTTP_400_BAD_REQUEST)
+
+        payload = {
+            "pageSize": 20,
+            "pageIndex": 1,
+            "filters": [
+                {
+                    "field": "hero_id",
+                    "operator": "eq",
+                    "value": hero_id
+                }
+            ],
+            "sorts": [],
+            "fields": ["hero_id", "hero.data.roadsort"],
+            "object": []
+        }
+
+        headers = MLBBHeaderBuilder.get_lang_header(lang)
+        response = requests.post(url_hero_lane, json=payload, headers=headers)
+        if response.status_code == 200:
+            return Response(response.json())
+        return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
+    
+    
+class HeroGuideTimeWinRateView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, hero_id):
+        base_path = BasePathProvider.get_base_path_academy()
+        url_hero_time_winrate = f"{MLBB_URL}{base_path}/2777027"
+
+        lang = request.GET.get('lang', 'en')
+        
+        if not hero_id:
+            return self.error_response('Missing hero id', status_code=status.HTTP_400_BAD_REQUEST)
+
+        RANK_MAP = {
+            'all': '101',
+            'epic': '5',
+            'legend': '6',
+            'mythic': '7',
+            'honor': '8',
+            'glory': '9',
+        }
+
+        rank = request.GET.get('rank', 'all')  # Default to 'All' rank
+        rank_value = RANK_MAP.get(rank.lower(), '101')
+
+        payload = {
+            "pageSize": 20,
+            "pageIndex": 1,
+            "filters": [
+                {
+                    "field": "heroid",
+                    "operator": "eq",
+                    "value": hero_id
+                },
+                {
+                    "field": "big_rank",
+                    "operator": "eq",
+                    "value": rank_value
+                },
+                {
+                    "field": "real_road",
+                    "operator": "eq",
+                    "value": "2"
+                }
+            ],
+            "sorts": []
+        }
+
+        headers = MLBBHeaderBuilder.get_lang_header(lang)
+        response = requests.post(url_hero_time_winrate, json=payload, headers=headers)
+        if response.status_code == 200:
+            return Response(response.json())
+        return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
+    
+    
+class HeroGuideBuildsView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, hero_id):
+        base_path = BasePathProvider.get_base_path_academy()
+        url_hero_builds = f"{MLBB_URL}{base_path}/2776688"
+
+        lang = request.GET.get('lang', 'en')
+        
+        if not hero_id:
+            return self.error_response('Missing hero id', status_code=status.HTTP_400_BAD_REQUEST)
+        
+        RANK_MAP = {
+            'all': '101',
+            'epic': '5',
+            'legend': '6',
+            'mythic': '7',
+            'honor': '8',
+            'glory': '9',
+        }
+
+        rank = request.GET.get('rank', 'all')  # Default to 'All' rank
+        rank_value = RANK_MAP.get(rank.lower(), '101')
+
+        payload = {
+            "pageSize": 20,
+            "pageIndex": 1,
+            "filters": [
+                {
+                    "field": "heroid",
+                    "operator": "eq",
+                    "value": hero_id
+                },
+                {
+                    "field": "real_road",
+                    "operator": "eq",
+                    "value": "2"
+                },
+                {
+                    "field": "big_rank",
+                    "operator": "eq",
+                    "value": rank_value
+                }
+            ],
+            "sorts": []
+        }
+
+        headers = MLBBHeaderBuilder.get_lang_header(lang)
+        response = requests.post(url_hero_builds, json=payload, headers=headers)
+        if response.status_code == 200:
+            return Response(response.json())
+        return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
+    
+    
+class HeroGuideCountersView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, hero_id):
+        base_path = BasePathProvider.get_base_path_academy()
+        url_hero_counters = f"{MLBB_URL}{base_path}/2777391"
+
+        lang = request.GET.get('lang', 'en')
+        
+        if not hero_id:
+            return self.error_response('Missing hero id', status_code=status.HTTP_400_BAD_REQUEST)
+        
+        RANK_MAP = {
+            'all': '101',
+            'epic': '5',
+            'legend': '6',
+            'mythic': '7',
+            'honor': '8',
+            'glory': '9',
+        }
+        
+        rank = request.GET.get('rank', 'all')  # Default to 'All' rank
+        rank_value = RANK_MAP.get(rank.lower(), '101')
+
+        payload = {
+            "pageSize": 200,
+            "pageIndex": 1,
+            "filters": [
+                {
+                    "field": "main_heroid",
+                    "operator": "eq",
+                    "value": hero_id
+                },
+                {
+                    "field": "camp_type",
+                    "operator": "eq",
+                    "value": 0
+                },
+                {
+                    "field": "big_rank",
+                    "operator": "eq",
+                    "value": rank_value
+                }
+            ],
+            "sorts": []
+        }
+
+        headers = MLBBHeaderBuilder.get_lang_header(lang)
+        response = requests.post(url_hero_counters, json=payload, headers=headers)
+        if response.status_code == 200:
+            return Response(response.json())
+        return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
+    
+    
+class HeroGuideTeammatesView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, hero_id):
+        base_path = BasePathProvider.get_base_path_academy()
+        url_hero_counters = f"{MLBB_URL}{base_path}/2777391"
+
+        lang = request.GET.get('lang', 'en')
+        
+        if not hero_id:
+            return self.error_response('Missing hero id', status_code=status.HTTP_400_BAD_REQUEST)
+        
+        RANK_MAP = {
+            'all': '101',
+            'epic': '5',
+            'legend': '6',
+            'mythic': '7',
+            'honor': '8',
+            'glory': '9',
+        }
+        
+        rank = request.GET.get('rank', 'all')  # Default to 'All' rank
+        rank_value = RANK_MAP.get(rank.lower(), '101')
+
+        payload = {
+            "pageSize": 200,
+            "pageIndex": 1,
+            "filters": [
+                {
+                    "field": "main_heroid",
+                    "operator": "eq",
+                    "value": hero_id
+                },
+                {
+                    "field": "camp_type",
+                    "operator": "eq",
+                    "value": "1"
+                },
+                {
+                    "field": "big_rank",
+                    "operator": "eq",
+                    "value": rank_value
+                }
+            ],
+            "sorts": []
+        }
+
+        headers = MLBBHeaderBuilder.get_lang_header(lang)
+        response = requests.post(url_hero_counters, json=payload, headers=headers)
+        if response.status_code == 200:
+            return Response(response.json())
+        return self.error_response('Failed to fetch data', response.text, status_code=response.status_code)
+    

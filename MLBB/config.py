@@ -45,7 +45,7 @@ SUPPORT_STATUS_MESSAGES = {
 API_STATUS_MESSAGES = {
     'limited': {
         'status': 'limited',
-        'message': f'API is currently in maintenance mode. Will available {DATE_AVAILABLE}.',
+        'message': f'API is currently in maintenance mode. Will be available {DATE_AVAILABLE}.',
         'available_endpoints': ['Base API']
     },
     'available': {

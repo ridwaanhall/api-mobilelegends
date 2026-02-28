@@ -1,58 +1,41 @@
 from pathlib import Path
-from decouple import config
+
+from .config import (
+    API_BASE_URL,
+    API_STATUS_MESSAGES,
+    API_VERSION,
+    DATE_AVAILABLE,
+    DEBUG,
+    SITE_TITLE,
+    DOCS_BASE_URL,
+    DONATION_CURRENCY,
+    DONATION_MIN,
+    DONATION_TARGET,
+    IS_AVAILABLE,
+    MAINTENANCE_INFO_URL,
+    MLBB_URL,
+    MLBB_URL_V2,
+    OG_IMAGE_URL,
+    PROD_URL,
+    SECRET_KEY,
+    SUPPORT_DETAILS,
+    SUPPORT_STATUS_MESSAGES,
+    TWITTER_HANDLE,
+    WEB_BASE_URL,
+)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# API Availability Control
-IS_AVAILABLE = config('IS_AVAILABLE', default=True, cast=bool)
-
-SUPPORT_DETAILS = {
-    'support_message': 'You can support us by donating from $1 USD (target: $500 USD) to help enhance API performance and handle high request volumes.',
-    'github_sponsors': 'https://github.com/sponsors/ridwaanhall',
-    'buymeacoffee': 'https://www.buymeacoffee.com/ridwaanhall',
-    'donation_link': 'https://github.com/sponsors/ridwaanhall',
-}
-
-# API Status Messages
-API_STATUS_MESSAGES = {
-    'limited': {
-        'status': 'limited',
-        'message': 'API is currently in maintenance mode. Will available August 28, 2025.',
-        'available_endpoints': ['Base API']
-    },
-    'available': {
-        'status': 'available',
-        'message': 'All API endpoints are fully operational.',
-        'available_endpoints': ['All endpoints']
-    }
-}
-
-API_VERSION = config('API_VERSION', default='1.5.0')
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY')
-
-MLBB_URL = config('MLBB_URL')
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=False, cast=bool)
-
-# Set base URL based on DEBUG mode
-if DEBUG:
-    PROD_URL = 'http://127.0.0.1:8000/api/'
-else:
-    PROD_URL = config('PROD_URL')
 
 if DEBUG:
     ALLOWED_HOSTS = []
 else:
     ALLOWED_HOSTS = [
         '.vercel.app',
-        '.ridwaanhall.com',
+        '.rone.dev',
     ]
 
 # Security settings for production
@@ -89,9 +72,11 @@ INSTALLED_APPS = [
     
     'rest_framework',
     
+    'apps.core',
     'apps.mlbb_api',
     'apps.mlbb_web',
     'apps.mpl_api',
+    'apps.academy_api',
 ]
 
 MIDDLEWARE = [
@@ -120,6 +105,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                "apps.core.context_processors.base_urls",
+                "apps.core.context_processors.site_title",
             ],
         },
     },

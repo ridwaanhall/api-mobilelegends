@@ -4,14 +4,16 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="Explore detailed hero information, rankings, positions, and more for Mobile Legends: Bang Bang.">
-        <meta name="keywords" content="MLBB, Mobile Legends, hero list, hero rank, hero position, hero detail, hero stats, hero skill combo, hero rate, hero relation, hero counter, hero compatibility">
+        <meta name="description" content="{% block meta_description %}Explore detailed hero information, rankings, positions, and more for Mobile Legends: Bang Bang.{% endblock %}">
+        <meta name="keywords" content="{% block meta_keywords %}MLBB, Mobile Legends, hero list, hero rank, hero position, hero detail, hero stats, hero skill combo, hero rate, hero relation, hero counter, hero compatibility{% endblock %}">
         <meta name="author" content="ridwaanhall">
         <meta name="language" content="English">
         <meta name="geo.region" content="ID">
-        <meta name="robots" content="index, follow">
-        <title>MLBB Hero Information and Rankings</title>
-        <link rel="canonical" href="https://mlbb-stats.ridwaanhall.com/">
+        <meta name="robots" content="{% block meta_robots %}index, follow{% endblock %}">
+        <title>{% block title %}{{ SITE_TITLE }}{% endblock %}</title>
+        <link rel="canonical" href="{% block canonical_url %}{{ WEB_BASE_URL }}{% endblock %}">
+        <meta name="theme-color" content="#0f172a">
+        <meta name="application-name" content="{{ SITE_TITLE }}">
         <!-- Add Tailwind CSS -->
         <link rel="stylesheet" href="{% static 'web.css' %}">
         <script>
@@ -26,18 +28,32 @@
             // Theme is now always dark, no script needed here.
         </script>
         <!-- Open Graph Meta Tags for Social Media -->
-        <meta property="og:title" content="MLBB Hero Information and Rankings">
-        <meta property="og:description" content="Explore detailed hero information, rankings, positions, and more for Mobile Legends: Bang Bang.">
-        <meta property="og:image" content="https://mlbb-stats.ridwaanhall.com/image.jpg">
-        <meta property="og:url" content="https://mlbb-stats.ridwaanhall.com/">
+        <meta property="og:title" content="{% block og_title %}{{ SITE_TITLE }}{% endblock %}">
+        <meta property="og:description" content="{% block og_description %}Explore detailed hero information, rankings, positions, and more for Mobile Legends: Bang Bang.{% endblock %}">
+        <meta property="og:image" content="{% block og_image %}{{ OG_IMAGE_URL }}{% endblock %}">
+        <meta property="og:url" content="{% block og_url %}{{ WEB_BASE_URL }}{% endblock %}">
         <meta property="og:type" content="website">
         <meta property="og:locale" content="en_US">
         <!-- Twitter Card Meta Tags -->
         <meta name="twitter:card" content="summary_large_image">
-        <meta name="twitter:title" content="MLBB Hero Information and Rankings">
-        <meta name="twitter:description" content="Explore detailed hero information, rankings, positions, and more for Mobile Legends: Bang Bang.">
-        <meta name="twitter:image" content="https://mlbb-stats.ridwaanhall.com/image.jpg">
-        <meta name="twitter:site" content="@ridwaanhall">
+        <meta name="twitter:title" content="{% block twitter_title %}{{ SITE_TITLE }}{% endblock %}">
+        <meta name="twitter:description" content="{% block twitter_description %}Explore detailed hero information, rankings, positions, and more for Mobile Legends: Bang Bang.{% endblock %}">
+        <meta name="twitter:image" content="{% block twitter_image %}{{ OG_IMAGE_URL }}{% endblock %}">
+        <meta name="twitter:site" content="{{ TWITTER_HANDLE }}">
+
+        <script type="application/ld+json">
+            {
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "name": "{{ SITE_TITLE|escapejs }}",
+              "url": "{{ WEB_BASE_URL|escapejs }}",
+              "potentialAction": {
+                "@type": "SearchAction",
+                "target": "{{ WEB_BASE_URL|escapejs }}hero-list/?q={search_term_string}",
+                "query-input": "required name=search_term_string"
+              }
+            }
+        </script>
 
         <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
         <style>

@@ -1,7 +1,42 @@
 {% extends "rest_framework/base.html" %}
+{% load static %}
+
+{% block head %}
+
+    {% block meta %}
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <meta name="robots" content="index, follow" />
+    {% endblock %}
+
+    <title>{% block title %}{% if name %}{{ name }} – {% endif %}{{ SITE_TITLE }}{% endblock %}</title>
+    <meta name="description" content="{% if name %}{{ name }}{% else %}API documentation{% endif %} for {{ SITE_TITLE }}.">
+    <link rel="canonical" href="{{ request.build_absolute_uri }}">
+    <meta property="og:title" content="{% if name %}{{ name }} – {% endif %}{{ SITE_TITLE }}">
+    <meta property="og:description" content="{% if name %}{{ name }}{% else %}API documentation{% endif %} for {{ SITE_TITLE }}.">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="{{ OG_IMAGE_URL }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{% if name %}{{ name }} – {% endif %}{{ SITE_TITLE }}">
+    <meta name="twitter:description" content="{% if name %}{{ name }}{% else %}API documentation{% endif %} for {{ SITE_TITLE }}.">
+    <meta name="twitter:image" content="{{ OG_IMAGE_URL }}">
+    <meta name="twitter:site" content="{{ TWITTER_HANDLE }}">
+
+    {% block style %}
+        {% block bootstrap_theme %}
+            <link rel="stylesheet" type="text/css" href="{% static "rest_framework/css/bootstrap.min.css" %}"/>
+            <link rel="stylesheet" type="text/css" href="{% static "rest_framework/css/bootstrap-tweaks.css" %}"/>
+        {% endblock %}
+
+        <link rel="stylesheet" type="text/css" href="{% static "rest_framework/css/prettify.css" %}"/>
+        <link rel="stylesheet" type="text/css" href="{% static "rest_framework/css/default.css" %}"/>
+        {% if code_style %}<style>{{ code_style }}</style>{% endif %}
+    {% endblock %}
+
+{% endblock %}
 
 {% block branding %}
-    <a class='navbar-brand' rel="nofollow" href='https://mlbb-stats.ridwaanhall.com/api/'>
-        API Mobile Legends
+    <a class='navbar-brand' rel="nofollow" href='{{ API_BASE_URL }}'>
+        {{ SITE_TITLE }}
     </a>
 {% endblock %}

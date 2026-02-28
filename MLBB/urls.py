@@ -16,13 +16,22 @@ Including another URLconf
 """
 from django.urls import path, include
 from django.http import HttpResponseRedirect
+from apps.core.views import robots_txt, sitemap_xml
 
 def redirect_to_api(request):
     return HttpResponseRedirect('/api/')
 
 urlpatterns = [
+    
     path('', redirect_to_api, name='redirect_to_api'),
+
+    path('robots.txt', robots_txt, name='robots_txt'),
+    path('sitemap.xml', sitemap_xml, name='sitemap_xml'),
+    
     path('api/', include('apps.mlbb_api.urls')),
     path('api/', include('apps.mpl_api.urls')),
+    path('api/', include('apps.academy_api.urls')),
+    
     path('', include('apps.mlbb_web.urls')),
+    
 ]

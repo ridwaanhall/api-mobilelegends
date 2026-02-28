@@ -1,5 +1,14 @@
 {% extends "base.html" %}
 
+{% block title %}{{ data.hero.data.name }} – Hero Detail | {{ SITE_TITLE }}{% endblock %}
+{% block meta_description %}View {{ data.hero.data.name }} stats, skills, counters, and compatibility in Mobile Legends.{% endblock %}
+{% block canonical_url %}{{ request.build_absolute_uri }}{% endblock %}
+{% block og_title %}{{ data.hero.data.name }} – Hero Detail | {{ SITE_TITLE }}{% endblock %}
+{% block og_description %}View {{ data.hero.data.name }} stats, skills, counters, and compatibility in Mobile Legends.{% endblock %}
+{% block og_url %}{{ request.build_absolute_uri }}{% endblock %}
+{% block twitter_title %}{{ data.hero.data.name }} – Hero Detail | {{ SITE_TITLE }}{% endblock %}
+{% block twitter_description %}View {{ data.hero.data.name }} stats, skills, counters, and compatibility in Mobile Legends.{% endblock %}
+
 {% block content %}
 <div class="bg-gray-900 text-gray-200 min-h-screen p-6">
     <div class="container mx-auto">

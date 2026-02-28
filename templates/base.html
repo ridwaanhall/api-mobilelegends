@@ -45,11 +45,11 @@
             {
               "@context": "https://schema.org",
               "@type": "WebSite",
-              "name": "{{ SITE_TITLE }}",
-              "url": "{{ WEB_BASE_URL }}",
+              "name": "{{ SITE_TITLE|escapejs }}",
+              "url": "{{ WEB_BASE_URL|escapejs }}",
               "potentialAction": {
                 "@type": "SearchAction",
-                "target": "{{ WEB_BASE_URL }}hero-list/?q={search_term_string}",
+                "target": "{{ WEB_BASE_URL|escapejs }}hero-list/?q={search_term_string}",
                 "query-input": "required name=search_term_string"
               }
             }

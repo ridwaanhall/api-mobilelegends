@@ -4,7 +4,7 @@ certifi==2025.11.12
 cffi==2.0.0
 charset-normalizer==3.4.4
 cryptography==46.0.5
-Django==5.2.9
+Django==5.2.11
 djangorestframework==3.16.1
 idna==3.11
 pycparser==2.23

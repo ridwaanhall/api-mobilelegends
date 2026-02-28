@@ -1,8 +1,8 @@
 from decouple import config
 
 # API Availability Control
-IS_AVAILABLE = config('IS_AVAILABLE', default=False, cast=bool)
-DATE_AVAILABLE = config('DATE_AVAILABLE', default='February 11, 2026')
+IS_AVAILABLE = config('IS_AVAILABLE', default=True, cast=bool)
+DATE_AVAILABLE = config('DATE_AVAILABLE', default='February 28, 2026')
 
 SUPPORT_DETAILS = {
     'support_message': 'You can support us by donating from $1 USD (target: $500 USD) to help enhance API performance and handle high request volumes.',
@@ -55,7 +55,7 @@ API_STATUS_MESSAGES = {
     }
 }
 
-API_VERSION = config('API_VERSION', default='1.6.0')
+API_VERSION = config('API_VERSION', default='2.0.0')
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY')

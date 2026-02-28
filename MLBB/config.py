@@ -55,7 +55,7 @@ API_STATUS_MESSAGES = {
     }
 }
 
-API_VERSION = config('API_VERSION', default='2.0.0')
+API_VERSION = config('API_VERSION', default='2.0.1')
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY')

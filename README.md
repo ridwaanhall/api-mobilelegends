@@ -36,11 +36,11 @@ This project provides an API for fetching various analytics and data related to 
 ## Summary of Base URL, API Docs, APIs, and Website
 
 ```txt
-https://mlbb-stats.ridwaanhall.com/                # base url
-https://mlbb-stats-docs.ridwaanhall.com/           # documentations easy-to-understand
-https://mlbb-stats.ridwaanhall.com/api/            # APIs
-https://mlbb-stats.ridwaanhall.com/api/mplid/      # MPL ID APIs
-https://mlbb-stats.ridwaanhall.com/hero-rank/      # for website demo of APIs
+https://mlbb-stats.rone.dev/                # base url
+https://mlbb-stats-docs.rone.dev/           # documentations easy-to-understand
+https://mlbb-stats.rone.dev/api/            # APIs
+https://mlbb-stats.rone.dev/api/mplid/      # MPL ID APIs
+https://mlbb-stats.rone.dev/hero-rank/      # for website demo of APIs
 ```
 
 ## Example API
@@ -60,13 +60,13 @@ def fetch_api(api_url):
         print(f"Error: {e}")
         return None
 
-api_url = "https://mlbb-stats.ridwaanhall.com/api/hero-detail/129" # change 129 with hero_id
+api_url = "https://mlbb-stats.rone.dev/api/hero-detail/129" # change 129 with hero_id
 data = fetch_api(api_url)
 
 print(json.dumps(data, indent=4) if data else "No data fetched.")
 ```
 
-### You can find more in [mlbb-stats-docs.ridwaanhall.com](https://mlbb-stats-docs.ridwaanhall.com/)
+### You can find more in [mlbb-stats-docs.rone.dev](https://mlbb-stats-docs.rone.dev/)
 
 ## Discussion
 
@@ -76,21 +76,21 @@ If you have any questions or would like to discuss this project, please join the
 
 ### API Docs with Explanations and Example Usage
 
-[https://mlbb-stats-docs.ridwaanhall.com/](https://mlbb-stats-docs.ridwaanhall.com/)
+[https://mlbb-stats-docs.rone.dev/](https://mlbb-stats-docs.rone.dev/)
 
 ![API Docs](images/api-docs.png)
 
-### Testing an API [Test the API](https://mlbb-stats.ridwaanhall.com/api/)
+### Testing an API [Test the API](https://mlbb-stats.rone.dev/api/)
 
 ![Testing an API](images/testing-api.png)
 
-### Demo Website [View Hero Rank Demo Website](https://mlbb-stats.ridwaanhall.com/hero-rank/)
+### Demo Website [View Hero Rank Demo Website](https://mlbb-stats.rone.dev/hero-rank/)
 
 ![Hero Rank Web](images/demo-website.png)
 
 ## Available Endpoints
 
-Visit this site to view [mlbb-stats.ridwaanhall.com](https://mlbb-stats.ridwaanhall.com)
+Visit this site to view [mlbb-stats.rone.dev](https://mlbb-stats.rone.dev)
 
 ## Usage
 

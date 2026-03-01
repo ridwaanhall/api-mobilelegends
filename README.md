@@ -92,6 +92,10 @@ If you have any questions or would like to discuss this project, please join the
 
 Visit this site to view [mlbb-stats.rone.dev](https://mlbb-stats.rone.dev)
 
+## Repo Stars
+
+[![RepoStars](https://repostars.dev/api/embed?repo=ridwaanhall%2Fapi-mobilelegends&theme=dark)](https://repostars.dev/?repos=ridwaanhall/api-mobilelegends,ridwaanhall/mlbb-api-docs&theme=dark)
+
 ## Usage
 
 Use the provided endpoints to fetch various analytics and data related to heroes in MLBB. Refer to the Endpoints section for detailed information on each endpoint and how to use them.

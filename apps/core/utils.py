@@ -15,12 +15,17 @@ class APIAvailabilityMixin:
         if not settings.IS_AVAILABLE:
             status_info = settings.API_STATUS_MESSAGES['limited']
             return Response({
-                'error': 'Service Unavailable',
-                'status': status_info['status'],
+                'status': 'error',
+                'code': 'SERVICE_UNAVAILABLE',
                 'message': status_info['message'],
-                'available_endpoints': status_info['available_endpoints']
+                'available_endpoints': status_info['available_endpoints'],
+                'support': {
+                    'livechat': ErrorResponseMixin.LIVECHAT_LINK,
+                    'contact': ErrorResponseMixin.CONTACT_FORM_LINK,
+                }
             }, status=status.HTTP_503_SERVICE_UNAVAILABLE)
-        return super().dispatch(request, *args, **kwargs)
+        parent = super()
+        return parent.dispatch(request, *args, **kwargs)  # type: ignore[attr-defined]
 
 
 class MLBBHeaderBuilder:
@@ -71,9 +76,51 @@ class MLBBHeaderBuilder:
 
 
 class ErrorResponseMixin:
+    LIVECHAT_LINK = 'https://ridwaanhall.com/guestbook/'
+    CONTACT_FORM_LINK = 'https://ridwaanhall.com/contact/'
+
+    @classmethod
+    def _build_error_code(cls, status_code: int, message: str) -> str:
+        message_normalized = (message or '').lower()
+        if 'failed to fetch data' in message_normalized:
+            return 'UPSTREAM_REQUEST_FAILED'
+        if status_code == 400:
+            return 'BAD_REQUEST'
+        if status_code == 404:
+            return 'RESOURCE_NOT_FOUND'
+        if status_code == 429:
+            return 'TOO_MANY_REQUESTS'
+        if status_code >= 500:
+            return 'INTERNAL_SERVER_ERROR'
+        return 'REQUEST_FAILED'
+
+    @classmethod
+    def _build_error_message(cls, status_code: int, message: str) -> str:
+        message_normalized = (message or '').lower()
+        if 'failed to fetch data' in message_normalized:
+            return 'We could not process your request right now due to an upstream service issue. Please contact support.'
+        if status_code >= 500:
+            return 'An internal server error occurred. Please contact support.'
+        return message or 'Request failed.'
+
     @staticmethod
     def error_response(message: str, details: Any = None, status_code: int = 400) -> Response:
-        return Response({'error': message, 'details': details}, status=status_code)
+        safe_payload = {
+            'status': 'error',
+            'code': ErrorResponseMixin._build_error_code(status_code, message),
+            'message': ErrorResponseMixin._build_error_message(status_code, message),
+            'support': {
+                'livechat': ErrorResponseMixin.LIVECHAT_LINK,
+                'contact': ErrorResponseMixin.CONTACT_FORM_LINK,
+            }
+        }
+
+        # Never expose raw upstream response text to clients.
+        message_normalized = (message or '').lower()
+        if 'failed to fetch data' not in message_normalized and details is not None:
+            safe_payload['details'] = details
+
+        return Response(safe_payload, status=status_code)
 
 
 def web_availability_required(view_func):
@@ -82,10 +129,14 @@ def web_availability_required(view_func):
         if not settings.IS_AVAILABLE:
             status_info = settings.API_STATUS_MESSAGES['limited']
             return JsonResponse({
-                'error': 'Service Unavailable',
-                'status': status_info['status'],
+                'status': 'error',
+                'code': 'SERVICE_UNAVAILABLE',
                 'message': status_info['message'],
-                'available_endpoints': ['Home page only']
+                'available_endpoints': ['Home page only'],
+                'support': {
+                    'livechat': ErrorResponseMixin.LIVECHAT_LINK,
+                    'contact': ErrorResponseMixin.CONTACT_FORM_LINK,
+                }
             }, status=503)
         return view_func(request, *args, **kwargs)
 

@@ -61,7 +61,7 @@ class HeroNameHelper:
                 if normalized_actual_name == normalized_search_name:
                     return record.get('data', {}).get('hero_id')
         
-        return None
+        return 0
 
 class HeroListView(APIAvailabilityMixin, ErrorResponseMixin, APIView):
     permission_classes = [AllowAny]

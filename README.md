@@ -1,53 +1,35 @@
-# API Mobile Legends (FastAPI)
+# Mobile Legends Public Data API (MLBB + Academy)
 
-Production-ready FastAPI migration of the MLBB analytics API, structured for maintainability and optimized for Vercel serverless deployment.
+Production FastAPI service that provides Mobile Legends data endpoints for analytics, hero insights, and academy content.
 
-## What This Project Provides
+## What The API Can Do
 
-- Full FastAPI implementation of all previous Django endpoints under `/api/`
-- Modular architecture with clear separation of routers, services, and core utilities
-- Standardized error responses for upstream failures and API validation errors
-- Secure encrypted/decrypted base-path handling for external API access via `.env`
-- Serverless-compatible deployment configuration for Vercel
+- Provide MLBB hero listings, rank performance, role/lane filters, matchup data, and win-rate utilities.
+- Provide MLBB Academy resources including heroes, roles, equipment, emblems, spells, guides, trends, and ratings.
+- Expose interactive API documentation for direct request testing in browser.
+- Return standardized error payloads for validation and service-level failures.
 
-## Architecture
+## Documentation
 
-```txt
-app/
-  api/
-    dependencies.py
-    routers/
-      root.py
-      mlbb.py
-      academy.py
-  core/
-    config.py
-    errors.py
-    http.py
-    security.py
-  services/
-    mlbb.py
-    academy.py
-  main.py
-api/
-  index.py
-```
+- Swagger UI: `/docs`
+- ReDoc: `/redoc`
+- Swagger alias: `/api/docs`
 
-## Base URLs
+## Available URLs
 
 ```txt
 https://mlbb-stats.rone.dev/                # root (redirects to /api/)
 https://mlbb-stats.rone.dev/api/            # API index and endpoint map
-https://mlbb-stats.rone.dev/docs            # Swagger UI (try API directly)
-https://mlbb-stats.rone.dev/redoc           # ReDoc documentation
-https://mlbb-stats.rone.dev/api/docs        # Swagger UI alias (redirects to /docs)
+https://mlbb-stats.rone.dev/docs            # Swagger UI
+https://mlbb-stats.rone.dev/redoc           # ReDoc
+https://mlbb-stats.rone.dev/api/docs        # Swagger alias (redirects to /docs)
 https://mlbb-stats.rone.dev/robots.txt
 https://mlbb-stats.rone.dev/sitemap.xml
 ```
 
-## Implemented Endpoints
+## API Coverage
 
-### MLBB
+### MLBB API
 
 - `GET /api/hero-list/`
 - `GET /api/hero-rank/`
@@ -61,7 +43,7 @@ https://mlbb-stats.rone.dev/sitemap.xml
 - `GET /api/hero-compatibility/{hero_id_or_name}/`
 - `GET /api/win-rate/?match-now=&wr-now=&wr-future=`
 
-### Academy
+### MLBB Academy API
 
 - `GET /api/academy/version/`
 - `GET /api/academy/heroes/`
@@ -86,48 +68,38 @@ https://mlbb-stats.rone.dev/sitemap.xml
 
 ## Local Development
 
-1. Install dependencies:
+1. Install dependencies.
 
 ```bash
 pip install -r requirements.txt
 ```
 
-1. Create environment file:
+1. Create environment file.
 
 ```bash
 cp .env.example .env
 ```
 
-1. Run FastAPI:
+1. Run FastAPI.
 
 ```bash
 uvicorn app.main:app --reload
 ```
 
-## Environment Variables
+## Configuration
 
-Minimum required:
+Required variables:
 
 - `SECRET_KEY`
 - `MLBB_URL`
 - `MLBB_URL_V2`
 
-See `.env.example` for full optional settings.
+See `.env.example` for full environment options.
 
-## Vercel Deployment
+## Changelog
 
-This repository is configured for serverless deployment through:
+Migration notes from API v2.0.3 to v3.0.0 are documented in [LOG.md](LOG.md).
 
-- `api/index.py` as the ASGI entrypoint
-- `vercel.json` routing all requests to `api/index.py`
-
-Deploy normally with Vercel CLI or Git integration.
-
-## Notes
-
-- If `IS_AVAILABLE=False`, API endpoints return a maintenance/service-unavailable response.
-- Upstream MLBB path segments are decrypted at runtime using `SECRET_KEY`.
-
-## License and Attribution
+## License
 
 This project is released under the BSD 3-Clause License. Attribution to Moonton and ridwaanhall should be preserved in downstream usage.

@@ -32,6 +32,8 @@ This file now tracks **EVERY version** (v3.0.0 + full v2 history).
 - Added ReDoc at `/redoc`.
 - Added `/api/docs` redirect alias to Swagger UI.
 - Improved OpenAPI parameter metadata with explicit descriptions, allowed values, and range constraints.
+- Refreshed `sitemap.xml` entries to the current FastAPI endpoint paths for improved crawler discovery.
+- Updated `robots.txt` to explicitly allow full crawling and expose sitemap/host hints.
 
 #### 3. Endpoint Surface and Organization
 

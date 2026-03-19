@@ -1,6 +1,6 @@
 # Mobile Legends Public Data API (MLBB + Academy)
 
-Production FastAPI service that provides Mobile Legends data endpoints for analytics, hero insights, and academy content.
+Production API service that provides Mobile Legends data endpoints for analytics, hero insights, and academy content.
 
 ## What The API Can Do
 

@@ -27,6 +27,29 @@ https://mlbb-stats.rone.dev/robots.txt
 https://mlbb-stats.rone.dev/sitemap.xml
 ```
 
+## Example Usage in FastAPI
+
+1. Visit [mlbb-stats.rone.dev/docs](https://mlbb-stats.rone.dev/docs)
+
+2. Open any API (example: `/api/hero-rank/`)
+   ![Step 2](images/step-02.png)
+   *Note: If clicking does not work, try expanding the dropdown.*
+
+3. Click **Try it out**
+   ![Step 3](images/step-03.png)
+
+4. Fill in the required data (or leave defaults if support)
+   ![Step 4](images/step-04.png)
+
+5. Click **Execute**
+   ![Step 5](images/step-05.png)
+
+6. You will see a response like this:
+   ![Step 6](images/step-06.png)
+   - **Red box**: `curl` code to fetch data
+   - **Yellow box**: Request URL to directly test the API
+   - **Green Box**: The actual API output
+
 ## API Coverage
 
 ### MLBB API

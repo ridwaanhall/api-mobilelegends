@@ -2,27 +2,7 @@
 
 ## Supported Versions
 
-Below are the dependencies and their versions currently supported and maintained with security updates in this project. Please ensure you are using these versions to receive the latest security patches.
-
-| Dependency             | Version       | Supported  |
-|------------------------|--------------|------------|
-| asgiref                | 3.8.1        | ✅         |
-| beautifulsoup4         | 4.13.4       | ✅         |
-| certifi                | 2024.8.30    | ✅         |
-| cffi                   | 1.17.1       | ✅         |
-| charset-normalizer     | 3.4.0        | ✅         |
-| cryptography           | 45.0.4       | ✅         |
-| Django                 | 5.2.6        | ✅         |
-| djangorestframework    | 3.15.2       | ✅         |
-| idna                   | 3.10         | ✅         |
-| pycparser              | 2.22         | ✅         |
-| python-decouple        | 3.8          | ✅         |
-| requests               | 2.32.4       | ✅         |
-| soupsieve              | 2.7          | ✅         |
-| sqlparse               | 0.5.2        | ✅         |
-| typing_extensions      | 4.14.1       | ✅         |
-| tzdata                 | 2024.2       | ✅         |
-| urllib3                | 2.5.0        | ✅         |
+The dependencies and their versions currently supported and maintained with security updates in this project. Please ensure you are using these versions to receive the latest security patches.
 
 If you are using older versions, we strongly recommend upgrading to the supported versions above to ensure you have the latest security fixes.
 

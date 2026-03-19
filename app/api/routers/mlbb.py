@@ -19,7 +19,7 @@ LANGUAGE_DESCRIPTION = (
 
 HERO_IDENTIFIER_DESCRIPTION = (
     "Hero identifier as numeric hero ID (recommended range: 1-132, see maximum hero ID at hero list) or hero name. "
-    "Name matching ignores spaces/symbols and is case-insensitive (example: fanny)."
+    "Name matching ignores spaces/symbols and is case-insensitive (example: luoyi from Luo Yi)."
 )
 
 RANK_DESCRIPTION = "Rank filter. Allowed: all, epic, legend, mythic, honor, glory."

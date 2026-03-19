@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
+from html import escape
 from urllib.parse import urljoin
 
 from fastapi import APIRouter
@@ -137,7 +138,8 @@ def api_index() -> dict[str, object]:
 @router.get("/robots.txt")
 def robots_txt() -> PlainTextResponse:
     sitemap_url = urljoin(WEB_BASE_URL, "sitemap.xml")
-    content = "\n".join(["User-agent: *", "Allow: /", f"Sitemap: {sitemap_url}"])
+    host_url = WEB_BASE_URL.rstrip("/")
+    content = "\n".join(["User-agent: *", "Allow: /", "Disallow:", f"Sitemap: {sitemap_url}", f"Host: {host_url}"])
     return PlainTextResponse(content=content)
 
 
@@ -147,17 +149,44 @@ def sitemap_xml() -> Response:
     lastmod = datetime.now(timezone.utc).date().isoformat()
     url_entries = [
         ("", "weekly", "1.0"),
-        ("hero-list/", "daily", "0.9"),
-        ("hero-rank/", "daily", "0.9"),
-        ("hero-position/", "daily", "0.8"),
-        ("hero-detail/1/", "weekly", "0.6"),
-        ("api/", "weekly", "0.5"),
-        ("api/docs/", "weekly", "0.3"),
+        ("api/", "daily", "1.0"),
+        ("docs", "daily", "0.9"),
+        ("redoc", "weekly", "0.8"),
+        ("api/hero-list/", "daily", "0.9"),
+        ("api/hero-rank/", "daily", "0.9"),
+        ("api/hero-position/", "daily", "0.9"),
+        ("api/hero-detail/1/", "weekly", "0.7"),
+        ("api/hero-detail-stats/1/", "weekly", "0.7"),
+        ("api/hero-skill-combo/1/", "weekly", "0.7"),
+        ("api/hero-rate/1/?past-days=7", "weekly", "0.7"),
+        ("api/hero-relation/1/", "weekly", "0.7"),
+        ("api/hero-counter/1/", "weekly", "0.7"),
+        ("api/hero-compatibility/1/", "weekly", "0.7"),
+        ("api/win-rate/?match-now=100&wr-now=50&wr-future=60", "weekly", "0.7"),
+        ("api/academy/version/", "daily", "0.9"),
+        ("api/academy/heroes/", "daily", "0.9"),
+        ("api/academy/roles/", "weekly", "0.8"),
+        ("api/academy/equipment/", "weekly", "0.8"),
+        ("api/academy/equipment-details/", "weekly", "0.8"),
+        ("api/academy/spells/", "weekly", "0.8"),
+        ("api/academy/emblems/", "weekly", "0.8"),
+        ("api/academy/recommended/", "daily", "0.8"),
+        ("api/academy/recommended/1/", "weekly", "0.7"),
+        ("api/academy/guide/", "daily", "0.9"),
+        ("api/academy/guide/1/stats/", "weekly", "0.7"),
+        ("api/academy/guide/1/lane/", "weekly", "0.7"),
+        ("api/academy/guide/1/time-win-rate/1/", "weekly", "0.7"),
+        ("api/academy/guide/1/builds/", "weekly", "0.7"),
+        ("api/academy/guide/1/counters/", "weekly", "0.7"),
+        ("api/academy/guide/1/teammates/", "weekly", "0.7"),
+        ("api/academy/guide/1/trends/?days=7", "weekly", "0.7"),
+        ("api/academy/guide/1/recommended/", "weekly", "0.7"),
+        ("api/academy/hero-ratings/", "daily", "0.8"),
     ]
     urls_xml = "\n".join(
         [
             "  <url>\n"
-            f"    <loc>{urljoin(base_url, path)}</loc>\n"
+            f"    <loc>{escape(urljoin(base_url, path), quote=False)}</loc>\n"
             f"    <lastmod>{lastmod}</lastmod>\n"
             f"    <changefreq>{freq}</changefreq>\n"
             f"    <priority>{priority}</priority>\n"

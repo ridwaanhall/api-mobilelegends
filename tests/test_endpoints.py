@@ -27,7 +27,7 @@ def test_api_docs_redirects_to_swagger() -> None:
 
 
 def test_api_index_exposes_only_mlbb_and_academy_services() -> None:
-    response = client.get("/api/")
+    response = client.get("/api")
     payload = response.json()
 
     assert response.status_code == 200
@@ -37,7 +37,7 @@ def test_api_index_exposes_only_mlbb_and_academy_services() -> None:
 
 def test_openapi_documents_mlbb_query_constraints() -> None:
     openapi = client.get("/openapi.json").json()
-    params = openapi["paths"]["/api/hero-rank/"]["get"]["parameters"]
+    params = openapi["paths"]["/api/hero-rank"]["get"]["parameters"]
 
     days_param = next(param for param in params if param["name"] == "days")
     rank_param = next(param for param in params if param["name"] == "rank")
@@ -48,7 +48,7 @@ def test_openapi_documents_mlbb_query_constraints() -> None:
 
 def test_openapi_documents_academy_path_and_query_constraints() -> None:
     openapi = client.get("/openapi.json").json()
-    op = openapi["paths"]["/api/academy/guide/{hero_id}/trends/"]["get"]
+    op = openapi["paths"]["/api/academy/guide/{hero_id}/trends"]["get"]
     params = op["parameters"]
 
     hero_id_param = next(param for param in params if param["name"] == "hero_id")
@@ -80,7 +80,7 @@ def test_sitemap_uses_latest_api_urls() -> None:
     }
 
     assert response.status_code == 200
-    assert "/api/hero-rank/" in loc_paths
-    assert "/api/academy/guide/" in loc_paths
+    assert "/api/hero-rank" in loc_paths
+    assert "/api/academy/guide" in loc_paths
     assert "/docs" in loc_paths
-    assert "/hero-rank/" not in loc_paths
+    assert "/hero-rank" not in loc_paths

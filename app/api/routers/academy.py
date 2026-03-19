@@ -30,7 +30,7 @@ def _rank_value(rank: str) -> str:
     return rank_map.get(rank.lower(), "101")
 
 
-@router.get("/version/", summary="Academy version info")
+@router.get("/version", summary="Academy version info")
 def version(lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en") -> object:
     payload = {
         "pageSize": 20,
@@ -43,7 +43,7 @@ def version(lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en"
     return fetch_academy_post("2718124", payload, lang)
 
 
-@router.get("/heroes/", summary="Academy hero catalog")
+@router.get("/heroes", summary="Academy hero catalog")
 def heroes(lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en") -> object:
     payload = {
         "pageSize": 200,
@@ -56,7 +56,7 @@ def heroes(lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en")
     return fetch_academy_post("2766683", payload, lang)
 
 
-@router.get("/roles/", summary="Role and emblem list")
+@router.get("/roles", summary="Role and emblem list")
 def roles(lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en") -> object:
     payload = {
         "pageSize": 50,
@@ -68,31 +68,31 @@ def roles(lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en") 
     return fetch_academy_post("2740642", payload, lang)
 
 
-@router.get("/equipment/", summary="Equipment list")
+@router.get("/equipment", summary="Equipment list")
 def equipment(lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en") -> object:
     payload = {"pageSize": 200, "pageIndex": 1, "filters": [], "sorts": []}
     return fetch_academy_post("2775075", payload, lang)
 
 
-@router.get("/equipment-details/", summary="Equipment detail list")
+@router.get("/equipment-details", summary="Equipment detail list")
 def equipment_details(lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en") -> object:
     payload = {"pageSize": 200, "pageIndex": 1, "filters": [], "sorts": []}
     return fetch_academy_post("2713995", payload, lang)
 
 
-@router.get("/spells/", summary="Battle spells list")
+@router.get("/spells", summary="Battle spells list")
 def spells(lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en") -> object:
     payload = {"pageSize": 200, "pageIndex": 1, "filters": [], "sorts": []}
     return fetch_academy_post("2718122", payload, lang)
 
 
-@router.get("/emblems/", summary="Emblems list")
+@router.get("/emblems", summary="Emblems list")
 def emblems(lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en") -> object:
     payload = {"pageSize": 50, "pageIndex": 1, "filters": [], "sorts": []}
     return fetch_academy_post("2718121", payload, lang)
 
 
-@router.get("/recommended/", summary="Recommended content list")
+@router.get("/recommended", summary="Recommended content list")
 def recommended(
     page: Annotated[int, Query(ge=1, description="Page index (1-based).")] = 1,
     lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
@@ -119,7 +119,7 @@ def recommended(
     return fetch_academy_post("2718124", payload, lang)
 
 
-@router.get("/recommended/{recommended_id}/", summary="Recommended content detail")
+@router.get("/recommended/{recommended_id}", summary="Recommended content detail")
 def recommended_detail(
     recommended_id: Annotated[int, Path(ge=1, description="Recommended post identifier.")],
     lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
@@ -139,7 +139,7 @@ def recommended_detail(
     return fetch_academy_post("2718124", payload, lang)
 
 
-@router.get("/guide/", summary="Guide hero list")
+@router.get("/guide", summary="Guide hero list")
 def guide(
     size: Annotated[int, Query(ge=1, le=5000, description="Page size. Recommended range: 1-5000.")] = 2000,
     page: Annotated[int, Query(ge=1, description="Page index (1-based).")] = 1,
@@ -182,7 +182,7 @@ def guide(
     return fetch_academy_post("2766683", payload, lang)
 
 
-@router.get("/guide/{hero_id}/stats/", summary="Guide hero stats")
+@router.get("/guide/{hero_id}/stats", summary="Guide hero stats")
 def guide_stats(
     hero_id: Annotated[int, Path(ge=1, le=132, description="Hero ID. Recommended range: 1-132.")],
     rank: Annotated[
@@ -204,7 +204,7 @@ def guide_stats(
     return fetch_academy_post("2755183", payload, lang)
 
 
-@router.get("/guide/{hero_id}/lane/", summary="Guide hero lane")
+@router.get("/guide/{hero_id}/lane", summary="Guide hero lane")
 def guide_lane(
     hero_id: Annotated[int, Path(ge=1, le=132, description="Hero ID. Recommended range: 1-132.")],
     lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
@@ -220,7 +220,7 @@ def guide_lane(
     return fetch_academy_post("2766683", payload, lang)
 
 
-@router.get("/guide/{hero_id}/time-win-rate/{lane_id}/", summary="Guide lane time win-rate")
+@router.get("/guide/{hero_id}/time-win-rate/{lane_id}", summary="Guide lane time win-rate")
 def guide_time_win_rate(
     hero_id: Annotated[int, Path(ge=1, le=132, description="Hero ID. Recommended range: 1-132.")],
     lane_id: Annotated[int, Path(ge=1, le=5, description="Lane ID. Allowed values: 1 (exp), 2 (mid), 3 (roam), 4 (jungle), 5 (gold).")],
@@ -243,7 +243,7 @@ def guide_time_win_rate(
     return fetch_academy_post("2777027", payload, lang)
 
 
-@router.get("/guide/{hero_id}/builds/", summary="Guide recommended builds")
+@router.get("/guide/{hero_id}/builds", summary="Guide recommended builds")
 def guide_builds(
     hero_id: Annotated[int, Path(ge=1, le=132, description="Hero ID. Recommended range: 1-132.")],
     rank: Annotated[
@@ -265,7 +265,7 @@ def guide_builds(
     return fetch_academy_post("2776688", payload, lang)
 
 
-@router.get("/guide/{hero_id}/counters/", summary="Guide counters")
+@router.get("/guide/{hero_id}/counters", summary="Guide counters")
 def guide_counters(
     hero_id: Annotated[int, Path(ge=1, le=132, description="Hero ID. Recommended range: 1-132.")],
     rank: Annotated[
@@ -287,7 +287,7 @@ def guide_counters(
     return fetch_academy_post("2777391", payload, lang)
 
 
-@router.get("/guide/{hero_id}/teammates/", summary="Guide teammates")
+@router.get("/guide/{hero_id}/teammates", summary="Guide teammates")
 def guide_teammates(
     hero_id: Annotated[int, Path(ge=1, le=132, description="Hero ID. Recommended range: 1-132.")],
     rank: Annotated[
@@ -309,7 +309,7 @@ def guide_teammates(
     return fetch_academy_post("2777391", payload, lang)
 
 
-@router.get("/guide/{hero_id}/trends/", summary="Guide win-rate trends")
+@router.get("/guide/{hero_id}/trends", summary="Guide win-rate trends")
 def guide_trends(
     hero_id: Annotated[int, Path(ge=1, le=132, description="Hero ID. Recommended range: 1-132.")],
     days: Annotated[
@@ -336,7 +336,7 @@ def guide_trends(
     return fetch_academy_post(day_map.get(days, "2755185"), payload, lang)
 
 
-@router.get("/guide/{hero_id}/recommended/", summary="Guide recommended content")
+@router.get("/guide/{hero_id}/recommended", summary="Guide recommended content")
 def guide_recommended(
     hero_id: Annotated[int, Path(ge=1, le=132, description="Hero ID. Recommended range: 1-132.")],
     page: Annotated[int, Query(ge=1, description="Page index (1-based).")] = 1,
@@ -361,12 +361,12 @@ def guide_recommended(
     return fetch_academy_post("2718124", payload, lang)
 
 
-@router.get("/hero-ratings/", summary="Hero ratings list")
+@router.get("/hero-ratings", summary="Hero ratings list")
 def hero_ratings(lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en") -> object:
     return fetch_ratings_all(lang)
 
 
-@router.get("/hero-ratings/{subject}/", summary="Hero ratings by subject")
+@router.get("/hero-ratings/{subject}", summary="Hero ratings by subject")
 def hero_ratings_subject(
     subject: Annotated[str, Path(min_length=1, description="Rating subject key from the ratings index response.")],
     lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",

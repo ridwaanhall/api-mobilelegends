@@ -37,7 +37,7 @@ def _hero_id_or_404(hero_identifier: str, lang: str) -> int:
     return hero_id
 
 
-@router.get("/hero-list/", summary="List heroes")
+@router.get("/hero-list", summary="List heroes")
 def hero_list(
     lang: Annotated[
         str,
@@ -55,7 +55,7 @@ def hero_list(
     return fetch_mlbb_post("2756564", payload, lang)
 
 
-@router.get("/hero-rank/", summary="Hero rank stats")
+@router.get("/hero-rank", summary="Hero rank stats")
 def hero_rank(
     days: Annotated[
         Literal["1", "3", "7", "15", "30"],
@@ -125,7 +125,7 @@ def hero_rank(
     return fetch_mlbb_post(url_map.get(days, "2756567"), payload, lang)
 
 
-@router.get("/hero-position/", summary="Hero position filters")
+@router.get("/hero-position", summary="Hero position filters")
 def hero_position(
     role: Annotated[
         Literal["all", "tank", "fighter", "ass", "mage", "mm", "supp"],
@@ -172,7 +172,7 @@ def hero_position(
     return fetch_mlbb_post("2756564", payload, lang)
 
 
-@router.get("/hero-detail/{hero_identifier}/", summary="Hero detail")
+@router.get("/hero-detail/{hero_identifier}", summary="Hero detail")
 def hero_detail(
     hero_identifier: Annotated[str, Path(description=HERO_IDENTIFIER_DESCRIPTION)],
     lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
@@ -188,7 +188,7 @@ def hero_detail(
     return fetch_mlbb_post("2756564", payload, lang)
 
 
-@router.get("/hero-detail-stats/{hero_identifier}/", summary="Hero detail stats")
+@router.get("/hero-detail-stats/{hero_identifier}", summary="Hero detail stats")
 def hero_detail_stats(
     hero_identifier: Annotated[str, Path(description=HERO_IDENTIFIER_DESCRIPTION)],
     lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
@@ -207,7 +207,7 @@ def hero_detail_stats(
     return fetch_mlbb_post("2756567", payload, lang)
 
 
-@router.get("/hero-skill-combo/{hero_identifier}/", summary="Hero skill combo")
+@router.get("/hero-skill-combo/{hero_identifier}", summary="Hero skill combo")
 def hero_skill_combo(
     hero_identifier: Annotated[str, Path(description=HERO_IDENTIFIER_DESCRIPTION)],
     lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
@@ -223,7 +223,7 @@ def hero_skill_combo(
     return fetch_mlbb_post("2674711", payload, lang)
 
 
-@router.get("/hero-rate/{hero_identifier}/", summary="Hero rate trends")
+@router.get("/hero-rate/{hero_identifier}", summary="Hero rate trends")
 def hero_rate(
     hero_identifier: Annotated[str, Path(description=HERO_IDENTIFIER_DESCRIPTION)],
     past_days: Annotated[
@@ -247,7 +247,7 @@ def hero_rate(
     return fetch_mlbb_post(url_map.get(past_days, "2674709"), payload, lang)
 
 
-@router.get("/hero-relation/{hero_identifier}/", summary="Hero relation")
+@router.get("/hero-relation/{hero_identifier}", summary="Hero relation")
 def hero_relation(
     hero_identifier: Annotated[str, Path(description=HERO_IDENTIFIER_DESCRIPTION)],
     lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
@@ -264,7 +264,7 @@ def hero_relation(
     return fetch_mlbb_post("2756564", payload, lang)
 
 
-@router.get("/hero-counter/{hero_identifier}/", summary="Hero counters")
+@router.get("/hero-counter/{hero_identifier}", summary="Hero counters")
 def hero_counter(
     hero_identifier: Annotated[str, Path(description=HERO_IDENTIFIER_DESCRIPTION)],
     lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
@@ -283,7 +283,7 @@ def hero_counter(
     return fetch_mlbb_post("2756569", payload, lang)
 
 
-@router.get("/hero-compatibility/{hero_identifier}/", summary="Hero compatibility")
+@router.get("/hero-compatibility/{hero_identifier}", summary="Hero compatibility")
 def hero_compatibility(
     hero_identifier: Annotated[str, Path(description=HERO_IDENTIFIER_DESCRIPTION)],
     lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
@@ -302,7 +302,7 @@ def hero_compatibility(
     return fetch_mlbb_post("2756569", payload, lang)
 
 
-@router.get("/win-rate/", summary="Win-rate calculator")
+@router.get("/win-rate", summary="Win-rate calculator")
 def win_rate(
     match_now: Annotated[
         str | None,

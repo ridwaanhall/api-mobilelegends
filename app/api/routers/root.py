@@ -29,17 +29,17 @@ def _get_mlbb_stats_endpoints() -> dict[str, str]:
     if IS_AVAILABLE:
         return {
             "documentation": "/api/docs",
-            "hero_list": "/api/hero-list/",
-            "hero_rank": "/api/hero-rank/",
-            "hero_position": "/api/hero-position/",
-            "hero_detail": "/api/hero-detail/{hero_id_or_name}/",
-            "hero_detail_stats": "/api/hero-detail-stats/{hero_id_or_name}/",
-            "hero_skill_combo": "/api/hero-skill-combo/{hero_id_or_name}/",
-            "hero_rate": "/api/hero-rate/{hero_id_or_name}/",
-            "hero_relation": "/api/hero-relation/{hero_id_or_name}/",
-            "hero_counter": "/api/hero-counter/{hero_id_or_name}/",
-            "hero_compatibility": "/api/hero-compatibility/{hero_id_or_name}/",
-            "win_rate": "/api/win-rate/?match-now=100&wr-now=50&wr-future=75",
+            "hero_list": "/api/hero-list",
+            "hero_rank": "/api/hero-rank",
+            "hero_position": "/api/hero-position",
+            "hero_detail": "/api/hero-detail/{hero_id_or_name}",
+            "hero_detail_stats": "/api/hero-detail-stats/{hero_id_or_name}",
+            "hero_skill_combo": "/api/hero-skill-combo/{hero_id_or_name}",
+            "hero_rate": "/api/hero-rate/{hero_id_or_name}",
+            "hero_relation": "/api/hero-relation/{hero_id_or_name}",
+            "hero_counter": "/api/hero-counter/{hero_id_or_name}",
+            "hero_compatibility": "/api/hero-compatibility/{hero_id_or_name}",
+            "win_rate": "/api/win-rate?match-now=100&wr-now=50&wr-future=75",
         }
     return {"documentation": DOCS_BASE_URL}
 
@@ -47,41 +47,37 @@ def _get_mlbb_stats_endpoints() -> dict[str, str]:
 def _get_mlbb_academy_endpoints() -> dict[str, str]:
     if IS_AVAILABLE:
         return {
-            "version": "/api/academy/version/",
-            "heroes": "/api/academy/heroes/",
-            "roles": "/api/academy/roles/",
-            "equipment": "/api/academy/equipment/",
-            "equipment_details": "/api/academy/equipment-details/",
-            "spells": "/api/academy/spells/",
-            "emblems": "/api/academy/emblems/",
-            "recommended": "/api/academy/recommended/",
-            "recommended_detail": "/api/academy/recommended/{recommended_id}/",
-            "guide": "/api/academy/guide/",
-            "guide_stats": "/api/academy/guide/{hero_id}/stats/",
-            "guide_lane": "/api/academy/guide/{hero_id}/lane/",
-            "guide_time_win_rate": "/api/academy/guide/{hero_id}/time-win-rate/{lane_id}/",
-            "guide_builds": "/api/academy/guide/{hero_id}/builds/",
-            "guide_counters": "/api/academy/guide/{hero_id}/counters/",
-            "guide_teammates": "/api/academy/guide/{hero_id}/teammates/",
-            "guide_trends": "/api/academy/guide/{hero_id}/trends/",
-            "guide_recommended": "/api/academy/guide/{hero_id}/recommended/",
-            "hero_ratings": "/api/academy/hero-ratings/",
-            "hero_ratings_subject": "/api/academy/hero-ratings/{subject}/",
+            "version": "/api/academy/version",
+            "heroes": "/api/academy/heroes",
+            "roles": "/api/academy/roles",
+            "equipment": "/api/academy/equipment",
+            "equipment_details": "/api/academy/equipment-details",
+            "spells": "/api/academy/spells",
+            "emblems": "/api/academy/emblems",
+            "recommended": "/api/academy/recommended",
+            "recommended_detail": "/api/academy/recommended/{recommended_id}",
+            "guide": "/api/academy/guide",
+            "guide_stats": "/api/academy/guide/{hero_id}/stats",
+            "guide_lane": "/api/academy/guide/{hero_id}/lane",
+            "guide_time_win_rate": "/api/academy/guide/{hero_id}/time-win-rate/{lane_id}",
+            "guide_builds": "/api/academy/guide/{hero_id}/builds",
+            "guide_counters": "/api/academy/guide/{hero_id}/counters",
+            "guide_teammates": "/api/academy/guide/{hero_id}/teammates",
+            "guide_trends": "/api/academy/guide/{hero_id}/trends",
+            "guide_recommended": "/api/academy/guide/{hero_id}/recommended",
+            "hero_ratings": "/api/academy/hero-ratings",
+            "hero_ratings_subject": "/api/academy/hero-ratings/{subject}",
         }
     return {}
-@router.get("/")
-def redirect_to_api() -> RedirectResponse:
-    return RedirectResponse(url="/api/", status_code=307)
 
 
+@router.get("/", include_in_schema=False)
 @router.get("/api/docs", include_in_schema=False)
-@router.get("/api/docs/", include_in_schema=False)
 def api_docs_redirect() -> RedirectResponse:
     return RedirectResponse(url="/docs", status_code=307)
 
 
 @router.get("/api")
-@router.get("/api/")
 def api_index() -> dict[str, object]:
     status_key = "available" if IS_AVAILABLE else "limited"
     status_info = API_STATUS_MESSAGES[status_key]
@@ -128,8 +124,7 @@ def api_index() -> dict[str, object]:
         },
         "links": {
             "api_url": base_api_url if IS_AVAILABLE else MAINTENANCE_INFO_URL,
-            "web_url": f"{base_web_url}hero-rank/" if IS_AVAILABLE else MAINTENANCE_INFO_URL,
-            "docs": "/api/docs",
+            "docs": "/docs",
             "external_docs": base_docs_url,
         },
     }
@@ -149,39 +144,39 @@ def sitemap_xml() -> Response:
     lastmod = datetime.now(timezone.utc).date().isoformat()
     url_entries = [
         ("", "weekly", "1.0"),
-        ("api/", "daily", "1.0"),
+        ("api", "daily", "1.0"),
         ("docs", "daily", "0.9"),
         ("redoc", "weekly", "0.8"),
-        ("api/hero-list/", "daily", "0.9"),
-        ("api/hero-rank/", "daily", "0.9"),
-        ("api/hero-position/", "daily", "0.9"),
-        ("api/hero-detail/1/", "weekly", "0.7"),
-        ("api/hero-detail-stats/1/", "weekly", "0.7"),
-        ("api/hero-skill-combo/1/", "weekly", "0.7"),
-        ("api/hero-rate/1/?past-days=7", "weekly", "0.7"),
-        ("api/hero-relation/1/", "weekly", "0.7"),
-        ("api/hero-counter/1/", "weekly", "0.7"),
-        ("api/hero-compatibility/1/", "weekly", "0.7"),
-        ("api/win-rate/?match-now=100&wr-now=50&wr-future=60", "weekly", "0.7"),
-        ("api/academy/version/", "daily", "0.9"),
-        ("api/academy/heroes/", "daily", "0.9"),
-        ("api/academy/roles/", "weekly", "0.8"),
-        ("api/academy/equipment/", "weekly", "0.8"),
-        ("api/academy/equipment-details/", "weekly", "0.8"),
-        ("api/academy/spells/", "weekly", "0.8"),
-        ("api/academy/emblems/", "weekly", "0.8"),
-        ("api/academy/recommended/", "daily", "0.8"),
-        ("api/academy/recommended/1/", "weekly", "0.7"),
-        ("api/academy/guide/", "daily", "0.9"),
-        ("api/academy/guide/1/stats/", "weekly", "0.7"),
-        ("api/academy/guide/1/lane/", "weekly", "0.7"),
-        ("api/academy/guide/1/time-win-rate/1/", "weekly", "0.7"),
-        ("api/academy/guide/1/builds/", "weekly", "0.7"),
-        ("api/academy/guide/1/counters/", "weekly", "0.7"),
-        ("api/academy/guide/1/teammates/", "weekly", "0.7"),
-        ("api/academy/guide/1/trends/?days=7", "weekly", "0.7"),
-        ("api/academy/guide/1/recommended/", "weekly", "0.7"),
-        ("api/academy/hero-ratings/", "daily", "0.8"),
+        ("api/hero-list", "daily", "0.9"),
+        ("api/hero-rank", "daily", "0.9"),
+        ("api/hero-position", "daily", "0.9"),
+        ("api/hero-detail/1", "weekly", "0.7"),
+        ("api/hero-detail-stats/1", "weekly", "0.7"),
+        ("api/hero-skill-combo/1", "weekly", "0.7"),
+        ("api/hero-rate/1?past-days=7", "weekly", "0.7"),
+        ("api/hero-relation/1", "weekly", "0.7"),
+        ("api/hero-counter/1", "weekly", "0.7"),
+        ("api/hero-compatibility/1", "weekly", "0.7"),
+        ("api/win-rate?match-now=100&wr-now=50&wr-future=60", "weekly", "0.7"),
+        ("api/academy/version", "daily", "0.9"),
+        ("api/academy/heroes", "daily", "0.9"),
+        ("api/academy/roles", "weekly", "0.8"),
+        ("api/academy/equipment", "weekly", "0.8"),
+        ("api/academy/equipment-details", "weekly", "0.8"),
+        ("api/academy/spells", "weekly", "0.8"),
+        ("api/academy/emblems", "weekly", "0.8"),
+        ("api/academy/recommended", "daily", "0.8"),
+        ("api/academy/recommended/1", "weekly", "0.7"),
+        ("api/academy/guide", "daily", "0.9"),
+        ("api/academy/guide/1/stats", "weekly", "0.7"),
+        ("api/academy/guide/1/lane", "weekly", "0.7"),
+        ("api/academy/guide/1/time-win-rate/1", "weekly", "0.7"),
+        ("api/academy/guide/1/builds", "weekly", "0.7"),
+        ("api/academy/guide/1/counters", "weekly", "0.7"),
+        ("api/academy/guide/1/teammates", "weekly", "0.7"),
+        ("api/academy/guide/1/trends?days=7", "weekly", "0.7"),
+        ("api/academy/guide/1/recommended", "weekly", "0.7"),
+        ("api/academy/hero-ratings", "daily", "0.8"),
     ]
     urls_xml = "\n".join(
         [

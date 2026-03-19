@@ -18,11 +18,11 @@ Production API service that provides Mobile Legends data endpoints for analytics
 ## Available URLs
 
 ```txt
-https://mlbb-stats.rone.dev/                # root (redirects to /api/)
-https://mlbb-stats.rone.dev/api/            # API index and endpoint map
-https://mlbb-stats.rone.dev/docs            # Swagger UI
-https://mlbb-stats.rone.dev/redoc           # ReDoc
-https://mlbb-stats.rone.dev/api/docs        # Swagger alias (redirects to /docs)
+https://mlbb-stats.rone.dev                # root (redirects to /api/)
+https://mlbb-stats.rone.dev/api            # API index and endpoint map
+https://mlbb-stats.rone.dev/docs           # Swagger UI
+https://mlbb-stats.rone.dev/redoc          # ReDoc
+https://mlbb-stats.rone.dev/api/docs       # Swagger alias (redirects to /docs)
 https://mlbb-stats.rone.dev/robots.txt
 https://mlbb-stats.rone.dev/sitemap.xml
 ```
@@ -31,7 +31,7 @@ https://mlbb-stats.rone.dev/sitemap.xml
 
 1. Visit [mlbb-stats.rone.dev/docs](https://mlbb-stats.rone.dev/docs)
 
-2. Open any API (example: `/api/hero-rank/`)
+2. Open any API (example: `/api/hero-rank`)
    ![Step 2](images/step-02.png)
    *Note: If clicking does not work, try expanding the dropdown.*
 
@@ -54,40 +54,40 @@ https://mlbb-stats.rone.dev/sitemap.xml
 
 ### MLBB API
 
-- `GET /api/hero-list/`
-- `GET /api/hero-rank/`
-- `GET /api/hero-position/`
-- `GET /api/hero-detail/{hero_id_or_name}/`
-- `GET /api/hero-detail-stats/{hero_id_or_name}/`
-- `GET /api/hero-skill-combo/{hero_id_or_name}/`
-- `GET /api/hero-rate/{hero_id_or_name}/`
-- `GET /api/hero-relation/{hero_id_or_name}/`
-- `GET /api/hero-counter/{hero_id_or_name}/`
-- `GET /api/hero-compatibility/{hero_id_or_name}/`
-- `GET /api/win-rate/?match-now=&wr-now=&wr-future=`
+- `GET /api/hero-list`
+- `GET /api/hero-rank`
+- `GET /api/hero-position`
+- `GET /api/hero-detail/{hero_id_or_name}`
+- `GET /api/hero-detail-stats/{hero_id_or_name}`
+- `GET /api/hero-skill-combo/{hero_id_or_name}`
+- `GET /api/hero-rate/{hero_id_or_name}`
+- `GET /api/hero-relation/{hero_id_or_name}`
+- `GET /api/hero-counter/{hero_id_or_name}`
+- `GET /api/hero-compatibility/{hero_id_or_name}`
+- `GET /api/win-rate?match-now=&wr-now=&wr-future=`
 
 ### MLBB Academy API
 
-- `GET /api/academy/version/`
-- `GET /api/academy/heroes/`
-- `GET /api/academy/roles/`
-- `GET /api/academy/equipment/`
-- `GET /api/academy/equipment-details/`
-- `GET /api/academy/spells/`
-- `GET /api/academy/emblems/`
-- `GET /api/academy/recommended/`
-- `GET /api/academy/recommended/{recommended_id}/`
-- `GET /api/academy/guide/`
-- `GET /api/academy/guide/{hero_id}/stats/`
-- `GET /api/academy/guide/{hero_id}/lane/`
-- `GET /api/academy/guide/{hero_id}/time-win-rate/{lane_id}/`
-- `GET /api/academy/guide/{hero_id}/builds/`
-- `GET /api/academy/guide/{hero_id}/counters/`
-- `GET /api/academy/guide/{hero_id}/teammates/`
-- `GET /api/academy/guide/{hero_id}/trends/`
-- `GET /api/academy/guide/{hero_id}/recommended/`
-- `GET /api/academy/hero-ratings/`
-- `GET /api/academy/hero-ratings/{subject}/`
+- `GET /api/academy/version`
+- `GET /api/academy/heroes`
+- `GET /api/academy/roles`
+- `GET /api/academy/equipment`
+- `GET /api/academy/equipment-details`
+- `GET /api/academy/spells`
+- `GET /api/academy/emblems`
+- `GET /api/academy/recommended`
+- `GET /api/academy/recommended/{recommended_id}`
+- `GET /api/academy/guide`
+- `GET /api/academy/guide/{hero_id}/stats`
+- `GET /api/academy/guide/{hero_id}/lane`
+- `GET /api/academy/guide/{hero_id}/time-win-rate/{lane_id}`
+- `GET /api/academy/guide/{hero_id}/builds`
+- `GET /api/academy/guide/{hero_id}/counters`
+- `GET /api/academy/guide/{hero_id}/teammates`
+- `GET /api/academy/guide/{hero_id}/trends`
+- `GET /api/academy/guide/{hero_id}/recommended`
+- `GET /api/academy/hero-ratings`
+- `GET /api/academy/hero-ratings/{subject}`
 
 ## Local Development
 

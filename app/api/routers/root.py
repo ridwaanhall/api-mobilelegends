@@ -27,7 +27,7 @@ router = APIRouter(tags=["root"])
 def _get_mlbb_stats_endpoints() -> dict[str, str]:
     if IS_AVAILABLE:
         return {
-            "documentation": DOCS_BASE_URL,
+            "documentation": "/api/docs",
             "hero_list": "/api/hero-list/",
             "hero_rank": "/api/hero-rank/",
             "hero_position": "/api/hero-position/",
@@ -73,9 +73,14 @@ def redirect_to_api() -> RedirectResponse:
     return RedirectResponse(url="/api/", status_code=307)
 
 
+@router.get("/api/docs", include_in_schema=False)
+@router.get("/api/docs/", include_in_schema=False)
+def api_docs_redirect() -> RedirectResponse:
+    return RedirectResponse(url="/docs", status_code=307)
+
+
 @router.get("/api")
 @router.get("/api/")
-@router.get("/api/docs/")
 def api_index() -> dict[str, object]:
     status_key = "available" if IS_AVAILABLE else "limited"
     status_info = API_STATUS_MESSAGES[status_key]
@@ -123,7 +128,8 @@ def api_index() -> dict[str, object]:
         "links": {
             "api_url": base_api_url if IS_AVAILABLE else MAINTENANCE_INFO_URL,
             "web_url": f"{base_web_url}hero-rank/" if IS_AVAILABLE else MAINTENANCE_INFO_URL,
-            "docs": base_docs_url,
+            "docs": "/api/docs",
+            "external_docs": base_docs_url,
         },
     }
 

@@ -40,7 +40,7 @@ https://mlbb-stats.rone.dev/                # root (redirects to /api/)
 https://mlbb-stats.rone.dev/api/            # API index and endpoint map
 https://mlbb-stats.rone.dev/docs            # Swagger UI (try API directly)
 https://mlbb-stats.rone.dev/redoc           # ReDoc documentation
-https://mlbb-stats.rone.dev/api/docs/       # same API index response
+https://mlbb-stats.rone.dev/api/docs        # Swagger UI alias (redirects to /docs)
 https://mlbb-stats.rone.dev/robots.txt
 https://mlbb-stats.rone.dev/sitemap.xml
 ```

@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, Query
+from typing import Annotated, Literal
+
+from fastapi import APIRouter, Depends, Path, Query
 from fastapi.responses import JSONResponse
 
 from app.api.dependencies import require_api_available
@@ -8,6 +10,19 @@ from app.core.errors import AppError
 from app.services.mlbb import fetch_mlbb_post, resolve_hero_id
 
 router = APIRouter(prefix="/api", tags=["mlbb"], dependencies=[Depends(require_api_available)])
+
+LANGUAGE_DESCRIPTION = (
+    "Language code for localized content. Supported codes: "
+    "en, id, es, pt, ru, tr, ar, de, fr, it, ja, ko, th, vi, zh-CN, zh-TW. "
+    "Default: en."
+)
+
+HERO_IDENTIFIER_DESCRIPTION = (
+    "Hero identifier as numeric hero ID (recommended range: 1-132) or hero name. "
+    "Name matching ignores spaces/symbols and is case-insensitive (example: fanny)."
+)
+
+RANK_DESCRIPTION = "Rank filter. Allowed: all, epic, legend, mythic, honor, glory."
 
 
 def _hero_id_or_404(hero_identifier: str, lang: str) -> int:
@@ -22,8 +37,15 @@ def _hero_id_or_404(hero_identifier: str, lang: str) -> int:
     return hero_id
 
 
-@router.get("/hero-list/")
-def hero_list(lang: str = Query(default="en")) -> object:
+@router.get("/hero-list/", summary="List heroes")
+def hero_list(
+    lang: Annotated[
+        str,
+        Query(
+            description=LANGUAGE_DESCRIPTION,
+        ),
+    ] = "en",
+) -> object:
     payload = {
         "pageSize": 10000,
         "sorts": [{"data": {"field": "hero_id", "order": "desc"}, "type": "sequence"}],
@@ -33,15 +55,27 @@ def hero_list(lang: str = Query(default="en")) -> object:
     return fetch_mlbb_post("2756564", payload, lang)
 
 
-@router.get("/hero-rank/")
+@router.get("/hero-rank/", summary="Hero rank stats")
 def hero_rank(
-    days: str = Query(default="1"),
-    rank: str = Query(default="all"),
-    size: int = Query(default=20),
-    index: int = Query(default=1),
-    sort_field: str = Query(default="win_rate"),
-    sort_order: str = Query(default="desc"),
-    lang: str = Query(default="en"),
+    days: Annotated[
+        Literal["1", "3", "7", "15", "30"],
+        Query(description="Past day window. Allowed: 1, 3, 7, 15, 30."),
+    ] = "1",
+    rank: Annotated[
+        Literal["all", "epic", "legend", "mythic", "honor", "glory"],
+        Query(description=RANK_DESCRIPTION),
+    ] = "all",
+    size: Annotated[int, Query(ge=1, le=100, description="Page size. Recommended range: 1-100.")] = 20,
+    index: Annotated[int, Query(ge=1, description="Page index (1-based).")]= 1,
+    sort_field: Annotated[
+        Literal["pick_rate", "ban_rate", "win_rate"],
+        Query(description="Sort field. Allowed: pick_rate, ban_rate, win_rate."),
+    ] = "win_rate",
+    sort_order: Annotated[
+        Literal["asc", "desc"],
+        Query(description="Sort direction. Allowed: asc, desc."),
+    ] = "desc",
+    lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
 ) -> object:
     def create_rank_payload(rank_value: str) -> dict[str, object]:
         return {
@@ -91,13 +125,21 @@ def hero_rank(
     return fetch_mlbb_post(url_map.get(days, "2756567"), payload, lang)
 
 
-@router.get("/hero-position/")
+@router.get("/hero-position/", summary="Hero position filters")
 def hero_position(
-    role: str = Query(default="all"),
-    lane: str = Query(default="all"),
-    size: int = Query(default=21),
-    index: int = Query(default=1),
-    lang: str = Query(default="en"),
+    role: Annotated[
+        Literal["all", "tank", "fighter", "ass", "mage", "mm", "supp"],
+        Query(
+            description="Role filter. Allowed: all, tank, fighter, ass (assassin), mage, mm (marksman), supp (support).",
+        ),
+    ] = "all",
+    lane: Annotated[
+        Literal["all", "exp", "mid", "roam", "jungle", "gold"],
+        Query(description="Lane filter. Allowed: all, exp, mid, roam, jungle, gold."),
+    ] = "all",
+    size: Annotated[int, Query(ge=1, le=100, description="Page size. Recommended range: 1-100.")] = 21,
+    index: Annotated[int, Query(ge=1, description="Page index (1-based).")]= 1,
+    lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
 ) -> object:
     role_map = {
         "all": [1, 2, 3, 4, 5, 6],
@@ -130,8 +172,11 @@ def hero_position(
     return fetch_mlbb_post("2756564", payload, lang)
 
 
-@router.get("/hero-detail/{hero_identifier}/")
-def hero_detail(hero_identifier: str, lang: str = Query(default="en")) -> object:
+@router.get("/hero-detail/{hero_identifier}/", summary="Hero detail")
+def hero_detail(
+    hero_identifier: Annotated[str, Path(description=HERO_IDENTIFIER_DESCRIPTION)],
+    lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
+) -> object:
     hero_id = _hero_id_or_404(hero_identifier, lang)
     payload = {
         "pageSize": 20,
@@ -143,8 +188,11 @@ def hero_detail(hero_identifier: str, lang: str = Query(default="en")) -> object
     return fetch_mlbb_post("2756564", payload, lang)
 
 
-@router.get("/hero-detail-stats/{hero_identifier}/")
-def hero_detail_stats(hero_identifier: str, lang: str = Query(default="en")) -> object:
+@router.get("/hero-detail-stats/{hero_identifier}/", summary="Hero detail stats")
+def hero_detail_stats(
+    hero_identifier: Annotated[str, Path(description=HERO_IDENTIFIER_DESCRIPTION)],
+    lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
+) -> object:
     hero_id = _hero_id_or_404(hero_identifier, lang)
     payload = {
         "pageSize": 20,
@@ -159,8 +207,11 @@ def hero_detail_stats(hero_identifier: str, lang: str = Query(default="en")) -> 
     return fetch_mlbb_post("2756567", payload, lang)
 
 
-@router.get("/hero-skill-combo/{hero_identifier}/")
-def hero_skill_combo(hero_identifier: str, lang: str = Query(default="en")) -> object:
+@router.get("/hero-skill-combo/{hero_identifier}/", summary="Hero skill combo")
+def hero_skill_combo(
+    hero_identifier: Annotated[str, Path(description=HERO_IDENTIFIER_DESCRIPTION)],
+    lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
+) -> object:
     hero_id = _hero_id_or_404(hero_identifier, lang)
     payload = {
         "pageSize": 20,
@@ -172,11 +223,14 @@ def hero_skill_combo(hero_identifier: str, lang: str = Query(default="en")) -> o
     return fetch_mlbb_post("2674711", payload, lang)
 
 
-@router.get("/hero-rate/{hero_identifier}/")
+@router.get("/hero-rate/{hero_identifier}/", summary="Hero rate trends")
 def hero_rate(
-    hero_identifier: str,
-    past_days: str = Query(default="7", alias="past-days"),
-    lang: str = Query(default="en"),
+    hero_identifier: Annotated[str, Path(description=HERO_IDENTIFIER_DESCRIPTION)],
+    past_days: Annotated[
+        Literal["7", "15", "30"],
+        Query(alias="past-days", description="Rate window in days. Allowed: 7, 15, 30."),
+    ] = "7",
+    lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
 ) -> object:
     hero_id = _hero_id_or_404(hero_identifier, lang)
     url_map = {"7": "2674709", "15": "2687909", "30": "2690860"}
@@ -193,8 +247,11 @@ def hero_rate(
     return fetch_mlbb_post(url_map.get(past_days, "2674709"), payload, lang)
 
 
-@router.get("/hero-relation/{hero_identifier}/")
-def hero_relation(hero_identifier: str, lang: str = Query(default="en")) -> object:
+@router.get("/hero-relation/{hero_identifier}/", summary="Hero relation")
+def hero_relation(
+    hero_identifier: Annotated[str, Path(description=HERO_IDENTIFIER_DESCRIPTION)],
+    lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
+) -> object:
     hero_id = _hero_id_or_404(hero_identifier, lang)
     payload = {
         "pageSize": 20,
@@ -207,8 +264,11 @@ def hero_relation(hero_identifier: str, lang: str = Query(default="en")) -> obje
     return fetch_mlbb_post("2756564", payload, lang)
 
 
-@router.get("/hero-counter/{hero_identifier}/")
-def hero_counter(hero_identifier: str, lang: str = Query(default="en")) -> object:
+@router.get("/hero-counter/{hero_identifier}/", summary="Hero counters")
+def hero_counter(
+    hero_identifier: Annotated[str, Path(description=HERO_IDENTIFIER_DESCRIPTION)],
+    lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
+) -> object:
     hero_id = _hero_id_or_404(hero_identifier, lang)
     payload = {
         "pageSize": 20,
@@ -223,8 +283,11 @@ def hero_counter(hero_identifier: str, lang: str = Query(default="en")) -> objec
     return fetch_mlbb_post("2756569", payload, lang)
 
 
-@router.get("/hero-compatibility/{hero_identifier}/")
-def hero_compatibility(hero_identifier: str, lang: str = Query(default="en")) -> object:
+@router.get("/hero-compatibility/{hero_identifier}/", summary="Hero compatibility")
+def hero_compatibility(
+    hero_identifier: Annotated[str, Path(description=HERO_IDENTIFIER_DESCRIPTION)],
+    lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
+) -> object:
     hero_id = _hero_id_or_404(hero_identifier, lang)
     payload = {
         "pageSize": 20,
@@ -239,11 +302,23 @@ def hero_compatibility(hero_identifier: str, lang: str = Query(default="en")) ->
     return fetch_mlbb_post("2756569", payload, lang)
 
 
-@router.get("/win-rate/")
+@router.get("/win-rate/", summary="Win-rate calculator")
 def win_rate(
-    match_now: str | None = Query(default=None, alias="match-now"),
-    wr_now: str | None = Query(default=None, alias="wr-now"),
-    wr_future: str | None = Query(default=None, alias="wr-future"),
+    match_now: Annotated[
+        str | None,
+        Query(alias="match-now", description="Current total matches. Must be an integer >= 0."),
+    ] = None,
+    wr_now: Annotated[
+        str | None,
+        Query(alias="wr-now", description="Current win rate in percent. Range: 0-100."),
+    ] = None,
+    wr_future: Annotated[
+        str | None,
+        Query(
+            alias="wr-future",
+            description="Target win rate in percent. Range: >0 to 100 and must be greater than wr-now.",
+        ),
+    ] = None,
 ) -> object:
     missing_params = [
         param

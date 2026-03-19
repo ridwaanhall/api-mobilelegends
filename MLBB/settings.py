@@ -74,8 +74,6 @@ INSTALLED_APPS = [
     
     'apps.core',
     'apps.mlbb_api',
-    'apps.mlbb_web',
-    'apps.mpl_api',
     'apps.academy_api',
 ]
 

@@ -29,9 +29,5 @@ urlpatterns = [
     path('sitemap.xml', sitemap_xml, name='sitemap_xml'),
     
     path('api/', include('apps.mlbb_api.urls')),
-    path('api/', include('apps.mpl_api.urls')),
-    path('api/', include('apps.academy_api.urls')),
-    
-    path('', include('apps.mlbb_web.urls')),
-    
+    path('api/', include('apps.academy_api.urls')),    
 ]

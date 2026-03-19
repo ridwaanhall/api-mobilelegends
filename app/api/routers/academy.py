@@ -1,10 +1,11 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 from typing import Annotated, Literal
 
 from fastapi import APIRouter, Depends, Path, Query
 
 from app.api.dependencies import require_api_available
+from app.core.hero_limits import validate_academy_hero_id
 from app.services.academy import fetch_academy_post, fetch_ratings_all, fetch_ratings_subject
 
 router = APIRouter(prefix="/api/academy", tags=["academy"], dependencies=[Depends(require_api_available)])
@@ -16,6 +17,9 @@ LANGUAGE_DESCRIPTION = (
 )
 
 RANK_DESCRIPTION = "Rank filter. Allowed: all, epic, legend, mythic, honor, glory."
+HERO_ID_DESCRIPTION = (
+    "Hero ID. Minimum: 1. Maximum is validated dynamically from current `/api/academy/guide` total."
+)
 
 
 def _rank_value(rank: str) -> str:
@@ -184,13 +188,14 @@ def guide(
 
 @router.get("/guide/{hero_id}/stats", summary="Guide hero stats")
 def guide_stats(
-    hero_id: Annotated[int, Path(ge=1, le=132, description="Hero ID. Recommended range: 1-132.")],
+    hero_id: Annotated[int, Path(ge=1, description=HERO_ID_DESCRIPTION)],
     rank: Annotated[
         Literal["all", "epic", "legend", "mythic", "honor", "glory"],
         Query(description=RANK_DESCRIPTION),
     ] = "all",
     lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
 ) -> object:
+    validate_academy_hero_id(hero_id, lang)
     payload = {
         "pageSize": 20,
         "pageIndex": 1,
@@ -206,9 +211,10 @@ def guide_stats(
 
 @router.get("/guide/{hero_id}/lane", summary="Guide hero lane")
 def guide_lane(
-    hero_id: Annotated[int, Path(ge=1, le=132, description="Hero ID. Recommended range: 1-132.")],
+    hero_id: Annotated[int, Path(ge=1, description=HERO_ID_DESCRIPTION)],
     lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
 ) -> object:
+    validate_academy_hero_id(hero_id, lang)
     payload = {
         "pageSize": 20,
         "pageIndex": 1,
@@ -222,7 +228,7 @@ def guide_lane(
 
 @router.get("/guide/{hero_id}/time-win-rate/{lane_id}", summary="Guide lane time win-rate")
 def guide_time_win_rate(
-    hero_id: Annotated[int, Path(ge=1, le=132, description="Hero ID. Recommended range: 1-132.")],
+    hero_id: Annotated[int, Path(ge=1, description=HERO_ID_DESCRIPTION)],
     lane_id: Annotated[int, Path(ge=1, le=5, description="Lane ID. Allowed values: 1 (exp), 2 (mid), 3 (roam), 4 (jungle), 5 (gold).")],
     rank: Annotated[
         Literal["all", "epic", "legend", "mythic", "honor", "glory"],
@@ -230,6 +236,7 @@ def guide_time_win_rate(
     ] = "all",
     lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
 ) -> object:
+    validate_academy_hero_id(hero_id, lang)
     payload = {
         "pageSize": 20,
         "pageIndex": 1,
@@ -245,13 +252,14 @@ def guide_time_win_rate(
 
 @router.get("/guide/{hero_id}/builds", summary="Guide recommended builds")
 def guide_builds(
-    hero_id: Annotated[int, Path(ge=1, le=132, description="Hero ID. Recommended range: 1-132.")],
+    hero_id: Annotated[int, Path(ge=1, description=HERO_ID_DESCRIPTION)],
     rank: Annotated[
         Literal["all", "epic", "legend", "mythic", "honor", "glory"],
         Query(description=RANK_DESCRIPTION),
     ] = "all",
     lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
 ) -> object:
+    validate_academy_hero_id(hero_id, lang)
     payload = {
         "pageSize": 20,
         "pageIndex": 1,
@@ -267,13 +275,14 @@ def guide_builds(
 
 @router.get("/guide/{hero_id}/counters", summary="Guide counters")
 def guide_counters(
-    hero_id: Annotated[int, Path(ge=1, le=132, description="Hero ID. Recommended range: 1-132.")],
+    hero_id: Annotated[int, Path(ge=1, description=HERO_ID_DESCRIPTION)],
     rank: Annotated[
         Literal["all", "epic", "legend", "mythic", "honor", "glory"],
         Query(description=RANK_DESCRIPTION),
     ] = "all",
     lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
 ) -> object:
+    validate_academy_hero_id(hero_id, lang)
     payload = {
         "pageSize": 200,
         "pageIndex": 1,
@@ -289,13 +298,14 @@ def guide_counters(
 
 @router.get("/guide/{hero_id}/teammates", summary="Guide teammates")
 def guide_teammates(
-    hero_id: Annotated[int, Path(ge=1, le=132, description="Hero ID. Recommended range: 1-132.")],
+    hero_id: Annotated[int, Path(ge=1, description=HERO_ID_DESCRIPTION)],
     rank: Annotated[
         Literal["all", "epic", "legend", "mythic", "honor", "glory"],
         Query(description=RANK_DESCRIPTION),
     ] = "all",
     lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
 ) -> object:
+    validate_academy_hero_id(hero_id, lang)
     payload = {
         "pageSize": 200,
         "pageIndex": 1,
@@ -311,7 +321,7 @@ def guide_teammates(
 
 @router.get("/guide/{hero_id}/trends", summary="Guide win-rate trends")
 def guide_trends(
-    hero_id: Annotated[int, Path(ge=1, le=132, description="Hero ID. Recommended range: 1-132.")],
+    hero_id: Annotated[int, Path(ge=1, description=HERO_ID_DESCRIPTION)],
     days: Annotated[
         Literal["7", "15", "30"],
         Query(description="Trend window in days. Allowed: 7, 15, 30."),
@@ -322,6 +332,7 @@ def guide_trends(
     ] = "all",
     lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
 ) -> object:
+    validate_academy_hero_id(hero_id, lang)
     day_map = {"7": "2755185", "15": "2755186", "30": "2755187"}
     payload = {
         "pageSize": 20,
@@ -338,10 +349,11 @@ def guide_trends(
 
 @router.get("/guide/{hero_id}/recommended", summary="Guide recommended content")
 def guide_recommended(
-    hero_id: Annotated[int, Path(ge=1, le=132, description="Hero ID. Recommended range: 1-132.")],
+    hero_id: Annotated[int, Path(ge=1, description=HERO_ID_DESCRIPTION)],
     page: Annotated[int, Query(ge=1, description="Page index (1-based).")] = 1,
     lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
 ) -> object:
+    validate_academy_hero_id(hero_id, lang)
     payload = {
         "pageSize": 20,
         "pageIndex": page,

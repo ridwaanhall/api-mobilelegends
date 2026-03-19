@@ -38,12 +38,15 @@ def test_api_index_exposes_only_mlbb_and_academy_services() -> None:
 def test_openapi_documents_mlbb_query_constraints() -> None:
     openapi = client.get("/openapi.json").json()
     params = openapi["paths"]["/api/hero-rank"]["get"]["parameters"]
+    hero_detail_params = openapi["paths"]["/api/hero-detail/{hero_identifier}"]["get"]["parameters"]
 
     days_param = next(param for param in params if param["name"] == "days")
     rank_param = next(param for param in params if param["name"] == "rank")
+    hero_identifier_param = next(param for param in hero_detail_params if param["name"] == "hero_identifier")
 
     assert "Allowed: 1, 3, 7, 15, 30" in days_param["description"]
     assert rank_param["schema"]["enum"] == ["all", "epic", "legend", "mythic", "honor", "glory"]
+    assert "validated dynamically" in hero_identifier_param["description"]
 
 
 def test_openapi_documents_academy_path_and_query_constraints() -> None:
@@ -54,7 +57,7 @@ def test_openapi_documents_academy_path_and_query_constraints() -> None:
     hero_id_param = next(param for param in params if param["name"] == "hero_id")
     days_param = next(param for param in params if param["name"] == "days")
 
-    assert hero_id_param["schema"]["maximum"] == 132
+    assert "validated dynamically" in hero_id_param["description"]
     assert days_param["schema"]["enum"] == ["7", "15", "30"]
 
 

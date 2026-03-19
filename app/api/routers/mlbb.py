@@ -7,6 +7,7 @@ from fastapi.responses import JSONResponse
 
 from app.api.dependencies import require_api_available
 from app.core.errors import AppError
+from app.core.hero_limits import validate_mlbb_hero_id
 from app.services.mlbb import fetch_mlbb_post, resolve_hero_id
 
 router = APIRouter(prefix="/api", tags=["mlbb"], dependencies=[Depends(require_api_available)])
@@ -18,7 +19,7 @@ LANGUAGE_DESCRIPTION = (
 )
 
 HERO_IDENTIFIER_DESCRIPTION = (
-    "Hero identifier as numeric hero ID (recommended range: 1-132, see maximum hero ID at hero list) or hero name. "
+    "Hero identifier as numeric hero ID (minimum: 1; maximum validated dynamically from current MLBB hero list) or hero name. "
     "Name matching ignores spaces/symbols and is case-insensitive (example: luoyi from Luo Yi)."
 )
 
@@ -26,6 +27,30 @@ RANK_DESCRIPTION = "Rank filter. Allowed: all, epic, legend, mythic, honor, glor
 
 
 def _hero_id_or_404(hero_identifier: str, lang: str) -> int:
+    try:
+        numeric_hero_id = int(hero_identifier)
+        if numeric_hero_id < 1:
+            raise AppError(
+                status_code=422,
+                code="VALIDATION_ERROR",
+                message="Validation failed.",
+                details=[
+                    {
+                        "type": "greater_than_equal",
+                        "loc": ["path", "hero_identifier"],
+                        "msg": "Input should be greater than or equal to 1",
+                        "input": numeric_hero_id,
+                        "ctx": {"ge": 1},
+                    }
+                ],
+                extra={"code": "VALIDATION_ERROR"},
+            )
+
+        validate_mlbb_hero_id(numeric_hero_id, lang)
+        return numeric_hero_id
+    except ValueError:
+        pass
+
     hero_id = resolve_hero_id(hero_identifier, lang)
     if hero_id <= 0:
         raise AppError(

@@ -46,6 +46,10 @@ This file now tracks **EVERY version** (v3.0.0 + full v2 history).
 
 - Added centralized validation handling with consistent error payload structure.
 - Expanded contract coverage with endpoint tests.
+- Replaced hardcoded hero ID upper bounds with dynamic runtime validation for both:
+  - Academy hero IDs based on live `/api/academy/guide` total.
+  - MLBB numeric hero IDs based on latest `/api/hero-list` highest hero ID.
+- Introduced a centralized core validator (`app/core/hero_limits.py`) with cache-backed max hero ID lookup shared by Academy and MLBB routes.
 
 #### 5. Deployment and Operations
 

@@ -26,10 +26,10 @@ SUPPORT_DETAILS: dict[str, str] = {
 SITE_TITLE: str = "API Mobile Legends"
 TWITTER_HANDLE: str = env_str("TWITTER_HANDLE", default="@ridwaanhall")
 
-WEB_BASE_URL: str = env_str("WEB_BASE_URL", default="https://mlbb-stats.rone.dev/")
-API_BASE_URL: str = env_str("API_BASE_URL", default=f"{WEB_BASE_URL}api/")
-DOCS_BASE_URL: str = env_str("DOCS_BASE_URL", default="https://mlbb-stats.rone.dev/docs")
-OG_IMAGE_URL: str = env_str("OG_IMAGE_URL", default=f"{WEB_BASE_URL}static/favicon.ico")
+BASE_URL: str = env_str("BASE_URL", default="https://mlbb-stats.rone.dev/")
+API_BASE_URL: str = env_str("API_BASE_URL", default=f"{BASE_URL}api/")
+DOCS_BASE_URL: str = env_str("DOCS_BASE_URL", default=f"{BASE_URL}docs")
+OG_IMAGE_URL: str = env_str("OG_IMAGE_URL", default=f"{BASE_URL}static/favicon.ico")
 
 MAINTENANCE_INFO_URL: str = env_str(
     "MAINTENANCE_INFO_URL",
@@ -37,6 +37,7 @@ MAINTENANCE_INFO_URL: str = env_str(
 )
 
 DONATION_MIN: int = config("DONATION_MIN", default=1, cast=int)
+DONATION_NOW: int = config("DONATION_NOW", default=0, cast=int)
 DONATION_TARGET: int = config("DONATION_TARGET", default=500, cast=int)
 DONATION_CURRENCY: str = env_str("DONATION_CURRENCY", default="USD")
 

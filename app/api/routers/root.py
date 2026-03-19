@@ -13,13 +13,14 @@ from app.core.config import (
     API_VERSION,
     DONATION_CURRENCY,
     DONATION_MIN,
+    DONATION_NOW,
     DONATION_TARGET,
     DOCS_BASE_URL,
     IS_AVAILABLE,
     MAINTENANCE_INFO_URL,
     SUPPORT_DETAILS,
     SUPPORT_STATUS_MESSAGES,
-    WEB_BASE_URL,
+    BASE_URL,
 )
 
 router = APIRouter(tags=["root"])
@@ -82,9 +83,8 @@ def api_index() -> dict[str, object]:
     status_key = "available" if IS_AVAILABLE else "limited"
     status_info = API_STATUS_MESSAGES[status_key]
     timestamp = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
-    base_api_url = API_BASE_URL.rstrip("/") + "/"
-    base_web_url = WEB_BASE_URL.rstrip("/") + "/"
-    base_docs_url = DOCS_BASE_URL.rstrip("/") + "/"
+    base_api_url = API_BASE_URL.rstrip("/")
+    docs_url = DOCS_BASE_URL.rstrip("/")
 
     return {
         "code": 200,
@@ -98,6 +98,7 @@ def api_index() -> dict[str, object]:
             "support": {
                 "status": status_info["status"],
                 "donation_min": DONATION_MIN,
+                "donation_now": DONATION_NOW,
                 "donation_target": DONATION_TARGET,
                 "donation_currency": DONATION_CURRENCY,
                 "donation_links": {
@@ -124,23 +125,22 @@ def api_index() -> dict[str, object]:
         },
         "links": {
             "api_url": base_api_url if IS_AVAILABLE else MAINTENANCE_INFO_URL,
-            "docs": "/docs",
-            "external_docs": base_docs_url,
+            "docs": docs_url,
         },
     }
 
 
 @router.get("/robots.txt")
 def robots_txt() -> PlainTextResponse:
-    sitemap_url = urljoin(WEB_BASE_URL, "sitemap.xml")
-    host_url = WEB_BASE_URL.rstrip("/")
+    sitemap_url = urljoin(BASE_URL, "sitemap.xml")
+    host_url = BASE_URL.rstrip("/")
     content = "\n".join(["User-agent: *", "Allow: /", "Disallow:", f"Sitemap: {sitemap_url}", f"Host: {host_url}"])
     return PlainTextResponse(content=content)
 
 
 @router.get("/sitemap.xml")
 def sitemap_xml() -> Response:
-    base_url = WEB_BASE_URL.rstrip("/") + "/"
+    base_url = BASE_URL.rstrip("/")
     lastmod = datetime.now(timezone.utc).date().isoformat()
     url_entries = [
         ("", "weekly", "1.0"),

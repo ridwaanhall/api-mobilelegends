@@ -1,130 +1,131 @@
-# MLBB Hero Analytics API and Website
+# API Mobile Legends (FastAPI)
 
-## 🌟 Support My Work
+Production-ready FastAPI migration of the MLBB analytics API, structured for maintainability and optimized for Vercel serverless deployment.
 
-<p align="center">
-    If my projects sparked value—or your wallet’s begging for a diet—drop your funds here. I catch, I thank, I build.
-</p>
+## What This Project Provides
 
-<p align="center">
-    <a href="https://github.com/sponsors/ridwaanhall/">
-        <img src="https://img.shields.io/badge/-Sponsor%20Me-blue?style=for-the-badge&logo=github&logoColor=white" alt="Sponsor Me" />
-    </a>
-    <a href="https://buymeacoffee.com/ridwaanhall">
-        <img src="https://img.shields.io/badge/-Buy%20Me%20a%20Coffee-yellow?style=for-the-badge&logo=buy-me-a-coffee&logoColor=white" alt="Buy Me a Coffee" />
-    </a>
-    <a href="https://saweria.co/ridwaanhall">
-        <img src="https://img.shields.io/badge/-Saweria-orange?style=for-the-badge" alt="Saweria" />
-    </a>
-    <a href="https://sociabuzz.com/ridwaanhall/support">
-        <img src="https://img.shields.io/badge/-Sociabuzz-red?style=for-the-badge" alt="Sociabuzz" />
-    </a>
-</p>
+- Full FastAPI implementation of all previous Django endpoints under `/api/`
+- Modular architecture with clear separation of routers, services, and core utilities
+- Standardized error responses for upstream failures and API validation errors
+- Secure encrypted/decrypted base-path handling for external API access via `.env`
+- Serverless-compatible deployment configuration for Vercel
 
-<p align="center">
-    No gimmicks—just real support and real appreciation.
-    <br />
-    Supporters get a name drop on GitHub and a louder voice in shaping future features.
-</p>
-
-## Description
-
-[![wakatime](https://wakatime.com/badge/user/018b799e-de53-4f7a-bb65-edc2df9f26d8/project/6f380e9e-ea7b-4326-8ec2-df979927fe68.svg)](https://wakatime.com/badge/user/018b799e-de53-4f7a-bb65-edc2df9f26d8/project/6f380e9e-ea7b-4326-8ec2-df979927fe68)
-
-This project provides an API for fetching various analytics and data related to heroes in the game Mobile Legends: Bang Bang (MLBB). The API includes endpoints for hero rankings, positions, details, skill combinations, ratings, relationships, counter information, and compatibility.
-
-## Summary of Base URL, API Docs, APIs, and Website
+## Architecture
 
 ```txt
-https://mlbb-stats.rone.dev/                # base url
-https://mlbb-stats-docs.rone.dev/           # documentations easy-to-understand
-https://mlbb-stats.rone.dev/api/            # APIs
-https://mlbb-stats.rone.dev/api/mplid/      # MPL ID APIs
-https://mlbb-stats.rone.dev/hero-rank/      # for website demo of APIs
+app/
+  api/
+    dependencies.py
+    routers/
+      root.py
+      mlbb.py
+      academy.py
+  core/
+    config.py
+    errors.py
+    http.py
+    security.py
+  services/
+    mlbb.py
+    academy.py
+  main.py
+api/
+  index.py
 ```
 
-## Example API
+## Base URLs
 
-### GET Hero Detail
-
-```py
-import requests
-import json
-
-def fetch_api(api_url):
-    try:
-        response = requests.get(api_url)
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        print(f"Error: {e}")
-        return None
-
-api_url = "https://mlbb-stats.rone.dev/api/hero-detail/129" # change 129 with hero_id
-data = fetch_api(api_url)
-
-print(json.dumps(data, indent=4) if data else "No data fetched.")
+```txt
+https://mlbb-stats.rone.dev/                # root (redirects to /api/)
+https://mlbb-stats.rone.dev/api/            # API index and endpoint map
+https://mlbb-stats.rone.dev/api/docs/       # same API index response
+https://mlbb-stats.rone.dev/robots.txt
+https://mlbb-stats.rone.dev/sitemap.xml
 ```
 
-### You can find more in [mlbb-stats-docs.rone.dev](https://mlbb-stats-docs.rone.dev/)
+## Implemented Endpoints
 
-## Discussion
+### MLBB
 
-If you have any questions or would like to discuss this project, please join the conversation in our [GitHub Discussions](https://github.com/ridwaanhall/api-mobilelegends/discussions). We value your feedback and are here to help!
+- `GET /api/hero-list/`
+- `GET /api/hero-rank/`
+- `GET /api/hero-position/`
+- `GET /api/hero-detail/{hero_id_or_name}/`
+- `GET /api/hero-detail-stats/{hero_id_or_name}/`
+- `GET /api/hero-skill-combo/{hero_id_or_name}/`
+- `GET /api/hero-rate/{hero_id_or_name}/`
+- `GET /api/hero-relation/{hero_id_or_name}/`
+- `GET /api/hero-counter/{hero_id_or_name}/`
+- `GET /api/hero-compatibility/{hero_id_or_name}/`
+- `GET /api/win-rate/?match-now=&wr-now=&wr-future=`
 
-## Interfaces
+### Academy
 
-### API Docs with Explanations and Example Usage
+- `GET /api/academy/version/`
+- `GET /api/academy/heroes/`
+- `GET /api/academy/roles/`
+- `GET /api/academy/equipment/`
+- `GET /api/academy/equipment-details/`
+- `GET /api/academy/spells/`
+- `GET /api/academy/emblems/`
+- `GET /api/academy/recommended/`
+- `GET /api/academy/recommended/{recommended_id}/`
+- `GET /api/academy/guide/`
+- `GET /api/academy/guide/{hero_id}/stats/`
+- `GET /api/academy/guide/{hero_id}/lane/`
+- `GET /api/academy/guide/{hero_id}/time-win-rate/{lane_id}/`
+- `GET /api/academy/guide/{hero_id}/builds/`
+- `GET /api/academy/guide/{hero_id}/counters/`
+- `GET /api/academy/guide/{hero_id}/teammates/`
+- `GET /api/academy/guide/{hero_id}/trends/`
+- `GET /api/academy/guide/{hero_id}/recommended/`
+- `GET /api/academy/hero-ratings/`
+- `GET /api/academy/hero-ratings/{subject}/`
 
-[https://mlbb-stats-docs.rone.dev/](https://mlbb-stats-docs.rone.dev/)
+## Local Development
 
-![API Docs](images/api-docs.png)
+1. Install dependencies:
 
-### Testing an API [Test the API](https://mlbb-stats.rone.dev/api/)
+```bash
+pip install -r requirements.txt
+```
 
-![Testing an API](images/testing-api.png)
+2. Create environment file:
 
-### Demo Website [View Hero Rank Demo Website](https://mlbb-stats.rone.dev/hero-rank/)
+```bash
+cp .env.example .env
+```
 
-![Hero Rank Web](images/demo-website.png)
+3. Run FastAPI:
 
-## Available Endpoints
+```bash
+uvicorn app.main:app --reload
+```
 
-Visit this site to view [mlbb-stats.rone.dev](https://mlbb-stats.rone.dev)
+## Environment Variables
 
-## Repo Stars
+Minimum required:
 
-[![RepoStars](https://repostars.dev/api/embed?repo=ridwaanhall%2Fapi-mobilelegends&theme=dark)](https://repostars.dev/?repos=ridwaanhall/api-mobilelegends,ridwaanhall/mlbb-api-docs&theme=dark)
+- `SECRET_KEY`
+- `MLBB_URL`
+- `MLBB_URL_V2`
 
-## Usage
+See `.env.example` for full optional settings.
 
-Use the provided endpoints to fetch various analytics and data related to heroes in MLBB. Refer to the Endpoints section for detailed information on each endpoint and how to use them.
+## Vercel Deployment
 
-## License
+This repository is configured for serverless deployment through:
 
-This project follows the **BSD 3-Clause License**. Please refer to [LICENSE](https://github.com/ridwaanhall/api-mobilelegends/blob/main/LICENSE) for details.
+- `api/index.py` as the ASGI entrypoint
+- `vercel.json` routing all requests to `api/index.py`
 
-## Attribution
+Deploy normally with Vercel CLI or Git integration.
 
-Special thanks to **Moonton** for developing **Mobile Legends: Bang Bang**. All rights to the game and its assets belong to **Moonton**.
+## Notes
 
-## Source
+- If `IS_AVAILABLE=False`, API endpoints return a maintenance/service-unavailable response.
+- Upstream MLBB path segments are decrypted at runtime using `SECRET_KEY`.
 
-For more information about **Mobile Legends: Bang Bang**, visit the official website: [Mobile Legends](https://www.mobilelegends.com).
+## License and Attribution
 
-## Disclaimer
-
-This project is an independent redistribution of the **Mobile Legends: Bang Bang API** developed by **Moonton**. The purpose of this project is to make accessing the API easier through custom code and implementation.
-
-By using this code, you **must** adhere to the following conditions:
-
-1. **License Compliance** – Users must follow the **BSD 3-Clause License** terms, including proper attribution and distribution policies. See [LICENSE](https://github.com/ridwaanhall/api-mobilelegends/blob/main/LICENSE) for details.
-2. **Attribution Requirement** – Users **must** mention both:
-   - **Moonton** as the developer and publisher of **Mobile Legends: Bang Bang**.
-   - **ridwaanhall** as the creator of this MLBB Stats.
-3. **Visibility of Attribution** – The attribution to **Moonton** and **ridwaanhall** must be clearly visible in any public-facing project or website that utilizes this API.
-4. **Independent Project** – This project is **not affiliated, endorsed, or officially supported** by **Moonton**. All rights to **Mobile Legends: Bang Bang** and its assets belong to **Moonton**.
-
-Failure to comply with these terms may result in **restriction from using this code**.
-
-For more information, please visit [Mobile Legends](https://www.mobilelegends.com/) and [ridwaanhall’s GitHub](https://github.com/ridwaanhall/api-mobilelegends).
+This project is released under the BSD 3-Clause License. Attribution to Moonton and ridwaanhall should be preserved in downstream usage.

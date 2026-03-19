@@ -38,6 +38,7 @@ def _get_mlbb_stats_endpoints() -> dict[str, str]:
             "hero_relation": "/api/hero-relation/{hero_id_or_name}/",
             "hero_counter": "/api/hero-counter/{hero_id_or_name}/",
             "hero_compatibility": "/api/hero-compatibility/{hero_id_or_name}/",
+            "win_rate": "/api/win-rate/?match-now=100&wr-now=50&wr-future=75",
         }
     return {"documentation": DOCS_BASE_URL}
 
@@ -67,34 +68,6 @@ def _get_mlbb_academy_endpoints() -> dict[str, str]:
             "hero_ratings_subject": "/api/academy/hero-ratings/{subject}/",
         }
     return {}
-
-
-def _get_other_mlbb_api_endpoints() -> dict[str, str]:
-    if IS_AVAILABLE:
-        return {"win_rate": "/api/win-rate/?match-now=100&wr-now=50&wr-future=75"}
-    return {}
-
-
-def _get_mpl_id_endpoints() -> dict[str, str]:
-    if IS_AVAILABLE:
-        return {
-            "standings": "/api/mplid/standings/",
-            "teams": "/api/mplid/teams/",
-            "team_detail": "/api/mplid/teams/{team_id}/",
-            "transfers": "/api/mplid/transfers/",
-            "team_stats": "/api/mplid/team-stats/",
-            "player_stats": "/api/mplid/player-stats/",
-            "hero_stats": "/api/mplid/hero-stats/",
-            "hero_pools": "/api/mplid/hero-pools/",
-            "player_pools": "/api/mplid/player-pools/",
-            "standings_mvp": "/api/mplid/standings-mvp/",
-            "schedule": "/api/mplid/schedule/",
-            "schedule_week": "/api/mplid/schedule/week/{week_number}/",
-            "schedule_all_weeks": "/api/mplid/schedule/week/",
-        }
-    return {}
-
-
 @router.get("/")
 def redirect_to_api() -> RedirectResponse:
     return RedirectResponse(url="/api/", status_code=307)
@@ -131,7 +104,7 @@ def api_index() -> dict[str, object]:
                 },
                 "message": SUPPORT_STATUS_MESSAGES[status_key],
             },
-            "available_services": ["mlbb_api", "mlbb_academy", "mpl_id", "other_mlbb_api"],
+            "available_services": ["mlbb_api", "mlbb_academy"],
         },
         "services": {
             "mlbb_api": {
@@ -145,18 +118,6 @@ def api_index() -> dict[str, object]:
                 "message": "MLBB Academy API is currently under maintenance." if not IS_AVAILABLE else "MLBB Academy API is online.",
                 "base_path": "/api/academy/",
                 "endpoints": _get_mlbb_academy_endpoints(),
-            },
-            "mpl_id": {
-                "status": status_info["status"],
-                "message": "MPL ID API is currently under maintenance." if not IS_AVAILABLE else "MPL ID API is online.",
-                "base_path": "/api/mplid/",
-                "endpoints": _get_mpl_id_endpoints(),
-            },
-            "other_mlbb_api": {
-                "status": status_info["status"],
-                "message": "Other MLBB API is currently under maintenance." if not IS_AVAILABLE else "Other MLBB API is online.",
-                "base_path": "/api/",
-                "endpoints": _get_other_mlbb_api_endpoints(),
             },
         },
         "links": {

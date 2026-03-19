@@ -64,7 +64,7 @@ API_STATUS_MESSAGES: dict[str, dict[str, str | list[str]]] = {
     },
 }
 
-API_VERSION: str = env_str("API_VERSION", default="2.0.3")
+API_VERSION: str = env_str("API_VERSION", default="3.0.0")
 SECRET_KEY: str = env_str("SECRET_KEY")
 MLBB_URL: str = env_str("MLBB_URL")
 MLBB_URL_V2: str = env_str("MLBB_URL_V2")

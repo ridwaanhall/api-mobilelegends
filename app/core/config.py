@@ -28,7 +28,7 @@ TWITTER_HANDLE: str = env_str("TWITTER_HANDLE", default="@ridwaanhall")
 
 WEB_BASE_URL: str = env_str("WEB_BASE_URL", default="https://mlbb-stats.rone.dev/")
 API_BASE_URL: str = env_str("API_BASE_URL", default=f"{WEB_BASE_URL}api/")
-DOCS_BASE_URL: str = env_str("DOCS_BASE_URL", default="https://mlbb-stats-docs.rone.dev/")
+DOCS_BASE_URL: str = env_str("DOCS_BASE_URL", default="https://mlbb-stats.rone.dev/docs")
 OG_IMAGE_URL: str = env_str("OG_IMAGE_URL", default=f"{WEB_BASE_URL}static/favicon.ico")
 
 MAINTENANCE_INFO_URL: str = env_str(

@@ -1,39 +1,42 @@
-# API v3.0.0 Migration Notes
+# API Changelog
 
-## Overview
+All notable changes to the API will be documented in this file.
 
-Version 3.0.0 is a major release focused on framework modernization, documentation quality, API contract clarity, and deployment readiness.
+## [3.0.0] - 2026-03-19
 
-## Release Scope
+**Major release** – Framework modernization, documentation quality, API contract clarity, and deployment readiness.
+
+### Release Scope
 
 - Migrated runtime from Django to FastAPI with an ASGI-first stack.
 - Consolidated public APIs into two primary service groups:
   - MLBB API
   - MLBB Academy API
+
 - Standardized endpoint behavior and error contracts for client integrations.
 
-## Key Differences: v2.0.3 -> v3.0.0
+### Key Differences: v2.0.3 → v3.0.0
 
-### 1. Framework and Runtime
+#### 1. Framework and Runtime
 
 - Replaced Django implementation with FastAPI.
 - Moved to ASGI entrypoint for serverless deployment compatibility.
 - Updated dependency set for FastAPI, Pydantic v2, and Starlette ecosystem.
 
-### 2. API Documentation Experience
+#### 2. API Documentation Experience
 
 - Added interactive Swagger UI at `/docs`.
 - Added ReDoc at `/redoc`.
 - Added `/api/docs` redirect alias to Swagger UI.
 - Improved OpenAPI parameter metadata with explicit descriptions, allowed values, and range constraints.
 
-### 3. Endpoint Surface and Organization
+#### 3. Endpoint Surface and Organization
 
 - Preserved and exposed MLBB and MLBB Academy endpoint groups under `/api/`.
 - Removed unsupported service exposure from API index (legacy/non-core service references are no longer listed).
 - Improved API index links and service visibility for consumers.
 
-### 4. Validation and Error Contract
+#### 4. Validation and Error Contract
 
 - Added centralized validation handling with consistent error payload structure.
 - Expanded contract coverage with endpoint tests for:
@@ -42,26 +45,37 @@ Version 3.0.0 is a major release focused on framework modernization, documentati
   - OpenAPI schema constraints,
   - validation failures on invalid enum/range inputs.
 
-### 5. Deployment and Operations
+#### 5. Deployment and Operations
 
 - Optimized for Vercel serverless deployment via ASGI entrypoint.
 - Updated environment variable defaults and project configuration to align with v3 behavior.
 
-## Compatibility Notes
+### Compatibility Notes
 
 - Base API paths remain under `/api/` for MLBB and Academy services.
 - Consumers should update any tooling or docs references to use the new interactive docs endpoints.
 - Validation behavior is stricter for enum and range constrained parameters; invalid inputs now consistently return validation error payloads.
 
-## Recommended Upgrade Steps
+### Recommended Upgrade Steps
 
 1. Pull latest code and install updated dependencies.
 2. Sync environment variables using `.env.example`.
 3. Validate client integrations against `/docs` OpenAPI schema.
-4. Run test suite before deployment:
-   - `pytest -q`
+4. Run test suite before deployment: `pytest -q`
 
-## Versioning
+### Versioning
 
 - Previous: v2.0.3
 - Current: v3.0.0
+
+## [2.0.3] - [add previous date]
+
+(Insert your old migration notes or git summary here when you have them)
+
+## [2.0.2] - [older date]
+
+...
+
+## [1.0.0] - [initial date]
+
+Initial Django release.

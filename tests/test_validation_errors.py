@@ -164,6 +164,45 @@ def test_win_rate_future_wr_not_greater_than_now_returns_standardized_error() ->
     assert "support" in payload
 
 
+def test_win_rate_wr_out_of_range_returns_standardized_error() -> None:
+    # wr-now above 100 should trigger win-rate range validation
+    response = client.get("/api/addon/win-rate?match-now=100&wr-now=150&wr-future=160")
+
+    assert response.status_code == 400
+    payload = response.json()
+    assert payload["status"] == "error"
+    assert payload["code"] == "BAD_REQUEST"
+    assert "timestamp" in payload
+    assert "support" in payload
+    # domain extra field should be present in standardized error
+    assert "required_no_lose_matches" in payload
+
+
+def test_win_rate_future_100_denominator_zero_returns_standardized_error() -> None:
+    # wr-future=100 is a special case that can cause a zero denominator in calculations
+    response = client.get("/api/addon/win-rate?match-now=100&wr-now=50&wr-future=100")
+
+    assert response.status_code == 400
+    payload = response.json()
+    assert payload["status"] == "error"
+    assert payload["code"] == "BAD_REQUEST"
+    assert "timestamp" in payload
+    assert "support" in payload
+    assert "required_no_lose_matches" in payload
+
+
+def test_win_rate_negative_required_matches_returns_standardized_error() -> None:
+    # Parameter combination intended to reach the branch where required_matches_int < 0
+    response = client.get("/api/addon/win-rate?match-now=1&wr-now=99&wr-future=100")
+
+    assert response.status_code == 400
+    payload = response.json()
+    assert payload["status"] == "error"
+    assert payload["code"] == "BAD_REQUEST"
+    assert "timestamp" in payload
+    assert "support" in payload
+    assert "required_no_lose_matches" in payload
+
 def test_mlbb_dynamic_max_hero_id_accepts_current_live_total(monkeypatch) -> None:
     def fake_fetch(endpoint_id: str, payload: dict, lang: str) -> object:
         if endpoint_id == "2756564":

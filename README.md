@@ -1,130 +1,156 @@
-# MLBB Hero Analytics API and Website
+# Mobile Legends: Bang Bang (MLBB) Public Data API (MLBB + Academy)
 
-## 🌟 Support My Work
+Production API service that provides Mobile Legends data endpoints for analytics, hero insights, and academy content.
 
-<p align="center">
-    If my projects sparked value—or your wallet’s begging for a diet—drop your funds here. I catch, I thank, I build.
-</p>
+## What The API Can Do
 
-<p align="center">
-    <a href="https://github.com/sponsors/ridwaanhall/">
-        <img src="https://img.shields.io/badge/-Sponsor%20Me-blue?style=for-the-badge&logo=github&logoColor=white" alt="Sponsor Me" />
-    </a>
-    <a href="https://buymeacoffee.com/ridwaanhall">
-        <img src="https://img.shields.io/badge/-Buy%20Me%20a%20Coffee-yellow?style=for-the-badge&logo=buy-me-a-coffee&logoColor=white" alt="Buy Me a Coffee" />
-    </a>
-    <a href="https://saweria.co/ridwaanhall">
-        <img src="https://img.shields.io/badge/-Saweria-orange?style=for-the-badge" alt="Saweria" />
-    </a>
-    <a href="https://sociabuzz.com/ridwaanhall/support">
-        <img src="https://img.shields.io/badge/-Sociabuzz-red?style=for-the-badge" alt="Sociabuzz" />
-    </a>
-</p>
+- Provide MLBB hero listings, rank performance, role/lane filters, matchup data, and win-rate utilities.
+- Provide MLBB Academy resources including heroes, roles, equipment, emblems, spells, guides, trends, and ratings.
+- Expose interactive API documentation for direct request testing in browser.
+- Return standardized error payloads for validation and service-level failures.
 
-<p align="center">
-    No gimmicks—just real support and real appreciation.
-    <br />
-    Supporters get a name drop on GitHub and a louder voice in shaping future features.
-</p>
+## Documentation
 
-## Description
+- Swagger UI: `/docs`
+- ReDoc: `/redoc`
+- Swagger alias: `/api/docs`
 
-[![wakatime](https://wakatime.com/badge/user/018b799e-de53-4f7a-bb65-edc2df9f26d8/project/6f380e9e-ea7b-4326-8ec2-df979927fe68.svg)](https://wakatime.com/badge/user/018b799e-de53-4f7a-bb65-edc2df9f26d8/project/6f380e9e-ea7b-4326-8ec2-df979927fe68)
-
-This project provides an API for fetching various analytics and data related to heroes in the game Mobile Legends: Bang Bang (MLBB). The API includes endpoints for hero rankings, positions, details, skill combinations, ratings, relationships, counter information, and compatibility.
-
-## Summary of Base URL, API Docs, APIs, and Website
+## Available URLs
 
 ```txt
-https://mlbb-stats.rone.dev/                # base url
-https://mlbb-stats-docs.rone.dev/           # documentations easy-to-understand
-https://mlbb-stats.rone.dev/api/            # APIs
-https://mlbb-stats.rone.dev/api/mplid/      # MPL ID APIs
-https://mlbb-stats.rone.dev/hero-rank/      # for website demo of APIs
+https://mlbb-stats.rone.dev                # root (redirects to /docs)
+https://mlbb-stats.rone.dev/api            # API index and endpoint map
+https://mlbb-stats.rone.dev/docs           # Swagger UI
+https://mlbb-stats.rone.dev/redoc          # ReDoc
+https://mlbb-stats.rone.dev/api/docs       # Swagger alias (redirects to /docs)
+https://mlbb-stats.rone.dev/robots.txt
+https://mlbb-stats.rone.dev/sitemap.xml
 ```
 
-## Example API
+## Example Usage in FastAPI
 
-### GET Hero Detail
+1. Visit [mlbb-stats.rone.dev/docs](https://mlbb-stats.rone.dev/docs)
 
-```py
-import requests
-import json
+2. Open any API (example: `/api/hero-rank`)
+   ![Step 2](images/step-02.png)
+   *Note: If clicking does not work, try expanding the dropdown.*
 
-def fetch_api(api_url):
-    try:
-        response = requests.get(api_url)
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        print(f"Error: {e}")
-        return None
+3. Click **Try it out**
+   ![Step 3](images/step-03.png)
 
-api_url = "https://mlbb-stats.rone.dev/api/hero-detail/129" # change 129 with hero_id
-data = fetch_api(api_url)
+4. Fill in the required data (or leave defaults if support)
+   ![Step 4](images/step-04.png)
 
-print(json.dumps(data, indent=4) if data else "No data fetched.")
-```
+5. Click **Execute**
+   ![Step 5](images/step-05.png)
 
-### You can find more in [mlbb-stats-docs.rone.dev](https://mlbb-stats-docs.rone.dev/)
+6. You will see a response like this:
+   ![Step 6](images/step-06.png)
+   - **Red box**: `curl` code to fetch data
+   - **Yellow box**: Request URL to directly test the API
+   - **Green Box**: The actual API output
 
-## Discussion
+## API Coverage
 
-If you have any questions or would like to discuss this project, please join the conversation in our [GitHub Discussions](https://github.com/ridwaanhall/api-mobilelegends/discussions). We value your feedback and are here to help!
+### MLBB API
 
-## Interfaces
+- `GET /api/hero-list`
+- `GET /api/hero-rank`
+- `GET /api/hero-position`
+- `GET /api/hero-detail/{hero_id_or_name}`
+- `GET /api/hero-detail-stats/{hero_id_or_name}`
+- `GET /api/hero-skill-combo/{hero_id_or_name}`
+- `GET /api/hero-rate/{hero_id_or_name}`
+- `GET /api/hero-relation/{hero_id_or_name}`
+- `GET /api/hero-counter/{hero_id_or_name}`
+- `GET /api/hero-compatibility/{hero_id_or_name}`
+- `GET /api/addon/win-rate?match-now=&wr-now=&wr-future=`
 
-### API Docs with Explanations and Example Usage
+### MLBB Academy API
 
-[https://mlbb-stats-docs.rone.dev/](https://mlbb-stats-docs.rone.dev/)
+- `GET /api/academy/version`
+- `GET /api/academy/heroes`
+- `GET /api/academy/roles`
+- `GET /api/academy/equipment`
+- `GET /api/academy/equipment-details`
+- `GET /api/academy/spells`
+- `GET /api/academy/emblems`
+- `GET /api/academy/recommended`
+- `GET /api/academy/recommended/{recommended_id}`
+- `GET /api/academy/guide`
+- `GET /api/academy/guide/{hero_id}/stats`
+- `GET /api/academy/guide/{hero_id}/lane`
+- `GET /api/academy/guide/{hero_id}/time-win-rate/{lane_id}`
+- `GET /api/academy/guide/{hero_id}/builds`
+- `GET /api/academy/guide/{hero_id}/counters`
+- `GET /api/academy/guide/{hero_id}/teammates`
+- `GET /api/academy/guide/{hero_id}/trends`
+- `GET /api/academy/guide/{hero_id}/recommended`
+- `GET /api/academy/hero-ratings`
+- `GET /api/academy/hero-ratings/{subject}`
 
-![API Docs](images/api-docs.png)
+## Changelog
 
-### Testing an API [Test the API](https://mlbb-stats.rone.dev/api/)
-
-![Testing an API](images/testing-api.png)
-
-### Demo Website [View Hero Rank Demo Website](https://mlbb-stats.rone.dev/hero-rank/)
-
-![Hero Rank Web](images/demo-website.png)
-
-## Available Endpoints
-
-Visit this site to view [mlbb-stats.rone.dev](https://mlbb-stats.rone.dev)
-
-## Repo Stars
-
-[![RepoStars](https://repostars.dev/api/embed?repo=ridwaanhall%2Fapi-mobilelegends&theme=dark)](https://repostars.dev/?repos=ridwaanhall/api-mobilelegends,ridwaanhall/mlbb-api-docs&theme=dark)
-
-## Usage
-
-Use the provided endpoints to fetch various analytics and data related to heroes in MLBB. Refer to the Endpoints section for detailed information on each endpoint and how to use them.
+Migration notes are documented in [Releases](https://github.com/ridwaanhall/api-mobilelegends/releases).
 
 ## License
 
-This project follows the **BSD 3-Clause License**. Please refer to [LICENSE](https://github.com/ridwaanhall/api-mobilelegends/blob/main/LICENSE) for details.
+This project is released under the **BSD 3-Clause License**. Attribution to **Moonton** and **ridwaanhall** should be preserved in downstream usage.
 
-## Attribution
+---
 
-Special thanks to **Moonton** for developing **Mobile Legends: Bang Bang**. All rights to the game and its assets belong to **Moonton**.
+## Local Development (for ridwaanhall only)
 
-## Source
+1. **Create virtual environment**
 
-For more information about **Mobile Legends: Bang Bang**, visit the official website: [Mobile Legends](https://www.mobilelegends.com).
+   ```bash
+   python -m venv .venv
+   ```
 
-## Disclaimer
+2. **Activate virtual environment**
 
-This project is an independent redistribution of the **Mobile Legends: Bang Bang API** developed by **Moonton**. The purpose of this project is to make accessing the API easier through custom code and implementation.
+   - On Linux/macOS:
 
-By using this code, you **must** adhere to the following conditions:
+     ```bash
+     source .venv/bin/activate
+     ```
 
-1. **License Compliance** – Users must follow the **BSD 3-Clause License** terms, including proper attribution and distribution policies. See [LICENSE](https://github.com/ridwaanhall/api-mobilelegends/blob/main/LICENSE) for details.
-2. **Attribution Requirement** – Users **must** mention both:
-   - **Moonton** as the developer and publisher of **Mobile Legends: Bang Bang**.
-   - **ridwaanhall** as the creator of this MLBB Stats.
-3. **Visibility of Attribution** – The attribution to **Moonton** and **ridwaanhall** must be clearly visible in any public-facing project or website that utilizes this API.
-4. **Independent Project** – This project is **not affiliated, endorsed, or officially supported** by **Moonton**. All rights to **Mobile Legends: Bang Bang** and its assets belong to **Moonton**.
+   - On Windows (PowerShell):
 
-Failure to comply with these terms may result in **restriction from using this code**.
+     ```bash
+     .venv\Scripts\Activate.ps1
+     ```
 
-For more information, please visit [Mobile Legends](https://www.mobilelegends.com/) and [ridwaanhall’s GitHub](https://github.com/ridwaanhall/api-mobilelegends).
+3. **Install dependencies**
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Create environment file**
+
+   ```bash
+   cp .env.example .env
+   ```
+
+5. **Run tests**
+
+   ```bash
+   pytest
+   ```
+
+6. **Start FastAPI server**
+
+   ```bash
+   uvicorn app.main:app --reload
+   ```
+
+## Configuration
+
+Required variables:
+
+- `SECRET_KEY`
+- `MLBB_URL`
+- `MLBB_URL_V2`
+
+See `.env.example` for full environment options.

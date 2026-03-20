@@ -1,0 +1,73 @@
+from __future__ import annotations
+
+import random
+from typing import Any
+
+import requests
+
+from app.core.errors import AppError
+
+
+class MLBBHeaderBuilder:
+    USER_AGENTS = [
+        "Mozilla/5.0 (Linux; Android 14; SM-S928B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36",
+        "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Mobile Safari/537.36",
+        "Mozilla/5.0 (Linux; Android 12; SM-G991B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Mobile Safari/537.36",
+        "Mozilla/5.0 (Linux; Android 11; Redmi Note 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36",
+        "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1",
+        "Mozilla/5.0 (iPhone; CPU iPhone OS 16_7_8 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.7 Mobile/15E148 Safari/604.1",
+        "Mozilla/5.0 (iPhone; CPU iPhone OS 15_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.6 Mobile/15E148 Safari/604.1",
+        "Mozilla/5.0 (iPad; CPU OS 17_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Mobile/15E148 Safari/604.1",
+        "Mozilla/5.0 (iPad; CPU OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:128.0) Gecko/20100101 Firefox/128.0",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edge/143.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0",
+    ]
+
+    @classmethod
+    def get_random_user_agent(cls) -> str:
+        return random.choice(cls.USER_AGENTS)
+
+    @staticmethod
+    def get_lang_header(lang: str) -> dict[str, str]:
+        headers = {
+            "Content-Type": "application/json",
+            "User-Agent": MLBBHeaderBuilder.get_random_user_agent(),
+        }
+        if lang and lang != "en":
+            headers["x-lang"] = lang
+        return headers
+
+
+def request_json(
+    *,
+    method: str,
+    url: str,
+    headers: dict[str, str],
+    payload: dict[str, Any] | None = None,
+) -> Any:
+    try:
+        if method == "GET":
+            response = requests.get(url, headers=headers, timeout=30)
+        else:
+            response = requests.post(url, json=payload, headers=headers, timeout=30)
+    except requests.RequestException as exc:
+        raise AppError(status_code=502, code="UPSTREAM_REQUEST_FAILED", message="Failed to fetch data", details=str(exc)) from exc
+
+    if response.status_code != 200:
+        raise AppError(
+            status_code=response.status_code,
+            code="UPSTREAM_REQUEST_FAILED",
+            message="Failed to fetch data",
+            details=response.text,
+        )
+
+    try:
+        return response.json()
+    except ValueError as exc:
+        raise AppError(status_code=502, code="UPSTREAM_INVALID_RESPONSE", message="Failed to fetch data", details="Invalid JSON from upstream") from exc

@@ -40,7 +40,7 @@ def _get_mlbb_stats_endpoints() -> dict[str, str]:
             "hero_relation": "/api/hero-relation/{hero_id_or_name}",
             "hero_counter": "/api/hero-counter/{hero_id_or_name}",
             "hero_compatibility": "/api/hero-compatibility/{hero_id_or_name}",
-            "win_rate": "/api/win-rate?match-now=100&wr-now=50&wr-future=75",
+            "win_rate": "/api/addon/win-rate?match-now=100&wr-now=50&wr-future=75",
         }
     return {"documentation": DOCS_BASE_URL}
 

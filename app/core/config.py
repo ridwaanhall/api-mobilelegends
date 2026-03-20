@@ -12,7 +12,7 @@ def env_str(key: str, default: str | None = None) -> str:
 
 
 IS_AVAILABLE: bool = config("IS_AVAILABLE", default=True, cast=bool)
-DATE_AVAILABLE: str = env_str("DATE_AVAILABLE", default="March 31, 2026")
+DATE_AVAILABLE: str = env_str("DATE_AVAILABLE", default="March 18, 2026")
 
 SUPPORT_DETAILS: dict[str, str] = {
     "support_message": "You can support us by donating from $1 USD (target: $500 USD) to help enhance API performance and handle high request volumes.",
@@ -23,7 +23,7 @@ SUPPORT_DETAILS: dict[str, str] = {
     "id_zone_adv": "advanced server: 1149309666 (57060)",
 }
 
-SITE_TITLE: str = "API Mobile Legends"
+SITE_TITLE: str = "Mobile Legends: Bang Bang (MLBB) Public Data API"
 TWITTER_HANDLE: str = env_str("TWITTER_HANDLE", default="@ridwaanhall")
 
 BASE_URL: str = env_str("BASE_URL", default="https://mlbb-stats.rone.dev/")

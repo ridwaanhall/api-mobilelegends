@@ -6,16 +6,32 @@ from fastapi.responses import JSONResponse
 
 from app.core.config import API_VERSION
 
-from app.api.routers.academy import router as academy_router
-from app.api.routers.mlbb import router as mlbb_router
 from app.api.routers.root import router as root_router
+from app.api.routers.mlbb import router as mlbb_router
+from app.api.routers.academy import router as academy_router
+from app.api.routers.addon import router as addon_router
+
 from app.core.errors import AppError, app_error_handler, safe_error_payload, unhandled_error_handler
 
-app = FastAPI(title="API Mobile Legends", version=API_VERSION, docs_url="/docs", redoc_url="/redoc")
+app = FastAPI(
+    title="Mobile Legends: Bang Bang (MLBB) Public Data API",
+    summary="Comprehensive MLBB stats, hero analytics, and academy resources for developers, analysts, and fans.",
+    description=(
+        "This API provides public access to Mobile Legends: Bang Bang (MLBB) data, including hero listings, rank performance, "
+        "role and lane filters, matchup data, and win-rate utilities. It also exposes MLBB Academy resources such as heroes, roles, "
+        "equipment, emblems, spells, guides, trends, and ratings. All endpoints are designed for analytics, insights, and integration "
+        "into third-party tools. The API features interactive documentation, standardized error payloads, and is powered by data from "
+        "official MLBB sources. Ideal for developers, analysts, and fans seeking reliable, up-to-date MLBB information."
+    ),
+    version=API_VERSION,
+    docs_url="/docs",
+    redoc_url="/redoc"
+)
 
 app.include_router(root_router)
 app.include_router(mlbb_router)
 app.include_router(academy_router)
+app.include_router(addon_router)
 
 app.add_exception_handler(AppError, app_error_handler)  # type: ignore[arg-type]
 app.add_exception_handler(Exception, unhandled_error_handler)  # type: ignore[arg-type]

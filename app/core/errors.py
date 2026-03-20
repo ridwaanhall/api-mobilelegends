@@ -77,6 +77,7 @@ def safe_error_payload(message: str, status_code: int, details: Any = None) -> d
 async def app_error_handler(_: Request, exc: AppError) -> JSONResponse:
     payload = safe_error_payload(exc.message, exc.status_code, exc.details)
     payload.update(exc.extra)
+    payload["code"] = exc.code
     return JSONResponse(status_code=exc.status_code, content=payload)
 
 

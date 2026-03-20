@@ -157,7 +157,7 @@ def sitemap_xml() -> Response:
         ("api/hero-relation/1", "weekly", "0.7"),
         ("api/hero-counter/1", "weekly", "0.7"),
         ("api/hero-compatibility/1", "weekly", "0.7"),
-        ("api/win-rate?match-now=100&wr-now=50&wr-future=60", "weekly", "0.7"),
+        ("api/addon/win-rate?match-now=100&wr-now=50&wr-future=60", "weekly", "0.7"),
         ("api/academy/version", "daily", "0.9"),
         ("api/academy/heroes", "daily", "0.9"),
         ("api/academy/roles", "weekly", "0.8"),

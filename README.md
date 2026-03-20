@@ -89,6 +89,62 @@ https://mlbb-stats.rone.dev/sitemap.xml
 - `GET /api/academy/hero-ratings`
 - `GET /api/academy/hero-ratings/{subject}`
 
+## Changelog
+
+Migration notes are documented in [Releases](https://github.com/ridwaanhall/api-mobilelegends/releases).
+
+## License
+
+This project is released under the *BSD 3-Clause License*. Attribution to Moonton and ridwaanhall should be preserved in downstream usage.
+
+---
+
+## Local Development (for ridwaanhall only)
+
+1. **Create virtual environment**
+
+   ```bash
+   python -m venv .venv
+   ```
+
+2. **Activate virtual environment**
+
+   - On Linux/macOS:
+
+     ```bash
+     source .venv/bin/activate
+     ```
+
+   - On Windows (PowerShell):
+
+     ```bash
+     .venv\Scripts\Activate.ps1
+     ```
+
+3. **Install dependencies**
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Create environment file**
+
+   ```bash
+   cp .env.example .env
+   ```
+
+5. **Run tests**
+
+   ```bash
+   pytest
+   ```
+
+6. **Start FastAPI server**
+
+   ```bash
+   uvicorn app.main:app --reload
+   ```
+
 ## Configuration
 
 Required variables:
@@ -98,39 +154,3 @@ Required variables:
 - `MLBB_URL_V2`
 
 See `.env.example` for full environment options.
-
-## Changelog
-
-Migration notes are documented in [Releases](https://github.com/ridwaanhall/api-mobilelegends/releases).
-
-## License
-
-This project is released under the BSD 3-Clause License. Attribution to Moonton and ridwaanhall should be preserved in downstream usage.
-
----
-
-## Local Development (for ridwaanhall only)
-
-1. Install dependencies.
-
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-2. Create environment file.
-
-   ```bash
-   cp .env.example .env
-   ```
-
-3. Tests
-
-   ```bash
-   pytest
-   ```
-
-4. Run FastAPI.
-
-   ```bash
-   uvicorn app.main:app --reload
-   ```

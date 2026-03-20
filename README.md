@@ -126,7 +126,7 @@ This project is released under the BSD 3-Clause License. Attribution to Moonton 
 3. Tests
 
    ```bash
-   python -m pytest -q
+   pytest
    ```
 
 4. Run FastAPI.

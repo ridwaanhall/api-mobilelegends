@@ -4,7 +4,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
-from app.core.config import API_VERSION
+from app.core.config import API_VERSION, DEBUG
 
 from app.api.routers.root import router as root_router
 from app.api.routers.mlbb import router as mlbb_router
@@ -14,6 +14,7 @@ from app.api.routers.addon import router as addon_router
 from app.core.errors import AppError, app_error_handler, safe_error_payload, unhandled_error_handler
 
 app = FastAPI(
+    debug=DEBUG,
     title="Mobile Legends: Bang Bang (MLBB) Public Data API",
     summary="Comprehensive MLBB stats, hero analytics, and academy resources for developers, analysts, and fans.",
     description=(
@@ -25,7 +26,35 @@ app = FastAPI(
     ),
     version=API_VERSION,
     docs_url="/docs",
-    redoc_url="/redoc"
+    redoc_url="/redoc",
+    openapi_url="/openapi.json",
+    contact={
+        "name": "RoneAI Founder",
+        "url": "https://ridwaanhall.com/contact/",
+        "email": "founder@rone.dev",
+    },
+    license_info={
+        "name": "BSD 3-Clause License",
+        "url": "https://github.com/ridwaanhall/api-mobilelegends/blob/main/LICENSE",
+    },
+    openapi_tags=[
+        {
+            "name": "root",
+            "description": "General endpoints for API metadata, documentation, and service utilities."
+        },
+        {
+            "name": "mlbb",
+            "description": "Main endpoints for Mobile Legends: Bang Bang game data and analytics."
+        },
+        {
+            "name": "academy",
+            "description": "Endpoints for MLBB Academy resources and educational content."
+        },
+        {
+            "name": "addon",
+            "description": "Endpoints for supplementary tools and additional features."
+        }
+    ]
 )
 
 app.include_router(root_router)

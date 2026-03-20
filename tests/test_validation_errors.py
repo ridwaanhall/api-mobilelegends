@@ -119,6 +119,51 @@ def test_mlbb_dynamic_max_hero_id_rejects_above_live_total(monkeypatch) -> None:
     assert payload["status"] == "error"
 
 
+def test_win_rate_missing_params_returns_standardized_error() -> None:
+    response = client.get("/api/addon/win-rate")
+
+    assert response.status_code == 400
+    payload = response.json()
+    assert payload["status"] == "error"
+    assert payload["code"] == "BAD_REQUEST"
+    assert "timestamp" in payload
+    assert "support" in payload
+    assert payload["required_no_lose_matches"] is None
+
+
+def test_win_rate_invalid_input_returns_standardized_error() -> None:
+    response = client.get("/api/addon/win-rate?match-now=abc&wr-now=50&wr-future=60")
+
+    assert response.status_code == 400
+    payload = response.json()
+    assert payload["status"] == "error"
+    assert payload["code"] == "BAD_REQUEST"
+    assert "timestamp" in payload
+    assert "support" in payload
+
+
+def test_win_rate_negative_match_now_returns_standardized_error() -> None:
+    response = client.get("/api/addon/win-rate?match-now=-1&wr-now=50&wr-future=60")
+
+    assert response.status_code == 400
+    payload = response.json()
+    assert payload["status"] == "error"
+    assert payload["code"] == "BAD_REQUEST"
+    assert "timestamp" in payload
+    assert "support" in payload
+
+
+def test_win_rate_future_wr_not_greater_than_now_returns_standardized_error() -> None:
+    response = client.get("/api/addon/win-rate?match-now=100&wr-now=60&wr-future=50")
+
+    assert response.status_code == 400
+    payload = response.json()
+    assert payload["status"] == "error"
+    assert payload["code"] == "BAD_REQUEST"
+    assert "timestamp" in payload
+    assert "support" in payload
+
+
 def test_mlbb_dynamic_max_hero_id_accepts_current_live_total(monkeypatch) -> None:
     def fake_fetch(endpoint_id: str, payload: dict, lang: str) -> object:
         if endpoint_id == "2756564":

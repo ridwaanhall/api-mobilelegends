@@ -18,7 +18,7 @@ Production API service that provides Mobile Legends data endpoints for analytics
 ## Available URLs
 
 ```txt
-https://mlbb-stats.rone.dev                # root (redirects to /api/)
+https://mlbb-stats.rone.dev                # root (redirects to /docs)
 https://mlbb-stats.rone.dev/api            # API index and endpoint map
 https://mlbb-stats.rone.dev/docs           # Swagger UI
 https://mlbb-stats.rone.dev/redoc          # ReDoc
@@ -101,7 +101,7 @@ See `.env.example` for full environment options.
 
 ## Changelog
 
-Migration notes from API v2.0.3 to v3.0.0 are documented in [LOG.md](LOG.md).
+Migration notes are documented in [Releases](https://github.com/ridwaanhall/api-mobilelegends/releases).
 
 ## License
 

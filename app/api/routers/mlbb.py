@@ -61,7 +61,7 @@ def _hero_id_or_404(hero_identifier: str, lang: str) -> int:
     return hero_id
 
 
-@router.get("/hero-list", summary="List heroes")
+@router.get("/hero-list", summary="List Heroes", description="Get a list of all heroes with basic information.")
 def hero_list(
     lang: Annotated[
         str,
@@ -79,7 +79,7 @@ def hero_list(
     return fetch_mlbb_post("2756564", payload, lang)
 
 
-@router.get("/hero-rank", summary="Hero rank stats")
+@router.get("/hero-rank", summary="Hero Rank Statistics", description="Get rank statistics for heroes over a specified time window.")
 def hero_rank(
     days: Annotated[
         Literal["1", "3", "7", "15", "30"],
@@ -149,7 +149,7 @@ def hero_rank(
     return fetch_mlbb_post(url_map.get(days, "2756567"), payload, lang)
 
 
-@router.get("/hero-position", summary="Hero position filters")
+@router.get("/hero-position", summary="Hero Position Filters", description="Filter heroes by their position on the map.")
 def hero_position(
     role: Annotated[
         Literal["all", "tank", "fighter", "ass", "mage", "mm", "supp"],
@@ -196,7 +196,7 @@ def hero_position(
     return fetch_mlbb_post("2756564", payload, lang)
 
 
-@router.get("/hero-detail/{hero_identifier}", summary="Hero detail")
+@router.get("/hero-detail/{hero_identifier}", summary="Hero Detail", description="Get detailed information about a specific hero.")
 def hero_detail(
     hero_identifier: Annotated[str, Path(description=HERO_IDENTIFIER_DESCRIPTION)],
     lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
@@ -212,7 +212,7 @@ def hero_detail(
     return fetch_mlbb_post("2756564", payload, lang)
 
 
-@router.get("/hero-detail-stats/{hero_identifier}", summary="Hero detail stats")
+@router.get("/hero-detail-stats/{hero_identifier}", summary="Hero Detail Statistics", description="Get detailed statistics for a specific hero.")
 def hero_detail_stats(
     hero_identifier: Annotated[str, Path(description=HERO_IDENTIFIER_DESCRIPTION)],
     lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
@@ -231,7 +231,7 @@ def hero_detail_stats(
     return fetch_mlbb_post("2756567", payload, lang)
 
 
-@router.get("/hero-skill-combo/{hero_identifier}", summary="Hero skill combo")
+@router.get("/hero-skill-combo/{hero_identifier}", summary="Hero Skill Combo", description="Get the skill combo information for a specific hero.")
 def hero_skill_combo(
     hero_identifier: Annotated[str, Path(description=HERO_IDENTIFIER_DESCRIPTION)],
     lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
@@ -247,7 +247,7 @@ def hero_skill_combo(
     return fetch_mlbb_post("2674711", payload, lang)
 
 
-@router.get("/hero-rate/{hero_identifier}", summary="Hero rate trends")
+@router.get("/hero-rate/{hero_identifier}", summary="Hero Rate Trends", description="Get rate trends for a specific hero over a specified time window.")
 def hero_rate(
     hero_identifier: Annotated[str, Path(description=HERO_IDENTIFIER_DESCRIPTION)],
     past_days: Annotated[
@@ -271,7 +271,7 @@ def hero_rate(
     return fetch_mlbb_post(url_map.get(past_days, "2674709"), payload, lang)
 
 
-@router.get("/hero-relation/{hero_identifier}", summary="Hero relation")
+@router.get("/hero-relation/{hero_identifier}", summary="Hero Relations", description="Get information about the relations of a specific hero.")
 def hero_relation(
     hero_identifier: Annotated[str, Path(description=HERO_IDENTIFIER_DESCRIPTION)],
     lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
@@ -288,7 +288,7 @@ def hero_relation(
     return fetch_mlbb_post("2756564", payload, lang)
 
 
-@router.get("/hero-counter/{hero_identifier}", summary="Hero counters")
+@router.get("/hero-counter/{hero_identifier}", summary="Hero Counters", description="Get information about heroes that counter a specific hero.")
 def hero_counter(
     hero_identifier: Annotated[str, Path(description=HERO_IDENTIFIER_DESCRIPTION)],
     lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
@@ -307,7 +307,7 @@ def hero_counter(
     return fetch_mlbb_post("2756569", payload, lang)
 
 
-@router.get("/hero-compatibility/{hero_identifier}", summary="Hero compatibility")
+@router.get("/hero-compatibility/{hero_identifier}", summary="Hero Compatibility", description="Get compatibility information for a specific hero.")
 def hero_compatibility(
     hero_identifier: Annotated[str, Path(description=HERO_IDENTIFIER_DESCRIPTION)],
     lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",

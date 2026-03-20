@@ -78,7 +78,7 @@ def api_docs_redirect() -> RedirectResponse:
     return RedirectResponse(url="/docs", status_code=307)
 
 
-@router.get("/api")
+@router.get("/api", summary="API Index and Status", description="Provides API metadata, status, and available services.")
 def api_index() -> dict[str, object]:
     status_key = "available" if IS_AVAILABLE else "limited"
     status_info = API_STATUS_MESSAGES[status_key]
@@ -130,7 +130,7 @@ def api_index() -> dict[str, object]:
     }
 
 
-@router.get("/robots.txt")
+@router.get("/robots.txt", summary="Robots.txt for Web Crawlers", description="Provides instructions for web crawlers and bots accessing the API.")
 def robots_txt() -> PlainTextResponse:
     sitemap_url = urljoin(BASE_URL, "sitemap.xml")
     host_url = BASE_URL.rstrip("/")
@@ -138,7 +138,7 @@ def robots_txt() -> PlainTextResponse:
     return PlainTextResponse(content=content)
 
 
-@router.get("/sitemap.xml")
+@router.get("/sitemap.xml", summary="Sitemap for Search Engines", description="Provides a sitemap for search engines to crawl the API endpoints.")
 def sitemap_xml() -> Response:
     base_url = BASE_URL.rstrip("/")
     lastmod = datetime.now(timezone.utc).date().isoformat()

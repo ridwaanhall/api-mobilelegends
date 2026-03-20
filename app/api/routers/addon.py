@@ -2,15 +2,13 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Query
 from fastapi.responses import JSONResponse
-
-from app.api.dependencies import require_api_available
 
 router = APIRouter(prefix="/api/addon", tags=["addon"])
 
 
-@router.get("/win-rate", summary="Win-rate calculator")
+@router.get("/win-rate", summary="Win Rate Calculator for Consecutive Wins")
 def win_rate(
     match_now: Annotated[
         str | None,

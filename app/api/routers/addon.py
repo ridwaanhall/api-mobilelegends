@@ -3,7 +3,8 @@ from __future__ import annotations
 from typing import Annotated
 
 from fastapi import APIRouter, Query
-from fastapi.responses import JSONResponse
+
+from app.core.errors import AppError
 
 router = APIRouter(prefix="/api/addon", tags=["addon"])
 
@@ -32,18 +33,18 @@ def win_rate(
         if value is None or value == ""
     ]
     if missing_params:
-        return JSONResponse(
+        raise AppError(
             status_code=400,
-            content={
-                "status": "error",
+            code="BAD_REQUEST",
+            message=(
+                f"Missing required parameter(s): {', '.join(missing_params)}. "
+                "Please provide all required parameters: match-now, wr-now, and wr-future."
+            ),
+            extra={
                 "match_now": match_now,
                 "wr_now": wr_now,
                 "wr_future": wr_future,
                 "required_no_lose_matches": None,
-                "message": (
-                    f"Missing required parameter(s): {', '.join(missing_params)}. "
-                    "Please provide all required parameters: match-now, wr-now, and wr-future."
-                ),
             },
         )
 
@@ -54,54 +55,54 @@ def win_rate(
         wr_now_float = float(str(wr_now))
         wr_future_float = float(str(wr_future))
     except ValueError:
-        return JSONResponse(
+        raise AppError(
             status_code=400,
-            content={
-                "status": "error",
+            code="BAD_REQUEST",
+            message="Invalid input. Ensure match-now is an integer and wr-now, wr-future are numeric values.",
+            extra={
                 "match_now": match_now,
                 "wr_now": wr_now,
                 "wr_future": wr_future,
                 "required_no_lose_matches": None,
-                "message": "Invalid input. Ensure match-now is an integer and wr-now, wr-future are numeric values.",
             },
         )
 
     if match_now_int < 0:
-        return JSONResponse(
+        raise AppError(
             status_code=400,
-            content={
-                "status": "error",
+            code="BAD_REQUEST",
+            message="match-now must be a non-negative integer.",
+            extra={
                 "match_now": match_now_int,
                 "wr_now": wr_now_float,
                 "wr_future": wr_future_float,
                 "required_no_lose_matches": None,
-                "message": "match-now must be a non-negative integer.",
             },
         )
 
     if not (0 <= wr_now_float <= 100) or not (0 < wr_future_float <= 100):
-        return JSONResponse(
+        raise AppError(
             status_code=400,
-            content={
-                "status": "error",
+            code="BAD_REQUEST",
+            message="Win rates must be between 0 and 100 (wr-future must be greater than 0).",
+            extra={
                 "match_now": match_now_int,
                 "wr_now": wr_now_float,
                 "wr_future": wr_future_float,
                 "required_no_lose_matches": None,
-                "message": "Win rates must be between 0 and 100 (wr-future must be greater than 0).",
             },
         )
 
     if wr_future_float <= wr_now_float:
-        return JSONResponse(
+        raise AppError(
             status_code=400,
-            content={
-                "status": "error",
+            code="BAD_REQUEST",
+            message="The target win rate (wr-future) must be greater than the current win rate (wr-now).",
+            extra={
                 "match_now": match_now_int,
                 "wr_now": wr_now_float,
                 "wr_future": wr_future_float,
                 "required_no_lose_matches": None,
-                "message": "The target win rate (wr-future) must be greater than the current win rate (wr-now).",
             },
         )
 
@@ -111,15 +112,15 @@ def win_rate(
     numerator = current_wins - match_now_int * wr_future_ratio
 
     if denominator == 0:
-        return JSONResponse(
+        raise AppError(
             status_code=400,
-            content={
-                "status": "error",
+            code="BAD_REQUEST",
+            message=f"It is not possible to reach a {wr_future_float}% win rate with a finite number of matches.",
+            extra={
                 "match_now": match_now_int,
                 "wr_now": wr_now_float,
                 "wr_future": wr_future_float,
                 "required_no_lose_matches": None,
-                "message": f"It is not possible to reach a {wr_future_float}% win rate with a finite number of matches.",
             },
         )
 
@@ -127,15 +128,15 @@ def win_rate(
     required_matches_int = int(required_matches) + (1 if required_matches % 1 > 0 else 0)
 
     if required_matches_int < 0:
-        return JSONResponse(
+        raise AppError(
             status_code=400,
-            content={
-                "status": "error",
+            code="BAD_REQUEST",
+            message="The target win rate cannot be achieved with only consecutive wins from your current record.",
+            extra={
                 "match_now": match_now_int,
                 "wr_now": wr_now_float,
                 "wr_future": wr_future_float,
                 "required_no_lose_matches": None,
-                "message": "The target win rate cannot be achieved with only consecutive wins from your current record.",
             },
         )
 

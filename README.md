@@ -89,26 +89,6 @@ https://mlbb-stats.rone.dev/sitemap.xml
 - `GET /api/academy/hero-ratings`
 - `GET /api/academy/hero-ratings/{subject}`
 
-## Local Development
-
-1. Install dependencies.
-
-```bash
-pip install -r requirements.txt
-```
-
-1. Create environment file.
-
-```bash
-cp .env.example .env
-```
-
-1. Run FastAPI.
-
-```bash
-uvicorn app.main:app --reload
-```
-
 ## Configuration
 
 Required variables:
@@ -126,3 +106,31 @@ Migration notes from API v2.0.3 to v3.0.0 are documented in [LOG.md](LOG.md).
 ## License
 
 This project is released under the BSD 3-Clause License. Attribution to Moonton and ridwaanhall should be preserved in downstream usage.
+
+---
+
+## Local Development (for ridwaanhall only)
+
+1. Install dependencies.
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+2. Create environment file.
+
+   ```bash
+   cp .env.example .env
+   ```
+
+3. Tests
+
+   ```bash
+   python -m pytest -q
+   ```
+
+4. Run FastAPI.
+
+   ```bash
+   uvicorn app.main:app --reload
+   ```

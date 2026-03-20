@@ -2,9 +2,9 @@
 
 ## Supported Versions
 
-The dependencies and their versions currently supported and maintained with security updates in this project. Please ensure you are using these versions to receive the latest security patches.
+This project actively supports and maintains the latest released version, including its dependencies, with security updates. Please ensure you are using a currently supported release to receive the latest security patches.
 
-If you are using older versions, we strongly recommend upgrading to the supported versions above to ensure you have the latest security fixes.
+If you are using older versions, we strongly recommend upgrading to the latest supported version to ensure you have the latest security fixes.
 
 ## Reporting a Vulnerability
 

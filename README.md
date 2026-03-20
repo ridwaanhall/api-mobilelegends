@@ -64,7 +64,7 @@ https://mlbb-stats.rone.dev/sitemap.xml
 - `GET /api/hero-relation/{hero_id_or_name}`
 - `GET /api/hero-counter/{hero_id_or_name}`
 - `GET /api/hero-compatibility/{hero_id_or_name}`
-- `GET /api/win-rate?match-now=&wr-now=&wr-future=`
+- `GET /api/addon/win-rate?match-now=&wr-now=&wr-future=`
 
 ### MLBB Academy API
 

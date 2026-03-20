@@ -1,4 +1,4 @@
-# Mobile Legends Public Data API (MLBB + Academy)
+# Mobile Legends: Bang Bang (MLBB) Public Data API (MLBB + Academy)
 
 Production API service that provides Mobile Legends data endpoints for analytics, hero insights, and academy content.
 
@@ -95,7 +95,7 @@ Migration notes are documented in [Releases](https://github.com/ridwaanhall/api-
 
 ## License
 
-This project is released under the *BSD 3-Clause License*. Attribution to Moonton and ridwaanhall should be preserved in downstream usage.
+This project is released under the **BSD 3-Clause License**. Attribution to **Moonton** and **ridwaanhall** should be preserved in downstream usage.
 
 ---
 

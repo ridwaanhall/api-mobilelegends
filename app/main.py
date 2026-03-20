@@ -52,7 +52,7 @@ app = FastAPI(
         },
         {
             "name": "addon",
-            "description": "Endpoints for supplementary tools and additional features."
+            "description": "Addon endpoints for supplementary tools and additional features."
         }
     ]
 )

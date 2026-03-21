@@ -2,7 +2,9 @@ from __future__ import annotations
 
 from typing import Annotated
 
+
 from fastapi import APIRouter, Query
+from app.core.param_descriptions import *
 
 from app.core.errors import AppError
 
@@ -11,34 +13,32 @@ router = APIRouter(prefix="/api/addon", tags=["addon"])
 
 @router.get(
     path="/win-rate",
-    summary="Win Rate Calculator for Consecutive Wins",
-    description=(
-        "Calculate the number of consecutive wins needed to reach a target win rate based on current matches and win rate."
-    ),
+    summary=SUMMARY_ADDON_WIN_RATE,
+    description=DESCRIPTION_ADDON_WIN_RATE,
 )
 def win_rate(
     match_now: Annotated[
         str | None,
         Query(
             alias="match-now",
-            title="Current Matches",
-            description="Current total number of matches played. Must be a non-negative integer.",
+            title=TITLE_MATCH_NOW,
+            description=DESCRIPTION_MATCH_NOW,
         ),
     ] = None,
     wr_now: Annotated[
         str | None,
         Query(
             alias="wr-now",
-            title="Current Win Rate",
-            description="Current win rate in percent. Range: 0-100.",
+            title=TITLE_WR_NOW,
+            description=DESCRIPTION_WR_NOW,
         ),
     ] = None,
     wr_future: Annotated[
         str | None,
         Query(
             alias="wr-future",
-            title="Target Win Rate",
-            description="Target win rate in percent. Range: >0 to 100 and must be greater than wr-now.",
+            title=TITLE_WR_FUTURE,
+            description=DESCRIPTION_WR_FUTURE,
         ),
     ] = None,
 ) -> object:

@@ -7,64 +7,52 @@ from fastapi import APIRouter, Depends, Path, Query
 from app.api.dependencies import require_api_available
 from app.services.mlbb import fetch_mlbb_post
 
+
 from app.core.errors import _hero_id_or_404
 from app.core.filters import (
     ROLE_MAP, LANE_MAP, validate_and_map_multi, validate_and_map_rank
 )
+from app.core.param_descriptions import *
 
 router = APIRouter(prefix="/api", tags=["mlbb"], dependencies=[Depends(require_api_available)])
 
-LANGUAGE_DESCRIPTION = (
-    "Language code for localized content. Supported codes: "
-    "en, id, es, pt, ru, tr, ar, de, fr, it, ja, ko, th, vi, zh-CN, zh-TW."
-)
 
-HERO_IDENTIFIER_DESCRIPTION = (
-    "Hero identifier as numeric hero ID (maximum validated dynamically from current MLBB hero list) or hero name. "
-    "Name matching ignores spaces/symbols and is case-insensitive (example: luoyi from Luo Yi)."
-)
-
-RANK_DESCRIPTION = "Rank filter. Allowed: all, epic, legend, mythic, honor, glory."
-
-SIZE_DESCRIPTION = "Number of items per page."
-
-INDEX_DESCRIPTION = "Page index (starting from 1)."
 
 
 @router.get(
     path="/hero-list",
-    summary="List Heroes",
-    description="Get a list of all heroes with basic information.",
+    summary=SUMMARY_HERO_LIST,
+    description=DESCRIPTION_HERO_LIST,
 )
 def hero_list(
     size: Annotated[
         int,
         Query(
-            title="Page Size",
-            description=SIZE_DESCRIPTION,
+            title=TITLE_PAGE_SIZE,
+            description=DESCRIPTION_PAGE_SIZE,
             ge=1,
         )
     ] = 20,
     index: Annotated[
         int,
         Query(
-            title="Page Index",
-            description=INDEX_DESCRIPTION,
+            title=TITLE_PAGE_INDEX,
+            description=DESCRIPTION_PAGE_INDEX,
             ge=1,
         )
     ] = 1,
     order: Annotated[
         Literal["asc", "desc"],
         Query(
-            title="Sort Order",
-            description="Sort order by hero ID for hero listing. Allowed: asc, desc.",
+            title=TITLE_SORT_ORDER,
+            description=DESCRIPTION_SORT_ORDER,
         )
     ] = "asc",
     lang: Annotated[
         str,
         Query(
-            title="Language",
-            description=LANGUAGE_DESCRIPTION,
+            title=TITLE_LANGUAGE,
+            description=DESCRIPTION_LANGUAGE,
         )
     ] = "en"
 ) -> object:
@@ -93,59 +81,59 @@ def hero_list(
 
 @router.get(
     path="/hero-rank",
-    summary="Hero Rank Statistics",
-    description="Get rank statistics for heroes over a specified time window."
+    summary=SUMMARY_HERO_RANK_STATS,
+    description=DESCRIPTION_HERO_RANK_STATS,
 )
 def hero_rank(
     days: Annotated[
         Literal["1", "3", "7", "15", "30"],
         Query(
-            title="Past Days",
-            description="Past day window. Allowed: 1, 3, 7, 15, 30.",
+            title=TITLE_PAST_DAYS,
+            description=DESCRIPTION_PAST_DAYS,
         )
     ] = "1",
     rank: Annotated[
         Literal["all", "epic", "legend", "mythic", "honor", "glory"],
         Query(
-            title="Rank",
-            description=RANK_DESCRIPTION,
+            title=TITLE_RANK,
+            description=DESCRIPTION_RANK,
         ),
     ] = "all",
     sort_field: Annotated[
         Literal["pick_rate", "ban_rate", "win_rate"],
         Query(
-            title="Sort Field",
-            description="Sort field. Allowed: pick_rate, ban_rate, win_rate.",
+            title=TITLE_SORT_FIELD,
+            description=DESCRIPTION_SORT_FIELD,
         )
     ] = "win_rate",
     sort_order: Annotated[
         Literal["asc", "desc"],
         Query(
-            title="Sort Order",
-            description="Sort direction. Allowed: asc, desc.",
+            title=TITLE_SORT_ORDER,
+            description=DESCRIPTION_SORT_ORDER,
         )
     ] = "desc",
     size: Annotated[
         int,
         Query(
-            title="Page Size",
-            description=SIZE_DESCRIPTION,
+            title=TITLE_PAGE_SIZE,
+            description=DESCRIPTION_PAGE_SIZE,
             ge=1,
         )
     ] = 20,
     index: Annotated[
         int,
         Query(
-            title="Page Index",
-            description=INDEX_DESCRIPTION,
+            title=TITLE_PAGE_INDEX,
+            description=DESCRIPTION_PAGE_INDEX,
             ge=1,
         )
     ] = 1,
     lang: Annotated[
         str,
         Query(
-            title="Language",
-            description=LANGUAGE_DESCRIPTION,
+            title=TITLE_LANGUAGE,
+            description=DESCRIPTION_LANGUAGE,
         )
     ] = "en"
 ) -> object:
@@ -206,52 +194,52 @@ def hero_rank(
 
 @router.get(
     path="/hero-position",
-    summary="Hero Position Filters",
-    description="Filter heroes by their position on the map.",
+    summary=SUMMARY_HERO_POSITION,
+    description=DESCRIPTION_HERO_POSITION,
 )
 def hero_position(
     role: Annotated[
         str,
         Query(
-            title="Role",
-            description="Role filter. Multi allowed: all, tank, fighter, assassin, mage, marksman, support. Example: tank,fighter",
+            title=TITLE_ROLE,
+            description=DESCRIPTION_ROLE,
         )
     ] = "tank,fighter,assassin,mage,marksman,support",
     lane: Annotated[
         str,
         Query(
-            title="Lane",
-            description="Lane filter. Multi allowed: all, exp, mid, roam, jungle, gold. Example: exp,mid",
+            title=TITLE_LANE,
+            description=DESCRIPTION_LANE,
         )
     ] = "exp,mid,roam,jungle,gold",
     size: Annotated[
         int,
         Query(
-            title="Page Size",
-            description=SIZE_DESCRIPTION,
+            title=TITLE_PAGE_SIZE,
+            description=DESCRIPTION_PAGE_SIZE,
             ge=1,
         )
     ] = 20,
     index: Annotated[
         int,
         Query(
-            title="Page Index",
-            description=INDEX_DESCRIPTION,
+            title=TITLE_PAGE_INDEX,
+            description=DESCRIPTION_PAGE_INDEX,
             ge=1,
         )
     ] = 1,
     order: Annotated[
         Literal["asc", "desc"],
         Query(
-            title="Sort Order",
-            description="Sort direction. Allowed: asc, desc.",
+            title=TITLE_SORT_ORDER,
+            description=DESCRIPTION_SORT_ORDER,
         )
     ] = "desc",
     lang: Annotated[
         str,
         Query(
-            title="Language",
-            description=LANGUAGE_DESCRIPTION,
+            title=TITLE_LANGUAGE,
+            description=DESCRIPTION_LANGUAGE,
         )
     ] = "en"
 ) -> object:
@@ -291,38 +279,38 @@ def hero_position(
 
 @router.get(
     path="/hero-detail/{hero_identifier}",
-    summary="Hero Detail",
-    description="Get detailed information about a specific hero.",
+    summary=SUMMARY_HERO_DETAIL,
+    description=DESCRIPTION_HERO_DETAIL,
 )
 def hero_detail(
     hero_identifier: Annotated[
         str,
         Path(
-            title="Hero Identifier",
-            description=HERO_IDENTIFIER_DESCRIPTION,
+            title=TITLE_HERO_IDENTIFIER,
+            description=DESCRIPTION_HERO_IDENTIFIER,
         )
     ],
     size: Annotated[
         int,
         Query(
-            title="Page Size",
-            description=SIZE_DESCRIPTION,
+            title=TITLE_PAGE_SIZE,
+            description=DESCRIPTION_PAGE_SIZE,
             ge=1,
         )
     ] = 20,
     index: Annotated[
         int,
         Query(
-            title="Page Index",
-            description=INDEX_DESCRIPTION,
+            title=TITLE_PAGE_INDEX,
+            description=DESCRIPTION_PAGE_INDEX,
             ge=1,
         )
     ] = 1,
     lang: Annotated[
         str,
         Query(
-            title="Language",
-            description=LANGUAGE_DESCRIPTION,
+            title=TITLE_LANGUAGE,
+            description=DESCRIPTION_LANGUAGE,
         )
     ] = "en"
 ) -> object:
@@ -345,45 +333,45 @@ def hero_detail(
 
 @router.get(
     path="/hero-detail-stats/{hero_identifier}",
-    summary="Hero Detail Statistics",
-    description="Get detailed statistics for a specific hero.",
+    summary=SUMMARY_HERO_DETAIL_STATS,
+    description=DESCRIPTION_HERO_DETAIL_STATS,
 )
 def hero_detail_stats(
     hero_identifier: Annotated[
         str,
         Path(
-            title="Hero Identifier",
-            description=HERO_IDENTIFIER_DESCRIPTION,
+            title=TITLE_HERO_IDENTIFIER,
+            description=DESCRIPTION_HERO_IDENTIFIER,
         )
     ],
     rank: Annotated[
         Literal["all", "epic", "legend", "mythic", "honor", "glory"],
         Query(
-            title="Rank",
-            description=RANK_DESCRIPTION,
+            title=TITLE_RANK,
+            description=DESCRIPTION_RANK,
         ),
     ] = "all",
     size: Annotated[
         int,
         Query(
-            title="Page Size",
-            description=SIZE_DESCRIPTION,
+            title=TITLE_PAGE_SIZE,
+            description=DESCRIPTION_PAGE_SIZE,
             ge=1,
         )
     ] = 20,
     index: Annotated[
         int,
         Query(
-            title="Page Index",
-            description=INDEX_DESCRIPTION,
+            title=TITLE_PAGE_INDEX,
+            description=DESCRIPTION_PAGE_INDEX,
             ge=1,
         )
     ] = 1,
     lang: Annotated[
         str,
         Query(
-            title="Language",
-            description=LANGUAGE_DESCRIPTION,
+            title=TITLE_LANGUAGE,
+            description=DESCRIPTION_LANGUAGE,
         )
     ] = "en"
 ) -> object:
@@ -415,38 +403,38 @@ def hero_detail_stats(
 
 @router.get(
     "/hero-skill-combo/{hero_identifier}",
-    summary="Hero Skill Combo",
-    description="Get the skill combo information for a specific hero.",
+    summary=SUMMARY_HERO_SKILL_COMBO,
+    description=DESCRIPTION_HERO_SKILL_COMBO,
 )
 def hero_skill_combo(
     hero_identifier: Annotated[
         str,
         Path(
-            title="Hero Identifier",
-            description=HERO_IDENTIFIER_DESCRIPTION,
+            title=TITLE_HERO_IDENTIFIER,
+            description=DESCRIPTION_HERO_IDENTIFIER,
         )
     ],
     size: Annotated[
         int,
         Query(
-            title="Page Size",
-            description=SIZE_DESCRIPTION,
+            title=TITLE_PAGE_SIZE,
+            description=DESCRIPTION_PAGE_SIZE,
             ge=1,
         )
     ] = 20,
     index: Annotated[
         int,
         Query(
-            title="Page Index",
-            description=INDEX_DESCRIPTION,
+            title=TITLE_PAGE_INDEX,
+            description=DESCRIPTION_PAGE_INDEX,
             ge=1,
         )
     ] = 1,
     lang: Annotated[
         str,
         Query(
-            title="Language",
-            description=LANGUAGE_DESCRIPTION,
+            title=TITLE_LANGUAGE,
+            description=DESCRIPTION_LANGUAGE,
         )
     ] = "en"
 ) -> object:
@@ -469,52 +457,53 @@ def hero_skill_combo(
 
 @router.get(
     path="/hero-rate/{hero_identifier}",
-    summary="Hero Rate Trends",
-    description="Get rate trends for a specific hero over a specified time window.",
+    summary=SUMMARY_HERO_RATE,
+    description=DESCRIPTION_HERO_RATE,
 )
 def hero_rate(
     hero_identifier: Annotated[
         str,
         Path(
-            title="Hero Identifier",
-            description=HERO_IDENTIFIER_DESCRIPTION,
+            title=TITLE_HERO_IDENTIFIER,
+            description=DESCRIPTION_HERO_IDENTIFIER,
         )
     ],
     rank: Annotated[
         Literal["all", "epic", "legend", "mythic", "honor", "glory"],
         Query(
-            title="Rank",
-            description=RANK_DESCRIPTION,
+            title=TITLE_RANK,
+            description=DESCRIPTION_RANK,
         ),
     ] = "all",
     past_days: Annotated[
         Literal["7", "15", "30"],
         Query(
             alias="past-days",
-            description="Rate window in days. Allowed: 7, 15, 30."
+            title=TITLE_RATE_WINDOW,
+            description=DESCRIPTION_RATE_WINDOW,
         ),
     ] = "7",
     size: Annotated[
         int,
         Query(
-            title="Page Size",
-            description=SIZE_DESCRIPTION,
+            title=TITLE_PAGE_SIZE,
+            description=DESCRIPTION_PAGE_SIZE,
             ge=1,
         )
     ] = 20,
     index: Annotated[
         int,
         Query(
-            title="Page Index",
-            description=INDEX_DESCRIPTION,
+            title=TITLE_PAGE_INDEX,
+            description=DESCRIPTION_PAGE_INDEX,
             ge=1,
         )
     ] = 1,
     lang: Annotated[
         str,
         Query(
-            title="Language",
-            description=LANGUAGE_DESCRIPTION,
+            title=TITLE_LANGUAGE,
+            description=DESCRIPTION_LANGUAGE,
         )
     ] = "en"
 ) -> object:
@@ -551,38 +540,38 @@ def hero_rate(
 
 @router.get(
     path="/hero-relation/{hero_identifier}",
-    summary="Hero Relations",
-    description="Get information about the relations of a specific hero.",
+    summary=SUMMARY_HERO_RELATION,
+    description=DESCRIPTION_HERO_RELATION,
 )
 def hero_relation(
     hero_identifier: Annotated[
         str,
         Path(
-            title="Hero Identifier",
-            description=HERO_IDENTIFIER_DESCRIPTION,
+            title=TITLE_HERO_IDENTIFIER,
+            description=DESCRIPTION_HERO_IDENTIFIER,
         )
     ],
     size: Annotated[
         int,
         Query(
-            title="Page Size",
-            description=SIZE_DESCRIPTION,
+            title=TITLE_PAGE_SIZE,
+            description=DESCRIPTION_PAGE_SIZE,
             ge=1,
         )
     ] = 20,
     index: Annotated[
         int,
         Query(
-            title="Page Index",
-            description=INDEX_DESCRIPTION,
+            title=TITLE_PAGE_INDEX,
+            description=DESCRIPTION_PAGE_INDEX,
             ge=1,
         )
     ] = 1,
     lang: Annotated[
         str,
         Query(
-            title="Language",
-            description=LANGUAGE_DESCRIPTION,
+            title=TITLE_LANGUAGE,
+            description=DESCRIPTION_LANGUAGE,
         )
     ] = "en"
 ) -> object:
@@ -606,45 +595,45 @@ def hero_relation(
 
 @router.get(
     path="/hero-counter/{hero_identifier}",
-    summary="Hero Counters",
-    description="Get information about heroes that counter a specific hero.",
+    summary=SUMMARY_HERO_COUNTER,
+    description=DESCRIPTION_HERO_COUNTER,
 )
 def hero_counter(
     hero_identifier: Annotated[
         str,
         Path(
-            title="Hero Identifier",
-            description=HERO_IDENTIFIER_DESCRIPTION,
+            title=TITLE_HERO_IDENTIFIER,
+            description=DESCRIPTION_HERO_IDENTIFIER,
         )
     ],
     rank: Annotated[
         Literal["all", "epic", "legend", "mythic", "honor", "glory"],
         Query(
-            title="Rank",
-            description=RANK_DESCRIPTION,
+            title=TITLE_RANK,
+            description=DESCRIPTION_RANK,
         ),
     ] = "all",
     size: Annotated[
         int,
         Query(
-            title="Page Size",
-            description=SIZE_DESCRIPTION,
+            title=TITLE_PAGE_SIZE,
+            description=DESCRIPTION_PAGE_SIZE,
             ge=1,
         )
     ] = 20,
     index: Annotated[
         int,
         Query(
-            title="Page Index",
-            description=INDEX_DESCRIPTION,
+            title=TITLE_PAGE_INDEX,
+            description=DESCRIPTION_PAGE_INDEX,
             ge=1,
         )
     ] = 1,
     lang: Annotated[
         str,
         Query(
-            title="Language",
-            description=LANGUAGE_DESCRIPTION,
+            title=TITLE_LANGUAGE,
+            description=DESCRIPTION_LANGUAGE,
         )
     ] = "en"
 ) -> object:
@@ -676,45 +665,45 @@ def hero_counter(
 
 @router.get(
     path="/hero-compatibility/{hero_identifier}",
-    summary="Hero Compatibility",
-    description="Get compatibility information for a specific hero.",
+    summary=SUMMARY_HERO_COMPATIBILITY,
+    description=DESCRIPTION_HERO_COMPATIBILITY,
 )
 def hero_compatibility(
     hero_identifier: Annotated[
         str,
         Path(
-            title="Hero Identifier",
-            description=HERO_IDENTIFIER_DESCRIPTION,
+            title=TITLE_HERO_IDENTIFIER,
+            description=DESCRIPTION_HERO_IDENTIFIER,
         )
     ],
     rank: Annotated[
         Literal["all", "epic", "legend", "mythic", "honor", "glory"],
         Query(
-            title="Rank",
-            description=RANK_DESCRIPTION,
+            title=TITLE_RANK,
+            description=DESCRIPTION_RANK,
         ),
     ] = "all",
     size: Annotated[
         int,
         Query(
-            title="Page Size",
-            description=SIZE_DESCRIPTION,
+            title=TITLE_PAGE_SIZE,
+            description=DESCRIPTION_PAGE_SIZE,
             ge=1,
         )
     ] = 20,
     index: Annotated[
         int,
         Query(
-            title="Page Index",
-            description=INDEX_DESCRIPTION,
+            title=TITLE_PAGE_INDEX,
+            description=DESCRIPTION_PAGE_INDEX,
             ge=1,
         )
     ] = 1,
     lang: Annotated[
         str,
         Query(
-            title="Language",
-            description=LANGUAGE_DESCRIPTION,
+            title=TITLE_LANGUAGE,
+            description=DESCRIPTION_LANGUAGE,
         )
     ] = "en"
 ) -> object:

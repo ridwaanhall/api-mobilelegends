@@ -9,20 +9,35 @@ from app.core.errors import AppError
 router = APIRouter(prefix="/api/addon", tags=["addon"])
 
 
-@router.get("/win-rate", summary="Win Rate Calculator for Consecutive Wins")
+@router.get(
+    path="/win-rate",
+    summary="Win Rate Calculator for Consecutive Wins",
+    description=(
+        "Calculate the number of consecutive wins needed to reach a target win rate based on current matches and win rate."
+    ),
+)
 def win_rate(
     match_now: Annotated[
         str | None,
-        Query(alias="match-now", description="Current total matches. Must be an integer >= 0."),
+        Query(
+            alias="match-now",
+            title="Current Matches",
+            description="Current total number of matches played. Must be a non-negative integer.",
+        ),
     ] = None,
     wr_now: Annotated[
         str | None,
-        Query(alias="wr-now", description="Current win rate in percent. Range: 0-100."),
+        Query(
+            alias="wr-now",
+            title="Current Win Rate",
+            description="Current win rate in percent. Range: 0-100.",
+        ),
     ] = None,
     wr_future: Annotated[
         str | None,
         Query(
             alias="wr-future",
+            title="Target Win Rate",
             description="Target win rate in percent. Range: >0 to 100 and must be greater than wr-now.",
         ),
     ] = None,

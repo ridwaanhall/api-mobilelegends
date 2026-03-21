@@ -63,6 +63,25 @@ def _hero_id_or_404(hero_identifier: str, lang: str) -> int:
 
 @router.get("/hero-list", summary="List Heroes", description="Get a list of all heroes with basic information.")
 def hero_list(
+    size: Annotated[
+        int,
+        Query(
+            ge=1,
+            le=1000,
+            description="Number of heroes per page. Recommended range: 1-1000."
+        )
+    ] = 1000,
+    index: Annotated[
+        int,
+        Query(
+            ge=1,
+            le=10000,
+            description="Page index (1-based). Recommended range: 1-10000.")
+    ] = 1,
+    order: Annotated[
+        Literal["asc", "desc"],
+        Query(description="Sort order for hero listing. Allowed: asc, desc."),
+    ] = "asc",
     lang: Annotated[
         str,
         Query(
@@ -71,10 +90,24 @@ def hero_list(
     ] = "en",
 ) -> object:
     payload = {
-        "pageSize": 10000,
-        "sorts": [{"data": {"field": "hero_id", "order": "desc"}, "type": "sequence"}],
-        "pageIndex": 1,
-        "fields": ["hero_id", "hero.data.head", "hero.data.name", "hero.data.smallmap"],
+        "pageSize": size,
+        "sorts": [
+            {
+                "data":
+                    {
+                        "field": "hero_id",
+                        "order": order
+                    },
+                    "type": "sequence"
+            }
+        ],
+        "pageIndex": index,
+        "fields": [
+            "hero_id",
+            "hero.data.head",
+            "hero.data.name",
+            "hero.data.smallmap"
+        ],
     }
     return fetch_mlbb_post("2756564", payload, lang)
 
@@ -161,7 +194,7 @@ def hero_position(
         Literal["all", "exp", "mid", "roam", "jungle", "gold"],
         Query(description="Lane filter. Allowed: all, exp, mid, roam, jungle, gold."),
     ] = "all",
-    size: Annotated[int, Query(ge=1, le=100, description="Page size. Recommended range: 1-100.")] = 21,
+    size: Annotated[int, Query(ge=1, le=100, description="Page size. Recommended range: 1-100.")] = 20,
     index: Annotated[int, Query(ge=1, description="Page index (1-based).")]= 1,
     lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
 ) -> object:
@@ -199,14 +232,16 @@ def hero_position(
 @router.get("/hero-detail/{hero_identifier}", summary="Hero Detail", description="Get detailed information about a specific hero.")
 def hero_detail(
     hero_identifier: Annotated[str, Path(description=HERO_IDENTIFIER_DESCRIPTION)],
+    size: Annotated[int, Query(ge=1, le=100, description="Page size. Recommended range: 1-100.")] = 20,
+    index: Annotated[int, Query(ge=1, description="Page index (1-based).")]= 1,
     lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
 ) -> object:
     hero_id = _hero_id_or_404(hero_identifier, lang)
     payload = {
-        "pageSize": 20,
+        "pageSize": int(size),
         "filters": [{"field": "hero_id", "operator": "eq", "value": hero_id}],
         "sorts": [],
-        "pageIndex": 1,
+        "pageIndex": int(index),
         "object": [],
     }
     return fetch_mlbb_post("2756564", payload, lang)
@@ -215,18 +250,44 @@ def hero_detail(
 @router.get("/hero-detail-stats/{hero_identifier}", summary="Hero Detail Statistics", description="Get detailed statistics for a specific hero.")
 def hero_detail_stats(
     hero_identifier: Annotated[str, Path(description=HERO_IDENTIFIER_DESCRIPTION)],
+    rank: Annotated[
+        Literal["all", "epic", "legend", "mythic", "honor", "glory"],
+        Query(description="Rank filter. Allowed: all, epic, legend, mythic, honor, glory."),
+    ] = "all",
+    size: Annotated[int, Query(ge=1, le=100, description="Page size. Recommended range: 1-100.")] = 20,
+    index: Annotated[int, Query(ge=1, description="Page index (1-based).")]= 1,
     lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
 ) -> object:
     hero_id = _hero_id_or_404(hero_identifier, lang)
+    rank_map = {
+        "all": "101",
+        "epic": "5",
+        "legend": "6",
+        "mythic": "7",
+        "honor": "8",
+        "glory": "9",
+    }
     payload = {
-        "pageSize": 20,
+        "pageSize": int(size),
         "filters": [
-            {"field": "main_heroid", "operator": "eq", "value": hero_id},
-            {"field": "bigrank", "operator": "eq", "value": "101"},
-            {"field": "match_type", "operator": "eq", "value": "1"},
+            {
+                "field": "main_heroid",
+                "operator": "eq",
+                "value": hero_id
+            },
+            {
+                "field": "bigrank",
+                "operator": "eq",
+                "value": rank_map.get(rank, "101")
+            },
+            {
+                "field": "match_type",
+                "operator": "eq",
+                "value": "1"
+            },
         ],
         "sorts": [],
-        "pageIndex": 1,
+        "pageIndex": int(index),
     }
     return fetch_mlbb_post("2756567", payload, lang)
 
@@ -234,14 +295,16 @@ def hero_detail_stats(
 @router.get("/hero-skill-combo/{hero_identifier}", summary="Hero Skill Combo", description="Get the skill combo information for a specific hero.")
 def hero_skill_combo(
     hero_identifier: Annotated[str, Path(description=HERO_IDENTIFIER_DESCRIPTION)],
+    size: Annotated[int, Query(ge=1, le=100, description="Page size. Recommended range: 1-100.")] = 20,
+    index: Annotated[int, Query(ge=1, description="Page index (1-based).")]= 1,
     lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
 ) -> object:
     hero_id = _hero_id_or_404(hero_identifier, lang)
     payload = {
-        "pageSize": 20,
+        "pageSize": int(size),
         "filters": [{"field": "hero_id", "operator": "eq", "value": hero_id}],
         "sorts": [],
-        "pageIndex": 1,
+        "pageIndex": int(index),
         "object": [2684183],
     }
     return fetch_mlbb_post("2674711", payload, lang)
@@ -250,23 +313,49 @@ def hero_skill_combo(
 @router.get("/hero-rate/{hero_identifier}", summary="Hero Rate Trends", description="Get rate trends for a specific hero over a specified time window.")
 def hero_rate(
     hero_identifier: Annotated[str, Path(description=HERO_IDENTIFIER_DESCRIPTION)],
+    rank: Annotated[
+        Literal["all", "epic", "legend", "mythic", "honor", "glory"],
+        Query(description=RANK_DESCRIPTION),
+    ] = "all",
     past_days: Annotated[
         Literal["7", "15", "30"],
         Query(alias="past-days", description="Rate window in days. Allowed: 7, 15, 30."),
     ] = "7",
+    size: Annotated[int, Query(ge=1, le=100, description="Page size. Recommended range: 1-100.")] = 20,
+    index: Annotated[int, Query(ge=1, description="Page index (1-based).")]= 1,
     lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
 ) -> object:
     hero_id = _hero_id_or_404(hero_identifier, lang)
     url_map = {"7": "2674709", "15": "2687909", "30": "2690860"}
+    rank_map = {
+        "all": "101",
+        "epic": "5",
+        "legend": "6",
+        "mythic": "7",
+        "honor": "8",
+        "glory": "9",
+    }
     payload = {
-        "pageSize": 20,
+        "pageSize": int(size),
         "filters": [
-            {"field": "main_heroid", "operator": "eq", "value": hero_id},
-            {"field": "bigrank", "operator": "eq", "value": "8"},
-            {"field": "match_type", "operator": "eq", "value": "1"},
+            {
+                "field": "main_heroid",
+                "operator": "eq",
+                "value": hero_id
+            },
+            {
+                "field": "bigrank",
+                "operator": "eq",
+                "value": rank_map.get(rank, "101")
+            },
+            {
+                "field": "match_type",
+                "operator": "eq",
+                "value": "1"
+            },
         ],
         "sorts": [],
-        "pageIndex": 1,
+        "pageIndex": int(index),
     }
     return fetch_mlbb_post(url_map.get(past_days, "2674709"), payload, lang)
 
@@ -274,14 +363,16 @@ def hero_rate(
 @router.get("/hero-relation/{hero_identifier}", summary="Hero Relations", description="Get information about the relations of a specific hero.")
 def hero_relation(
     hero_identifier: Annotated[str, Path(description=HERO_IDENTIFIER_DESCRIPTION)],
+    size: Annotated[int, Query(ge=1, le=100, description="Page size. Recommended range: 1-100.")] = 20,
+    index: Annotated[int, Query(ge=1, description="Page index (1-based).")]= 1,
     lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
 ) -> object:
     hero_id = _hero_id_or_404(hero_identifier, lang)
     payload = {
-        "pageSize": 20,
+        "pageSize": int(size),
         "filters": [{"field": "hero_id", "operator": "eq", "value": hero_id}],
         "sorts": [],
-        "pageIndex": 1,
+        "pageIndex": int(index),
         "fields": ["hero.data.name"],
         "object": [],
     }
@@ -291,18 +382,44 @@ def hero_relation(
 @router.get("/hero-counter/{hero_identifier}", summary="Hero Counters", description="Get information about heroes that counter a specific hero.")
 def hero_counter(
     hero_identifier: Annotated[str, Path(description=HERO_IDENTIFIER_DESCRIPTION)],
+    rank: Annotated[
+        Literal["all", "epic", "legend", "mythic", "honor", "glory"],
+        Query(description=RANK_DESCRIPTION),
+    ] = "all",
+    size: Annotated[int, Query(ge=1, le=100, description="Page size. Recommended range: 1-100.")] = 20,
+    index: Annotated[int, Query(ge=1, description="Page index (1-based).")]= 1,
     lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
 ) -> object:
     hero_id = _hero_id_or_404(hero_identifier, lang)
+    rank_map = {
+        "all": "101",
+        "epic": "5",
+        "legend": "6",
+        "mythic": "7",
+        "honor": "8",
+        "glory": "9",
+    }
     payload = {
-        "pageSize": 20,
+        "pageSize": int(size),
         "filters": [
-            {"field": "match_type", "operator": "eq", "value": "0"},
-            {"field": "main_heroid", "operator": "eq", "value": hero_id},
-            {"field": "bigrank", "operator": "eq", "value": "7"},
+            {
+                "field": "match_type",
+                "operator": "eq",
+                "value": "0"
+            },
+            {
+                "field": "main_heroid",
+                "operator": "eq",
+                "value": hero_id
+            },
+            {
+                "field": "bigrank",
+                "operator": "eq",
+                "value": rank_map.get(rank, "101")
+            },
         ],
         "sorts": [],
-        "pageIndex": 1,
+        "pageIndex": int(index),
     }
     return fetch_mlbb_post("2756569", payload, lang)
 
@@ -310,17 +427,43 @@ def hero_counter(
 @router.get("/hero-compatibility/{hero_identifier}", summary="Hero Compatibility", description="Get compatibility information for a specific hero.")
 def hero_compatibility(
     hero_identifier: Annotated[str, Path(description=HERO_IDENTIFIER_DESCRIPTION)],
+    rank: Annotated[
+        Literal["all", "epic", "legend", "mythic", "honor", "glory"],
+        Query(description=RANK_DESCRIPTION),
+    ] = "all",
+    size: Annotated[int, Query(ge=1, le=100, description="Page size. Recommended range: 1-100.")] = 20,
+    index: Annotated[int, Query(ge=1, description="Page index (1-based).")]= 1,
     lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
 ) -> object:
     hero_id = _hero_id_or_404(hero_identifier, lang)
+    rank_map = {
+        "all": "101",
+        "epic": "5",
+        "legend": "6",
+        "mythic": "7",
+        "honor": "8",
+        "glory": "9",
+    }
     payload = {
-        "pageSize": 20,
+        "pageSize": int(size),
         "filters": [
-            {"field": "match_type", "operator": "eq", "value": "1"},
-            {"field": "main_heroid", "operator": "eq", "value": hero_id},
-            {"field": "bigrank", "operator": "eq", "value": "7"},
+            {
+                "field": "match_type",
+                "operator": "eq",
+                "value": "1"
+            },
+            {
+                "field": "main_heroid",
+                "operator": "eq",
+                "value": hero_id
+            },
+            {
+                "field": "bigrank",
+                "operator": "eq",
+                "value": rank_map.get(rank, "101")
+            },
         ],
         "sorts": [],
-        "pageIndex": 1,
+        "pageIndex": int(index),
     }
     return fetch_mlbb_post("2756569", payload, lang)

@@ -2,21 +2,20 @@
 Reusable filter utilities for MLBB API input validation and mapping.
 Provides DRY, auto-documented, and typo-tolerant mapping for roles, lanes, ranks, etc.
 """
-from typing import List, Dict
 from fastapi import HTTPException
 
-ROLE_MAP: Dict[str, List[int]] = {
-    # "all": [1, 2, 3, 4, 5, 6],
+ROLE_MAP: dict[str, list[int]] = {
+    "all": [1, 2, 3, 4, 5, 6],
     "tank": [1],
     "fighter": [2],
-    "ass": [3],
+    "assassin": [3],
     "mage": [4],
-    "mm": [5],
-    "supp": [6],
+    "marksman": [5],
+    "support": [6],
 }
 
-LANE_MAP: Dict[str, List[int]] = {
-    # "all": [1, 2, 3, 4, 5],
+LANE_MAP: dict[str, list[int]] = {
+    "all": [1, 2, 3, 4, 5],
     "exp": [1],
     "mid": [2],
     "roam": [3],
@@ -24,7 +23,7 @@ LANE_MAP: Dict[str, List[int]] = {
     "gold": [5],
 }
 
-RANK_MAP: Dict[str, str] = {
+RANK_MAP: dict[str, str] = {
     "all": "101",
     "epic": "5",
     "legend": "6",
@@ -33,13 +32,13 @@ RANK_MAP: Dict[str, str] = {
     "glory": "9",
 }
 
-def parse_multi(value: str) -> List[str]:
+def parse_multi(value: str) -> list[str]:
     """
     Parse a comma-separated string into a list of stripped, lowercased, non-empty values.
     """
     return [v.strip().lower() for v in value.split(",") if v.strip()]
 
-def suggest_closest(value: str, allowed: List[str]) -> str:
+def suggest_closest(value: str, allowed: list[str]) -> str:
     """
     Suggest the closest allowed value for a typo input using difflib.
     """
@@ -52,10 +51,10 @@ def suggest_closest(value: str, allowed: List[str]) -> str:
 
 def validate_and_map_multi(
     selected_raw: str,
-    mapping: Dict[str, List[int]],
-    default: List[int],
+    mapping: dict[str, list[int]],
+    default: list[int],
     field_name: str,
-) -> List[int]:
+) -> list[int]:
     """
     Validate and map a comma-separated string to a list of mapped values.
     Raises HTTPException on invalid input, with typo suggestions.

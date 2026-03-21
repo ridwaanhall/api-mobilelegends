@@ -5,7 +5,7 @@ from typing import Any
 
 import requests
 
-from app.core.errors import AppError
+from app.core.exceptions import AppError
 
 
 class MLBBHeaderBuilder:

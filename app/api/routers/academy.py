@@ -2,7 +2,6 @@
 
 from typing import Annotated, Literal
 
-
 from fastapi import APIRouter, Depends, Path, Query
 
 from app.api.dependencies import require_api_available
@@ -11,8 +10,8 @@ from app.core.filters import (
     ROLE_MAP, LANE_MAP, validate_and_map_multi, validate_and_map_rank
 )
 from app.core.hero_limits import validate_academy_hero_id
-from app.services.academy import fetch_academy_post, fetch_ratings_all, fetch_ratings_subject
 from app.core.param_descriptions import *
+from app.services.academy import fetch_academy_post, fetch_ratings_all, fetch_ratings_subject
 
 router = APIRouter(prefix="/api/academy", tags=["academy"], dependencies=[Depends(require_api_available)])
 

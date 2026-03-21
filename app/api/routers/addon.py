@@ -2,10 +2,9 @@ from __future__ import annotations
 
 from typing import Annotated
 
-
 from fastapi import APIRouter, Query
-from app.core.param_descriptions import *
 
+from app.core.param_descriptions import *
 from app.core.errors import AppError
 
 router = APIRouter(prefix="/api/addon", tags=["addon"])

@@ -4,7 +4,6 @@ from datetime import datetime, timezone
 from html import escape
 from urllib.parse import urljoin
 
-
 from fastapi import APIRouter
 from fastapi.responses import PlainTextResponse, RedirectResponse, Response
 from app.core.param_descriptions import *

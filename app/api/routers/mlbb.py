@@ -5,8 +5,8 @@ from typing import Annotated, Literal
 from fastapi import APIRouter, Depends, Path, Query
 
 from app.api.dependencies import require_api_available
-from app.services.mlbb import fetch_mlbb_post
 
+from app.services.mlbb import fetch_mlbb_post
 
 from app.core.errors import _hero_id_or_404
 from app.core.filters import (
@@ -15,8 +15,6 @@ from app.core.filters import (
 from app.core.param_descriptions import *
 
 router = APIRouter(prefix="/api", tags=["mlbb"], dependencies=[Depends(require_api_available)])
-
-
 
 
 @router.get(

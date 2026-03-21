@@ -26,9 +26,9 @@ HERO_IDENTIFIER_DESCRIPTION = (
 
 RANK_DESCRIPTION = "Rank filter. Allowed: all, epic, legend, mythic, honor, glory."
 
-SIZE_DESCRIPTION = "Number of items per page. Recommended range: 1-20."
+SIZE_DESCRIPTION = "Number of items per page."
 
-INDEX_DESCRIPTION = "Page index (1-based). Recommended range: 1-1000."
+INDEX_DESCRIPTION = "Page index (starting from 1)."
 
 
 @router.get("/hero-list", summary="List Heroes", description="Get a list of all heroes with basic information.")
@@ -37,7 +37,6 @@ def hero_list(
         int,
         Query(
             ge=1,
-            le=2000,
             description=SIZE_DESCRIPTION
         )
     ] = 20,
@@ -45,7 +44,6 @@ def hero_list(
         int,
         Query(
             ge=1,
-            le=1000,
             description=INDEX_DESCRIPTION
         )
     ] = 1,
@@ -113,7 +111,6 @@ def hero_rank(
         int,
         Query(
             ge=1,
-            le=2000,
             description=SIZE_DESCRIPTION
         )
     ] = 20,
@@ -121,7 +118,6 @@ def hero_rank(
         int,
         Query(
             ge=1,
-            le=1000,
             description=INDEX_DESCRIPTION
         )
     ] = 1,
@@ -205,7 +201,6 @@ def hero_position(
         int,
         Query(
             ge=1,
-            le=2000,
             description=SIZE_DESCRIPTION
         )
     ] = 20,
@@ -213,7 +208,6 @@ def hero_position(
         int,
         Query(
             ge=1,
-            le=1000,
             description=INDEX_DESCRIPTION
         )
     ] = 1,
@@ -276,7 +270,6 @@ def hero_detail(
         int,
         Query(
             ge=1,
-            le=2000,
             description=SIZE_DESCRIPTION
         )
     ] = 20,
@@ -284,7 +277,6 @@ def hero_detail(
         int,
         Query(
             ge=1,
-            le=1000,
             description=INDEX_DESCRIPTION
         )
     ] = 1,
@@ -330,7 +322,6 @@ def hero_detail_stats(
         int,
         Query(
             ge=1,
-            le=2000,
             description=SIZE_DESCRIPTION
         )
     ] = 20,
@@ -338,7 +329,6 @@ def hero_detail_stats(
         int,
         Query(
             ge=1,
-            le=1000,
             description=INDEX_DESCRIPTION
         )
     ] = 1,
@@ -387,7 +377,6 @@ def hero_skill_combo(
         int,
         Query(
             ge=1,
-            le=2000,
             description=SIZE_DESCRIPTION
         )
     ] = 20,
@@ -395,7 +384,6 @@ def hero_skill_combo(
         int,
         Query(
             ge=1,
-            le=1000,
             description=INDEX_DESCRIPTION
         )
     ] = 1,
@@ -448,7 +436,6 @@ def hero_rate(
         int,
         Query(
             ge=1,
-            le=2000,
             description=SIZE_DESCRIPTION
         )
     ] = 20,
@@ -456,7 +443,6 @@ def hero_rate(
         int,
         Query(
             ge=1,
-            le=1000,
             description=INDEX_DESCRIPTION
         )
     ] = 1,
@@ -510,7 +496,6 @@ def hero_relation(
         int,
         Query(
             ge=1,
-            le=2000,
             description=SIZE_DESCRIPTION
         )
     ] = 20,
@@ -518,7 +503,6 @@ def hero_relation(
         int,
         Query(
             ge=1,
-            le=1000,
             description=INDEX_DESCRIPTION
         )
     ] = 1,
@@ -565,7 +549,6 @@ def hero_counter(
         int,
         Query(
             ge=1,
-            le=2000,
             description=SIZE_DESCRIPTION
         )
     ] = 20,
@@ -573,7 +556,6 @@ def hero_counter(
         int,
         Query(
             ge=1,
-            le=1000,
             description=INDEX_DESCRIPTION
         )
     ] = 1,
@@ -628,7 +610,6 @@ def hero_compatibility(
         int,
         Query(
             ge=1,
-            le=2000,
             description=SIZE_DESCRIPTION
         )
     ] = 20,
@@ -636,7 +617,6 @@ def hero_compatibility(
         int,
         Query(
             ge=1,
-            le=1000,
             description=INDEX_DESCRIPTION
         )
     ] = 1,

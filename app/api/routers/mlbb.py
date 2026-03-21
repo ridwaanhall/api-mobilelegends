@@ -6,7 +6,11 @@ from fastapi import APIRouter, Depends, Path, Query
 
 from app.api.dependencies import require_api_available
 from app.services.mlbb import fetch_mlbb_post
+
 from app.core.errors import _hero_id_or_404
+from app.core.filters import (
+    ROLE_MAP, LANE_MAP, validate_and_map_multi, validate_and_map_rank
+)
 
 router = APIRouter(prefix="/api", tags=["mlbb"], dependencies=[Depends(require_api_available)])
 
@@ -23,32 +27,9 @@ HERO_IDENTIFIER_DESCRIPTION = (
 
 RANK_DESCRIPTION = "Rank filter. Allowed: all, epic, legend, mythic, honor, glory."
 
-
-def _rank_value(rank: str) -> str:
-    rank_map = {
-        "all": "101",
-        "epic": "5",
-        "legend": "6",
-        "mythic": "7",
-        "honor": "8",
-        "glory": "9",
-    }
-    return rank_map.get(rank.lower(), "101")
-
 # role map and lane map
 def parse_multi(value: str) -> list[str]:
     return [v.strip() for v in value.split(",") if v.strip()]
-
-
-def map_multi_values(selected: list[str], mapping: dict[str, list[int]], default: list[int]) -> list[int]:
-    if not selected or "all" in selected:
-        return default
-
-    result = set()
-    for item in selected:
-        result.update(mapping.get(item, []))
-
-    return list(result)
 
 
 @router.get("/hero-list", summary="List Heroes", description="Get a list of all heroes with basic information.")
@@ -104,24 +85,12 @@ def hero_list(
 
 @router.get("/hero-rank", summary="Hero Rank Statistics", description="Get rank statistics for heroes over a specified time window.")
 def hero_rank(
-    days: Annotated[
-        Literal["1", "3", "7", "15", "30"],
-        Query(description="Past day window. Allowed: 1, 3, 7, 15, 30."),
-    ] = "1",
-    rank: Annotated[
-        Literal["all", "epic", "legend", "mythic", "honor", "glory"],
-        Query(description=RANK_DESCRIPTION),
-    ] = "all",
+    days: Annotated[Literal["1", "3", "7", "15", "30"], Query(description="Past day window. Allowed: 1, 3, 7, 15, 30.")] = "1",
+    rank: Annotated[str, Query(description=RANK_DESCRIPTION)] = "all",
     size: Annotated[int, Query(ge=1, le=100, description="Page size. Recommended range: 1-100.")] = 20,
     index: Annotated[int, Query(ge=1, description="Page index (1-based).")]= 1,
-    sort_field: Annotated[
-        Literal["pick_rate", "ban_rate", "win_rate"],
-        Query(description="Sort field. Allowed: pick_rate, ban_rate, win_rate."),
-    ] = "win_rate",
-    sort_order: Annotated[
-        Literal["asc", "desc"],
-        Query(description="Sort direction. Allowed: asc, desc."),
-    ] = "desc",
+    sort_field: Annotated[Literal["pick_rate", "ban_rate", "win_rate"], Query(description="Sort field. Allowed: pick_rate, ban_rate, win_rate.")] = "win_rate",
+    sort_order: Annotated[Literal["asc", "desc"], Query(description="Sort direction. Allowed: asc, desc.")] = "desc",
     lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
 ) -> object:
     def create_rank_payload(rank_value: str) -> dict[str, object]:
@@ -154,7 +123,7 @@ def hero_rank(
     }
     url_map = {"1": "2756567", "3": "2756568", "7": "2756569", "15": "2756565", "30": "2756570"}
 
-    payload =create_rank_payload(_rank_value(rank))
+    payload = create_rank_payload(validate_and_map_rank(rank))
     payload["pageSize"] = int(size)
     payload["pageIndex"] = int(index)
     payload["sorts"] = [
@@ -166,49 +135,15 @@ def hero_rank(
 
 @router.get("/hero-position", summary="Hero Position Filters", description="Filter heroes by their position on the map.")
 def hero_position(
-    role: Annotated[
-        str,
-        Query(
-            description="Role filter. Multi allowed: all, tank, fighter, ass, mage, mm, supp. Example: tank,fighter",
-        ),
-    ] = "tank,fighter,ass,mage,mm,supp",
-    lane: Annotated[
-        str,
-        Query(
-            description="Lane filter. Multi allowed: all, exp, mid, roam, jungle, gold. Example: exp,mid",
-        ),
-    ] = "exp,mid,roam,jungle,gold",
+    role: Annotated[str, Query(description="Role filter. Multi allowed: all, tank, fighter, ass, mage, mm, supp. Example: tank,fighter")] = "tank,fighter,ass,mage,mm,supp",
+    lane: Annotated[str, Query(description="Lane filter. Multi allowed: all, exp, mid, roam, jungle, gold. Example: exp,mid")] = "exp,mid,roam,jungle,gold",
     size: Annotated[int, Query(ge=1, le=100, description="Page size. Recommended range: 1-100.")] = 20,
-    index: Annotated[int, Query(ge=1, description="Page index (1-based).")] = 1,
-    order: Annotated[
-        Literal["asc", "desc"],
-        Query(description="Sort direction. Allowed: asc, desc."),
-    ] = "desc",
+    index: Annotated[int, Query(ge=1, description="Page index (1-based).")]= 1,
+    order: Annotated[Literal["asc", "desc"], Query(description="Sort direction. Allowed: asc, desc.")] = "desc",
     lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
 ) -> object:
-    role_map = {
-        # "all": [1, 2, 3, 4, 5, 6],
-        "tank": [1],
-        "fighter": [2],
-        "ass": [3],
-        "mage": [4],
-        "mm": [5],
-        "supp": [6],
-    }
-    lane_map = {
-        # "all": [1, 2, 3, 4, 5],
-        "exp": [1],
-        "mid": [2],
-        "roam": [3],
-        "jungle": [4],
-        "gold": [5],
-    }
-    
-    role_list = parse_multi(role)
-    lane_list = parse_multi(lane)
-    
-    role_values = map_multi_values(role_list, role_map, [1, 2, 3, 4, 5, 6])
-    lane_values = map_multi_values(lane_list, lane_map, [1, 2, 3, 4, 5])
+    role_values = validate_and_map_multi(role, ROLE_MAP, ROLE_MAP["all"], "role")
+    lane_values = validate_and_map_multi(lane, LANE_MAP, LANE_MAP["all"], "lane")
 
     payload = {
         "pageSize": int(size),
@@ -254,10 +189,7 @@ def hero_detail(
 @router.get("/hero-detail-stats/{hero_identifier}", summary="Hero Detail Statistics", description="Get detailed statistics for a specific hero.")
 def hero_detail_stats(
     hero_identifier: Annotated[str, Path(description=HERO_IDENTIFIER_DESCRIPTION)],
-    rank: Annotated[
-        Literal["all", "epic", "legend", "mythic", "honor", "glory"],
-        Query(description="Rank filter. Allowed: all, epic, legend, mythic, honor, glory."),
-    ] = "all",
+    rank: Annotated[str, Query(description="Rank filter. Allowed: all, epic, legend, mythic, honor, glory.")] = "all",
     size: Annotated[int, Query(ge=1, le=100, description="Page size. Recommended range: 1-100.")] = 20,
     index: Annotated[int, Query(ge=1, description="Page index (1-based).")]= 1,
     lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
@@ -274,7 +206,7 @@ def hero_detail_stats(
             {
                 "field": "bigrank",
                 "operator": "eq",
-                "value": _rank_value(rank)
+                "value": validate_and_map_rank(rank)
             },
             {
                 "field": "match_type",
@@ -334,7 +266,7 @@ def hero_rate(
             {
                 "field": "bigrank",
                 "operator": "eq",
-                "value": _rank_value(rank)
+                "value": validate_and_map_rank(rank)
             },
             {
                 "field": "match_type",
@@ -395,7 +327,7 @@ def hero_counter(
             {
                 "field": "bigrank",
                 "operator": "eq",
-                "value": _rank_value(rank)
+                "value": validate_and_map_rank(rank)
             },
         ],
         "sorts": [],
@@ -432,7 +364,7 @@ def hero_compatibility(
             {
                 "field": "bigrank",
                 "operator": "eq",
-                "value": _rank_value(rank)
+                "value": validate_and_map_rank(rank)
             },
         ],
         "sorts": [],

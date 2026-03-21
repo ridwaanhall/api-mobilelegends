@@ -6,7 +6,7 @@ from typing import Any
 from fastapi import Request
 from fastapi.responses import JSONResponse
 
-from app.core.errors import AppError
+## Removed circular import of AppError
 from app.core.hero_limits import validate_mlbb_hero_id
 from app.services.mlbb import resolve_hero_id
 

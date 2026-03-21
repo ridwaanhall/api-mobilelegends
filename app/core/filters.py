@@ -1,8 +1,12 @@
+"""
+Reusable filter utilities for MLBB API input validation and mapping.
+Provides DRY, auto-documented, and typo-tolerant mapping for roles, lanes, ranks, etc.
+"""
+from typing import List, Dict
 from fastapi import HTTPException
 
-
-ROLE_MAP = {
-    "all": [1, 2, 3, 4, 5, 6],
+ROLE_MAP: Dict[str, List[int]] = {
+    # "all": [1, 2, 3, 4, 5, 6],
     "tank": [1],
     "fighter": [2],
     "ass": [3],
@@ -11,8 +15,8 @@ ROLE_MAP = {
     "supp": [6],
 }
 
-LANE_MAP = {
-    "all": [1, 2, 3, 4, 5],
+LANE_MAP: Dict[str, List[int]] = {
+    # "all": [1, 2, 3, 4, 5],
     "exp": [1],
     "mid": [2],
     "roam": [3],
@@ -20,34 +24,69 @@ LANE_MAP = {
     "gold": [5],
 }
 
+RANK_MAP: Dict[str, str] = {
+    "all": "101",
+    "epic": "5",
+    "legend": "6",
+    "mythic": "7",
+    "honor": "8",
+    "glory": "9",
+}
 
-def parse_multi(value: str) -> list[str]:
-    return [v.strip() for v in value.split(",") if v.strip()]
+def parse_multi(value: str) -> List[str]:
+    """
+    Parse a comma-separated string into a list of stripped, lowercased, non-empty values.
+    """
+    return [v.strip().lower() for v in value.split(",") if v.strip()]
 
+def suggest_closest(value: str, allowed: List[str]) -> str:
+    """
+    Suggest the closest allowed value for a typo input using difflib.
+    """
+    try:
+        import difflib
+        suggestion = difflib.get_close_matches(value, allowed, n=1)
+        return suggestion[0] if suggestion else ""
+    except Exception:
+        return ""
 
 def validate_and_map_multi(
     selected_raw: str,
-    mapping: dict[str, list[int]],
-    default: list[int],
+    mapping: Dict[str, List[int]],
+    default: List[int],
     field_name: str,
-) -> list[int]:
+) -> List[int]:
+    """
+    Validate and map a comma-separated string to a list of mapped values.
+    Raises HTTPException on invalid input, with typo suggestions.
+    """
     selected = parse_multi(selected_raw)
-
     if not selected:
         return default
-
+    allowed = list(mapping.keys())
     invalid = [item for item in selected if item not in mapping]
     if invalid:
+        suggestions = [f"{item} (did you mean: {suggest_closest(item, allowed)})" for item in invalid]
         raise HTTPException(
             status_code=422,
-            detail=f"Invalid {field_name}: {', '.join(invalid)}. Allowed: {', '.join(mapping.keys())}",
+            detail=f"Invalid {field_name}: {', '.join(suggestions)}. Allowed: {', '.join(allowed)}",
         )
-
     if "all" in selected:
         return default
-
     result = set()
     for item in selected:
         result.update(mapping[item])
-
     return list(result)
+
+def validate_and_map_rank(rank_raw: str) -> str:
+    """
+    Validate and map a rank string to its code. Raises HTTPException on invalid input.
+    """
+    rank = rank_raw.strip().lower()
+    if rank not in RANK_MAP:
+        suggestion = suggest_closest(rank, list(RANK_MAP.keys()))
+        raise HTTPException(
+            status_code=422,
+            detail=f"Invalid rank: {rank} (did you mean: {suggestion}). Allowed: {', '.join(RANK_MAP.keys())}",
+        )
+    return RANK_MAP[rank]

@@ -5,9 +5,8 @@ from typing import Annotated, Literal
 from fastapi import APIRouter, Depends, Path, Query
 
 from app.api.dependencies import require_api_available
-from app.core.errors import AppError
-from app.core.hero_limits import validate_mlbb_hero_id
-from app.services.mlbb import fetch_mlbb_post, resolve_hero_id
+from app.services.mlbb import fetch_mlbb_post
+from app.core.errors import _hero_id_or_404
 
 router = APIRouter(prefix="/api", tags=["mlbb"], dependencies=[Depends(require_api_available)])
 
@@ -25,40 +24,31 @@ HERO_IDENTIFIER_DESCRIPTION = (
 RANK_DESCRIPTION = "Rank filter. Allowed: all, epic, legend, mythic, honor, glory."
 
 
-def _hero_id_or_404(hero_identifier: str, lang: str) -> int:
-    try:
-        numeric_hero_id = int(hero_identifier)
-        if numeric_hero_id < 1:
-            raise AppError(
-                status_code=422,
-                code="VALIDATION_ERROR",
-                message="Validation failed.",
-                details=[
-                    {
-                        "type": "greater_than_equal",
-                        "loc": ["path", "hero_identifier"],
-                        "msg": "Input should be greater than or equal to 1",
-                        "input": numeric_hero_id,
-                        "ctx": {"ge": 1},
-                    }
-                ],
-                extra={"code": "VALIDATION_ERROR"},
-            )
+def _rank_value(rank: str) -> str:
+    rank_map = {
+        "all": "101",
+        "epic": "5",
+        "legend": "6",
+        "mythic": "7",
+        "honor": "8",
+        "glory": "9",
+    }
+    return rank_map.get(rank.lower(), "101")
 
-        validate_mlbb_hero_id(numeric_hero_id, lang)
-        return numeric_hero_id
-    except ValueError:
-        pass
+# role map and lane map
+def parse_multi(value: str) -> list[str]:
+    return [v.strip() for v in value.split(",") if v.strip()]
 
-    hero_id = resolve_hero_id(hero_identifier, lang)
-    if hero_id <= 0:
-        raise AppError(
-            status_code=404,
-            code="RESOURCE_NOT_FOUND",
-            message="Hero not found",
-            details=f"No hero found with name: {hero_identifier}",
-        )
-    return hero_id
+
+def map_multi_values(selected: list[str], mapping: dict[str, list[int]], default: list[int]) -> list[int]:
+    if not selected or "all" in selected:
+        return default
+
+    result = set()
+    for item in selected:
+        result.update(mapping.get(item, []))
+
+    return list(result)
 
 
 @router.get("/hero-list", summary="List Heroes", description="Get a list of all heroes with basic information.")
@@ -163,16 +153,8 @@ def hero_rank(
         "win_rate": "main_hero_win_rate",
     }
     url_map = {"1": "2756567", "3": "2756568", "7": "2756569", "15": "2756565", "30": "2756570"}
-    rank_map = {
-        "all": create_rank_payload("101"),
-        "epic": create_rank_payload("5"),
-        "legend": create_rank_payload("6"),
-        "mythic": create_rank_payload("7"),
-        "honor": create_rank_payload("8"),
-        "glory": create_rank_payload("9"),
-    }
 
-    payload = rank_map.get(rank, rank_map["all"])
+    payload =create_rank_payload(_rank_value(rank))
     payload["pageSize"] = int(size)
     payload["pageIndex"] = int(index)
     payload["sorts"] = [
@@ -185,21 +167,27 @@ def hero_rank(
 @router.get("/hero-position", summary="Hero Position Filters", description="Filter heroes by their position on the map.")
 def hero_position(
     role: Annotated[
-        Literal["all", "tank", "fighter", "ass", "mage", "mm", "supp"],
+        str,
         Query(
-            description="Role filter. Allowed: all, tank, fighter, ass (assassin), mage, mm (marksman), supp (support).",
+            description="Role filter. Multi allowed: all, tank, fighter, ass, mage, mm, supp. Example: tank,fighter",
         ),
-    ] = "all",
+    ] = "tank,fighter,ass,mage,mm,supp",
     lane: Annotated[
-        Literal["all", "exp", "mid", "roam", "jungle", "gold"],
-        Query(description="Lane filter. Allowed: all, exp, mid, roam, jungle, gold."),
-    ] = "all",
+        str,
+        Query(
+            description="Lane filter. Multi allowed: all, exp, mid, roam, jungle, gold. Example: exp,mid",
+        ),
+    ] = "exp,mid,roam,jungle,gold",
     size: Annotated[int, Query(ge=1, le=100, description="Page size. Recommended range: 1-100.")] = 20,
-    index: Annotated[int, Query(ge=1, description="Page index (1-based).")]= 1,
+    index: Annotated[int, Query(ge=1, description="Page index (1-based).")] = 1,
+    order: Annotated[
+        Literal["asc", "desc"],
+        Query(description="Sort direction. Allowed: asc, desc."),
+    ] = "desc",
     lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
 ) -> object:
     role_map = {
-        "all": [1, 2, 3, 4, 5, 6],
+        # "all": [1, 2, 3, 4, 5, 6],
         "tank": [1],
         "fighter": [2],
         "ass": [3],
@@ -208,20 +196,36 @@ def hero_position(
         "supp": [6],
     }
     lane_map = {
-        "all": [1, 2, 3, 4, 5],
+        # "all": [1, 2, 3, 4, 5],
         "exp": [1],
         "mid": [2],
         "roam": [3],
         "jungle": [4],
         "gold": [5],
     }
+    
+    role_list = parse_multi(role)
+    lane_list = parse_multi(lane)
+    
+    role_values = map_multi_values(role_list, role_map, [1, 2, 3, 4, 5, 6])
+    lane_values = map_multi_values(lane_list, lane_map, [1, 2, 3, 4, 5])
+
     payload = {
         "pageSize": int(size),
         "filters": [
-            {"field": "<hero.data.sortid>", "operator": "hasAnyOf", "value": role_map.get(role, [1, 2, 3, 4, 5, 6])},
-            {"field": "<hero.data.roadsort>", "operator": "hasAnyOf", "value": lane_map.get(lane, [1, 2, 3, 4, 5])},
+            {"field": "<hero.data.sortid>", "operator": "hasAnyOf", "value": role_values},
+            {"field": "<hero.data.roadsort>", "operator": "hasAnyOf", "value": lane_values},
         ],
-        "sorts": [{"data": {"field": "hero_id", "order": "desc"}, "type": "sequence"}],
+        "sorts": [
+            {
+                "data":
+                    {
+                        "field": "hero_id",
+                        "order": order
+                    },
+                "type": "sequence"
+            }
+        ],
         "pageIndex": int(index),
         "fields": ["id", "hero_id", "hero.data.name", "hero.data.smallmap", "hero.data.sortid", "hero.data.roadsort"],
         "object": [],
@@ -259,14 +263,6 @@ def hero_detail_stats(
     lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
 ) -> object:
     hero_id = _hero_id_or_404(hero_identifier, lang)
-    rank_map = {
-        "all": "101",
-        "epic": "5",
-        "legend": "6",
-        "mythic": "7",
-        "honor": "8",
-        "glory": "9",
-    }
     payload = {
         "pageSize": int(size),
         "filters": [
@@ -278,7 +274,7 @@ def hero_detail_stats(
             {
                 "field": "bigrank",
                 "operator": "eq",
-                "value": rank_map.get(rank, "101")
+                "value": _rank_value(rank)
             },
             {
                 "field": "match_type",
@@ -327,14 +323,6 @@ def hero_rate(
 ) -> object:
     hero_id = _hero_id_or_404(hero_identifier, lang)
     url_map = {"7": "2674709", "15": "2687909", "30": "2690860"}
-    rank_map = {
-        "all": "101",
-        "epic": "5",
-        "legend": "6",
-        "mythic": "7",
-        "honor": "8",
-        "glory": "9",
-    }
     payload = {
         "pageSize": int(size),
         "filters": [
@@ -346,7 +334,7 @@ def hero_rate(
             {
                 "field": "bigrank",
                 "operator": "eq",
-                "value": rank_map.get(rank, "101")
+                "value": _rank_value(rank)
             },
             {
                 "field": "match_type",
@@ -391,14 +379,6 @@ def hero_counter(
     lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
 ) -> object:
     hero_id = _hero_id_or_404(hero_identifier, lang)
-    rank_map = {
-        "all": "101",
-        "epic": "5",
-        "legend": "6",
-        "mythic": "7",
-        "honor": "8",
-        "glory": "9",
-    }
     payload = {
         "pageSize": int(size),
         "filters": [
@@ -415,7 +395,7 @@ def hero_counter(
             {
                 "field": "bigrank",
                 "operator": "eq",
-                "value": rank_map.get(rank, "101")
+                "value": _rank_value(rank)
             },
         ],
         "sorts": [],
@@ -436,14 +416,6 @@ def hero_compatibility(
     lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
 ) -> object:
     hero_id = _hero_id_or_404(hero_identifier, lang)
-    rank_map = {
-        "all": "101",
-        "epic": "5",
-        "legend": "6",
-        "mythic": "7",
-        "honor": "8",
-        "glory": "9",
-    }
     payload = {
         "pageSize": int(size),
         "filters": [
@@ -460,7 +432,7 @@ def hero_compatibility(
             {
                 "field": "bigrank",
                 "operator": "eq",
-                "value": rank_map.get(rank, "101")
+                "value": _rank_value(rank)
             },
         ],
         "sorts": [],

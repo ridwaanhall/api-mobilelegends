@@ -150,7 +150,7 @@ This project is released under the **BSD 3-Clause License**. Attribution to **Mo
 Required variables:
 
 - `SECRET_KEY`
-- `MLBB_URL`
-- `MLBB_URL_V2`
+- `RONE_DEV_ACCESS_KEY`
+- `RONE_DEV_ACCESS_KEY_V2`
 
 See `.env.example` for full environment options.

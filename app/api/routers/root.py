@@ -72,13 +72,29 @@ def _get_mlbb_academy_endpoints() -> dict[str, str]:
     return {}
 
 
-@router.get("/", include_in_schema=False)
-@router.get("/api/docs", include_in_schema=False)
+@router.get(
+    path="/",
+    summary="API Root Endpoint",
+    description=(
+        "Welcome to the Mobile Legends API. This endpoint provides an overview of the API status, available services, and links to documentation. For detailed information on specific endpoints, please refer to the documentation."
+    ),
+    include_in_schema=False,
+)
+@router.get(
+    path="/api/docs",
+    summary="API Documentation",
+    description="Redirect to the API documentation.",
+    include_in_schema=False,
+)
 def api_docs_redirect() -> RedirectResponse:
     return RedirectResponse(url="/docs", status_code=307)
 
 
-@router.get("/api", summary="API Index and Status", description="Provides API metadata, status, and available services.")
+@router.get(
+    path="/api",
+    summary="API Index and Status",
+    description="Provides API metadata, status, and available services.",
+)
 def api_index() -> dict[str, object]:
     status_key = "available" if IS_AVAILABLE else "limited"
     status_info = API_STATUS_MESSAGES[status_key]
@@ -130,7 +146,11 @@ def api_index() -> dict[str, object]:
     }
 
 
-@router.get("/robots.txt", summary="Robots.txt for Web Crawlers", description="Provides instructions for web crawlers and bots accessing the API.")
+@router.get(
+    path="/robots.txt",
+    summary="Robots.txt for Web Crawlers",
+    description="Provides instructions for web crawlers and bots accessing the API.",
+)
 def robots_txt() -> PlainTextResponse:
     sitemap_url = urljoin(BASE_URL, "sitemap.xml")
     host_url = BASE_URL.rstrip("/")
@@ -138,7 +158,11 @@ def robots_txt() -> PlainTextResponse:
     return PlainTextResponse(content=content)
 
 
-@router.get("/sitemap.xml", summary="Sitemap for Search Engines", description="Provides a sitemap for search engines to crawl the API endpoints.")
+@router.get(
+    path="/sitemap.xml",
+    summary="Sitemap for Search Engines",
+    description="Provides a sitemap for search engines to crawl the API endpoints.",
+)
 def sitemap_xml() -> Response:
     base_url = BASE_URL.rstrip("/")
     lastmod = datetime.now(timezone.utc).date().isoformat()

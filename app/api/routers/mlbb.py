@@ -20,7 +20,7 @@ LANGUAGE_DESCRIPTION = (
 )
 
 HERO_IDENTIFIER_DESCRIPTION = (
-    "Hero identifier as numeric hero ID (minimum: 1; maximum validated dynamically from current MLBB hero list) or hero name. "
+    "Hero identifier as numeric hero ID (maximum validated dynamically from current MLBB hero list) or hero name. "
     "Name matching ignores spaces/symbols and is case-insensitive (example: luoyi from Luo Yi)."
 )
 

@@ -21,7 +21,7 @@ LANGUAGE_DESCRIPTION = (
 
 RANK_DESCRIPTION = "Rank filter. Allowed: all, epic, legend, mythic, honor, glory."
 HERO_ID_DESCRIPTION = (
-    "Hero ID. Minimum: 1. Maximum is validated dynamically from current `/api/academy/guide` total."
+    "Hero ID. Maximum is validated dynamically from current `/api/academy/guide` total."
 )
 
 SIZE_DESCRIPTION = "Number of items per page."

@@ -31,32 +31,42 @@ SIZE_DESCRIPTION = "Number of items per page."
 INDEX_DESCRIPTION = "Page index (starting from 1)."
 
 
-@router.get("/hero-list", summary="List Heroes", description="Get a list of all heroes with basic information.")
+@router.get(
+    path="/hero-list",
+    summary="List Heroes",
+    description="Get a list of all heroes with basic information.",
+)
 def hero_list(
     size: Annotated[
         int,
         Query(
+            title="Page Size",
+            description=SIZE_DESCRIPTION,
             ge=1,
-            description=SIZE_DESCRIPTION
         )
     ] = 20,
     index: Annotated[
         int,
         Query(
+            title="Page Index",
+            description=INDEX_DESCRIPTION,
             ge=1,
-            description=INDEX_DESCRIPTION
         )
     ] = 1,
     order: Annotated[
         Literal["asc", "desc"],
-        Query(description="Sort order by hero ID for hero listing. Allowed: asc, desc."),
+        Query(
+            title="Sort Order",
+            description="Sort order by hero ID for hero listing. Allowed: asc, desc.",
+        )
     ] = "asc",
     lang: Annotated[
         str,
         Query(
+            title="Language",
             description=LANGUAGE_DESCRIPTION,
-        ),
-    ] = "en",
+        )
+    ] = "en"
 ) -> object:
     payload = {
         "pageSize": size,
@@ -81,52 +91,63 @@ def hero_list(
     return fetch_mlbb_post("2756564", payload, lang)
 
 
-@router.get("/hero-rank", summary="Hero Rank Statistics", description="Get rank statistics for heroes over a specified time window.")
+@router.get(
+    path="/hero-rank",
+    summary="Hero Rank Statistics",
+    description="Get rank statistics for heroes over a specified time window."
+)
 def hero_rank(
     days: Annotated[
         Literal["1", "3", "7", "15", "30"],
         Query(
-            description="Past day window. Allowed: 1, 3, 7, 15, 30."
+            title="Past Days",
+            description="Past day window. Allowed: 1, 3, 7, 15, 30.",
         )
     ] = "1",
     rank: Annotated[
-        str,
+        Literal["all", "epic", "legend", "mythic", "honor", "glory"],
         Query(
-            description=RANK_DESCRIPTION
-        )
+            title="Rank",
+            description=RANK_DESCRIPTION,
+        ),
     ] = "all",
     sort_field: Annotated[
         Literal["pick_rate", "ban_rate", "win_rate"],
         Query(
-            description="Sort field. Allowed: pick_rate, ban_rate, win_rate."
+            title="Sort Field",
+            description="Sort field. Allowed: pick_rate, ban_rate, win_rate.",
         )
     ] = "win_rate",
     sort_order: Annotated[
         Literal["asc", "desc"],
         Query(
-            description="Sort direction. Allowed: asc, desc."
+            title="Sort Order",
+            description="Sort direction. Allowed: asc, desc.",
         )
     ] = "desc",
     size: Annotated[
         int,
         Query(
+            title="Page Size",
+            description=SIZE_DESCRIPTION,
             ge=1,
-            description=SIZE_DESCRIPTION
         )
     ] = 20,
     index: Annotated[
         int,
         Query(
+            title="Page Index",
+            description=INDEX_DESCRIPTION,
             ge=1,
-            description=INDEX_DESCRIPTION
         )
     ] = 1,
     lang: Annotated[
         str,
         Query(
-            description=LANGUAGE_DESCRIPTION
+            title="Language",
+            description=LANGUAGE_DESCRIPTION,
         )
-    ] = "en",
+    ] = "en"
 ) -> object:
     def create_rank_payload(rank_value: str) -> dict[str, object]:
         return {
@@ -183,46 +204,56 @@ def hero_rank(
     return fetch_mlbb_post(url_map.get(days, "2756567"), payload, lang)
 
 
-@router.get("/hero-position", summary="Hero Position Filters", description="Filter heroes by their position on the map.")
+@router.get(
+    path="/hero-position",
+    summary="Hero Position Filters",
+    description="Filter heroes by their position on the map.",
+)
 def hero_position(
     role: Annotated[
         str,
         Query(
-            description="Role filter. Multi allowed: all, tank, fighter, assassin, mage, marksman, support. Example: tank,fighter"
+            title="Role",
+            description="Role filter. Multi allowed: all, tank, fighter, assassin, mage, marksman, support. Example: tank,fighter",
         )
     ] = "tank,fighter,assassin,mage,marksman,support",
     lane: Annotated[
         str,
         Query(
-            description="Lane filter. Multi allowed: all, exp, mid, roam, jungle, gold. Example: exp,mid"
+            title="Lane",
+            description="Lane filter. Multi allowed: all, exp, mid, roam, jungle, gold. Example: exp,mid",
         )
     ] = "exp,mid,roam,jungle,gold",
     size: Annotated[
         int,
         Query(
+            title="Page Size",
+            description=SIZE_DESCRIPTION,
             ge=1,
-            description=SIZE_DESCRIPTION
         )
     ] = 20,
     index: Annotated[
         int,
         Query(
+            title="Page Index",
+            description=INDEX_DESCRIPTION,
             ge=1,
-            description=INDEX_DESCRIPTION
         )
     ] = 1,
     order: Annotated[
         Literal["asc", "desc"],
         Query(
-            description="Sort direction. Allowed: asc, desc."
+            title="Sort Order",
+            description="Sort direction. Allowed: asc, desc.",
         )
     ] = "desc",
     lang: Annotated[
         str,
         Query(
-            description=LANGUAGE_DESCRIPTION
+            title="Language",
+            description=LANGUAGE_DESCRIPTION,
         )
-    ] = "en",
+    ] = "en"
 ) -> object:
     role_values = validate_and_map_multi(role, ROLE_MAP, ROLE_MAP["all"], "role")
     lane_values = validate_and_map_multi(lane, LANE_MAP, LANE_MAP["all"], "lane")
@@ -258,34 +289,42 @@ def hero_position(
     return fetch_mlbb_post("2756564", payload, lang)
 
 
-@router.get("/hero-detail/{hero_identifier}", summary="Hero Detail", description="Get detailed information about a specific hero.")
+@router.get(
+    path="/hero-detail/{hero_identifier}",
+    summary="Hero Detail",
+    description="Get detailed information about a specific hero.",
+)
 def hero_detail(
     hero_identifier: Annotated[
         str,
         Path(
-            description=HERO_IDENTIFIER_DESCRIPTION
+            title="Hero Identifier",
+            description=HERO_IDENTIFIER_DESCRIPTION,
         )
     ],
     size: Annotated[
         int,
         Query(
+            title="Page Size",
+            description=SIZE_DESCRIPTION,
             ge=1,
-            description=SIZE_DESCRIPTION
         )
     ] = 20,
     index: Annotated[
         int,
         Query(
+            title="Page Index",
+            description=INDEX_DESCRIPTION,
             ge=1,
-            description=INDEX_DESCRIPTION
         )
     ] = 1,
     lang: Annotated[
         str,
         Query(
-            description=LANGUAGE_DESCRIPTION
+            title="Language",
+            description=LANGUAGE_DESCRIPTION,
         )
-    ] = "en",
+    ] = "en"
 ) -> object:
     hero_id = _hero_id_or_404(hero_identifier, lang)
     payload = {
@@ -304,40 +343,49 @@ def hero_detail(
     return fetch_mlbb_post("2756564", payload, lang)
 
 
-@router.get("/hero-detail-stats/{hero_identifier}", summary="Hero Detail Statistics", description="Get detailed statistics for a specific hero.")
+@router.get(
+    path="/hero-detail-stats/{hero_identifier}",
+    summary="Hero Detail Statistics",
+    description="Get detailed statistics for a specific hero.",
+)
 def hero_detail_stats(
     hero_identifier: Annotated[
         str,
         Path(
-            description=HERO_IDENTIFIER_DESCRIPTION
+            title="Hero Identifier",
+            description=HERO_IDENTIFIER_DESCRIPTION,
         )
     ],
     rank: Annotated[
-        str,
+        Literal["all", "epic", "legend", "mythic", "honor", "glory"],
         Query(
-            description=RANK_DESCRIPTION
-        )
+            title="Rank",
+            description=RANK_DESCRIPTION,
+        ),
     ] = "all",
     size: Annotated[
         int,
         Query(
+            title="Page Size",
+            description=SIZE_DESCRIPTION,
             ge=1,
-            description=SIZE_DESCRIPTION
         )
     ] = 20,
     index: Annotated[
         int,
         Query(
+            title="Page Index",
+            description=INDEX_DESCRIPTION,
             ge=1,
-            description=INDEX_DESCRIPTION
         )
     ] = 1,
     lang: Annotated[
         str,
         Query(
-            description=LANGUAGE_DESCRIPTION
+            title="Language",
+            description=LANGUAGE_DESCRIPTION,
         )
-    ] = "en",
+    ] = "en"
 ) -> object:
     hero_id = _hero_id_or_404(hero_identifier, lang)
     payload = {
@@ -365,34 +413,42 @@ def hero_detail_stats(
     return fetch_mlbb_post("2756567", payload, lang)
 
 
-@router.get("/hero-skill-combo/{hero_identifier}", summary="Hero Skill Combo", description="Get the skill combo information for a specific hero.")
+@router.get(
+    "/hero-skill-combo/{hero_identifier}",
+    summary="Hero Skill Combo",
+    description="Get the skill combo information for a specific hero.",
+)
 def hero_skill_combo(
     hero_identifier: Annotated[
         str,
         Path(
-            description=HERO_IDENTIFIER_DESCRIPTION
+            title="Hero Identifier",
+            description=HERO_IDENTIFIER_DESCRIPTION,
         )
     ],
     size: Annotated[
         int,
         Query(
+            title="Page Size",
+            description=SIZE_DESCRIPTION,
             ge=1,
-            description=SIZE_DESCRIPTION
         )
     ] = 20,
     index: Annotated[
         int,
         Query(
+            title="Page Index",
+            description=INDEX_DESCRIPTION,
             ge=1,
-            description=INDEX_DESCRIPTION
         )
     ] = 1,
     lang: Annotated[
         str,
         Query(
-            description=LANGUAGE_DESCRIPTION
+            title="Language",
+            description=LANGUAGE_DESCRIPTION,
         )
-    ] = "en",
+    ] = "en"
 ) -> object:
     hero_id = _hero_id_or_404(hero_identifier, lang)
     payload = {
@@ -411,18 +467,24 @@ def hero_skill_combo(
     return fetch_mlbb_post("2674711", payload, lang)
 
 
-@router.get("/hero-rate/{hero_identifier}", summary="Hero Rate Trends", description="Get rate trends for a specific hero over a specified time window.")
+@router.get(
+    path="/hero-rate/{hero_identifier}",
+    summary="Hero Rate Trends",
+    description="Get rate trends for a specific hero over a specified time window.",
+)
 def hero_rate(
     hero_identifier: Annotated[
         str,
         Path(
-            description=HERO_IDENTIFIER_DESCRIPTION
+            title="Hero Identifier",
+            description=HERO_IDENTIFIER_DESCRIPTION,
         )
     ],
     rank: Annotated[
         Literal["all", "epic", "legend", "mythic", "honor", "glory"],
         Query(
-            description=RANK_DESCRIPTION
+            title="Rank",
+            description=RANK_DESCRIPTION,
         ),
     ] = "all",
     past_days: Annotated[
@@ -435,23 +497,26 @@ def hero_rate(
     size: Annotated[
         int,
         Query(
+            title="Page Size",
+            description=SIZE_DESCRIPTION,
             ge=1,
-            description=SIZE_DESCRIPTION
         )
     ] = 20,
     index: Annotated[
         int,
         Query(
+            title="Page Index",
+            description=INDEX_DESCRIPTION,
             ge=1,
-            description=INDEX_DESCRIPTION
         )
     ] = 1,
     lang: Annotated[
         str,
         Query(
-            description=LANGUAGE_DESCRIPTION
+            title="Language",
+            description=LANGUAGE_DESCRIPTION,
         )
-    ] = "en",
+    ] = "en"
 ) -> object:
     hero_id = _hero_id_or_404(hero_identifier, lang)
     url_map = {
@@ -484,34 +549,42 @@ def hero_rate(
     return fetch_mlbb_post(url_map.get(past_days, "2674709"), payload, lang)
 
 
-@router.get("/hero-relation/{hero_identifier}", summary="Hero Relations", description="Get information about the relations of a specific hero.")
+@router.get(
+    path="/hero-relation/{hero_identifier}",
+    summary="Hero Relations",
+    description="Get information about the relations of a specific hero.",
+)
 def hero_relation(
     hero_identifier: Annotated[
         str,
         Path(
-            description=HERO_IDENTIFIER_DESCRIPTION
+            title="Hero Identifier",
+            description=HERO_IDENTIFIER_DESCRIPTION,
         )
     ],
     size: Annotated[
         int,
         Query(
+            title="Page Size",
+            description=SIZE_DESCRIPTION,
             ge=1,
-            description=SIZE_DESCRIPTION
         )
     ] = 20,
     index: Annotated[
         int,
         Query(
+            title="Page Index",
+            description=INDEX_DESCRIPTION,
             ge=1,
-            description=INDEX_DESCRIPTION
         )
     ] = 1,
     lang: Annotated[
         str,
         Query(
-            description=LANGUAGE_DESCRIPTION
+            title="Language",
+            description=LANGUAGE_DESCRIPTION,
         )
-    ] = "en",
+    ] = "en"
 ) -> object:
     hero_id = _hero_id_or_404(hero_identifier, lang)
     payload = {
@@ -531,40 +604,49 @@ def hero_relation(
     return fetch_mlbb_post("2756564", payload, lang)
 
 
-@router.get("/hero-counter/{hero_identifier}", summary="Hero Counters", description="Get information about heroes that counter a specific hero.")
+@router.get(
+    path="/hero-counter/{hero_identifier}",
+    summary="Hero Counters",
+    description="Get information about heroes that counter a specific hero.",
+)
 def hero_counter(
     hero_identifier: Annotated[
         str,
         Path(
-            description=HERO_IDENTIFIER_DESCRIPTION
+            title="Hero Identifier",
+            description=HERO_IDENTIFIER_DESCRIPTION,
         )
     ],
     rank: Annotated[
         Literal["all", "epic", "legend", "mythic", "honor", "glory"],
         Query(
-            description=RANK_DESCRIPTION
-        )
+            title="Rank",
+            description=RANK_DESCRIPTION,
+        ),
     ] = "all",
     size: Annotated[
         int,
         Query(
+            title="Page Size",
+            description=SIZE_DESCRIPTION,
             ge=1,
-            description=SIZE_DESCRIPTION
         )
     ] = 20,
     index: Annotated[
         int,
         Query(
+            title="Page Index",
+            description=INDEX_DESCRIPTION,
             ge=1,
-            description=INDEX_DESCRIPTION
         )
     ] = 1,
     lang: Annotated[
         str,
         Query(
-            description=LANGUAGE_DESCRIPTION
+            title="Language",
+            description=LANGUAGE_DESCRIPTION,
         )
-    ] = "en",
+    ] = "en"
 ) -> object:
     hero_id = _hero_id_or_404(hero_identifier, lang)
     payload = {
@@ -592,40 +674,49 @@ def hero_counter(
     return fetch_mlbb_post("2756569", payload, lang)
 
 
-@router.get("/hero-compatibility/{hero_identifier}", summary="Hero Compatibility", description="Get compatibility information for a specific hero.")
+@router.get(
+    path="/hero-compatibility/{hero_identifier}",
+    summary="Hero Compatibility",
+    description="Get compatibility information for a specific hero.",
+)
 def hero_compatibility(
     hero_identifier: Annotated[
         str,
         Path(
-            description=HERO_IDENTIFIER_DESCRIPTION
+            title="Hero Identifier",
+            description=HERO_IDENTIFIER_DESCRIPTION,
         )
     ],
     rank: Annotated[
         Literal["all", "epic", "legend", "mythic", "honor", "glory"],
         Query(
-            description=RANK_DESCRIPTION
+            title="Rank",
+            description=RANK_DESCRIPTION,
         ),
     ] = "all",
     size: Annotated[
         int,
         Query(
+            title="Page Size",
+            description=SIZE_DESCRIPTION,
             ge=1,
-            description=SIZE_DESCRIPTION
         )
     ] = 20,
     index: Annotated[
         int,
         Query(
+            title="Page Index",
+            description=INDEX_DESCRIPTION,
             ge=1,
-            description=INDEX_DESCRIPTION
         )
     ] = 1,
     lang: Annotated[
         str,
         Query(
-            description=LANGUAGE_DESCRIPTION
+            title="Language",
+            description=LANGUAGE_DESCRIPTION,
         )
-    ] = "en",
+    ] = "en"
 ) -> object:
     hero_id = _hero_id_or_404(hero_identifier, lang)
     payload = {

@@ -4,6 +4,7 @@ uvicorn==0.42.0
 python-decouple==3.8
 requests==2.32.5
 cryptography==46.0.5
+email-validator==2.3.0
 
 # dev
 pytest==9.0.2

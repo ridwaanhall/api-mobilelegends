@@ -18,29 +18,34 @@ router = APIRouter(prefix="/api/addon", tags=["addon"])
 )
 def win_rate(
     match_now: Annotated[
-        str | None,
+        int,
         Query(
             alias="match-now",
             title=TITLE_MATCH_NOW,
             description=DESCRIPTION_MATCH_NOW,
+            ge=0,
         ),
-    ] = None,
+    ],
     wr_now: Annotated[
-        str | None,
+        float,
         Query(
             alias="wr-now",
             title=TITLE_WR_NOW,
             description=DESCRIPTION_WR_NOW,
+            ge=0,
+            le=100,
         ),
-    ] = None,
+    ],
     wr_future: Annotated[
-        str | None,
+        float,
         Query(
             alias="wr-future",
             title=TITLE_WR_FUTURE,
             description=DESCRIPTION_WR_FUTURE,
+            ge=0,
+            le=100,
         ),
-    ] = None,
+    ],
 ) -> object:
     missing_params = [
         param

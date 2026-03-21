@@ -6,9 +6,7 @@ from typing import Any
 from fastapi import Request
 from fastapi.responses import JSONResponse
 
-
-LIVECHAT_LINK = "https://ridwaanhall.com/guestbook/"
-CONTACT_FORM_LINK = "https://ridwaanhall.com/contact/"
+from app.core.config import LIVECHAT_LINK, CONTACT_FORM_LINK
 
 
 class AppError(Exception):

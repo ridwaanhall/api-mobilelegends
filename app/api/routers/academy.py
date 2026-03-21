@@ -168,7 +168,8 @@ def roles(
             title="Language",
             description=LANGUAGE_DESCRIPTION,
         )
-    ] = "en") -> object:
+    ] = "en"
+) -> object:
     payload = {
         "pageSize": size,
         "pageIndex": index,

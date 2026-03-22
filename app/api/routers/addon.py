@@ -41,7 +41,7 @@ def win_rate(
             alias="wr-future",
             title=TITLE_WR_FUTURE,
             description=DESCRIPTION_WR_FUTURE,
-            ge=0,
+            gt=0,
             le=100,
         ),
     ],

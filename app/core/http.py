@@ -62,6 +62,7 @@ class MLBBHeaderBuilder:
     @staticmethod
     def get_identity_header(
         jwt: str | None = None,
+        x_token: str | None = None,
         x_actid: str | None = None,
         x_appid: str | None = None,
         lang: str | None = None,
@@ -84,6 +85,9 @@ class MLBBHeaderBuilder:
 
         if x_appid:
             headers["x-appid"] = x_appid
+
+        if x_token:
+            headers["x-token"] = x_token
 
         if lang:
             headers["x-lang"] = lang

@@ -2,7 +2,7 @@ from fastapi import APIRouter, Body, Depends, Query
 
 from app.api.dependencies import require_api_available
 
-from app.services.identity import fetch_identity_post
+from app.services.identity import fetch_identity_post, fetch_identity_stats
 
 from app.core.http import MLBBHeaderBuilder
 from app.core.param_descriptions import *
@@ -149,3 +149,32 @@ def user_info(
     )
     return fetch_identity_post("base/getBaseInfo", payload, headers)
 
+
+@router.post(
+    path="/user-stats",
+    summary="User Statistics",
+    description="Retrieve the authenticated player's statistics information using a valid JWT.",
+)
+def user_stats(
+    x_token: Annotated[
+        str,
+        Body(
+            title="X-Token",
+            description="The X-Token obtained from the /login endpoint. Same with JWT but in header format.",
+            embed=True,
+        )
+    ],
+    lang: Annotated[
+        LanguageEnum,
+        Query(
+            title=TITLE_LANGUAGE,
+            description=DESCRIPTION_LANGUAGE,
+        )
+    ] = LanguageEnum.ENGLISH,
+) -> object:
+    payload = {}
+    headers = MLBBHeaderBuilder.get_identity_header(
+        lang=lang,
+        x_token=x_token,
+    )
+    return fetch_identity_stats("battlereport/stats", payload, headers)

@@ -19,7 +19,7 @@ DEBUG: bool = config("DEBUG", default=False, cast=bool)
 # =========================
 # Availability Settings
 # =========================
-API_VERSION: str = env_str("API_VERSION", default="3.0.1")
+API_VERSION: str = env_str("API_VERSION", default="3.1.0")
 IS_AVAILABLE: bool = config("IS_AVAILABLE", default=True, cast=bool)
 DATE_AVAILABLE: str = env_str("DATE_AVAILABLE", default="March 18, 2026")
 

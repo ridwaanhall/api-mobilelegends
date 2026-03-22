@@ -2,7 +2,7 @@ from fastapi import APIRouter, Body, Depends, Query
 
 from app.api.dependencies import require_api_available
 
-from app.services.identity import fetch_identity_post, fetch_identity_stats
+from app.services.identity import fetch_identity_post, fetch_identity_actgateway
 
 from app.core.http import MLBBHeaderBuilder
 from app.core.param_descriptions import *
@@ -153,14 +153,14 @@ def user_info(
 @router.post(
     path="/user-stats",
     summary="User Statistics",
-    description="Retrieve the authenticated player's statistics information using a valid JWT.",
+    description="Retrieve the authenticated player's statistics information using a valid X-Token.",
 )
 def user_stats(
-    x_token: Annotated[
+    jwt: Annotated[
         str,
         Body(
-            title="X-Token",
-            description="The X-Token obtained from the /login endpoint. Same with JWT but in header format.",
+            title="JWT",
+            description="The JWT obtained from the /login endpoint.",
             embed=True,
         )
     ],
@@ -175,6 +175,36 @@ def user_stats(
     payload = {}
     headers = MLBBHeaderBuilder.get_identity_header(
         lang=lang,
-        x_token=x_token,
+        x_token=jwt,
     )
-    return fetch_identity_stats("battlereport/stats", payload, headers)
+    return fetch_identity_actgateway("battlereport/stats", payload, headers)
+
+
+@router.post(
+    path="/user-season",
+    summary="User Season List",
+    description="Retrieve the authenticated player's season information using a valid X-Token.",
+)
+def user_season(
+    jwt: Annotated[
+        str,
+        Body(
+            title="JWT",
+            description="The JWT obtained from the /login endpoint.",
+            embed=True,
+        )
+    ],
+    lang: Annotated[
+        LanguageEnum,
+        Query(
+            title=TITLE_LANGUAGE,
+            description=DESCRIPTION_LANGUAGE,
+        )
+    ] = LanguageEnum.ENGLISH,
+) -> object:
+    payload = {}
+    headers = MLBBHeaderBuilder.get_identity_header(
+        lang=lang,
+        x_token=jwt,
+    )
+    return fetch_identity_actgateway("battlereport/season/list", payload, headers)

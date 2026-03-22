@@ -11,7 +11,7 @@ def fetch_identity_post(path: str, payload: dict[str, Any], headers: dict) -> An
     url = f"{base_path}/{path}"
     return request_form(method="POST", url=url, payload=payload, headers=headers)
 
-def fetch_identity_stats(path: str, payload: dict[str, Any], headers: dict) -> Any:
+def fetch_identity_actgateway(path: str, payload: dict[str, Any], headers: dict) -> Any:
     base_path = BaseIdentityPathProvider.get_base_url_path_stats()
     url = f"{base_path}/{path}"
     return request_json(method="GET", url=url, headers=headers, payload=payload)

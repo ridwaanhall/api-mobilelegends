@@ -47,6 +47,10 @@ app = FastAPI(
             "description": "Endpoints for MLBB Academy resources and educational content."
         },
         {
+            "name": "identity",
+            "description": "Endpoints for user authentication and identity management."
+        },
+        {
             "name": "addon",
             "description": "Addon endpoints for supplementary tools and additional features."
         }

@@ -46,7 +46,7 @@ def hero_list(
             title=TITLE_SORT_ORDER,
             description=DESCRIPTION_SORT_ORDER,
         )
-    ] = SortOrderEnum.ASCENDING,
+    ] = SortOrderEnum.DESCENDING,
     lang: Annotated[
         LanguageEnum,
         Query(

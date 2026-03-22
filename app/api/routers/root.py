@@ -6,6 +6,7 @@ from urllib.parse import urljoin
 
 from fastapi import APIRouter
 from fastapi.responses import PlainTextResponse, RedirectResponse, Response
+from app.core.param_descriptions import *
 
 from app.core.config import (
     API_BASE_URL,
@@ -72,13 +73,27 @@ def _get_mlbb_academy_endpoints() -> dict[str, str]:
     return {}
 
 
-@router.get("/", include_in_schema=False)
-@router.get("/api/docs", include_in_schema=False)
+@router.get(
+    path="/",
+    summary=SUMMARY_API_ROOT,
+    description=DESCRIPTION_API_ROOT,
+    include_in_schema=False,
+)
+@router.get(
+    path="/api/docs",
+    summary=SUMMARY_API_DOCS,
+    description=DESCRIPTION_API_DOCS,
+    include_in_schema=False,
+)
 def api_docs_redirect() -> RedirectResponse:
     return RedirectResponse(url="/docs", status_code=307)
 
 
-@router.get("/api", summary="API Index and Status", description="Provides API metadata, status, and available services.")
+@router.get(
+    path="/api",
+    summary=SUMMARY_API_INDEX,
+    description=DESCRIPTION_API_INDEX,
+)
 def api_index() -> dict[str, object]:
     status_key = "available" if IS_AVAILABLE else "limited"
     status_info = API_STATUS_MESSAGES[status_key]
@@ -130,7 +145,11 @@ def api_index() -> dict[str, object]:
     }
 
 
-@router.get("/robots.txt", summary="Robots.txt for Web Crawlers", description="Provides instructions for web crawlers and bots accessing the API.")
+@router.get(
+    path="/robots.txt",
+    summary=SUMMARY_ROBOTS_TXT,
+    description=DESCRIPTION_ROBOTS_TXT,
+)
 def robots_txt() -> PlainTextResponse:
     sitemap_url = urljoin(BASE_URL, "sitemap.xml")
     host_url = BASE_URL.rstrip("/")
@@ -138,7 +157,11 @@ def robots_txt() -> PlainTextResponse:
     return PlainTextResponse(content=content)
 
 
-@router.get("/sitemap.xml", summary="Sitemap for Search Engines", description="Provides a sitemap for search engines to crawl the API endpoints.")
+@router.get(
+    path="/sitemap.xml",
+    summary=SUMMARY_SITEMAP_XML,
+    description=DESCRIPTION_SITEMAP_XML,
+)
 def sitemap_xml() -> Response:
     base_url = BASE_URL.rstrip("/")
     lastmod = datetime.now(timezone.utc).date().isoformat()

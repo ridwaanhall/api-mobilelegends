@@ -5,53 +5,116 @@ from typing import Annotated, Literal
 from fastapi import APIRouter, Depends, Path, Query
 
 from app.api.dependencies import require_api_available
-from app.core.hero_limits import validate_academy_hero_id
+
 from app.services.academy import fetch_academy_post, fetch_ratings_all, fetch_ratings_subject
+
+from app.core.enums import LanguageEnum, RankEnum, SortOrderEnum, HeroRoleEnum, HeroLaneEnum
+from app.core.filters import (
+    ROLE_MAP, LANE_MAP, validate_and_map_multi, validate_and_map_rank
+)
+from app.core.hero_limits import validate_academy_hero_id
+from app.core.param_descriptions import *
 
 router = APIRouter(prefix="/api/academy", tags=["academy"], dependencies=[Depends(require_api_available)])
 
-LANGUAGE_DESCRIPTION = (
-    "Language code for localized content. Supported codes: "
-    "en, id, es, pt, ru, tr, ar, de, fr, it, ja, ko, th, vi, zh-CN, zh-TW. "
-    "Default: en."
+
+@router.get(
+    path="/version",
+    summary=SUMMARY_ACADEMY_VERSION,
+    description=DESCRIPTION_ACADEMY_VERSION,
 )
-
-RANK_DESCRIPTION = "Rank filter. Allowed: all, epic, legend, mythic, honor, glory."
-HERO_ID_DESCRIPTION = (
-    "Hero ID. Minimum: 1. Maximum is validated dynamically from current `/api/academy/guide` total."
-)
-
-
-def _rank_value(rank: str) -> str:
-    rank_map = {
-        "all": "101",
-        "epic": "5",
-        "legend": "6",
-        "mythic": "7",
-        "honor": "8",
-        "glory": "9",
-    }
-    return rank_map.get(rank.lower(), "101")
-
-
-@router.get("/version", summary="Game Version Info", description="Get a list of game versions with release dates.")
-def version(lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en") -> object:
+def version(
+    size: Annotated[
+        int,
+        Query(
+            title=TITLE_PAGE_SIZE,
+            description=DESCRIPTION_PAGE_SIZE,
+            ge=1,
+        )
+    ] = 20,
+    index: Annotated[
+        int,
+        Query(
+            title=TITLE_PAGE_INDEX,
+            description=DESCRIPTION_PAGE_INDEX,
+            ge=1,
+        )
+    ] = 1,
+    order: Annotated[
+        SortOrderEnum,
+        Query(
+            title=TITLE_SORT_ORDER,
+            description=DESCRIPTION_SORT_ORDER,
+        )
+    ] = SortOrderEnum.DESCENDING,
+    lang: Annotated[
+        LanguageEnum,
+        Query(
+            title=TITLE_LANGUAGE,
+            description=DESCRIPTION_LANGUAGE,
+        )
+    ] = LanguageEnum.ENGLISH
+) -> object:
     payload = {
-        "pageSize": 20,
-        "pageIndex": 1,
-        "filters": [{"field": "formId", "operator": "eq", "value": 2777742}],
-        "sorts": [{"data": {"field": "createdAt", "order": "desc"}, "type": "sequence"}],
+        "pageSize": size,
+        "pageIndex": index,
+        "filters": [
+            {
+                "field": "formId",
+                "operator": "eq",
+                "value": 2777742
+            }
+        ],
+        "sorts": [
+            {
+                "data":
+                    {
+                        "field": "createdAt",
+                        "order": order
+                    }
+                ,
+                "type": "sequence"
+            }
+        ],
         "type": "form.item.all",
         "object": [2675413],
     }
     return fetch_academy_post("2718124", payload, lang)
 
 
-@router.get("/heroes", summary="Hero Catalog", description="Get a list of all heroes with basic information.")
-def heroes(lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en") -> object:
+@router.get(
+    path="/heroes",
+    summary=SUMMARY_ACADEMY_HEROES,
+    description=DESCRIPTION_ACADEMY_HEROES,
+)
+def heroes(
+    size: Annotated[
+        int,
+        Query(
+            title=TITLE_PAGE_SIZE,
+            description=DESCRIPTION_PAGE_SIZE,
+            ge=1,
+        )
+    ] = 20,
+    index: Annotated[
+        int,
+        Query(
+            title=TITLE_PAGE_INDEX,
+            description=DESCRIPTION_PAGE_INDEX,
+            ge=1,
+        )
+    ] = 1,
+    lang: Annotated[
+        LanguageEnum,
+        Query(
+            title=TITLE_LANGUAGE,
+            description=DESCRIPTION_LANGUAGE,
+        )
+    ] = LanguageEnum.ENGLISH
+) -> object:
     payload = {
-        "pageSize": 200,
-        "pageIndex": 1,
+        "pageSize": size,
+        "pageIndex": index,
         "filters": [],
         "sorts": [],
         "fields": ["head", "head_big", "hero.data.name", "hero.data.roadsort", "hero_id", "painting"],
@@ -60,67 +123,313 @@ def heroes(lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en")
     return fetch_academy_post("2766683", payload, lang)
 
 
-@router.get("/roles", summary="Hero Roles", description="Get a list of hero roles (tank, fighter, assassin, mage, marksman, support).")
-def roles(lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en") -> object:
+@router.get(
+    path="/roles",
+    summary=SUMMARY_ACADEMY_ROLES,
+    description=DESCRIPTION_ACADEMY_ROLES,
+)
+def roles(
+    size: Annotated[
+        int,
+        Query(
+            title=TITLE_PAGE_SIZE,
+            description=DESCRIPTION_PAGE_SIZE,
+            ge=1,
+        )
+    ] = 20,
+    index: Annotated[
+        int,
+        Query(
+            title=TITLE_PAGE_INDEX,
+            description=DESCRIPTION_PAGE_INDEX,
+            ge=1,
+        )
+    ] = 1,
+    order: Annotated[
+        SortOrderEnum,
+        Query(
+            title=TITLE_SORT_ORDER,
+            description=DESCRIPTION_SORT_ORDER,
+        )
+    ] = SortOrderEnum.ASCENDING,
+    lang: Annotated[
+        LanguageEnum,
+        Query(
+            title=TITLE_LANGUAGE,
+            description=DESCRIPTION_LANGUAGE,
+        )
+    ] = LanguageEnum.ENGLISH
+) -> object:
     payload = {
-        "pageSize": 50,
-        "pageIndex": 1,
+        "pageSize": size,
+        "pageIndex": index,
         "filters": [],
-        "sorts": [{"data": {"field": "emblem_id", "order": "asc"}, "type": "sequence"}],
+        "sorts": [
+            {
+                "data":
+                    {
+                        "field": "emblem_id",
+                        "order": order
+                    }
+                ,
+                "type": "sequence"
+            }
+        ],
         "object": [],
     }
     return fetch_academy_post("2740642", payload, lang)
 
 
-@router.get("/equipment", summary="Equipment (Items)", description="Get a list of all equipment (items) with details.")
-def equipment(lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en") -> object:
+@router.get(
+    path="/equipment",
+    summary=SUMMARY_ACADEMY_EQUIPMENT,
+    description=DESCRIPTION_ACADEMY_EQUIPMENT,
+)
+def equipment(
+    size: Annotated[
+        int,
+        Query(
+            title=TITLE_PAGE_SIZE,
+            description=DESCRIPTION_PAGE_SIZE,
+            ge=1,
+        )
+    ] = 20,
+    index: Annotated[
+        int,
+        Query(
+            title=TITLE_PAGE_INDEX,
+            description=DESCRIPTION_PAGE_INDEX,
+            ge=1,
+        )
+    ] = 1,
+    lang: Annotated[
+        LanguageEnum,
+        Query(
+            title=TITLE_LANGUAGE,
+            description=DESCRIPTION_LANGUAGE,
+        )
+    ] = LanguageEnum.ENGLISH
+) -> object:
     payload = {
-        "pageSize": 1000,
-        "pageIndex": 1,
+        "pageSize": size,
+        "pageIndex": index,
         "filters": [],
         "sorts": []
     }
     return fetch_academy_post("2775075", payload, lang)
 
 
-@router.get("/equipment-details", summary="Equipment Details", description="Get detailed information about a specific piece of equipment.")
-def equipment_details(lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en") -> object:
-    payload = {"pageSize": 200, "pageIndex": 1, "filters": [], "sorts": []}
+@router.get(
+    path="/equipment-details",
+    summary=SUMMARY_ACADEMY_EQUIPMENT_DETAILS,
+    description=DESCRIPTION_ACADEMY_EQUIPMENT_DETAILS,
+)
+def equipment_details(
+    size: Annotated[
+        int,
+        Query(
+            title=TITLE_PAGE_SIZE,
+            description=DESCRIPTION_PAGE_SIZE,
+            ge=1,
+        )
+    ] = 20,
+    index: Annotated[
+        int,
+        Query(
+            title=TITLE_PAGE_INDEX,
+            description=DESCRIPTION_PAGE_INDEX,
+            ge=1,
+        )
+    ] = 1,
+    lang: Annotated[
+        LanguageEnum,
+        Query(
+            title=TITLE_LANGUAGE,
+            description=DESCRIPTION_LANGUAGE,
+        )
+    ] = LanguageEnum.ENGLISH
+) -> object:
+    payload = {
+        "pageSize": size,
+        "pageIndex": index,
+        "filters": [],
+        "sorts": []
+    }
     return fetch_academy_post("2713995", payload, lang)
 
 
-@router.get("/spells", summary="Battle Spells", description="Get a list of all battle spells with details.")
-def spells(lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en") -> object:
-    payload = {"pageSize": 200, "pageIndex": 1, "filters": [], "sorts": []}
+@router.get(
+    path="/spells",
+    summary=SUMMARY_ACADEMY_SPELLS,
+    description=DESCRIPTION_ACADEMY_SPELLS,
+)
+def spells(
+    size: Annotated[
+        int,
+        Query(
+            title=TITLE_PAGE_SIZE,
+            description=DESCRIPTION_PAGE_SIZE,
+            ge=1,
+        )
+    ] = 20,
+    index: Annotated[
+        int,
+        Query(
+            title=TITLE_PAGE_INDEX,
+            description=DESCRIPTION_PAGE_INDEX,
+            ge=1,
+        )
+    ] = 1,
+    lang: Annotated[
+        LanguageEnum,
+        Query(
+            title=TITLE_LANGUAGE,
+            description=DESCRIPTION_LANGUAGE,
+        )
+    ] = LanguageEnum.ENGLISH
+) -> object:
+    payload = {
+        "pageSize": size,
+        "pageIndex": index,
+        "filters": [],
+        "sorts": []
+    }
     return fetch_academy_post("2718122", payload, lang)
 
 
-@router.get("/emblems", summary="Emblems", description="Get a list of all emblems with details.")
-def emblems(lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en") -> object:
-    payload = {"pageSize": 50, "pageIndex": 1, "filters": [], "sorts": []}
+@router.get(
+    path="/emblems",
+    summary=SUMMARY_ACADEMY_EMBLEMS,
+    description=DESCRIPTION_ACADEMY_EMBLEMS,
+)
+def emblems(
+    size: Annotated[
+        int,
+        Query(
+            title=TITLE_PAGE_SIZE,
+            description=DESCRIPTION_PAGE_SIZE,
+            ge=1,
+        )
+    ] = 20,
+    index: Annotated[
+        int,
+        Query(
+            title=TITLE_PAGE_INDEX,
+            description=DESCRIPTION_PAGE_INDEX,
+            ge=1,
+        )
+    ] = 1,
+    lang: Annotated[
+        LanguageEnum,
+        Query(
+            title=TITLE_LANGUAGE,
+            description=DESCRIPTION_LANGUAGE,
+        )
+    ] = LanguageEnum.ENGLISH
+) -> object:
+    payload = {
+        "pageSize": size,
+        "pageIndex": index,
+        "filters": [],
+        "sorts": []
+    }
     return fetch_academy_post("2718121", payload, lang)
 
 
-@router.get("/recommended", summary="Recommended Content", description="Get a list of recommended content.")
+@router.get(
+    path="/recommended",
+    summary=SUMMARY_ACADEMY_RECOMMENDED,
+    description=DESCRIPTION_ACADEMY_RECOMMENDED,
+)
 def recommended(
-    page: Annotated[int, Query(ge=1, description="Page index (1-based).")] = 1,
-    lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
+    size: Annotated[
+        int,
+        Query(
+            title=TITLE_PAGE_SIZE,
+            description=DESCRIPTION_PAGE_SIZE,
+            ge=1,
+        )
+    ] = 20,
+    index: Annotated[
+        int,
+        Query(
+            title=TITLE_PAGE_INDEX,
+            description=DESCRIPTION_PAGE_INDEX,
+            ge=1,
+        )
+    ] = 1,
+    order: Annotated[
+        SortOrderEnum,
+        Query(
+            title=TITLE_SORT_ORDER,
+            description=DESCRIPTION_SORT_ORDER,
+        )
+    ] = SortOrderEnum.DESCENDING,
+    lang: Annotated[
+        LanguageEnum,
+        Query(
+            title=TITLE_LANGUAGE,
+            description=DESCRIPTION_LANGUAGE,
+        )
+    ] = LanguageEnum.ENGLISH
 ) -> object:
     payload = {
-        "pageSize": 10,
-        "pageIndex": page,
+        "pageSize": size,
+        "pageIndex": index,
         "filters": [
-            {"field": "formId", "operator": "eq", "value": 2737553},
-            {"field": "data.state", "operator": "eq", "value": "release"},
-            {"field": "data.channels", "operator": "in", "value": ["recommend"]},
-            {"field": "uin", "operator": "contain", "value": "/.*/"},
-            {"field": "data.data.game_version", "operator": "contain", "value": "/.*/"},
-            {"field": "data.data.language", "operator": "eq", "value": lang},
-            {"field": "createdAt", "operator": "gte", "value": 1},
+            {
+                "field": "formId",
+                "operator": "eq",
+                "value": 2737553
+            },
+            {
+                "field": "data.state",
+                "operator": "eq",
+                "value": "release"
+            },
+            {
+                "field": "data.channels",
+                "operator": "in",
+                "value": ["recommend"]
+            },
+            {
+                "field": "uin",
+                "operator": "contain",
+                "value": "/.*/"
+            },
+            {
+                "field": "data.data.game_version",
+                "operator": "contain",
+                "value": "/.*/"
+            },
+            {
+                "field": "data.data.language",
+                "operator": "eq",
+                "value": lang
+            },
+            {
+                "field": "createdAt",
+                "operator": "gte",
+                "value": 1
+            },
         ],
         "sorts": [
-            {"data": {"field": "dynamic.hot", "order": "desc"}, "type": "sequence"},
-            {"data": {"field": "createdAt", "order": "desc"}, "type": "sequence"},
+            {
+                "data":
+                {
+                    "field": "dynamic.hot",
+                    "order": order
+                },
+                "type": "sequence"
+            },
+            {
+                "data":
+                {
+                    "field": "createdAt",
+                    "order": order
+                },
+                "type": "sequence"
+            },
         ],
         "type": "form.item.all",
         "object": [2675413],
@@ -128,18 +437,63 @@ def recommended(
     return fetch_academy_post("2718124", payload, lang)
 
 
-@router.get("/recommended/{recommended_id}", summary="Recommended Content Detail", description="Get detailed information about a specific recommended content item.")
+@router.get(
+    path="/recommended/{recommended_id}",
+    summary=SUMMARY_ACADEMY_RECOMMENDED_DETAIL,
+    description=DESCRIPTION_ACADEMY_RECOMMENDED_DETAIL,
+)
 def recommended_detail(
-    recommended_id: Annotated[int, Path(ge=1, description="Recommended post identifier.")],
-    lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
+    recommended_id: Annotated[
+        int,
+        Path(
+            title=TITLE_RECOMMENDED_POST_ID,
+            description=DESCRIPTION_RECOMMENDED_POST_ID,
+            ge=1
+        )
+    ],
+    size: Annotated[
+        int,
+        Query(
+            title=TITLE_PAGE_SIZE,
+            description=DESCRIPTION_PAGE_SIZE,
+            ge=1,
+        )
+    ] = 20,
+    index: Annotated[
+        int,
+        Query(
+            title=TITLE_PAGE_INDEX,
+            description=DESCRIPTION_PAGE_INDEX,
+            ge=1,
+        )
+    ] = 1,
+    lang: Annotated[
+        LanguageEnum,
+        Query(
+            title=TITLE_LANGUAGE,
+            description=DESCRIPTION_LANGUAGE,
+        )
+    ] = LanguageEnum.ENGLISH
 ) -> object:
     payload = {
-        "pageSize": 20,
-        "pageIndex": 1,
+        "pageSize": size,
+        "pageIndex": index,
         "filters": [
-            {"field": "formId", "operator": "eq", "value": 2737553},
-            {"field": "id", "operator": "eq", "value": recommended_id},
-            {"field": "data.state", "operator": "eq", "value": "release"},
+            {
+                "field": "formId",
+                "operator": "eq",
+                "value": 2737553
+            },
+            {
+                "field": "id",
+                "operator": "eq",
+                "value": recommended_id
+            },
+            {
+                "field": "data.state",
+                "operator": "eq",
+                "value": "release"
+            },
         ],
         "sorts": [],
         "type": "form.item.all",
@@ -148,82 +502,224 @@ def recommended_detail(
     return fetch_academy_post("2718124", payload, lang)
 
 
-@router.get("/guide", summary="Guide Hero (Similar to Hero Catalog with role/lane filters)", description="Get a list of heroes with filtering options for role and lane.")
+@router.get(
+    path="/guide",
+    summary=SUMMARY_ACADEMY_GUIDE,
+    description=DESCRIPTION_ACADEMY_GUIDE,
+)
 def guide(
-    size: Annotated[int, Query(ge=1, le=5000, description="Page size. Recommended range: 1-5000.")] = 2000,
-    page: Annotated[int, Query(ge=1, description="Page index (1-based).")] = 1,
     role: Annotated[
-        str | None,
+        list[str],
         Query(
-            description="Role code list separated by comma. Allowed values: t (tank), f (fighter), a (assassin), m (mage), mm (marksman), s (support). Example: t,mm",
-        ),
-    ] = None,
+            title=TITLE_ROLE,
+            description=DESCRIPTION_ROLE,
+        )
+    ] = [
+        HeroRoleEnum.TANK,
+        HeroRoleEnum.FIGHTER,
+        HeroRoleEnum.ASSASSIN,
+        HeroRoleEnum.MAGE,
+        HeroRoleEnum.MARKSMAN,
+        HeroRoleEnum.SUPPORT,
+    ],
     lane: Annotated[
-        str | None,
+        list[str],
         Query(
-            description="Lane code list separated by comma. Allowed values: e (exp), m (mid), r (roam), j (jungle), g (gold). Example: e,j",
-        ),
-    ] = None,
-    lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
+            title=TITLE_LANE,
+            description=DESCRIPTION_LANE,
+        )
+    ] = [
+        HeroLaneEnum.EXP,
+        HeroLaneEnum.MID,
+        HeroLaneEnum.ROAM,
+        HeroLaneEnum.JUNGLE,
+        HeroLaneEnum.GOLD,
+    ],
+    size: Annotated[
+        int,
+        Query(
+            title=TITLE_PAGE_SIZE,
+            description=DESCRIPTION_PAGE_SIZE,
+            ge=1,
+        )
+    ] = 20,
+    index: Annotated[
+        int,
+        Query(
+            title=TITLE_PAGE_INDEX,
+            description=DESCRIPTION_PAGE_INDEX,
+            ge=1,
+        )
+    ] = 1,
+    order: Annotated[
+        SortOrderEnum,
+        Query(
+            title=TITLE_SORT_ORDER,
+            description=DESCRIPTION_SORT_ORDER,
+        )
+    ] = SortOrderEnum.ASCENDING,
+    lang: Annotated[
+        LanguageEnum,
+        Query(
+            title=TITLE_LANGUAGE,
+            description=DESCRIPTION_LANGUAGE,
+        )
+    ] = LanguageEnum.ENGLISH
 ) -> object:
-    role_map = {"t": 1, "f": 2, "a": 3, "m": 4, "mm": 5, "s": 6}
-    lane_map = {"e": 1, "m": 2, "r": 3, "j": 4, "g": 5}
-
-    role_values: list[int] = []
-    if role:
-        role_values = [role_map[item] for item in role.split(",") if item in role_map]
-
-    lane_values: list[int] = []
-    if lane:
-        lane_values = [lane_map[item] for item in lane.split(",") if item in lane_map]
-
+    role_values = validate_and_map_multi(role, ROLE_MAP, [1, 2, 3, 4, 5, 6], "role")
+    lane_values = validate_and_map_multi(lane, LANE_MAP, [1, 2, 3, 4, 5], "lane")
+    
     payload = {
         "pageSize": size,
-        "pageIndex": page,
+        "pageIndex": index,
         "filters": [
-            {"field": "<hero.data.sortid>", "operator": "hasAnyOf", "value": role_values or [1, 2, 3, 4, 5, 6]},
-            {"field": "<hero.data.roadsort>", "operator": "hasAnyOf", "value": lane_values or [1, 2, 3, 4, 5]},
+            {
+                "field":"<hero.data.sortid>",
+                "operator": "hasAnyOf",
+                "value": role_values
+            },
+            {
+                "field":"<hero.data.roadsort>",
+                "operator": "hasAnyOf",
+                "value": lane_values
+            },
         ],
-        "sorts": [{"data": {"field": "hero_id", "order": "desc"}, "type": "sequence"}],
+        "sorts": [
+            {
+                "data":
+                    {
+                        "field": "hero_id",
+                        "order": order
+                    },
+                "type": "sequence"
+            }
+        ],
         "fields": ["head", "hero_id", "hero.data.name"],
         "object": [],
     }
     return fetch_academy_post("2766683", payload, lang)
 
 
-@router.get("/guide/{hero_id}/stats", summary="Guide Hero Statistics (Win Rate, Pick Rate, Ban Rate, etc.)", description="Get statistics for a specific hero based on their performance in different ranks.")
+@router.get(
+    path="/guide/{hero_id}/stats",
+    summary=SUMMARY_ACADEMY_GUIDE_STATS,
+    description=DESCRIPTION_ACADEMY_GUIDE_STATS,
+)
 def guide_stats(
-    hero_id: Annotated[int, Path(ge=1, description=HERO_ID_DESCRIPTION)],
+    hero_id: Annotated[
+        int,
+        Path(
+            title=TITLE_HERO_ID,
+            description=DESCRIPTION_HERO_ID,
+            ge=1,
+        )
+    ],
     rank: Annotated[
-        Literal["all", "epic", "legend", "mythic", "honor", "glory"],
-        Query(description=RANK_DESCRIPTION),
-    ] = "all",
-    lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
+        RankEnum,
+        Query(
+            title=TITLE_RANK,
+            description=DESCRIPTION_RANK,
+        ),
+    ] = RankEnum.ALL,
+    size: Annotated[
+        int,
+        Query(
+            title=TITLE_PAGE_SIZE,
+            description=DESCRIPTION_PAGE_SIZE,
+            ge=1,
+        )
+    ] = 20,
+    index: Annotated[
+        int,
+        Query(
+            title=TITLE_PAGE_INDEX,
+            description=DESCRIPTION_PAGE_INDEX,
+            ge=1,
+        )
+    ] = 1,
+    lang: Annotated[
+        LanguageEnum,
+        Query(
+            title=TITLE_LANGUAGE,
+            description=DESCRIPTION_LANGUAGE,
+        )
+    ] = LanguageEnum.ENGLISH
 ) -> object:
     validate_academy_hero_id(hero_id, lang)
     payload = {
-        "pageSize": 20,
-        "pageIndex": 1,
+        "pageSize": size,
+        "pageIndex": index,
         "filters": [
-            {"field": "main_heroid", "operator": "eq", "value": hero_id},
-            {"field": "bigrank", "operator": "eq", "value": _rank_value(rank)},
-            {"field": "match_type", "operator": "eq", "value": 1},
+            {
+                "field": "main_heroid",
+                "operator": "eq",
+                "value": hero_id
+            },
+            {
+                "field": "bigrank",
+                "operator": "eq",
+                "value": validate_and_map_rank(rank)
+            },
+            {
+                "field": "match_type",
+                "operator": "eq",
+                "value": 1
+            }
         ],
         "sorts": [],
     }
     return fetch_academy_post("2755183", payload, lang)
 
 
-@router.get("/guide/{hero_id}/lane", summary="Guide Hero Lane Distribution", description="Get lane distribution information for a specific hero.")
+@router.get(
+    path="/guide/{hero_id}/lane",
+    summary=SUMMARY_ACADEMY_GUIDE_LANE,
+    description=DESCRIPTION_ACADEMY_GUIDE_LANE,
+)
 def guide_lane(
-    hero_id: Annotated[int, Path(ge=1, description=HERO_ID_DESCRIPTION)],
-    lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
+    hero_id: Annotated[
+        int,
+        Path(
+            title=TITLE_HERO_ID,
+            description=DESCRIPTION_HERO_ID,
+            ge=1,
+        )
+    ],
+    size: Annotated[
+        int,
+        Query(
+            title=TITLE_PAGE_SIZE,
+            description=DESCRIPTION_PAGE_SIZE,
+            ge=1,
+        )
+    ] = 20,
+    index: Annotated[
+        int,
+        Query(
+            title=TITLE_PAGE_INDEX,
+            description=DESCRIPTION_PAGE_INDEX,
+            ge=1,
+        )
+    ] = 1,
+    lang: Annotated[
+        LanguageEnum,
+        Query(
+            title=TITLE_LANGUAGE,
+            description=DESCRIPTION_LANGUAGE,
+        )
+    ] = LanguageEnum.ENGLISH
 ) -> object:
     validate_academy_hero_id(hero_id, lang)
     payload = {
-        "pageSize": 20,
-        "pageIndex": 1,
-        "filters": [{"field": "hero_id", "operator": "eq", "value": hero_id}],
+        "pageSize": size,
+        "pageIndex": index,
+        "filters": [
+            {
+                "field": "hero_id",
+                "operator": "eq",
+                "value": hero_id
+            }
+        ],
         "sorts": [],
         "fields": ["hero_id", "hero.data.roadsort"],
         "object": [],
@@ -231,146 +727,470 @@ def guide_lane(
     return fetch_academy_post("2766683", payload, lang)
 
 
-@router.get("/guide/{hero_id}/time-win-rate/{lane_id}", summary="Guide Hero Time-based Win Rate for Lane", description="Get time-based win rate information for a specific hero in a specific lane.")
+@router.get(
+    path="/guide/{hero_id}/time-win-rate/{lane_id}",
+    summary=SUMMARY_ACADEMY_GUIDE_TIME_WIN_RATE,
+    description=DESCRIPTION_ACADEMY_GUIDE_TIME_WIN_RATE,
+)
 def guide_time_win_rate(
-    hero_id: Annotated[int, Path(ge=1, description=HERO_ID_DESCRIPTION)],
-    lane_id: Annotated[int, Path(ge=1, le=5, description="Lane ID. Allowed values: 1 (exp), 2 (mid), 3 (roam), 4 (jungle), 5 (gold).")],
+    hero_id: Annotated[
+        int,
+        Path(
+            title=TITLE_HERO_ID,
+            description=DESCRIPTION_HERO_ID,
+            ge=1,
+        )
+    ],
+    lane_id: Annotated[
+        int,
+        Path(
+            title="Lane ID",
+            description="Lane ID. Allowed values: 1 (exp), 2 (mid), 3 (roam), 4 (jungle), 5 (gold).",
+            ge=1,
+            le=5,
+        )
+    ],
     rank: Annotated[
-        Literal["all", "epic", "legend", "mythic", "honor", "glory"],
-        Query(description=RANK_DESCRIPTION),
-    ] = "all",
-    lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
+        RankEnum,
+        Query(
+            title=TITLE_RANK,
+            description=DESCRIPTION_RANK,
+        ),
+    ] = RankEnum.ALL,
+    size: Annotated[
+        int,
+        Query(
+            title=TITLE_PAGE_SIZE,
+            description=DESCRIPTION_PAGE_SIZE,
+            ge=1,
+        )
+    ] = 20,
+    index: Annotated[
+        int,
+        Query(
+            title=TITLE_PAGE_INDEX,
+            description=DESCRIPTION_PAGE_INDEX,
+            ge=1,
+        )
+    ] = 1,
+    lang: Annotated[
+        LanguageEnum,
+        Query(
+            title=TITLE_LANGUAGE,
+            description=DESCRIPTION_LANGUAGE,
+        )
+    ] = LanguageEnum.ENGLISH
 ) -> object:
     validate_academy_hero_id(hero_id, lang)
     payload = {
-        "pageSize": 20,
-        "pageIndex": 1,
+        "pageSize": size,
+        "pageIndex": index,
         "filters": [
-            {"field": "heroid", "operator": "eq", "value": hero_id},
-            {"field": "big_rank", "operator": "eq", "value": _rank_value(rank)},
-            {"field": "real_road", "operator": "eq", "value": lane_id},
+            {
+                "field": "heroid",
+                "operator": "eq",
+                "value": hero_id
+            },
+            {
+                "field": "big_rank",
+                "operator": "eq",
+                "value": validate_and_map_rank(rank)
+            },
+            {
+                "field": "real_road",
+                "operator": "eq",
+                "value": lane_id
+            },
         ],
         "sorts": [],
     }
     return fetch_academy_post("2777027", payload, lang)
 
 
-@router.get("/guide/{hero_id}/builds", summary="Guide Hero Builds (Recommended Equipment) for Lane", description="Get recommended equipment builds for a specific hero in a specific lane.")
+@router.get(
+    path="/guide/{hero_id}/builds",
+    summary=SUMMARY_ACADEMY_GUIDE_BUILDS,
+    description=DESCRIPTION_ACADEMY_GUIDE_BUILDS,
+    deprecated=True,
+)
 def guide_builds(
-    hero_id: Annotated[int, Path(ge=1, description=HERO_ID_DESCRIPTION)],
+    hero_id: Annotated[
+        int,
+        Path(
+            title=TITLE_HERO_ID,
+            description=DESCRIPTION_HERO_ID,
+            ge=1,
+        )
+    ],
     rank: Annotated[
-        Literal["all", "epic", "legend", "mythic", "honor", "glory"],
-        Query(description=RANK_DESCRIPTION),
-    ] = "all",
-    lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
+        RankEnum,
+        Query(
+            title=TITLE_RANK,
+            description=DESCRIPTION_RANK,
+        ),
+    ] = RankEnum.ALL,
+    size: Annotated[
+        int,
+        Query(
+            title=TITLE_PAGE_SIZE,
+            description=DESCRIPTION_PAGE_SIZE,
+            ge=1,
+        )
+    ] = 20,
+    index: Annotated[
+        int,
+        Query(
+            title=TITLE_PAGE_INDEX,
+            description=DESCRIPTION_PAGE_INDEX,
+            ge=1,
+        )
+    ] = 1,
+    lang: Annotated[
+        LanguageEnum,
+        Query(
+            title=TITLE_LANGUAGE,
+            description=DESCRIPTION_LANGUAGE,
+        )
+    ] = LanguageEnum.ENGLISH
 ) -> object:
     validate_academy_hero_id(hero_id, lang)
     payload = {
-        "pageSize": 20,
-        "pageIndex": 1,
+        "pageSize": size,
+        "pageIndex": index,
         "filters": [
-            {"field": "heroid", "operator": "eq", "value": hero_id},
-            {"field": "real_road", "operator": "eq", "value": "2"},
-            {"field": "big_rank", "operator": "eq", "value": _rank_value(rank)},
+            {
+                "field": "heroid",
+                "operator": "eq",
+                "value": hero_id
+            },
+            {
+                "field": "real_road",
+                "operator": "eq",
+                "value": "2"
+            },
+            {
+                "field": "big_rank",
+                "operator": "eq",
+                "value": validate_and_map_rank(rank)
+            }
         ],
         "sorts": [],
     }
     return fetch_academy_post("2776688", payload, lang)
 
 
-@router.get("/guide/{hero_id}/counters", summary="Guide Hero Counters", description="Get counter information for a specific hero.")
+@router.get(
+    path="/guide/{hero_id}/counters",
+    summary=SUMMARY_ACADEMY_GUIDE_COUNTERS,
+    description=DESCRIPTION_ACADEMY_GUIDE_COUNTERS,
+)
 def guide_counters(
-    hero_id: Annotated[int, Path(ge=1, description=HERO_ID_DESCRIPTION)],
+    hero_id: Annotated[
+        int,
+        Path(
+            title=TITLE_HERO_ID,
+            description=DESCRIPTION_HERO_ID,
+            ge=1,
+        )
+    ],
     rank: Annotated[
-        Literal["all", "epic", "legend", "mythic", "honor", "glory"],
-        Query(description=RANK_DESCRIPTION),
-    ] = "all",
-    lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
+        RankEnum,
+        Query(
+            title=TITLE_RANK,
+            description=DESCRIPTION_RANK,
+        ),
+    ] = RankEnum.ALL,
+    size: Annotated[
+        int,
+        Query(
+            title=TITLE_PAGE_SIZE,
+            description=DESCRIPTION_PAGE_SIZE,
+            ge=1,
+        )
+    ] = 20,
+    index: Annotated[
+        int,
+        Query(
+            title=TITLE_PAGE_INDEX,
+            description=DESCRIPTION_PAGE_INDEX,
+            ge=1,
+        )
+    ] = 1,
+    lang: Annotated[
+        LanguageEnum,
+        Query(
+            title=TITLE_LANGUAGE,
+            description=DESCRIPTION_LANGUAGE,
+        )
+    ] = LanguageEnum.ENGLISH
 ) -> object:
     validate_academy_hero_id(hero_id, lang)
     payload = {
-        "pageSize": 200,
-        "pageIndex": 1,
+        "pageSize": size,
+        "pageIndex": index,
         "filters": [
-            {"field": "main_heroid", "operator": "eq", "value": hero_id},
-            {"field": "camp_type", "operator": "eq", "value": 0},
-            {"field": "big_rank", "operator": "eq", "value": _rank_value(rank)},
+            {
+                "field": "main_heroid",
+                "operator": "eq",
+                "value": hero_id
+            },
+            {
+                "field": "camp_type",
+                "operator": "eq",
+                "value": 0
+            },
+            {
+                "field": "big_rank",
+                "operator": "eq",
+                "value": validate_and_map_rank(rank)
+            }
         ],
         "sorts": [],
     }
     return fetch_academy_post("2777391", payload, lang)
 
 
-@router.get("/guide/{hero_id}/teammates", summary="Guide Hero Teammates", description="Get teammate information for a specific hero.")
+@router.get(
+    path="/guide/{hero_id}/teammates",
+    summary=SUMMARY_ACADEMY_GUIDE_TEAMMATES,
+    description=DESCRIPTION_ACADEMY_GUIDE_TEAMMATES,
+)
 def guide_teammates(
-    hero_id: Annotated[int, Path(ge=1, description=HERO_ID_DESCRIPTION)],
+    hero_id: Annotated[
+        int,
+        Path(
+            title=TITLE_HERO_ID,
+            description=DESCRIPTION_HERO_ID,
+            ge=1,
+        )
+    ],
     rank: Annotated[
-        Literal["all", "epic", "legend", "mythic", "honor", "glory"],
-        Query(description=RANK_DESCRIPTION),
-    ] = "all",
-    lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
+        RankEnum,
+        Query(
+            title=TITLE_RANK,
+            description=DESCRIPTION_RANK,
+        ),
+    ] = RankEnum.ALL,
+    size: Annotated[
+        int,
+        Query(
+            title=TITLE_PAGE_SIZE,
+            description=DESCRIPTION_PAGE_SIZE,
+            ge=1,
+        )
+    ] = 20,
+    index: Annotated[
+        int,
+        Query(
+            title=TITLE_PAGE_INDEX,
+            description=DESCRIPTION_PAGE_INDEX,
+            ge=1,
+        )
+    ] = 1,
+    lang: Annotated[
+        LanguageEnum,
+        Query(
+            title=TITLE_LANGUAGE,
+            description=DESCRIPTION_LANGUAGE,
+        )
+    ] = LanguageEnum.ENGLISH
 ) -> object:
     validate_academy_hero_id(hero_id, lang)
     payload = {
-        "pageSize": 200,
-        "pageIndex": 1,
+        "pageSize": size,
+        "pageIndex": index,
         "filters": [
-            {"field": "main_heroid", "operator": "eq", "value": hero_id},
-            {"field": "camp_type", "operator": "eq", "value": "1"},
-            {"field": "big_rank", "operator": "eq", "value": _rank_value(rank)},
+            {
+                "field": "main_heroid",
+                "operator": "eq",
+                "value": hero_id
+            },
+            {
+                "field": "camp_type",
+                "operator": "eq",
+                "value": "1"
+            },
+            {
+                "field": "big_rank",
+                "operator": "eq",
+                "value": validate_and_map_rank(rank)
+            }
         ],
         "sorts": [],
     }
     return fetch_academy_post("2777391", payload, lang)
 
 
-@router.get("/guide/{hero_id}/trends", summary="Guide Hero Trends (Recent Performance Changes)", description="Get trend information for a specific hero over a specified time window.")
+@router.get(
+    path="/guide/{hero_id}/trends",
+    summary=SUMMARY_ACADEMY_GUIDE_TRENDS,
+    description=DESCRIPTION_ACADEMY_GUIDE_TRENDS,
+)
 def guide_trends(
-    hero_id: Annotated[int, Path(ge=1, description=HERO_ID_DESCRIPTION)],
+    hero_id: Annotated[
+        int,
+        Path(
+            title=TITLE_HERO_ID,
+            description=DESCRIPTION_HERO_ID,
+            ge=1,
+        )
+    ],
     days: Annotated[
         Literal["7", "15", "30"],
-        Query(description="Trend window in days. Allowed: 7, 15, 30."),
+        Query(
+            title=TITLE_TREND_WINDOW,
+            description=DESCRIPTION_TREND_WINDOW,
+        ),
     ] = "7",
     rank: Annotated[
-        Literal["all", "epic", "legend", "mythic", "honor", "glory"],
-        Query(description=RANK_DESCRIPTION),
-    ] = "all",
-    lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
+        RankEnum,
+        Query(
+            title=TITLE_RANK,
+            description=DESCRIPTION_RANK,
+        ),
+    ] = RankEnum.ALL,
+    size: Annotated[
+        int,
+        Query(
+            title=TITLE_PAGE_SIZE,
+            description=DESCRIPTION_PAGE_SIZE,
+            ge=1,
+        )
+    ] = 20,
+    index: Annotated[
+        int,
+        Query(
+            title=TITLE_PAGE_INDEX,
+            description=DESCRIPTION_PAGE_INDEX,
+            ge=1,
+        )
+    ] = 1,
+    lang: Annotated[
+        LanguageEnum,
+        Query(
+            title=TITLE_LANGUAGE,
+            description=DESCRIPTION_LANGUAGE,
+        )
+    ] = LanguageEnum.ENGLISH
 ) -> object:
     validate_academy_hero_id(hero_id, lang)
-    day_map = {"7": "2755185", "15": "2755186", "30": "2755187"}
+    day_map = {
+        "7": "2755185",
+        "15": "2755186",
+        "30": "2755187"
+    }
     payload = {
-        "pageSize": 20,
-        "pageIndex": 1,
+        "pageSize": size,
+        "pageIndex": index,
         "filters": [
-            {"field": "main_heroid", "operator": "eq", "value": hero_id},
-            {"field": "bigrank", "operator": "eq", "value": _rank_value(rank)},
-            {"field": "match_type", "operator": "eq", "value": 1},
+            {
+                "field": "main_heroid",
+                "operator": "eq",
+                "value": hero_id
+            },
+            {
+                "field": "bigrank",
+                "operator": "eq",
+                "value": validate_and_map_rank(rank)
+            },
+            {
+                "field": "match_type",
+                "operator": "eq",
+                "value": 1
+            }
         ],
         "sorts": [],
     }
     return fetch_academy_post(day_map.get(days, "2755185"), payload, lang)
 
 
-@router.get("/guide/{hero_id}/recommended", summary="Guide Recommended Content", description="Get recommended content for a specific hero.")
+@router.get(
+    path="/guide/{hero_id}/recommended",
+    summary=SUMMARY_ACADEMY_GUIDE_RECOMMENDED,
+    description=DESCRIPTION_ACADEMY_GUIDE_RECOMMENDED,
+)
 def guide_recommended(
-    hero_id: Annotated[int, Path(ge=1, description=HERO_ID_DESCRIPTION)],
-    page: Annotated[int, Query(ge=1, description="Page index (1-based).")] = 1,
-    lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
+    hero_id: Annotated[
+        int,
+        Path(
+            ge=1,
+            description=DESCRIPTION_HERO_ID,
+        )
+    ],
+    size: Annotated[
+        int,
+        Query(
+            title=TITLE_PAGE_SIZE,
+            description=DESCRIPTION_PAGE_SIZE,
+            ge=1,
+        )
+    ] = 20,
+    index: Annotated[
+        int,
+        Query(
+            title=TITLE_PAGE_INDEX,
+            description=DESCRIPTION_PAGE_INDEX,
+            ge=1,
+        )
+    ] = 1,
+    order: Annotated[
+        SortOrderEnum,
+        Query(
+            title=TITLE_SORT_ORDER,
+            description="Sort order for recommendation hotness and creation time.",
+        ),
+    ] = SortOrderEnum.DESCENDING,
+    lang: Annotated[
+        LanguageEnum,
+        Query(
+            title=TITLE_LANGUAGE,
+            description=DESCRIPTION_LANGUAGE,
+        )
+    ] = LanguageEnum.ENGLISH
 ) -> object:
     validate_academy_hero_id(hero_id, lang)
     payload = {
-        "pageSize": 20,
-        "pageIndex": page,
+        "pageSize": size,
+        "pageIndex": index,
         "filters": [
-            {"field": "formId", "operator": "eq", "value": 2737553},
-            {"field": "data.state", "operator": "eq", "value": "release"},
-            {"field": "data.data.hero.hero_id", "operator": "eq", "value": hero_id},
-            {"field": "data.data.language", "operator": "eq", "value": lang},
+            {
+                "field": "formId",
+                "operator": "eq",
+                "value": 2737553
+            },
+            {
+                "field": "data.state",
+                "operator": "eq",
+                "value": "release"
+            },
+            {
+                "field": "data.data.hero.hero_id",
+                "operator": "eq",
+                "value": hero_id
+            },
+            {
+                "field": "data.data.language",
+                "operator": "eq",
+                "value": lang
+            },
         ],
         "sorts": [
-            {"data": {"field": "data.sort", "order": "desc"}, "type": "sequence"},
-            {"data": {"field": "createdAt", "order": "desc"}, "type": "sequence"},
+            {
+                "data":
+                    {
+                        "field": "data.sort",
+                        "order": order
+                    },
+                "type": "sequence"
+            },
+            {
+                "data":
+                    {
+                        "field": "createdAt",
+                        "order": order
+                    },
+                "type": "sequence"
+            }
         ],
         "type": "form.item.all",
         "object": [2675413],
@@ -378,14 +1198,44 @@ def guide_recommended(
     return fetch_academy_post("2718124", payload, lang)
 
 
-@router.get("/hero-ratings", summary="Hero Ratings Index", description="Get a list of all hero ratings.")
-def hero_ratings(lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en") -> object:
+@router.get(
+    path="/hero-ratings",
+    summary=SUMMARY_ACADEMY_HERO_RATINGS,
+    description=DESCRIPTION_ACADEMY_HERO_RATINGS,
+)
+def hero_ratings(
+    lang: Annotated[
+        LanguageEnum,
+        Query(
+            title=TITLE_LANGUAGE,
+            description=DESCRIPTION_LANGUAGE,
+        )
+    ] = LanguageEnum.ENGLISH
+) -> object:
     return fetch_ratings_all(lang)
 
 
-@router.get("/hero-ratings/{subject}", summary="Hero Ratings by Subject ID", description="Get hero ratings for a specific subject.")
+@router.get(
+    path="/hero-ratings/{subject}",
+    summary=SUMMARY_ACADEMY_HERO_RATINGS_SUBJECT,
+    description=DESCRIPTION_ACADEMY_HERO_RATINGS_SUBJECT,
+)
 def hero_ratings_subject(
-    subject: Annotated[str, Path(min_length=1, description="Rating subject key from the ratings index response.")],
-    lang: Annotated[str, Query(description=LANGUAGE_DESCRIPTION)] = "en",
+    subject: Annotated[
+        str,
+        Path(
+            title=TITLE_RATING_SUBJECT,
+            description=DESCRIPTION_RATING_SUBJECT,
+            min_length=7,
+            max_length=7,
+        )
+    ],
+    lang: Annotated[
+        LanguageEnum,
+        Query(
+            title=TITLE_LANGUAGE,
+            description=DESCRIPTION_LANGUAGE,
+        )
+    ] = LanguageEnum.ENGLISH
 ) -> object:
     return fetch_ratings_subject(lang, subject)

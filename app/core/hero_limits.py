@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from time import monotonic
 
-from app.core.errors import AppError
+from app.core.exceptions import AppError
 from app.services.academy import fetch_academy_post
 from app.services.mlbb import fetch_mlbb_post
 

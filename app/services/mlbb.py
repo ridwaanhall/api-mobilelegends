@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from typing import Any
 
-from app.core.config import MLBB_URL
+from app.core.config import RONE_DEV_ACCESS_KEY
 from app.core.http import MLBBHeaderBuilder, request_json
 from app.core.security import BasePathProvider
 
@@ -36,7 +36,7 @@ def _hero_list_payload() -> dict[str, Any]:
 
 def get_hero_id_by_name(hero_name: str, lang: str = "en") -> int:
     base_path = BasePathProvider.get_base_path()
-    url = f"{MLBB_URL}{base_path}/2756564"
+    url = f"{RONE_DEV_ACCESS_KEY}{base_path}/2756564"
     data = request_json(method="POST", url=url, payload=_hero_list_payload(), headers=MLBBHeaderBuilder.get_lang_header(lang))
     search_name = normalize_hero_name(hero_name)
 
@@ -57,6 +57,6 @@ def resolve_hero_id(hero_identifier: str, lang: str) -> int:
 
 def fetch_mlbb_post(endpoint_id: str, payload: dict[str, Any], lang: str) -> Any:
     base_path = BasePathProvider.get_base_path()
-    url = f"{MLBB_URL}{base_path}/{endpoint_id}"
+    url = f"{RONE_DEV_ACCESS_KEY}{base_path}/{endpoint_id}"
     headers = MLBBHeaderBuilder.get_lang_header(lang)
     return request_json(method="POST", url=url, payload=payload, headers=headers)

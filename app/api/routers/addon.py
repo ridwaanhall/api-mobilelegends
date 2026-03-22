@@ -4,28 +4,47 @@ from typing import Annotated
 
 from fastapi import APIRouter, Query
 
+from app.core.param_descriptions import *
 from app.core.errors import AppError
 
 router = APIRouter(prefix="/api/addon", tags=["addon"])
 
 
-@router.get("/win-rate", summary="Win Rate Calculator for Consecutive Wins")
+@router.get(
+    path="/win-rate",
+    summary=SUMMARY_ADDON_WIN_RATE,
+    description=DESCRIPTION_ADDON_WIN_RATE,
+)
 def win_rate(
     match_now: Annotated[
-        str | None,
-        Query(alias="match-now", description="Current total matches. Must be an integer >= 0."),
-    ] = None,
+        int,
+        Query(
+            alias="match-now",
+            title=TITLE_MATCH_NOW,
+            description=DESCRIPTION_MATCH_NOW,
+            ge=0,
+        ),
+    ],
     wr_now: Annotated[
-        str | None,
-        Query(alias="wr-now", description="Current win rate in percent. Range: 0-100."),
-    ] = None,
+        float,
+        Query(
+            alias="wr-now",
+            title=TITLE_WR_NOW,
+            description=DESCRIPTION_WR_NOW,
+            ge=0,
+            le=100,
+        ),
+    ],
     wr_future: Annotated[
-        str | None,
+        float,
         Query(
             alias="wr-future",
-            description="Target win rate in percent. Range: >0 to 100 and must be greater than wr-now.",
+            title=TITLE_WR_FUTURE,
+            description=DESCRIPTION_WR_FUTURE,
+            gt=0,
+            le=100,
         ),
-    ] = None,
+    ],
 ) -> object:
     missing_params = [
         param

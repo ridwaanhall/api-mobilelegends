@@ -99,58 +99,59 @@ This project is released under the **BSD 3-Clause License**. Attribution to **Mo
 
 ---
 
-## Local Development (for ridwaanhall only)
+<details>
+   <summary>Local Development (for ridwaanhall only)</summary>
 
-1. **Create virtual environment**
+   1. **Create virtual environment**
 
-   ```bash
-   python -m venv .venv
-   ```
+      ```bash
+      python -m venv .venv
+      ```
 
-2. **Activate virtual environment**
+   2. **Activate virtual environment**
 
-   - On Linux/macOS:
+      - On Linux/macOS:
 
-     ```bash
-     source .venv/bin/activate
-     ```
+      ```bash
+      source .venv/bin/activate
+      ```
 
-   - On Windows (PowerShell):
+      - On Windows (PowerShell):
 
-     ```bash
-     .venv\Scripts\Activate.ps1
-     ```
+      ```bash
+      .venv\Scripts\Activate.ps1
+      ```
 
-3. **Install dependencies**
+   3. **Install dependencies**
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+      ```bash
+      pip install -r requirements.txt
+      ```
 
-4. **Create environment file**
+   4. **Create environment file**
 
-   ```bash
-   cp .env.example .env
-   ```
+      ```bash
+      cp .env.example .env
+      ```
 
-5. **Run tests**
+   5. **Run tests**
 
-   ```bash
-   pytest
-   ```
+      ```bash
+      pytest
+      ```
 
-6. **Start FastAPI server**
+   6. **Start FastAPI server**
 
-   ```bash
-   uvicorn app.main:app --reload
-   ```
+      ```bash
+      uvicorn app.main:app --reload
+      ```
 
-## Configuration
+   Configuration
 
-Required variables:
+   Required variables:
+      - `SECRET_KEY`
+      - `RONE_DEV_ACCESS_KEY`
+      - `RONE_DEV_ACCESS_KEY_V2`
 
-- `SECRET_KEY`
-- `MLBB_URL`
-- `MLBB_URL_V2`
-
-See `.env.example` for full environment options.
+   See `.env.example` for full environment options.
+   </details>

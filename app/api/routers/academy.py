@@ -46,7 +46,7 @@ def version(
             title=TITLE_SORT_ORDER,
             description=DESCRIPTION_SORT_ORDER,
         )
-    ] = SortOrderEnum.ASCENDING,
+    ] = SortOrderEnum.DESCENDING,
     lang: Annotated[
         LanguageEnum,
         Query(
@@ -364,7 +364,7 @@ def recommended(
             title=TITLE_SORT_ORDER,
             description=DESCRIPTION_SORT_ORDER,
         )
-    ] = SortOrderEnum.ASCENDING,
+    ] = SortOrderEnum.DESCENDING,
     lang: Annotated[
         LanguageEnum,
         Query(
@@ -566,8 +566,8 @@ def guide(
         )
     ] = LanguageEnum.ENGLISH
 ) -> object:
-    role_values = validate_and_map_multi(role, ROLE_MAP, ROLE_MAP["all"], "role")
-    lane_values = validate_and_map_multi(lane, LANE_MAP, LANE_MAP["all"], "lane")
+    role_values = validate_and_map_multi(role, ROLE_MAP, [1, 2, 3, 4, 5, 6], "role")
+    lane_values = validate_and_map_multi(lane, LANE_MAP, [1, 2, 3, 4, 5], "lane")
     
     payload = {
         "pageSize": size,
@@ -741,18 +741,14 @@ def guide_time_win_rate(
             ge=1,
         )
     ],
-    lane: Annotated[
-        list[str],
-        Query(
-            title=TITLE_LANE,
-            description=DESCRIPTION_LANE,
+    lane_id: Annotated[
+        int,
+        Path(
+            title="Lane ID",
+            description="Lane ID. Allowed values: 1 (exp), 2 (mid), 3 (roam), 4 (jungle), 5 (gold).",
+            ge=1,
+            le=5,
         )
-    ] = [
-        HeroLaneEnum.EXP,
-        HeroLaneEnum.MID,
-        HeroLaneEnum.ROAM,
-        HeroLaneEnum.JUNGLE,
-        HeroLaneEnum.GOLD,
     ],
     rank: Annotated[
         RankEnum,
@@ -803,7 +799,7 @@ def guide_time_win_rate(
             {
                 "field": "real_road",
                 "operator": "eq",
-                "value": lane
+                "value": lane_id
             },
         ],
         "sorts": [],

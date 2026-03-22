@@ -1230,7 +1230,8 @@ def hero_ratings_subject(
         Path(
             title=TITLE_RATING_SUBJECT,
             description=DESCRIPTION_RATING_SUBJECT,
-            min_length=1,
+            min_length=7,
+            max_length=7,
         )
     ],
     lang: Annotated[

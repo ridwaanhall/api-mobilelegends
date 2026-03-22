@@ -10,19 +10,19 @@ from app.core.security import BasePathProvider
 def fetch_academy_post(endpoint_id: str, payload: dict[str, Any], lang: str) -> Any:
     base_path = BasePathProvider.get_base_path_academy()
     url = f"{RONE_DEV_ACCESS_KEY}{base_path}/{endpoint_id}"
-    headers = MLBBHeaderBuilder.get_lang_header(lang)
+    headers = MLBBHeaderBuilder.get_academy_mlbb_header(lang)
     return request_json(method="POST", url=url, payload=payload, headers=headers)
 
 
 def fetch_ratings_all(lang: str) -> Any:
     base_path = BasePathProvider.get_base_path_ratings()
     url = f"{RONE_DEV_ACCESS_KEY_V2}{base_path}?offset=0"
-    headers = MLBBHeaderBuilder.get_lang_header(lang)
+    headers = MLBBHeaderBuilder.get_academy_mlbb_header(lang)
     return request_json(method="GET", url=url, headers=headers)
 
 
 def fetch_ratings_subject(lang: str, subject: str) -> Any:
     base_path = BasePathProvider.get_base_path_ratings()
     url = f"{RONE_DEV_ACCESS_KEY_V2}{base_path}/{subject}"
-    headers = MLBBHeaderBuilder.get_lang_header(lang)
+    headers = MLBBHeaderBuilder.get_academy_mlbb_header(lang)
     return request_json(method="GET", url=url, headers=headers)

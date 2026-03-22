@@ -50,7 +50,7 @@ class MLBBHeaderBuilder:
         return random.choice(cls.USER_AGENTS)
 
     @staticmethod
-    def get_lang_header(lang: str) -> dict[str, str]:
+    def get_academy_mlbb_header(lang: str) -> dict[str, str]:
         headers = {
             "Content-Type": "application/json",
             "User-Agent": MLBBHeaderBuilder.get_random_user_agent(),

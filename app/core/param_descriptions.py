@@ -20,8 +20,7 @@ DESCRIPTION_SORT_ORDER = "Sort order for results. Allowed: asc, desc."
 
 TITLE_LANGUAGE = "Language"
 DESCRIPTION_LANGUAGE = (
-    "Language code for localized content. Supported codes: "
-    "en, id, es, pt, ru, tr, ar, de, fr, it, ja, ko, th, vi, zh-CN, zh-TW."
+    "Language code for localized content."
 )
 
 TITLE_RANK = "Rank"
@@ -155,10 +154,16 @@ SUMMARY_ACADEMY_GUIDE = "Guide Hero List"
 DESCRIPTION_ACADEMY_GUIDE = "List heroes with filtering options for role and lane."
 
 TITLE_ROLE = "Role"
-DESCRIPTION_ROLE = "Role filter. Multi allowed: all, tank, fighter, assassin, mage, marksman, support. Example: tank,fighter."
+DESCRIPTION_ROLE = (
+    "Role filter. Multi allowed: tank, fighter, assassin, mage, marksman, support. "
+    "Example: role=tank&role=fighter"
+)
 
 TITLE_LANE = "Lane"
-DESCRIPTION_LANE = "Lane filter. Multi allowed: all, exp, mid, roam, jungle, gold. Example: exp,mid."
+DESCRIPTION_LANE = (
+    "Lane filter. Multi allowed: exp, mid, roam, jungle, gold. "
+    "Example: lane=exp&lane=mid"
+)
 
 ## /api/academy/guide/{hero_id}/stats
 SUMMARY_ACADEMY_GUIDE_STATS = "Guide Hero Statistics"

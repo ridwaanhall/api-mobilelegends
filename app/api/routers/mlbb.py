@@ -8,6 +8,7 @@ from app.api.dependencies import require_api_available
 
 from app.services.mlbb import fetch_mlbb_post
 
+from app.core.enums import LanguageEnum, RankEnum, SortOrderEnum, HeroRoleEnum, HeroLaneEnum
 from app.core.errors import _hero_id_or_404
 from app.core.filters import (
     ROLE_MAP, LANE_MAP, validate_and_map_multi, validate_and_map_rank
@@ -40,19 +41,19 @@ def hero_list(
         )
     ] = 1,
     order: Annotated[
-        Literal["asc", "desc"],
+        SortOrderEnum,
         Query(
             title=TITLE_SORT_ORDER,
             description=DESCRIPTION_SORT_ORDER,
         )
-    ] = "asc",
+    ] = SortOrderEnum.ASCENDING,
     lang: Annotated[
-        str,
+        LanguageEnum,
         Query(
             title=TITLE_LANGUAGE,
             description=DESCRIPTION_LANGUAGE,
         )
-    ] = "en"
+    ] = LanguageEnum.ENGLISH
 ) -> object:
     payload = {
         "pageSize": size,
@@ -91,12 +92,12 @@ def hero_rank(
         )
     ] = "1",
     rank: Annotated[
-        Literal["all", "epic", "legend", "mythic", "honor", "glory"],
+        RankEnum,
         Query(
             title=TITLE_RANK,
             description=DESCRIPTION_RANK,
         ),
-    ] = "all",
+    ] = RankEnum.ALL,
     sort_field: Annotated[
         Literal["pick_rate", "ban_rate", "win_rate"],
         Query(
@@ -105,12 +106,12 @@ def hero_rank(
         )
     ] = "win_rate",
     sort_order: Annotated[
-        Literal["asc", "desc"],
+        SortOrderEnum,
         Query(
             title=TITLE_SORT_ORDER,
             description=DESCRIPTION_SORT_ORDER,
         )
-    ] = "desc",
+    ] = SortOrderEnum.DESCENDING,
     size: Annotated[
         int,
         Query(
@@ -128,12 +129,12 @@ def hero_rank(
         )
     ] = 1,
     lang: Annotated[
-        str,
+        LanguageEnum,
         Query(
             title=TITLE_LANGUAGE,
             description=DESCRIPTION_LANGUAGE,
         )
-    ] = "en"
+    ] = LanguageEnum.ENGLISH
 ) -> object:
     def create_rank_payload(rank_value: str) -> dict[str, object]:
         return {
@@ -174,8 +175,8 @@ def hero_rank(
     url_map = {"1": "2756567", "3": "2756568", "7": "2756569", "15": "2756565", "30": "2756570"}
 
     payload = create_rank_payload(validate_and_map_rank(rank))
-    payload["pageSize"] = int(size)
-    payload["pageIndex"] = int(index)
+    payload["pageSize"] = size
+    payload["pageIndex"] = index
     payload["sorts"] = [
         {
             "data":
@@ -197,19 +198,32 @@ def hero_rank(
 )
 def hero_position(
     role: Annotated[
-        str,
+        list[str],
         Query(
             title=TITLE_ROLE,
             description=DESCRIPTION_ROLE,
         )
-    ] = "tank,fighter,assassin,mage,marksman,support",
+    ] = [
+        HeroRoleEnum.TANK,
+        HeroRoleEnum.FIGHTER,
+        HeroRoleEnum.ASSASSIN,
+        HeroRoleEnum.MAGE,
+        HeroRoleEnum.MARKSMAN,
+        HeroRoleEnum.SUPPORT,
+    ],
     lane: Annotated[
-        str,
+        list[str],
         Query(
             title=TITLE_LANE,
             description=DESCRIPTION_LANE,
         )
-    ] = "exp,mid,roam,jungle,gold",
+    ] = [
+        HeroLaneEnum.EXP,
+        HeroLaneEnum.MID,
+        HeroLaneEnum.ROAM,
+        HeroLaneEnum.JUNGLE,
+        HeroLaneEnum.GOLD,
+    ],
     size: Annotated[
         int,
         Query(
@@ -227,25 +241,25 @@ def hero_position(
         )
     ] = 1,
     order: Annotated[
-        Literal["asc", "desc"],
+        SortOrderEnum,
         Query(
             title=TITLE_SORT_ORDER,
             description=DESCRIPTION_SORT_ORDER,
         )
-    ] = "desc",
+    ] = SortOrderEnum.DESCENDING,
     lang: Annotated[
-        str,
+        LanguageEnum,
         Query(
             title=TITLE_LANGUAGE,
             description=DESCRIPTION_LANGUAGE,
         )
-    ] = "en"
+    ] = LanguageEnum.ENGLISH
 ) -> object:
-    role_values = validate_and_map_multi(role, ROLE_MAP, ROLE_MAP["all"], "role")
-    lane_values = validate_and_map_multi(lane, LANE_MAP, LANE_MAP["all"], "lane")
+    role_values = validate_and_map_multi(role, ROLE_MAP, [1,2,3,4,5,6], "role")
+    lane_values = validate_and_map_multi(lane, LANE_MAP, [1,2,3,4,5], "lane")
 
     payload = {
-        "pageSize": int(size),
+        "pageSize": size,
         "filters": [
             {
                 "field": "<hero.data.sortid>",
@@ -260,15 +274,14 @@ def hero_position(
         ],
         "sorts": [
             {
-                "data":
-                    {
-                        "field": "hero_id",
-                        "order": order
-                    },
+                "data": {
+                    "field": "hero_id",
+                    "order": order
+                },
                 "type": "sequence"
             }
         ],
-        "pageIndex": int(index),
+        "pageIndex": index,
         "fields": ["id", "hero_id", "hero.data.name", "hero.data.smallmap", "hero.data.sortid", "hero.data.roadsort"],
         "object": [],
     }
@@ -305,16 +318,16 @@ def hero_detail(
         )
     ] = 1,
     lang: Annotated[
-        str,
+        LanguageEnum,
         Query(
             title=TITLE_LANGUAGE,
             description=DESCRIPTION_LANGUAGE,
         )
-    ] = "en"
+    ] = LanguageEnum.ENGLISH
 ) -> object:
     hero_id = _hero_id_or_404(hero_identifier, lang)
     payload = {
-        "pageSize": int(size),
+        "pageSize": size,
         "filters": [
             {
                 "field": "hero_id",
@@ -323,7 +336,7 @@ def hero_detail(
             }
         ],
         "sorts": [],
-        "pageIndex": int(index),
+        "pageIndex": index,
         "object": [],
     }
     return fetch_mlbb_post("2756564", payload, lang)
@@ -343,12 +356,12 @@ def hero_detail_stats(
         )
     ],
     rank: Annotated[
-        Literal["all", "epic", "legend", "mythic", "honor", "glory"],
+        RankEnum,
         Query(
             title=TITLE_RANK,
             description=DESCRIPTION_RANK,
         ),
-    ] = "all",
+    ] = RankEnum.ALL,
     size: Annotated[
         int,
         Query(
@@ -366,16 +379,16 @@ def hero_detail_stats(
         )
     ] = 1,
     lang: Annotated[
-        str,
+        LanguageEnum,
         Query(
             title=TITLE_LANGUAGE,
             description=DESCRIPTION_LANGUAGE,
         )
-    ] = "en"
+    ] = LanguageEnum.ENGLISH
 ) -> object:
     hero_id = _hero_id_or_404(hero_identifier, lang)
     payload = {
-        "pageSize": int(size),
+        "pageSize": size,
         "filters": [
             {
                 "field": "main_heroid",
@@ -394,7 +407,7 @@ def hero_detail_stats(
             },
         ],
         "sorts": [],
-        "pageIndex": int(index),
+        "pageIndex": index,
     }
     return fetch_mlbb_post("2756567", payload, lang)
 
@@ -429,16 +442,16 @@ def hero_skill_combo(
         )
     ] = 1,
     lang: Annotated[
-        str,
+        LanguageEnum,
         Query(
             title=TITLE_LANGUAGE,
             description=DESCRIPTION_LANGUAGE,
         )
-    ] = "en"
+    ] = LanguageEnum.ENGLISH
 ) -> object:
     hero_id = _hero_id_or_404(hero_identifier, lang)
     payload = {
-        "pageSize": int(size),
+        "pageSize": size,
         "filters": [
             {
                 "field": "hero_id",
@@ -447,7 +460,7 @@ def hero_skill_combo(
             }
         ],
         "sorts": [],
-        "pageIndex": int(index),
+        "pageIndex": index,
         "object": [2684183],
     }
     return fetch_mlbb_post("2674711", payload, lang)
@@ -467,12 +480,12 @@ def hero_rate(
         )
     ],
     rank: Annotated[
-        Literal["all", "epic", "legend", "mythic", "honor", "glory"],
+        RankEnum,
         Query(
             title=TITLE_RANK,
             description=DESCRIPTION_RANK,
         ),
-    ] = "all",
+    ] = RankEnum.ALL,
     past_days: Annotated[
         Literal["7", "15", "30"],
         Query(
@@ -498,12 +511,12 @@ def hero_rate(
         )
     ] = 1,
     lang: Annotated[
-        str,
+        LanguageEnum,
         Query(
             title=TITLE_LANGUAGE,
             description=DESCRIPTION_LANGUAGE,
         )
-    ] = "en"
+    ] = LanguageEnum.ENGLISH
 ) -> object:
     hero_id = _hero_id_or_404(hero_identifier, lang)
     url_map = {
@@ -512,7 +525,7 @@ def hero_rate(
         "30": "2690860"
     }
     payload = {
-        "pageSize": int(size),
+        "pageSize": size,
         "filters": [
             {
                 "field": "main_heroid",
@@ -531,7 +544,7 @@ def hero_rate(
             },
         ],
         "sorts": [],
-        "pageIndex": int(index),
+        "pageIndex": index,
     }
     return fetch_mlbb_post(url_map.get(past_days, "2674709"), payload, lang)
 
@@ -566,16 +579,16 @@ def hero_relation(
         )
     ] = 1,
     lang: Annotated[
-        str,
+        LanguageEnum,
         Query(
             title=TITLE_LANGUAGE,
             description=DESCRIPTION_LANGUAGE,
         )
-    ] = "en"
+    ] = LanguageEnum.ENGLISH
 ) -> object:
     hero_id = _hero_id_or_404(hero_identifier, lang)
     payload = {
-        "pageSize": int(size),
+        "pageSize": size,
         "filters": [
             {
                 "field": "hero_id",
@@ -584,7 +597,7 @@ def hero_relation(
             }
         ],
         "sorts": [],
-        "pageIndex": int(index),
+        "pageIndex": index,
         "fields": ["hero.data.name"],
         "object": [],
     }
@@ -605,12 +618,12 @@ def hero_counter(
         )
     ],
     rank: Annotated[
-        Literal["all", "epic", "legend", "mythic", "honor", "glory"],
+        RankEnum,
         Query(
             title=TITLE_RANK,
             description=DESCRIPTION_RANK,
         ),
-    ] = "all",
+    ] = RankEnum.ALL,
     size: Annotated[
         int,
         Query(
@@ -628,16 +641,16 @@ def hero_counter(
         )
     ] = 1,
     lang: Annotated[
-        str,
+        LanguageEnum,
         Query(
             title=TITLE_LANGUAGE,
             description=DESCRIPTION_LANGUAGE,
         )
-    ] = "en"
+    ] = LanguageEnum.ENGLISH
 ) -> object:
     hero_id = _hero_id_or_404(hero_identifier, lang)
     payload = {
-        "pageSize": int(size),
+        "pageSize": size,
         "filters": [
             {
                 "field": "match_type",
@@ -656,7 +669,7 @@ def hero_counter(
             },
         ],
         "sorts": [],
-        "pageIndex": int(index),
+        "pageIndex": index,
     }
     return fetch_mlbb_post("2756569", payload, lang)
 
@@ -675,12 +688,12 @@ def hero_compatibility(
         )
     ],
     rank: Annotated[
-        Literal["all", "epic", "legend", "mythic", "honor", "glory"],
+        RankEnum,
         Query(
             title=TITLE_RANK,
             description=DESCRIPTION_RANK,
         ),
-    ] = "all",
+    ] = RankEnum.ALL,
     size: Annotated[
         int,
         Query(
@@ -698,16 +711,16 @@ def hero_compatibility(
         )
     ] = 1,
     lang: Annotated[
-        str,
+        LanguageEnum,
         Query(
             title=TITLE_LANGUAGE,
             description=DESCRIPTION_LANGUAGE,
         )
-    ] = "en"
+    ] = LanguageEnum.ENGLISH
 ) -> object:
     hero_id = _hero_id_or_404(hero_identifier, lang)
     payload = {
-        "pageSize": int(size),
+        "pageSize": size,
         "filters": [
             {
                 "field": "match_type",
@@ -726,6 +739,6 @@ def hero_compatibility(
             },
         ],
         "sorts": [],
-        "pageIndex": int(index),
+        "pageIndex": index,
     }
     return fetch_mlbb_post("2756569", payload, lang)

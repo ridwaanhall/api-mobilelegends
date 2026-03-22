@@ -5,7 +5,6 @@ Provides DRY, auto-documented, and typo-tolerant mapping for roles, lanes, ranks
 from fastapi import HTTPException
 
 ROLE_MAP: dict[str, list[int]] = {
-    "all": [1, 2, 3, 4, 5, 6],
     "tank": [1],
     "fighter": [2],
     "assassin": [3],
@@ -15,7 +14,6 @@ ROLE_MAP: dict[str, list[int]] = {
 }
 
 LANE_MAP: dict[str, list[int]] = {
-    "all": [1, 2, 3, 4, 5],
     "exp": [1],
     "mid": [2],
     "roam": [3],
@@ -50,18 +48,19 @@ def suggest_closest(value: str, allowed: list[str]) -> str:
         return ""
 
 def validate_and_map_multi(
-    selected_raw: str,
+    selected_raw: list[str],
     mapping: dict[str, list[int]],
     default: list[int],
     field_name: str,
 ) -> list[int]:
     """
-    Validate and map a comma-separated string to a list of mapped values.
+    Validate and map a list of strings to a list of mapped values.
     Raises HTTPException on invalid input, with typo suggestions.
     """
-    selected = parse_multi(selected_raw)
+    selected = [v.strip().lower() for v in selected_raw if v.strip()]
     if not selected:
         return default
+
     allowed = list(mapping.keys())
     invalid = [item for item in selected if item not in mapping]
     if invalid:
@@ -70,8 +69,10 @@ def validate_and_map_multi(
             status_code=422,
             detail=f"Invalid {field_name}: {', '.join(suggestions)}. Allowed: {', '.join(allowed)}",
         )
+
     if "all" in selected:
         return default
+
     result = set()
     for item in selected:
         result.update(mapping[item])

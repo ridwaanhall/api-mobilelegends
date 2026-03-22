@@ -6,12 +6,14 @@ from fastapi import APIRouter, Depends, Path, Query
 
 from app.api.dependencies import require_api_available
 
+from app.services.academy import fetch_academy_post, fetch_ratings_all, fetch_ratings_subject
+
+from app.core.enums import LanguageEnum, RankEnum, SortOrderEnum, HeroRoleEnum, HeroLaneEnum
 from app.core.filters import (
     ROLE_MAP, LANE_MAP, validate_and_map_multi, validate_and_map_rank
 )
 from app.core.hero_limits import validate_academy_hero_id
 from app.core.param_descriptions import *
-from app.services.academy import fetch_academy_post, fetch_ratings_all, fetch_ratings_subject
 
 router = APIRouter(prefix="/api/academy", tags=["academy"], dependencies=[Depends(require_api_available)])
 
@@ -39,18 +41,19 @@ def version(
         )
     ] = 1,
     order: Annotated[
-        Literal["asc", "desc"],
+        SortOrderEnum,
         Query(
             title=TITLE_SORT_ORDER,
             description=DESCRIPTION_SORT_ORDER,
         )
-    ] = "desc",
+    ] = SortOrderEnum.ASCENDING,
     lang: Annotated[
-        str, Query(
+        LanguageEnum,
+        Query(
             title=TITLE_LANGUAGE,
             description=DESCRIPTION_LANGUAGE,
         )
-    ] = "en"
+    ] = LanguageEnum.ENGLISH
 ) -> object:
     payload = {
         "pageSize": size,
@@ -102,12 +105,12 @@ def heroes(
         )
     ] = 1,
     lang: Annotated[
-        str,
+        LanguageEnum,
         Query(
             title=TITLE_LANGUAGE,
             description=DESCRIPTION_LANGUAGE,
         )
-    ] = "en"
+    ] = LanguageEnum.ENGLISH
 ) -> object:
     payload = {
         "pageSize": size,
@@ -143,19 +146,19 @@ def roles(
         )
     ] = 1,
     order: Annotated[
-        Literal["asc", "desc"],
+        SortOrderEnum,
         Query(
             title=TITLE_SORT_ORDER,
             description=DESCRIPTION_SORT_ORDER,
         )
-    ] = "asc",
+    ] = SortOrderEnum.ASCENDING,
     lang: Annotated[
-        str,
+        LanguageEnum,
         Query(
             title=TITLE_LANGUAGE,
             description=DESCRIPTION_LANGUAGE,
         )
-    ] = "en"
+    ] = LanguageEnum.ENGLISH
 ) -> object:
     payload = {
         "pageSize": size,
@@ -200,12 +203,12 @@ def equipment(
         )
     ] = 1,
     lang: Annotated[
-        str,
+        LanguageEnum,
         Query(
             title=TITLE_LANGUAGE,
             description=DESCRIPTION_LANGUAGE,
         )
-    ] = "en"
+    ] = LanguageEnum.ENGLISH
 ) -> object:
     payload = {
         "pageSize": size,
@@ -239,12 +242,12 @@ def equipment_details(
         )
     ] = 1,
     lang: Annotated[
-        str,
+        LanguageEnum,
         Query(
             title=TITLE_LANGUAGE,
             description=DESCRIPTION_LANGUAGE,
         )
-    ] = "en"
+    ] = LanguageEnum.ENGLISH
 ) -> object:
     payload = {
         "pageSize": size,
@@ -278,12 +281,12 @@ def spells(
         )
     ] = 1,
     lang: Annotated[
-        str,
+        LanguageEnum,
         Query(
             title=TITLE_LANGUAGE,
             description=DESCRIPTION_LANGUAGE,
         )
-    ] = "en"
+    ] = LanguageEnum.ENGLISH
 ) -> object:
     payload = {
         "pageSize": size,
@@ -317,12 +320,12 @@ def emblems(
         )
     ] = 1,
     lang: Annotated[
-        str,
+        LanguageEnum,
         Query(
             title=TITLE_LANGUAGE,
             description=DESCRIPTION_LANGUAGE,
         )
-    ] = "en"
+    ] = LanguageEnum.ENGLISH
 ) -> object:
     payload = {
         "pageSize": size,
@@ -356,19 +359,19 @@ def recommended(
         )
     ] = 1,
     order: Annotated[
-        Literal["asc", "desc"],
+        SortOrderEnum,
         Query(
             title=TITLE_SORT_ORDER,
             description=DESCRIPTION_SORT_ORDER,
-        ),
-    ] = "desc",
+        )
+    ] = SortOrderEnum.ASCENDING,
     lang: Annotated[
-        str,
+        LanguageEnum,
         Query(
             title=TITLE_LANGUAGE,
             description=DESCRIPTION_LANGUAGE,
         )
-    ] = "en",
+    ] = LanguageEnum.ENGLISH
 ) -> object:
     payload = {
         "pageSize": size,
@@ -465,12 +468,12 @@ def recommended_detail(
         )
     ] = 1,
     lang: Annotated[
-        str,
+        LanguageEnum,
         Query(
             title=TITLE_LANGUAGE,
             description=DESCRIPTION_LANGUAGE,
         )
-    ] = "en",
+    ] = LanguageEnum.ENGLISH
 ) -> object:
     payload = {
         "pageSize": size,
@@ -506,19 +509,32 @@ def recommended_detail(
 )
 def guide(
     role: Annotated[
-        str,
+        list[str],
         Query(
             title=TITLE_ROLE,
             description=DESCRIPTION_ROLE,
         )
-    ] = "tank,fighter,assassin,mage,marksman,support",
+    ] = [
+        HeroRoleEnum.TANK,
+        HeroRoleEnum.FIGHTER,
+        HeroRoleEnum.ASSASSIN,
+        HeroRoleEnum.MAGE,
+        HeroRoleEnum.MARKSMAN,
+        HeroRoleEnum.SUPPORT,
+    ],
     lane: Annotated[
-        str,
+        list[str],
         Query(
             title=TITLE_LANE,
             description=DESCRIPTION_LANE,
         )
-    ] = "exp,mid,roam,jungle,gold",
+    ] = [
+        HeroLaneEnum.EXP,
+        HeroLaneEnum.MID,
+        HeroLaneEnum.ROAM,
+        HeroLaneEnum.JUNGLE,
+        HeroLaneEnum.GOLD,
+    ],
     size: Annotated[
         int,
         Query(
@@ -536,19 +552,19 @@ def guide(
         )
     ] = 1,
     order: Annotated[
-        Literal["asc", "desc"],
+        SortOrderEnum,
         Query(
             title=TITLE_SORT_ORDER,
             description=DESCRIPTION_SORT_ORDER,
-        ),
-    ] = "desc",
+        )
+    ] = SortOrderEnum.ASCENDING,
     lang: Annotated[
-        str,
+        LanguageEnum,
         Query(
             title=TITLE_LANGUAGE,
             description=DESCRIPTION_LANGUAGE,
         )
-    ] = "en",
+    ] = LanguageEnum.ENGLISH
 ) -> object:
     role_values = validate_and_map_multi(role, ROLE_MAP, ROLE_MAP["all"], "role")
     lane_values = validate_and_map_multi(lane, LANE_MAP, LANE_MAP["all"], "lane")
@@ -599,12 +615,12 @@ def guide_stats(
         )
     ],
     rank: Annotated[
-        Literal["all", "epic", "legend", "mythic", "honor", "glory"],
+        RankEnum,
         Query(
             title=TITLE_RANK,
             description=DESCRIPTION_RANK,
         ),
-    ] = "all",
+    ] = RankEnum.ALL,
     size: Annotated[
         int,
         Query(
@@ -622,12 +638,12 @@ def guide_stats(
         )
     ] = 1,
     lang: Annotated[
-        str,
+        LanguageEnum,
         Query(
             title=TITLE_LANGUAGE,
             description=DESCRIPTION_LANGUAGE,
         )
-    ] = "en",
+    ] = LanguageEnum.ENGLISH
 ) -> object:
     validate_academy_hero_id(hero_id, lang)
     payload = {
@@ -686,12 +702,12 @@ def guide_lane(
         )
     ] = 1,
     lang: Annotated[
-        str,
+        LanguageEnum,
         Query(
             title=TITLE_LANGUAGE,
             description=DESCRIPTION_LANGUAGE,
         )
-    ] = "en",
+    ] = LanguageEnum.ENGLISH
 ) -> object:
     validate_academy_hero_id(hero_id, lang)
     payload = {
@@ -726,19 +742,25 @@ def guide_time_win_rate(
         )
     ],
     lane: Annotated[
-        str,
+        list[str],
         Query(
             title=TITLE_LANE,
             description=DESCRIPTION_LANE,
         )
-    ] = "exp,mid,roam,jungle,gold",
+    ] = [
+        HeroLaneEnum.EXP,
+        HeroLaneEnum.MID,
+        HeroLaneEnum.ROAM,
+        HeroLaneEnum.JUNGLE,
+        HeroLaneEnum.GOLD,
+    ],
     rank: Annotated[
-        Literal["all", "epic", "legend", "mythic", "honor", "glory"],
+        RankEnum,
         Query(
             title=TITLE_RANK,
-            description=DESCRIPTION_RANK
+            description=DESCRIPTION_RANK,
         ),
-    ] = "all",
+    ] = RankEnum.ALL,
     size: Annotated[
         int,
         Query(
@@ -756,12 +778,12 @@ def guide_time_win_rate(
         )
     ] = 1,
     lang: Annotated[
-        str,
+        LanguageEnum,
         Query(
             title=TITLE_LANGUAGE,
             description=DESCRIPTION_LANGUAGE,
         )
-    ] = "en",
+    ] = LanguageEnum.ENGLISH
 ) -> object:
     validate_academy_hero_id(hero_id, lang)
     payload = {
@@ -805,12 +827,12 @@ def guide_builds(
         )
     ],
     rank: Annotated[
-        Literal["all", "epic", "legend", "mythic", "honor", "glory"],
+        RankEnum,
         Query(
             title=TITLE_RANK,
             description=DESCRIPTION_RANK,
         ),
-    ] = "all",
+    ] = RankEnum.ALL,
     size: Annotated[
         int,
         Query(
@@ -828,12 +850,12 @@ def guide_builds(
         )
     ] = 1,
     lang: Annotated[
-        str,
+        LanguageEnum,
         Query(
             title=TITLE_LANGUAGE,
             description=DESCRIPTION_LANGUAGE,
         )
-    ] = "en",
+    ] = LanguageEnum.ENGLISH
 ) -> object:
     validate_academy_hero_id(hero_id, lang)
     payload = {
@@ -876,12 +898,12 @@ def guide_counters(
         )
     ],
     rank: Annotated[
-        Literal["all", "epic", "legend", "mythic", "honor", "glory"],
+        RankEnum,
         Query(
             title=TITLE_RANK,
             description=DESCRIPTION_RANK,
         ),
-    ] = "all",
+    ] = RankEnum.ALL,
     size: Annotated[
         int,
         Query(
@@ -899,12 +921,12 @@ def guide_counters(
         )
     ] = 1,
     lang: Annotated[
-        str,
+        LanguageEnum,
         Query(
             title=TITLE_LANGUAGE,
             description=DESCRIPTION_LANGUAGE,
         )
-    ] = "en",
+    ] = LanguageEnum.ENGLISH
 ) -> object:
     validate_academy_hero_id(hero_id, lang)
     payload = {
@@ -947,12 +969,12 @@ def guide_teammates(
         )
     ],
     rank: Annotated[
-        Literal["all", "epic", "legend", "mythic", "honor", "glory"],
+        RankEnum,
         Query(
             title=TITLE_RANK,
             description=DESCRIPTION_RANK,
         ),
-    ] = "all",
+    ] = RankEnum.ALL,
     size: Annotated[
         int,
         Query(
@@ -970,12 +992,12 @@ def guide_teammates(
         )
     ] = 1,
     lang: Annotated[
-        str,
+        LanguageEnum,
         Query(
             title=TITLE_LANGUAGE,
             description=DESCRIPTION_LANGUAGE,
         )
-    ] = "en",
+    ] = LanguageEnum.ENGLISH
 ) -> object:
     validate_academy_hero_id(hero_id, lang)
     payload = {
@@ -1025,12 +1047,12 @@ def guide_trends(
         ),
     ] = "7",
     rank: Annotated[
-        Literal["all", "epic", "legend", "mythic", "honor", "glory"],
+        RankEnum,
         Query(
             title=TITLE_RANK,
             description=DESCRIPTION_RANK,
         ),
-    ] = "all",
+    ] = RankEnum.ALL,
     size: Annotated[
         int,
         Query(
@@ -1048,12 +1070,12 @@ def guide_trends(
         )
     ] = 1,
     lang: Annotated[
-        str,
+        LanguageEnum,
         Query(
             title=TITLE_LANGUAGE,
             description=DESCRIPTION_LANGUAGE,
         )
-    ] = "en",
+    ] = LanguageEnum.ENGLISH
 ) -> object:
     validate_academy_hero_id(hero_id, lang)
     day_map = {
@@ -1116,19 +1138,19 @@ def guide_recommended(
         )
     ] = 1,
     order: Annotated[
-        Literal["asc", "desc"],
+        SortOrderEnum,
         Query(
-            title="Sort Order",
+            title=TITLE_SORT_ORDER,
             description="Sort order for recommendation hotness and creation time.",
         ),
-    ] = "desc",
+    ] = SortOrderEnum.DESCENDING,
     lang: Annotated[
-        str,
+        LanguageEnum,
         Query(
             title=TITLE_LANGUAGE,
             description=DESCRIPTION_LANGUAGE,
         )
-    ] = "en",
+    ] = LanguageEnum.ENGLISH
 ) -> object:
     validate_academy_hero_id(hero_id, lang)
     payload = {
@@ -1187,12 +1209,13 @@ def guide_recommended(
 )
 def hero_ratings(
     lang: Annotated[
-        str,
+        LanguageEnum,
         Query(
             title=TITLE_LANGUAGE,
             description=DESCRIPTION_LANGUAGE,
         )
-    ] = "en") -> object:
+    ] = LanguageEnum.ENGLISH
+) -> object:
     return fetch_ratings_all(lang)
 
 
@@ -1211,11 +1234,11 @@ def hero_ratings_subject(
         )
     ],
     lang: Annotated[
-        str,
+        LanguageEnum,
         Query(
             title=TITLE_LANGUAGE,
             description=DESCRIPTION_LANGUAGE,
         )
-    ] = "en",
+    ] = LanguageEnum.ENGLISH
 ) -> object:
     return fetch_ratings_subject(lang, subject)

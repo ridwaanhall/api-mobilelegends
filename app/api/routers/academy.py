@@ -14,7 +14,6 @@ from app.core.enums import LanguageEnum, RankEnum, SortOrderEnum, HeroRoleEnum, 
 from app.core.filters import (
     ROLE_MAP, LANE_MAP, validate_and_map_multi, validate_and_map_rank
 )
-from app.core.hero_limits import validate_academy_hero_id
 from app.core.param_descriptions import *
 
 router = APIRouter(prefix="/api/academy", tags=["academy"], dependencies=[Depends(require_api_available)])

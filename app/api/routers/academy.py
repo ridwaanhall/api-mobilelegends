@@ -1427,7 +1427,7 @@ def guide_recommended(
 
 
 @router.get(
-    path="/heroes-ratings",
+    path="/heroes/ratings",
     summary="Hero Ratings Index",
     description=(
         "Retrieve a list of all hero ratings and community polls. "
@@ -1452,7 +1452,7 @@ def hero_ratings(
 
 
 @router.get(
-    path="/heroes-ratings/{subject}",
+    path="/heroes/ratings/{subject}",
     summary="Hero Ratings by Subject",
     description=(
         "Retrieve hero ratings for a specific subject from the ratings index. "

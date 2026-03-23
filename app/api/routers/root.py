@@ -6,7 +6,6 @@ from urllib.parse import urljoin
 
 from fastapi import APIRouter
 from fastapi.responses import PlainTextResponse, RedirectResponse, Response
-from app.core.param_descriptions import *
 
 from app.core.config import (
     API_BASE_URL,
@@ -75,14 +74,10 @@ def _get_mlbb_academy_endpoints() -> dict[str, str]:
 
 @router.get(
     path="/",
-    summary=SUMMARY_API_ROOT,
-    description=DESCRIPTION_API_ROOT,
     include_in_schema=False,
 )
 @router.get(
     path="/api/docs",
-    summary=SUMMARY_API_DOCS,
-    description=DESCRIPTION_API_DOCS,
     include_in_schema=False,
 )
 def api_docs_redirect() -> RedirectResponse:

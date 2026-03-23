@@ -8,6 +8,8 @@ from app.api.dependencies import require_api_available
 
 from app.services.academy import fetch_academy_post, fetch_ratings_all, fetch_ratings_subject
 
+from app.core.errors import _hero_id_or_404
+
 from app.core.enums import LanguageEnum, RankEnum, SortOrderEnum, HeroRoleEnum, HeroLaneEnum
 from app.core.filters import (
     ROLE_MAP, LANE_MAP, validate_and_map_multi, validate_and_map_rank
@@ -763,7 +765,7 @@ def guide(
 
 
 @router.get(
-    path="/heroes/{hero_id}/stats",
+    path="/heroes/{hero_identifier}/stats",
     summary="Hero Statistics",
     description=(
         "Retrieve performance statistics for a specific hero by rank. "
@@ -776,12 +778,11 @@ def guide(
     ),
 )
 def guide_stats(
-    hero_id: Annotated[
-        int,
+    hero_identifier: Annotated[
+        str,
         Path(
-            title=TITLE_HERO_ID,
-            description=DESCRIPTION_HERO_ID,
-            ge=1,
+            title=TITLE_HERO_IDENTIFIER,
+            description=DESCRIPTION_HERO_IDENTIFIER,
         )
     ],
     rank: Annotated[
@@ -815,7 +816,7 @@ def guide_stats(
         )
     ] = LanguageEnum.ENGLISH
 ) -> object:
-    validate_academy_hero_id(hero_id, lang)
+    hero_id = _hero_id_or_404(hero_identifier, lang)
     payload = {
         "pageSize": size,
         "pageIndex": index,
@@ -842,7 +843,7 @@ def guide_stats(
 
 
 @router.get(
-    path="/heroes/{hero_id}/lane",
+    path="/heroes/{hero_identifier}/lane",
     summary="Hero Lane Distribution",
     description=(
         "Retrieve lane distribution information for a specific hero. "
@@ -854,12 +855,11 @@ def guide_stats(
     ),
 )
 def guide_lane(
-    hero_id: Annotated[
-        int,
+    hero_identifier: Annotated[
+        str,
         Path(
-            title=TITLE_HERO_ID,
-            description=DESCRIPTION_HERO_ID,
-            ge=1,
+            title=TITLE_HERO_IDENTIFIER,
+            description=DESCRIPTION_HERO_IDENTIFIER,
         )
     ],
     size: Annotated[
@@ -886,7 +886,7 @@ def guide_lane(
         )
     ] = LanguageEnum.ENGLISH
 ) -> object:
-    validate_academy_hero_id(hero_id, lang)
+    hero_id = _hero_id_or_404(hero_identifier, lang)
     payload = {
         "pageSize": size,
         "pageIndex": index,
@@ -905,7 +905,7 @@ def guide_lane(
 
 
 @router.get(
-    path="/heroes/{hero_id}/time-win-rate/{lane_id}",
+    path="/heroes/{hero_identifier}/time-win-rate/{lane_id}",
     summary="Hero Lane Time-based Win Rate",
     description=(
         "Retrieve time-based win rate statistics for a specific hero in a given lane. "
@@ -918,12 +918,11 @@ def guide_lane(
     ),
 )
 def guide_time_win_rate(
-    hero_id: Annotated[
-        int,
+    hero_identifier: Annotated[
+        str,
         Path(
-            title=TITLE_HERO_ID,
-            description=DESCRIPTION_HERO_ID,
-            ge=1,
+            title=TITLE_HERO_IDENTIFIER,
+            description=DESCRIPTION_HERO_IDENTIFIER,
         )
     ],
     lane_id: Annotated[
@@ -966,7 +965,7 @@ def guide_time_win_rate(
         )
     ] = LanguageEnum.ENGLISH
 ) -> object:
-    validate_academy_hero_id(hero_id, lang)
+    hero_id = _hero_id_or_404(hero_identifier, lang)
     payload = {
         "pageSize": size,
         "pageIndex": index,
@@ -993,7 +992,7 @@ def guide_time_win_rate(
 
 
 @router.get(
-    path="/heroes/{hero_id}/builds",
+    path="/heroes/{hero_identifier}/builds",
     summary="Hero Recommended Builds",
     description=(
         "Retrieve recommended equipment builds for a specific hero in a given lane. "
@@ -1009,12 +1008,11 @@ def guide_time_win_rate(
     deprecated=True,
 )
 def guide_builds(
-    hero_id: Annotated[
-        int,
+    hero_identifier: Annotated[
+        str,
         Path(
-            title=TITLE_HERO_ID,
-            description=DESCRIPTION_HERO_ID,
-            ge=1,
+            title=TITLE_HERO_IDENTIFIER,
+            description=DESCRIPTION_HERO_IDENTIFIER,
         )
     ],
     rank: Annotated[
@@ -1048,7 +1046,7 @@ def guide_builds(
         )
     ] = LanguageEnum.ENGLISH
 ) -> object:
-    validate_academy_hero_id(hero_id, lang)
+    hero_id = _hero_id_or_404(hero_identifier, lang)
     payload = {
         "pageSize": size,
         "pageIndex": index,
@@ -1075,7 +1073,7 @@ def guide_builds(
 
 
 @router.get(
-    path="/heroes/{hero_id}/counters",
+    path="/heroes/{hero_identifier}/counters",
     summary="Hero Counters",
     description=(
         "Retrieve counter information for a specific hero. "
@@ -1088,12 +1086,11 @@ def guide_builds(
     ),
 )
 def guide_counters(
-    hero_id: Annotated[
-        int,
+    hero_identifier: Annotated[
+        str,
         Path(
-            title=TITLE_HERO_ID,
-            description=DESCRIPTION_HERO_ID,
-            ge=1,
+            title=TITLE_HERO_IDENTIFIER,
+            description=DESCRIPTION_HERO_IDENTIFIER,
         )
     ],
     rank: Annotated[
@@ -1127,7 +1124,7 @@ def guide_counters(
         )
     ] = LanguageEnum.ENGLISH
 ) -> object:
-    validate_academy_hero_id(hero_id, lang)
+    hero_id = _hero_id_or_404(hero_identifier, lang)
     payload = {
         "pageSize": size,
         "pageIndex": index,
@@ -1154,7 +1151,7 @@ def guide_counters(
 
 
 @router.get(
-    path="/heroes/{hero_id}/teammates",
+    path="/heroes/{hero_identifier}/teammates",
     summary="Hero Teammates",
     description=(
         "Retrieve teammate information for a specific hero. "
@@ -1167,12 +1164,11 @@ def guide_counters(
     ),
 )
 def guide_teammates(
-    hero_id: Annotated[
-        int,
+    hero_identifier: Annotated[
+        str,
         Path(
-            title=TITLE_HERO_ID,
-            description=DESCRIPTION_HERO_ID,
-            ge=1,
+            title=TITLE_HERO_IDENTIFIER,
+            description=DESCRIPTION_HERO_IDENTIFIER,
         )
     ],
     rank: Annotated[
@@ -1206,7 +1202,7 @@ def guide_teammates(
         )
     ] = LanguageEnum.ENGLISH
 ) -> object:
-    validate_academy_hero_id(hero_id, lang)
+    hero_id = _hero_id_or_404(hero_identifier, lang)
     payload = {
         "pageSize": size,
         "pageIndex": index,
@@ -1233,7 +1229,7 @@ def guide_teammates(
 
 
 @router.get(
-    path="/heroes/{hero_id}/trends",
+    path="/heroes/{hero_identifier}/trends",
     summary="Hero Performance Trends",
     description=(
         "Retrieve trend information for a specific hero over a selected time window. "
@@ -1246,12 +1242,11 @@ def guide_teammates(
     ),
 )
 def guide_trends(
-    hero_id: Annotated[
-        int,
+    hero_identifier: Annotated[
+        str,
         Path(
-            title=TITLE_HERO_ID,
-            description=DESCRIPTION_HERO_ID,
-            ge=1,
+            title=TITLE_HERO_IDENTIFIER,
+            description=DESCRIPTION_HERO_IDENTIFIER,
         )
     ],
     days: Annotated[
@@ -1292,7 +1287,7 @@ def guide_trends(
         )
     ] = LanguageEnum.ENGLISH
 ) -> object:
-    validate_academy_hero_id(hero_id, lang)
+    hero_id = _hero_id_or_404(hero_identifier, lang)
     day_map = {
         "7": "2755185",
         "15": "2755186",
@@ -1324,7 +1319,7 @@ def guide_trends(
 
 
 @router.get(
-    path="/heroes/{hero_id}/recommended",
+    path="/heroes/{hero_identifier}/recommended",
     summary="Hero Recommended Content",
     description=(
         "Retrieve recommended content for a specific hero. "
@@ -1338,11 +1333,11 @@ def guide_trends(
     ),
 )
 def guide_recommended(
-    hero_id: Annotated[
-        int,
+    hero_identifier: Annotated[
+        str,
         Path(
-            ge=1,
-            description=DESCRIPTION_HERO_ID,
+            title=TITLE_HERO_IDENTIFIER,
+            description=DESCRIPTION_HERO_IDENTIFIER,
         )
     ],
     size: Annotated[
@@ -1376,7 +1371,7 @@ def guide_recommended(
         )
     ] = LanguageEnum.ENGLISH
 ) -> object:
-    validate_academy_hero_id(hero_id, lang)
+    hero_id = _hero_id_or_404(hero_identifier, lang)
     payload = {
         "pageSize": size,
         "pageIndex": index,

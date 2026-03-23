@@ -337,6 +337,89 @@ def emblems(
 
 
 @router.get(
+    path="/rank",
+    summary="Rank List",
+    description="Retrieve all rank information for MLBB.",
+)
+def rank(
+    size: Annotated[
+        int,
+        Query(
+            title=TITLE_PAGE_SIZE,
+            description=DESCRIPTION_PAGE_SIZE,
+            ge=1,
+        )
+    ] = 20,
+    index: Annotated[
+        int,
+        Query(
+            title=TITLE_PAGE_INDEX,
+            description=DESCRIPTION_PAGE_INDEX,
+            ge=1,
+        )
+    ] = 1,
+    lang: Annotated[
+        LanguageEnum,
+        Query(
+            title=TITLE_LANGUAGE,
+            description=DESCRIPTION_LANGUAGE,
+        )
+    ] = LanguageEnum.ENGLISH
+) -> object:
+    payload = {
+        "pageSize": size,
+        "pageIndex": index,
+        "filters": [],
+        "sorts": [],
+        "object": []
+    }
+    return fetch_academy_post("3210596", payload, lang)
+
+
+@router.get(
+    path="/rank/{rank_id}",
+    summary="Rank Details",
+    description="Retrieve details for a specific rank in MLBB.",
+)
+def rank_details(
+    rank_id: Annotated[
+        int,
+        Path(
+            title="Rank ID",
+            description="Rank ID. Maximum is validated dynamically from current rank list.",
+            ge=1,
+            le=9999
+        )
+    ],
+    lang: Annotated[
+        LanguageEnum,
+        Query(
+            title=TITLE_LANGUAGE,
+            description=DESCRIPTION_LANGUAGE,
+        )
+    ] = LanguageEnum.ENGLISH
+) -> object:
+    payload = {
+        "pageSize": 1,
+        "pageIndex": 1,
+        "filters": [
+            {
+                "field": "rankid_start",
+                "operator": "lte",
+                "value": rank_id
+            },
+            {
+                "field": "rankid_end",
+                "operator": "gte",
+                "value": rank_id
+            }
+        ],
+        "sorts": [],
+        "object": []
+    }
+    return fetch_academy_post("3210596", payload, lang)
+
+@router.get(
     path="/recommended",
     summary=SUMMARY_ACADEMY_RECOMMENDED,
     description=DESCRIPTION_ACADEMY_RECOMMENDED,

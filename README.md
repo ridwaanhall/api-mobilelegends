@@ -52,42 +52,67 @@ https://mlbb-stats.rone.dev/sitemap.xml
 
 ## API Coverage
 
-### MLBB API
+### Root API
 
-- `GET /api/hero-list`
-- `GET /api/hero-rank`
-- `GET /api/hero-position`
-- `GET /api/hero-detail/{hero_id_or_name}`
-- `GET /api/hero-detail-stats/{hero_id_or_name}`
-- `GET /api/hero-skill-combo/{hero_id_or_name}`
-- `GET /api/hero-rate/{hero_id_or_name}`
-- `GET /api/hero-relation/{hero_id_or_name}`
-- `GET /api/hero-counter/{hero_id_or_name}`
-- `GET /api/hero-compatibility/{hero_id_or_name}`
-- `GET /api/addon/win-rate?match-now=&wr-now=&wr-future=`
+- `GET /api` — API Index and Status
+- `GET /robots.txt` — Robots.txt for Web Crawlers
+- `GET /sitemap.xml` — Sitemap for Search Engines
+
+### MLBB Game Data API
+
+- `GET /api/hero-list` — List Heroes
+- `GET /api/hero-rank` — Hero Rank Statistics
+- `GET /api/hero-position` — Hero Position Filters
+- `GET /api/hero-detail/{hero_identifier}` — Hero Detail
+- `GET /api/hero-detail-stats/{hero_identifier}` — Hero Detail Statistics
+- `GET /api/hero-skill-combo/{hero_identifier}` — Hero Skill Combo
+- `GET /api/hero-rate/{hero_identifier}` — Hero Rate Trends
+- `GET /api/hero-relation/{hero_identifier}` — Hero Relations
+- `GET /api/hero-counter/{hero_identifier}` — Hero Counters
+- `GET /api/hero-compatibility/{hero_identifier}` — Hero Compatibility
 
 ### MLBB Academy API
 
-- `GET /api/academy/version`
-- `GET /api/academy/heroes`
-- `GET /api/academy/roles`
-- `GET /api/academy/equipment`
-- `GET /api/academy/equipment-details`
-- `GET /api/academy/spells`
-- `GET /api/academy/emblems`
-- `GET /api/academy/recommended`
-- `GET /api/academy/recommended/{recommended_id}`
-- `GET /api/academy/guide`
-- `GET /api/academy/guide/{hero_id}/stats`
-- `GET /api/academy/guide/{hero_id}/lane`
-- `GET /api/academy/guide/{hero_id}/time-win-rate/{lane_id}`
-- `GET /api/academy/guide/{hero_id}/builds`
-- `GET /api/academy/guide/{hero_id}/counters`
-- `GET /api/academy/guide/{hero_id}/teammates`
-- `GET /api/academy/guide/{hero_id}/trends`
-- `GET /api/academy/guide/{hero_id}/recommended`
-- `GET /api/academy/hero-ratings`
-- `GET /api/academy/hero-ratings/{subject}`
+- `GET /api/academy/version` — Game Version Info
+- `GET /api/academy/heroes/old` — Hero Catalog
+- `GET /api/academy/roles` — Roles
+- `GET /api/academy/equipment` — Equipment (Items)
+- `GET /api/academy/equipment-details` — Equipment Details
+- `GET /api/academy/spells` — Battle Spells
+- `GET /api/academy/emblems` — Emblems
+- `GET /api/academy/rank` — Rank List
+- `GET /api/academy/rank/{rank_id}` — Rank Details
+- `GET /api/academy/recommended` — Recommended Content
+- `GET /api/academy/recommended/{recommended_id}` — Recommended Detail
+- `GET /api/academy/heroes` — Hero Filters
+- `GET /api/academy/heroes/{hero_id}/stats` — Hero Statistics
+- `GET /api/academy/heroes/{hero_id}/lane` — Hero Lane Distribution
+- `GET /api/academy/heroes/{hero_id}/time-win-rate/{lane_id}` — Hero Lane Time-based Win Rate
+- `GET /api/academy/heroes/{hero_id}/builds` — Hero Recommended Builds
+- `GET /api/academy/heroes/{hero_id}/counters` — Hero Counters
+- `GET /api/academy/heroes/{hero_id}/teammates` — Hero Teammates
+- `GET /api/academy/heroes/{hero_id}/trends` — Hero Performance Trends
+- `GET /api/academy/heroes/{hero_id}/recommended` — Hero Recommended Content
+- `GET /api/academy/heroes/ratings` — Hero Ratings Index
+- `GET /api/academy/heroes/ratings/{subject}` — Hero Ratings by Subject
+
+### User API
+
+- `POST /api/user/auth/send-vc` — Send Verification Code
+- `POST /api/user/auth/login` — Login with Verification Code
+- `POST /api/user/auth/logout` — Logout
+- `POST /api/user/info` — User Info
+- `POST /api/user/stats` — User Statistics
+- `POST /api/user/season` — User Season List
+- `POST /api/user/match` — User Matches
+- `POST /api/user/match/{match_id}` — User Match Details
+- `POST /api/user/heros/frequent` — User Frequent Heroes
+- `POST /api/user/friends` — User Friends
+
+### Addon API
+
+- `GET /api/addon/win-rate` — Win Rate Calculator for Consecutive Wins
+- `GET /api/addon/check-ip` — Check IP Address Location Details
 
 ## Changelog
 

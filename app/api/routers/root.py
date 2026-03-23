@@ -83,11 +83,11 @@ def get_all_hero_ids() -> list[int]:
     include_in_schema=False,
 )
 @router.get(
-    path="/api/docs",
+    path="/docs",
     include_in_schema=False,
 )
 def api_docs_redirect() -> RedirectResponse:
-    return RedirectResponse(url="/docs", status_code=307)
+    return RedirectResponse(url="/api/docs", status_code=307)
 
 
 

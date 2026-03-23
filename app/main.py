@@ -33,26 +33,26 @@ app = FastAPI(
         "name": "BSD 3-Clause License",
         "url": "https://github.com/ridwaanhall/api-mobilelegends/blob/main/LICENSE",
     },
-    openapi_tags=[
+    openapi_tags = [
         {
             "name": "root",
-            "description": "General endpoints for API metadata, documentation, and service utilities."
+            "description": "API status, index, and crawler-related files."
         },
         {
             "name": "mlbb",
-            "description": "Main endpoints for Mobile Legends: Bang Bang game data and analytics."
+            "description": "Hero data, stats, and in-game analytics."
         },
         {
             "name": "academy",
-            "description": "Endpoints for MLBB Academy resources and educational content."
+            "description": "Game guides, builds, and reference data."
         },
         {
             "name": "user",
-            "description": "Endpoints for user authentication and user management."
+            "description": "Authentication and player-related data."
         },
         {
             "name": "addon",
-            "description": "Addon endpoints for supplementary tools and additional features."
+            "description": "Utility tools and extra features."
         }
     ]
 )

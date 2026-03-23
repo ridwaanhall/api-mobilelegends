@@ -20,7 +20,7 @@ router = APIRouter(prefix="/api/academy", tags=["academy"], dependencies=[Depend
 
 
 @router.get(
-    path="/version",
+    path="/meta/version",
     summary="Game Version Info",
     description=(
         "Fetch a list of game versions with their release dates. "
@@ -110,7 +110,7 @@ def version(
 
 
 @router.get(
-    path="/heroes/old",
+    path="/heroes/catalog",
     summary="Hero Catalog",
     description=(
         "Supports query parameters for pagination and localization.\n\n"
@@ -338,8 +338,8 @@ def equipment(
 
 
 @router.get(
-    path="/equipment-details",
-    summary="Equipment Details",
+    path="/equipment/expanded",
+    summary="Equipment Expanded",
     description=(
         "Get detailed information about a specific equipment item. "
         "Supports query parameters for pagination and localization.\n\n"
@@ -538,8 +538,8 @@ def emblems(
 
 
 @router.get(
-    path="/rank",
-    summary="Rank List",
+    path="/ranks",
+    summary="Ranks List",
     description=(
         "Retrieve all rank information for MLBB. Supports query parameters for pagination and localization.\n\n"
         "Query parameters:\n"
@@ -571,7 +571,7 @@ def emblems(
         "    - Guiding players in understanding MLBB's ranking structure."
     ),
 )
-def rank(
+def ranks(
     size: Annotated[
         int,
         Query(
@@ -607,8 +607,8 @@ def rank(
 
 
 @router.get(
-    path="/rank/{rank_id}",
-    summary="Rank Details",
+    path="/ranks/{rank_id}",
+    summary="Ranks Details",
     description=(
         "Retrieve details for a specific rank in MLBB by rank ID. "
         "Supports query parameter for localization.\n\n"
@@ -641,7 +641,7 @@ def rank(
         "    - Guiding players in understanding MLBB's ranking structure."
     ),
 )
-def rank_details(
+def ranks_details(
     rank_id: Annotated[
         int,
         Path(
@@ -1289,7 +1289,7 @@ def heroes_lane(
 
 
 @router.get(
-    path="/heroes/{hero_identifier}/time-win-rate/{lane_id}",
+    path="/heroes/{hero_identifier}/win-rate/timeline/{lane_id}",
     summary="Hero Lane Time-based Win Rate",
     description=(
         "Retrieve time-based win rate statistics for a specific hero in a given lane. "

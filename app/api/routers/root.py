@@ -24,13 +24,10 @@ from app.core.config import (
 
 from fastapi.routing import APIRoute
 from fastapi import Request
-from app.services.mlbb import fetch_mlbb_post
 
 router = APIRouter(tags=["root"])
 
 
-
-# Utility to get all available endpoints from the FastAPI app
 def get_available_endpoints(app, include_methods: set[str] | None = None) -> list[dict]:
     endpoints: list[dict] = []
     for route in app.routes:
@@ -38,7 +35,6 @@ def get_available_endpoints(app, include_methods: set[str] | None = None) -> lis
             continue
         if include_methods and not (set(route.methods) & include_methods):
             continue
-        # Exclude docs, openapi, redoc, static
         if route.path in {"/openapi.json", "/docs", "/redoc", "/static"}:
             continue
         endpoints.append({
@@ -49,33 +45,6 @@ def get_available_endpoints(app, include_methods: set[str] | None = None) -> lis
             "include_in_schema": getattr(route, "include_in_schema", True),
         })
     return endpoints
-
-# Only public endpoints for maintenance mode
-def is_public_endpoint(path: str) -> bool:
-    # Only allow endpoints that do not require user authentication or sensitive data
-    # Exclude /api/user, /api/addon/check-ip, etc.
-    if path.startswith("/api/user"):
-        return False
-    if path.startswith("/api/addon/check-ip"):
-        return False
-    # Allow all others
-    return True
-
-# Get all hero IDs
-def get_all_hero_ids() -> list[int]:
-    payload: dict = {
-        "pageSize": 200,
-        "sorts": [{"data": {"field": "hero_id", "order": "asc"}, "type": "sequence"}],
-        "pageIndex": 1,
-        "fields": ["hero_id"],
-    }
-    data = fetch_mlbb_post("2756564", payload, "en")
-    ids: list[int] = []
-    for record in data.get("data", {}).get("records", []):
-        hero_id = record.get("data", {}).get("hero_id")
-        if isinstance(hero_id, int):
-            ids.append(hero_id)
-    return ids
 
 
 @router.get(

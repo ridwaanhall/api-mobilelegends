@@ -16,10 +16,22 @@ router = APIRouter(prefix="/api/addon", tags=["addon"])
     summary="Win Rate Calculator for Consecutive Wins",
     description=(
         "Calculate the number of consecutive wins required to reach a target win rate "
-        "based on current matches and current win rate. "
-        "The response includes current match count, current win rate, target win rate, "
-        "and the exact number of consecutive wins needed without any losses to achieve "
-        "the desired win rate."
+        "based on current matches and current win rate.\n\n"
+        "Query parameters:\n"
+        "- **match-now**: Current total number of matches played (minimum: 0).\n"
+        "- **wr-now**: Current win rate in percent (range: 0–100).\n"
+        "- **wr-future**: Target win rate in percent. Must be greater than current win rate and between 0–100.\n\n"
+        "The response includes win rate calculation data:\n"
+        "- **status**: Response status (e.g., 'success').\n"
+        "- **match_now**: Current total matches played.\n"
+        "- **wr_now**: Current win rate.\n"
+        "- **wr_future**: Target win rate.\n"
+        "- **required_no_lose_matches**: Number of consecutive wins required without losses to reach the target win rate.\n"
+        "- **message**: Explanation message summarizing the result.\n\n"
+        "This endpoint is useful for:\n"
+        "    - Calculating how many consecutive wins are needed to reach a desired win rate.\n"
+        "    - Helping players set realistic performance goals.\n"
+        "    - Providing analytics for win rate progression."
     ),
 )
 def win_rate(
@@ -184,8 +196,19 @@ def win_rate(
     summary="Check IP address location details",
     description=(
         "Retrieves geographic information associated with a given IP address. "
-        "The response includes details such as city, state, country code, and language. "
-        "It can be used to identify the approximate location and context of the IP address for analytics, security checks, or personalization purposes."
+        "No parameters required.\n\n"
+        "The response includes IP location data:\n"
+        "- **code**: Response code (e.g., 0).\n"
+        "- **msg**: Status message (e.g., 'ok').\n"
+        "- **data**:\n"
+        "    - **city**: City name (e.g., 'Yogyakarta').\n"
+        "    - **state**: State or region (e.g., 'Yogyakarta').\n"
+        "    - **country**: Country code (e.g., 'id').\n"
+        "    - **lang**: Language code (e.g., 'en').\n\n"
+        "This endpoint is useful for:\n"
+        "    - Identifying approximate geographic location of an IP address.\n"
+        "    - Supporting analytics and personalization.\n"
+        "    - Performing security checks and contextual validation."
     ),
 )
 def hero_ratings():

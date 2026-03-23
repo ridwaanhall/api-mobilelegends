@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Body, Depends, Query
+from fastapi import APIRouter, Body, Depends, Path, Query
 
 from app.api.dependencies import require_api_available
 
@@ -119,7 +119,7 @@ def logout(
 
 
 @router.post(
-    path="/user-info",
+    path="/info",
     summary="User Info",
     description="Retrieve the authenticated player's base profile information using a valid JWT.",
 )
@@ -151,7 +151,7 @@ def user_info(
 
 
 @router.post(
-    path="/user-stats",
+    path="/stats",
     summary="User Statistics",
     description="Retrieve the authenticated player's statistics information using a valid X-Token.",
 )
@@ -181,7 +181,7 @@ def user_stats(
 
 
 @router.post(
-    path="/user-season",
+    path="/season",
     summary="User Season List",
     description="Retrieve the authenticated player's season information using a valid X-Token.",
 )
@@ -211,11 +211,11 @@ def user_season(
 
 
 @router.post(
-    path="/user-matches-recent",
-    summary="User Recent Matches",
-    description="Retrieve the authenticated player's recent matches information using a valid X-Token.",
+    path="/match",
+    summary="User Matches",
+    description="Retrieve the authenticated player's matches information using a valid X-Token.",
 )
-def user_recent_matches(
+def user_match(
     jwt: Annotated[
         str,
         Body(
@@ -266,3 +266,49 @@ def user_recent_matches(
         params["last_cursor"] = last_cursor
 
     return fetch_user_actgateway("battlereport/matches/recent", headers, params)
+
+
+@router.post(
+    path="/match/{match_id}",
+    summary="User Match Details",
+    description="Retrieve the authenticated player's match details using a valid X-Token.",
+)
+def user_match_details(
+    match_id: Annotated[
+        int,
+        Path(
+            title="Match ID",
+            description="The unique identifier of the match to retrieve details for.",
+        )
+    ],
+    jwt: Annotated[
+        str,
+        Body(
+            title="JWT",
+            description="The JWT obtained from the /login endpoint.",
+            embed=True,
+        )
+    ],
+    sid: Annotated[
+        int,
+        Query(
+            title="Season ID",
+            description="The season ID for filtering recent matches.",
+        )
+    ],
+    lang: Annotated[
+        LanguageEnum,
+        Query(
+            title=TITLE_LANGUAGE,
+            description=DESCRIPTION_LANGUAGE,
+        )
+    ] = LanguageEnum.ENGLISH,
+) -> object:
+    headers = MLBBHeaderBuilder.get_user_header(
+        lang=lang,
+        x_token=jwt,
+    )
+    params = {
+        "sid": sid
+    }
+    return fetch_user_actgateway(f"battlereport/matches/{match_id}", headers, params)

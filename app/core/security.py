@@ -55,7 +55,7 @@ class BasePathProvider:
         return CryptoManager(SECRET_KEY).decrypt(cls.RONE_DEV_KEY_RATINGS)
 
 
-class BaseIdentityPathProvider:
+class BaseUserPathProvider:
     RONE_DEV_KEY_AUTH = (
         b"gAAAAABpv9lxb0XK9Gsa41L-d2gn4qZ2hEM9PXFV83nVXYUddiyUOAsev0SpyJ3uXuwLjlpMmZIO_267f7C1QKQGZWRjy4p0lTMlkNnVKVK1tqZeJ5eCg7W9xkRc7ALT2BqGbg2Y65LG"
     )

@@ -2,7 +2,7 @@ from fastapi import APIRouter, Body, Depends, Query
 
 from app.api.dependencies import require_api_available
 
-from app.services.identity import fetch_identity_post, fetch_identity_actgateway
+from app.services.user import fetch_user_post, fetch_user_actgateway
 
 from app.core.http import MLBBHeaderBuilder
 from app.core.param_descriptions import *
@@ -10,7 +10,7 @@ from app.core.enums import LanguageEnum
 
 from typing import Annotated
 
-router = APIRouter(prefix="/api/identity", tags=["identity"], dependencies=[Depends(require_api_available)])
+router = APIRouter(prefix="/api/user", tags=["user"], dependencies=[Depends(require_api_available)])
 
 
 @router.post(
@@ -36,12 +36,12 @@ def send_vc(
         )
     ],
 ) -> object:
-    headers = MLBBHeaderBuilder.get_identity_header()
+    headers = MLBBHeaderBuilder.get_user_header()
     payload = {
         "roleId": role_id,
         "zoneId": zone_id,
     }
-    return fetch_identity_post("base/sendVc", headers, payload)
+    return fetch_user_post("base/sendVc", headers, payload)
 
 
 @router.post(
@@ -75,7 +75,7 @@ def login(
         )
     ],
 ) -> object:
-    headers = MLBBHeaderBuilder.get_identity_header()
+    headers = MLBBHeaderBuilder.get_user_header()
     payload = {
         "roleId": role_id,
         "zoneId": zone_id,
@@ -83,7 +83,7 @@ def login(
         "referer": "academy",
         "type": "web",
     }
-    return fetch_identity_post("base/login", headers, payload)
+    return fetch_user_post("base/login", headers, payload)
 
 
 @router.post(
@@ -109,13 +109,13 @@ def logout(
         )
     ],
 ) -> object:
-    headers = MLBBHeaderBuilder.get_identity_header(
+    headers = MLBBHeaderBuilder.get_user_header(
         jwt=jwt
     )
     payload = {
         "token": token,
     }
-    return fetch_identity_post("base/logout", headers, payload)
+    return fetch_user_post("base/logout", headers, payload)
 
 
 @router.post(
@@ -140,14 +140,14 @@ def user_info(
         )
     ] = LanguageEnum.ENGLISH,
 ) -> object:
-    headers = MLBBHeaderBuilder.get_identity_header(
+    headers = MLBBHeaderBuilder.get_user_header(
         lang=lang,
         x_actid="2728785",
         x_appid="2713644",
         jwt=jwt
     )
     payload = {}
-    return fetch_identity_post("base/getBaseInfo", headers, payload)
+    return fetch_user_post("base/getBaseInfo", headers, payload)
 
 
 @router.post(
@@ -172,12 +172,12 @@ def user_stats(
         )
     ] = LanguageEnum.ENGLISH,
 ) -> object:
-    headers = MLBBHeaderBuilder.get_identity_header(
+    headers = MLBBHeaderBuilder.get_user_header(
         lang=lang,
         x_token=jwt,
     )
     params = {}
-    return fetch_identity_actgateway("battlereport/stats", headers, params)
+    return fetch_user_actgateway("battlereport/stats", headers, params)
 
 
 @router.post(
@@ -202,12 +202,12 @@ def user_season(
         )
     ] = LanguageEnum.ENGLISH,
 ) -> object:
-    headers = MLBBHeaderBuilder.get_identity_header(
+    headers = MLBBHeaderBuilder.get_user_header(
         lang=lang,
         x_token=jwt,
     )
     params = {}
-    return fetch_identity_actgateway("battlereport/season/list", headers, params)
+    return fetch_user_actgateway("battlereport/season/list", headers, params)
 
 
 @router.post(
@@ -254,7 +254,7 @@ def user_recent_matches(
         )
     ] = LanguageEnum.ENGLISH,
 ) -> object:
-    headers = MLBBHeaderBuilder.get_identity_header(
+    headers = MLBBHeaderBuilder.get_user_header(
         lang=lang,
         x_token=jwt,
     )
@@ -265,4 +265,4 @@ def user_recent_matches(
     if last_cursor is not None:
         params["last_cursor"] = last_cursor
 
-    return fetch_identity_actgateway("battlereport/matches/recent", headers, params)
+    return fetch_user_actgateway("battlereport/matches/recent", headers, params)

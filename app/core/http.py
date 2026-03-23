@@ -60,7 +60,7 @@ class MLBBHeaderBuilder:
         return headers
     
     @staticmethod
-    def get_identity_header(
+    def get_user_header(
         jwt: str | None = None,
         x_token: str | None = None,
         x_actid: str | None = None,

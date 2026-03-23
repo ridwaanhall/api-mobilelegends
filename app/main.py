@@ -11,7 +11,7 @@ from app.api.routers.root import router as root_router
 from app.api.routers.mlbb import router as mlbb_router
 from app.api.routers.academy import router as academy_router
 from app.api.routers.addon import router as addon_router
-from app.api.routers.identity import router as identity_router
+from app.api.routers.user import router as user_router
 
 from app.core.errors import AppError, app_error_handler, safe_error_payload, unhandled_error_handler
 
@@ -47,8 +47,8 @@ app = FastAPI(
             "description": "Endpoints for MLBB Academy resources and educational content."
         },
         {
-            "name": "identity",
-            "description": "Endpoints for user authentication and identity management."
+            "name": "user",
+            "description": "Endpoints for user authentication and user management."
         },
         {
             "name": "addon",
@@ -60,7 +60,7 @@ app = FastAPI(
 app.include_router(root_router)
 app.include_router(mlbb_router)
 app.include_router(academy_router)
-app.include_router(identity_router)
+app.include_router(user_router)
 app.include_router(addon_router)
 
 app.add_exception_handler(AppError, app_error_handler)  # type: ignore[arg-type]

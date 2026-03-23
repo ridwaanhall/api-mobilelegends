@@ -91,8 +91,14 @@ def api_docs_redirect() -> RedirectResponse:
 
 @router.get(
     path="/api",
-    summary=SUMMARY_API_INDEX,
-    description=DESCRIPTION_API_INDEX,
+    summary="API Index and Status",
+    description=(
+        "Provides API metadata, current status, and available services. "
+        "The response includes general information such as version, author, base URL, "
+        "support and donation details, and a list of available services with their endpoints. "
+        "It also returns operational status messages for each service (e.g., mlbb_api, mlbb_academy), "
+        "along with links to API documentation and base URLs."
+    ),
 )
 def api_index() -> dict[str, object]:
     status_key = "available" if IS_AVAILABLE else "limited"
@@ -147,8 +153,14 @@ def api_index() -> dict[str, object]:
 
 @router.get(
     path="/robots.txt",
-    summary=SUMMARY_ROBOTS_TXT,
-    description=DESCRIPTION_ROBOTS_TXT,
+    summary="Robots.txt for Web Crawlers",
+    description=(
+        "Provides instructions for web crawlers and bots accessing the API. "
+        "The response defines rules for user-agents, allowed/disallowed paths, "
+        "and includes references to the sitemap and host information. "
+        "This helps search engines and automated crawlers understand how to index "
+        "and interact with the API resources."
+    ),
 )
 def robots_txt() -> PlainTextResponse:
     sitemap_url = urljoin(BASE_URL, "sitemap.xml")
@@ -159,8 +171,12 @@ def robots_txt() -> PlainTextResponse:
 
 @router.get(
     path="/sitemap.xml",
-    summary=SUMMARY_SITEMAP_XML,
-    description=DESCRIPTION_SITEMAP_XML,
+    summary="Sitemap for Search Engines",
+    description=(
+        "Provides a sitemap for search engines to better index the API resources. "
+        "The response includes a list of URLs, their update frequencies, and priorities. "
+        "This helps search engines understand the structure of the API and prioritize crawling efforts."
+    ),
 )
 def sitemap_xml() -> Response:
     base_url = BASE_URL.rstrip("/")

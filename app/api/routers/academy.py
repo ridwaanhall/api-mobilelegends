@@ -20,8 +20,15 @@ router = APIRouter(prefix="/api/academy", tags=["academy"], dependencies=[Depend
 
 @router.get(
     path="/version",
-    summary=SUMMARY_ACADEMY_VERSION,
-    description=DESCRIPTION_ACADEMY_VERSION,
+    summary="Game Version Info",
+    description=(
+        "Fetch a list of game versions with their release dates. "
+        "Supports query parameters for pagination (`size`, `index`), sorting (`order`), "
+        "and localization (`lang`). The response includes version identifiers, timestamps, "
+        "and metadata such as form IDs and update information. Useful for tracking "
+        "game version history, release cycles, and ensuring compatibility with specific "
+        "patches or updates."
+    ),
 )
 def version(
     size: Annotated[
@@ -84,8 +91,14 @@ def version(
 
 @router.get(
     path="/heroes",
-    summary=SUMMARY_ACADEMY_HEROES,
-    description=DESCRIPTION_ACADEMY_HEROES,
+    summary="Hero Catalog",
+    description=(
+        "Retrieve a paginated list of all heroes with basic information. "
+        "Supports query parameters for pagination (`size`, `index`) and localization (`lang`). "
+        "The response includes hero identifiers, names, images (`head`, `head_big`, `painting`), "
+        "and lane/role assignments (`roadsort`). Useful for displaying hero collections, "
+        "browsing available heroes, and analyzing their basic attributes."
+    ),
 )
 def heroes(
     size: Annotated[
@@ -125,8 +138,14 @@ def heroes(
 
 @router.get(
     path="/roles",
-    summary=SUMMARY_ACADEMY_ROLES,
-    description=DESCRIPTION_ACADEMY_ROLES,
+    summary="Roles",
+    description=(
+        "List all hero roles available in the game (Tank, Fighter, Assassin, Mage, Marksman, Support). "
+        "Supports query parameters for pagination (`size`, `index`), sorting (`order`), "
+        "and localization (`lang`). The response includes role identifiers, titles, icons, "
+        "and emblem details such as attributes and bonuses. Useful for displaying role categories, "
+        "explaining role-specific attributes, and guiding players in hero selection."
+    ),
 )
 def roles(
     size: Annotated[
@@ -182,8 +201,14 @@ def roles(
 
 @router.get(
     path="/equipment",
-    summary=SUMMARY_ACADEMY_EQUIPMENT,
-    description=DESCRIPTION_ACADEMY_EQUIPMENT,
+    summary="Equipment (Items)",
+    description=(
+        "List all equipment (items). "
+        "Supports query parameters for pagination (`size`, `index`) and localization (`lang`). "
+        "The response includes item identifiers, names, and icons (`equipid`, `equipname`, `equipicon`). "
+        "Useful for displaying the full equipment catalog, browsing available items, "
+        "and analyzing their basic attributes."
+    ),
 )
 def equipment(
     size: Annotated[
@@ -221,8 +246,15 @@ def equipment(
 
 @router.get(
     path="/equipment-details",
-    summary=SUMMARY_ACADEMY_EQUIPMENT_DETAILS,
-    description=DESCRIPTION_ACADEMY_EQUIPMENT_DETAILS,
+    summary="Equipment Details",
+    description=(
+        "Get detailed information about a specific equipment item. "
+        "Supports query parameters for pagination (`size`, `index`) and localization (`lang`). "
+        "The response includes item identifiers, names, icons, type, and detailed attributes "
+        "such as passive skills, tips, and descriptions (`equipskilldesc`, `equiptips`, `equiptypename`). "
+        "Useful for displaying full item details, explaining effects, and guiding players "
+        "in equipment selection and strategy."
+    ),
 )
 def equipment_details(
     size: Annotated[
@@ -260,8 +292,14 @@ def equipment_details(
 
 @router.get(
     path="/spells",
-    summary=SUMMARY_ACADEMY_SPELLS,
-    description=DESCRIPTION_ACADEMY_SPELLS,
+    summary="Battle Spells",
+    description=(
+        "List all battle spells with details. "
+        "Supports query parameters for pagination (`size`, `index`) and localization (`lang`). "
+        "The response includes spell identifiers, names, icons, short descriptions, and full skill descriptions "
+        "(`skilldesc`, `skillshortdesc`). Useful for displaying the complete catalog of battle spells, "
+        "explaining their effects, and guiding players in spell selection and strategy."
+    ),
 )
 def spells(
     size: Annotated[
@@ -299,8 +337,14 @@ def spells(
 
 @router.get(
     path="/emblems",
-    summary=SUMMARY_ACADEMY_EMBLEMS,
-    description=DESCRIPTION_ACADEMY_EMBLEMS,
+    summary="Emblems",
+    description=(
+        "List all emblems with details. "
+        "Supports query parameters for pagination (`size`, `index`) and localization (`lang`). "
+        "The response includes emblem identifiers, names, icons, tiers, and associated skills "
+        "(`emblemskill` with skill name, description, and icon). Useful for displaying the full emblem catalog, "
+        "explaining emblem effects, and guiding players in emblem selection and optimization."
+    ),
 )
 def emblems(
     size: Annotated[
@@ -339,7 +383,13 @@ def emblems(
 @router.get(
     path="/rank",
     summary="Rank List",
-    description="Retrieve all rank information for MLBB.",
+    description=(
+        "Retrieve all rank information for MLBB. "
+        "Supports query parameters for pagination (`size`, `index`) and localization (`lang`). "
+        "The response includes rank identifiers, names, icons, and ranges (`rankid_start`, `rankid_end`) "
+        "with corresponding tier labels (`bigrank_name`, `minrank_name`). Useful for displaying the full "
+        "rank progression system, explaining rank tiers, and guiding players in understanding MLBB's ranking structure."
+    ),
 )
 def rank(
     size: Annotated[
@@ -379,7 +429,14 @@ def rank(
 @router.get(
     path="/rank/{rank_id}",
     summary="Rank Details",
-    description="Retrieve details for a specific rank in MLBB.",
+    description=(
+        "Retrieve details for a specific rank in MLBB by rank ID. "
+        "Supports query parameter for localization (`lang`). "
+        "The response includes rank identifiers, names, icons, and ranges (`rankid_start`, `rankid_end`) "
+        "with corresponding tier labels (`bigrank_name`, `minrank_name`). Useful for displaying detailed "
+        "information about a single rank tier, explaining its position in the progression system, "
+        "and guiding players in understanding MLBB's ranking structure."
+    ),
 )
 def rank_details(
     rank_id: Annotated[
@@ -421,8 +478,15 @@ def rank_details(
 
 @router.get(
     path="/recommended",
-    summary=SUMMARY_ACADEMY_RECOMMENDED,
-    description=DESCRIPTION_ACADEMY_RECOMMENDED,
+    summary="Recommended Content",
+    description=(
+        "List recommended content for players. "
+        "Supports query parameters for pagination (`size`, `index`), sorting (`order`), "
+        "and localization (`lang`). The response includes guides and builds with metadata such as "
+        "hero overview, strengths, weaknesses, recommended equipment, emblems, spells, and cooperative/counter heroes. "
+        "It also provides user-generated content details (title, author, snapshot, votes, views) and contextual tips. "
+        "Useful for surfacing community guides, personalized builds, and strategic recommendations for MLBB players."
+    ),
 )
 def recommended(
     size: Annotated[
@@ -522,8 +586,15 @@ def recommended(
 
 @router.get(
     path="/recommended/{recommended_id}",
-    summary=SUMMARY_ACADEMY_RECOMMENDED_DETAIL,
-    description=DESCRIPTION_ACADEMY_RECOMMENDED_DETAIL,
+    summary="Recommended Detail",
+    description=(
+        "Get details for a specific recommended content item by its identifier. "
+        "Supports query parameters for pagination (`size`, `index`) and localization (`lang`). "
+        "The response includes hero overview, strengths, weaknesses, recommended equipment, emblems, spells, "
+        "cooperative and counter heroes, as well as metadata such as title, snapshot, author, votes, and views. "
+        "Useful for displaying full details of a single guide or build, explaining strategic recommendations, "
+        "and surfacing community-generated content for MLBB players."
+    ),
 )
 def recommended_detail(
     recommended_id: Annotated[
@@ -587,8 +658,15 @@ def recommended_detail(
 
 @router.get(
     path="/guide",
-    summary=SUMMARY_ACADEMY_GUIDE,
-    description=DESCRIPTION_ACADEMY_GUIDE,
+    summary="Hero Filters",
+    description=(
+        "Retrieve a list of heroes with filtering options for role and lane. "
+        "Supports query parameters for role (`tank`, `fighter`, `assassin`, `mage`, `marksman`, `support`) "
+        "and lane (`exp`, `mid`, `roam`, `jungle`, `gold`), as well as pagination (`size`, `index`), "
+        "sorting (`order`), and localization (`lang`). The response includes hero identifiers, names, "
+        "and portrait images. Useful for filtering heroes by gameplay role or lane assignment, "
+        "and displaying customized hero lists in MLBB Academy."
+    ),
 )
 def guide(
     role: Annotated[
@@ -685,8 +763,16 @@ def guide(
 
 @router.get(
     path="/guide/{hero_id}/stats",
-    summary=SUMMARY_ACADEMY_GUIDE_STATS,
-    description=DESCRIPTION_ACADEMY_GUIDE_STATS,
+    summary="Hero Statistics",
+    description=(
+        "Retrieve performance statistics for a specific hero by rank. "
+        "Supports query parameters for rank (`all`, `epic`, `legend`, `mythic`, `honor`, `glory`), "
+        "pagination (`size`, `index`), and localization (`lang`). "
+        "The response includes hero identifiers, names, portraits, and statistical metrics such as "
+        "appearance rate, ban rate, win rate, and synergy with other heroes (`sub_hero`, `sub_hero_last`). "
+        "Useful for analyzing hero performance across different ranks, understanding meta trends, "
+        "and guiding players in hero selection and strategy."
+    ),
 )
 def guide_stats(
     hero_id: Annotated[
@@ -756,8 +842,15 @@ def guide_stats(
 
 @router.get(
     path="/guide/{hero_id}/lane",
-    summary=SUMMARY_ACADEMY_GUIDE_LANE,
-    description=DESCRIPTION_ACADEMY_GUIDE_LANE,
+    summary="Hero Lane Distribution",
+    description=(
+        "Retrieve lane distribution information for a specific hero. "
+        "Supports query parameters for pagination (`size`, `index`) and localization (`lang`). "
+        "The response includes hero identifiers, lane assignments, and lane metadata such as "
+        "lane ID, title, and icon (`road_sort_id`, `road_sort_title`, `road_sort_icon`). "
+        "Useful for analyzing hero lane preferences, understanding optimal lane assignments, "
+        "and guiding players in hero positioning strategies."
+    ),
 )
 def guide_lane(
     hero_id: Annotated[
@@ -812,8 +905,16 @@ def guide_lane(
 
 @router.get(
     path="/guide/{hero_id}/time-win-rate/{lane_id}",
-    summary=SUMMARY_ACADEMY_GUIDE_TIME_WIN_RATE,
-    description=DESCRIPTION_ACADEMY_GUIDE_TIME_WIN_RATE,
+    summary="Hero Lane Time-based Win Rate",
+    description=(
+        "Retrieve time-based win rate statistics for a specific hero in a given lane. "
+        "Supports query parameters for rank (`all`, `epic`, `legend`, `mythic`, `honor`, `glory`), "
+        "pagination (`size`, `index`), and localization (`lang`). "
+        "The response includes hero identifiers, lane ID, overall win rate, and segmented win rates "
+        "across different time intervals (`time_min`, `time_max`, `win_rate`). "
+        "Useful for analyzing hero performance progression over match duration, "
+        "understanding lane-specific strengths, and guiding players in timing strategies."
+    ),
 )
 def guide_time_win_rate(
     hero_id: Annotated[
@@ -892,9 +993,18 @@ def guide_time_win_rate(
 
 @router.get(
     path="/guide/{hero_id}/builds",
-    summary=SUMMARY_ACADEMY_GUIDE_BUILDS,
-    description=DESCRIPTION_ACADEMY_GUIDE_BUILDS,
-    deprecated=True,
+    summary="Hero Recommended Builds",
+    description=(
+        "Retrieve recommended equipment builds for a specific hero in a given lane. "
+        "⚠️ Deprecated: This endpoint is maintained for backward compatibility but may be replaced in future versions. "
+        "Supports query parameters for rank (`all`, `epic`, `legend`, `mythic`, `honor`, `glory`), "
+        "pagination (`size`, `index`), and localization (`lang`). "
+        "The response includes hero identifiers, names, lane assignment, and build details such as "
+        "equipment IDs (`equipid`), emblem configuration (`emblem`), battle spell (`battleskill`), rune skills, "
+        "and statistical metrics like build pick rate and win rate. "
+        "Useful for displaying historical or community-recommended builds, but should be replaced with newer endpoints "
+        "for up-to-date build recommendations."
+    ),
 )
 def guide_builds(
     hero_id: Annotated[
@@ -964,8 +1074,16 @@ def guide_builds(
 
 @router.get(
     path="/guide/{hero_id}/counters",
-    summary=SUMMARY_ACADEMY_GUIDE_COUNTERS,
-    description=DESCRIPTION_ACADEMY_GUIDE_COUNTERS,
+    summary="Hero Counters",
+    description=(
+        "Retrieve counter information for a specific hero. "
+        "Supports query parameters for rank (`all`, `epic`, `legend`, `mythic`, `honor`, `glory`), "
+        "pagination (`size`, `index`), and localization (`lang`). "
+        "The response includes hero identifiers, overall statistics such as ban rate, pick rate, and win rate, "
+        "as well as a list of counter heroes (`sub_hero`) with their win rates and impact values (`increase_win_rate`). "
+        "Useful for analyzing which heroes perform well against the target hero, understanding matchup dynamics, "
+        "and guiding players in drafting strategies."
+    ),
 )
 def guide_counters(
     hero_id: Annotated[
@@ -1035,8 +1153,16 @@ def guide_counters(
 
 @router.get(
     path="/guide/{hero_id}/teammates",
-    summary=SUMMARY_ACADEMY_GUIDE_TEAMMATES,
-    description=DESCRIPTION_ACADEMY_GUIDE_TEAMMATES,
+    summary="Hero Teammates",
+    description=(
+        "Retrieve teammate information for a specific hero. "
+        "Supports query parameters for rank (`all`, `epic`, `legend`, `mythic`, `honor`, `glory`), "
+        "pagination (`size`, `index`), and localization (`lang`). "
+        "The response includes hero identifiers, overall statistics such as ban rate, pick rate, and win rate, "
+        "as well as a list of teammate heroes (`sub_hero`) with their win rates and impact values (`increase_win_rate`). "
+        "Useful for analyzing which heroes synergize well with the target hero, understanding team composition dynamics, "
+        "and guiding players in drafting strategies."
+    ),
 )
 def guide_teammates(
     hero_id: Annotated[
@@ -1106,8 +1232,16 @@ def guide_teammates(
 
 @router.get(
     path="/guide/{hero_id}/trends",
-    summary=SUMMARY_ACADEMY_GUIDE_TRENDS,
-    description=DESCRIPTION_ACADEMY_GUIDE_TRENDS,
+    summary="Hero Performance Trends",
+    description=(
+        "Retrieve trend information for a specific hero over a selected time window. "
+        "Supports query parameters for days (`7`, `15`, `30`), rank (`all`, `epic`, `legend`, `mythic`, `honor`, `glory`), "
+        "pagination (`size`, `index`), and localization (`lang`). "
+        "The response includes hero identifiers, rank context, and daily statistics such as "
+        "appearance rate (`app_rate`), ban rate (`ban_rate`), and win rate (`win_rate`) over the specified period. "
+        "Useful for tracking hero performance changes, identifying meta shifts, and guiding players in understanding "
+        "how a hero’s effectiveness evolves across different ranks and timeframes."
+    ),
 )
 def guide_trends(
     hero_id: Annotated[
@@ -1189,8 +1323,17 @@ def guide_trends(
 
 @router.get(
     path="/guide/{hero_id}/recommended",
-    summary=SUMMARY_ACADEMY_GUIDE_RECOMMENDED,
-    description=DESCRIPTION_ACADEMY_GUIDE_RECOMMENDED,
+    summary="Hero Recommended Content",
+    description=(
+        "Retrieve recommended content for a specific hero. "
+        "Supports query parameters for pagination (`size`, `index`), sorting (`order` by hotness or creation time), "
+        "and localization (`lang`). "
+        "The response includes hero identifiers, lane assignments, and community-generated content such as "
+        "guides, builds, emblems, equipment, spells, and cooperative/counter strategies. "
+        "Each record also contains metadata like title, snapshot image, author information, votes, views, and popularity metrics. "
+        "Useful for surfacing curated or community-recommended hero guides, builds, and strategies to help players "
+        "optimize gameplay and learn from shared experiences."
+    ),
 )
 def guide_recommended(
     hero_id: Annotated[
@@ -1283,8 +1426,16 @@ def guide_recommended(
 
 @router.get(
     path="/hero-ratings",
-    summary=SUMMARY_ACADEMY_HERO_RATINGS,
-    description=DESCRIPTION_ACADEMY_HERO_RATINGS,
+    summary="Hero Ratings Index",
+    description=(
+        "Retrieve a list of all hero ratings and community polls. "
+        "Supports query parameter for localization (`lang`). "
+        "The response includes rating subjects (poll topics), titles, descriptions, and aggregated statistics such as "
+        "comment counts, ranking lists of heroes with their scores, total votes, vote counts, and highlighted comments. "
+        "Each hero entry contains identifiers, images, score values, and optional hashtags or channels. "
+        "Useful for displaying community-driven hero ratings, tracking popularity trends, and surfacing thematic polls "
+        "such as 'Most Charismatic Hero' or 'Top Jungler'."
+    ),
 )
 def hero_ratings(
     lang: Annotated[
@@ -1300,8 +1451,15 @@ def hero_ratings(
 
 @router.get(
     path="/hero-ratings/{subject}",
-    summary=SUMMARY_ACADEMY_HERO_RATINGS_SUBJECT,
-    description=DESCRIPTION_ACADEMY_HERO_RATINGS_SUBJECT,
+    summary="Hero Ratings by Subject",
+    description=(
+        "Retrieve hero ratings for a specific subject from the ratings index. "
+        "Supports query parameter for localization (`lang`). "
+        "The response includes hero entries with identifiers, names, images, and rating statistics such as "
+        "score value, total score, vote count, and highlighted community comments. "
+        "Useful for displaying detailed ratings within a chosen poll or theme (e.g., 'Top Jungler', 'Most Charismatic Hero'), "
+        "allowing players to explore community sentiment and popularity for heroes in a specific category."
+    ),
 )
 def hero_ratings_subject(
     subject: Annotated[

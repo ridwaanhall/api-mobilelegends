@@ -16,7 +16,12 @@ router = APIRouter(prefix="/api/user", tags=["user"], dependencies=[Depends(requ
 @router.post(
     path="/auth/send-vc",
     summary="Send Verification Code",
-    description="Send an in-game verification code to the player's account.",
+    description=(
+        "Send an in-game verification code to the player's account. "
+        "Requires a JSON body with `role_id` (player role identifier) and `zone_id` (server zone identifier). "
+        "The response confirms whether the verification code was successfully dispatched. "
+        "Useful for account authentication flows, linking user identity, and validating ownership of a game account."
+    ),
 )
 def send_vc(
     role_id: Annotated[
@@ -47,7 +52,15 @@ def send_vc(
 @router.post(
     path="/auth/login",
     summary="Login with Verification Code",
-    description="Authenticate the player using a verification code to obtain a JWT and session token.",
+    description=(
+        "Authenticate the player using a verification code to obtain a JWT and session token. "
+        "Requires a JSON body with `role_id` (player role identifier), `zone_id` (server zone identifier), "
+        "and `vc` (verification code). "
+        "The response includes authentication details such as JWT, session token, role ID, zone ID, and metadata "
+        "like time and module information. "
+        "Useful for completing account login flows, establishing secure sessions, and enabling authorized access "
+        "to user-specific resources."
+    ),
 )
 def login(
     role_id: Annotated[
@@ -121,7 +134,15 @@ def logout(
 @router.post(
     path="/info",
     summary="User Info",
-    description="Retrieve the authenticated player's base profile information using a valid JWT.",
+    description=(
+        "Retrieve the authenticated player's base profile information using a valid JWT. "
+        "Supports query parameter for localization (`lang`). "
+        "Requires a JSON body containing `jwt` (JSON Web Token obtained from login). "
+        "The response includes player details such as avatar URL, display name, level, rank level, "
+        "historical rank level, registered country, role ID, and zone ID. "
+        "Useful for displaying identity card information, verifying account ownership, "
+        "and populating player profile data in client applications."
+    ),
 )
 def user_info(
     jwt: Annotated[
@@ -153,7 +174,29 @@ def user_info(
 @router.post(
     path="/stats",
     summary="User Statistics",
-    description="Retrieve the authenticated player's statistics information using a valid JWT.",
+    description=(
+        "Retrieve the authenticated player's statistics information using a valid JWT. "
+        "Supports query parameter for localization (`lang`). "
+        "Requires a JSON body containing `jwt` (JSON Web Token obtained from login). "
+        "The response includes general player stats and hero-specific highlights:\n\n"
+        "- **wc**: Win Count (total matches won)\n"
+        "- **tc**: Total Count (total matches played)\n"
+        "- **as**: Average Score (overall performance rating)\n"
+        "- **gt**: Game Time (average match duration in minutes)\n"
+        "- **mvpc**: MVP Count (number of times player earned MVP)\n"
+        "- **wsc**: Win Streak Count (longest consecutive wins)\n\n"
+        "Hero-specific highlights:\n"
+        "- **mo**: Most Often (hero most frequently used)\n"
+        "- **hk**: Highest Kills (hero with the most kills)\n"
+        "- **ma**: Most Assists (hero contributing the most assists)\n"
+        "- **ms**: Most Score (hero with the highest accumulated score)\n"
+        "- **mdt**: Most Damage Taken (hero absorbing the most damage)\n"
+        "- **mg**: Most Gold (hero earning the most gold)\n"
+        "- **mtd**: Most Total Damage (hero dealing the most damage overall)\n\n"
+        "Each hero highlight includes metadata such as hero ID, name, images, battle ID, and timestamp. "
+        "Useful for analyzing overall player performance, identifying favorite heroes, and showcasing "
+        "personal achievements in MLBB."
+    ),
 )
 def user_stats(
     jwt: Annotated[
@@ -183,7 +226,15 @@ def user_stats(
 @router.post(
     path="/season",
     summary="User Season List",
-    description="Retrieve the authenticated player's season information using a valid JWT.",
+    description=(
+        "Retrieve the authenticated player's season information using a valid JWT. "
+        "Supports query parameter for localization (`lang`). "
+        "Requires a JSON body containing `jwt` (JSON Web Token obtained from login). "
+        "The response includes a list of season identifiers (`sids`) representing the seasons "
+        "in which the player has participated or has tracked statistics. "
+        "Useful for displaying season history, linking performance data to specific seasons, "
+        "and enabling clients to fetch season-specific stats or achievements."
+    ),
 )
 def user_season(
     jwt: Annotated[
@@ -213,7 +264,37 @@ def user_season(
 @router.post(
     path="/match",
     summary="User Matches",
-    description="Retrieve the authenticated player's matches information using a valid JWT.",
+    description=(
+        "Retrieve the authenticated player's recent matches information using a valid JWT. "
+        "Supports query parameters:\n"
+        "- **sid**: Season ID for filtering matches (use `0` for all seasons, or specific IDs from `/api/user/season`).\n"
+        "- **limit**: Maximum number of matches to retrieve (minimum 1).\n"
+        "- **last_cursor**: Cursor for pagination. This value must be set to the `bid_s` of the last match "
+        "from the previous page. The API response includes `pageInfo.nextCursor`, which corresponds to the `bid_s` "
+        "of the last item in the current result set. Use that value as `last_cursor` in the next request to fetch "
+        "the following page.\n"
+        "- **lang**: Language code for localized content.\n\n"
+        "Requires a JSON body containing `jwt` (JSON Web Token obtained from login).\n\n"
+        "The response includes match details:\n"
+        "- **sid**: Season ID.\n"
+        "- **bid**: Battle ID (unique match reference).\n"
+        "- **hid**: Hero ID used in the match.\n"
+        "- **k**: Kills.\n"
+        "- **d**: Deaths.\n"
+        "- **a**: Assists.\n"
+        "- **lid**: Lane ID (1 EXP, 2 Mid, 3 Roam, 4 Jungle, 5 Gold).\n"
+        "- **s**: Score (performance rating for the match).\n"
+        "- **mvp**: MVP flag (1 if MVP, 0 otherwise).\n"
+        "- **res**: Result (1 = Win, 0 = Loss).\n"
+        "- **ts**: Timestamp of the match.\n"
+        "- **hid_e**: Hero entity metadata (hero ID, name, images).\n"
+        "- **bid_s**: Short battle ID (used for pagination cursor).\n\n"
+        "Pagination example:\n"
+        "1. First request: `/api/user/match?sid=40&limit=10&lang=en` → response includes `pageInfo.nextCursor = 4139649383291049463`.\n"
+        "2. Second request: `/api/user/match?sid=40&limit=10&last_cursor=4139649383291049463&lang=en` → retrieves the next page, "
+        "starting from the match with `bid_s = 4139649383291049463`.\n\n"
+        "This mechanism ensures reliable sequential pagination through a player's match history."
+    ),
 )
 def user_match(
     jwt: Annotated[
@@ -271,7 +352,41 @@ def user_match(
 @router.post(
     path="/match/{match_id}",
     summary="User Match Details",
-    description="Retrieve the authenticated player's match details using a valid JWT.",
+    description=(
+        "Retrieve the authenticated player's detailed match information using a valid JWT. "
+        "Supports query parameters:\n"
+        "- **match_id**: Unique identifier of the match (from `bid_s` in `/api/user/match`).\n"
+        "- **sid**: Season ID for filtering (from `/api/user/season`).\n"
+        "- **lang**: Language code for localized content.\n\n"
+        "Requires a JSON body containing `jwt` (JSON Web Token obtained from login).\n\n"
+        "The response includes per-player match details:\n"
+        "- **f**: Team flag (1 = Team A, 2 = Team B).\n"
+        "- **hid**: Hero ID used in the match.\n"
+        "- **rid**: Role ID (unique player identifier).\n"
+        "- **zid**: Zone ID (server region).\n"
+        "- **k**: Kills.\n"
+        "- **d**: Deaths.\n"
+        "- **a**: Assists.\n"
+        "- **tfr**: Team Fight Rate (contribution ratio in team fights).\n"
+        "- **o**: Output (total damage dealt).\n"
+        "- **op**: Output Percentage (damage contribution relative to team).\n"
+        "- **s**: Score (performance rating).\n"
+        "- **mvp**: MVP flag (1 if MVP, 0 otherwise).\n"
+        "- **its**: Item IDs equipped during the match.\n"
+        "- **its_e**: Item entity metadata (name, image, etc.).\n"
+        "- **eq**: Equipment slot indicator.\n"
+        "- **ts**: Timestamp of the match.\n"
+        "- **bd**: Battle duration (seconds).\n"
+        "- **fk**: First Kill flag (number of first kills).\n"
+        "- **fw**: First Win flag (1 if team achieved first objective win).\n"
+        "- **hid_e**: Hero entity metadata (hero ID, name, images).\n"
+        "- **hlvl**: Hero level reached in the match.\n"
+        "- **rname**: Role name (e.g., 'ジャングラー', 'Pertaliteee').\n\n"
+        "This endpoint provides a full breakdown of each participant in the match, including "
+        "their hero choice, performance stats (kills, deaths, assists, damage), items built, "
+        "and role assignment. Useful for reconstructing match history, analyzing team compositions, "
+        "and evaluating player performance in detail."
+    ),
 )
 def user_match_details(
     match_id: Annotated[
@@ -317,7 +432,32 @@ def user_match_details(
 @router.post(
     path="/heros/frequent",
     summary="User Frequent Heroes",
-    description="Retrieve the authenticated player's frequent heroes information using a valid JWT.",
+    description=(
+        "Retrieve the authenticated player's frequent heroes information using a valid JWT. "
+        "Supports query parameters:\n"
+        "- **sid**: Season ID for filtering frequent heroes (must be a valid season ID from `/api/user/season`).\n"
+        "- **limit**: Maximum number of heroes to retrieve (minimum 1).\n"
+        "- **last_cursor**: Cursor for pagination. This value must be set to the `hid` (hero_id) of the last hero "
+        "from the previous page. The API response includes `pageInfo.nextCursor`, which corresponds to the hero_id "
+        "of the first hero in the next page. Use that value as `last_cursor` in the next request to fetch subsequent heroes.\n"
+        "- **lang**: Language code for localized content.\n\n"
+        "Requires a JSON body containing `jwt` (JSON Web Token obtained from login).\n\n"
+        "The response includes frequent hero usage details:\n"
+        "- **hid**: Hero ID.\n"
+        "- **tc**: Total Count (number of matches played with this hero).\n"
+        "- **wc**: Win Count (number of matches won with this hero).\n"
+        "- **bs**: Battle Score (average performance rating).\n"
+        "- **mr**: Match Rating (accumulated rating points).\n"
+        "- **mrp**: Match Rating Percentage (rating contribution relative to overall performance).\n"
+        "- **hid_e**: Hero entity metadata (hero ID, name, images).\n"
+        "- **p**: Power score (weighted performance index for ranking frequent heroes).\n\n"
+        "Pagination example:\n"
+        "1. First request: `/api/user/heros/frequent?sid=37&limit=5&lang=en` → response includes `pageInfo.nextCursor = 11`.\n"
+        "2. Second request: `/api/user/heros/frequent?sid=37&limit=5&last_cursor=11&lang=en` → retrieves the next page, "
+        "starting from the hero with `hid = 11`.\n\n"
+        "This endpoint is useful for analyzing which heroes a player uses most often, their win rates, and performance scores "
+        "across different seasons."
+    ),
 )
 def user_frequent_heros(
     jwt: Annotated[
@@ -375,7 +515,31 @@ def user_frequent_heros(
 @router.post(
     path="/friends",
     summary="User Friends",
-    description="Retrieve the authenticated player's friends information using a valid JWT.",
+    description=(
+        "Retrieve the authenticated player's friends information using a valid JWT. "
+        "Supports query parameters:\n"
+        "- **sid**: Season ID for filtering friends (must be a valid season ID from `/api/user/season`).\n"
+        "- **lang**: Language code for localized content.\n\n"
+        "Requires a JSON body containing `jwt` (JSON Web Token obtained from login).\n\n"
+        "The response includes friend statistics and metadata:\n"
+        "- **bfs**: Best Friends (highlighted or prioritized friends list, may be null).\n"
+        "- **wfs**: Weekly Friends (friends interacted with recently, may be empty).\n"
+        "- **fs**: Friends list entries, each containing:\n"
+        "   - **f**: Friend object with identifiers:\n"
+        "       - **rid**: Role ID (unique player identifier).\n"
+        "       - **zid**: Zone ID (server region).\n"
+        "       - **n**: Name (may be empty if private).\n"
+        "       - **ax**: Avatar URL (may be empty).\n"
+        "       - **pri**: Privacy flag (true if details are hidden).\n"
+        "   - **frid**: Friend Role ID (unique identifier for the friend).\n"
+        "   - **fzid**: Friend Zone ID (server region for the friend).\n"
+        "   - **cl**: Current Level of the friend.\n"
+        "   - **l**: Level (same as cl, sometimes duplicated).\n"
+        "   - **tbc**: Total Battle Count (matches played together).\n"
+        "   - **twc**: Total Win Count (matches won together).\n\n"
+        "This endpoint is useful for displaying a player's friend list, tracking shared match history, "
+        "and analyzing cooperative performance with friends across different seasons."
+    ),
 )
 def user_friends(
     jwt: Annotated[

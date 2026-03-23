@@ -4,7 +4,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
-from app.core.config import DEBUG,  TITLE, SUMMARY, DESCRIPTION, API_VERSION, CONTACT_FORM_LINK
+from app.core.config import DEBUG, API_VERSION
 
 
 from app.api.routers.root import router as root_router
@@ -37,7 +37,7 @@ app = FastAPI(
 
     contact={
         "name": "RoneAI",
-        "url": CONTACT_FORM_LINK,
+        "url": "https://rone.dev/#Contact",
         "email": "founder@rone.dev",
     },
 

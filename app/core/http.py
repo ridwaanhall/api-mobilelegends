@@ -101,10 +101,11 @@ def request_json(
     url: str,
     headers: dict[str, str],
     payload: dict[str, Any] | None = None,
+    params: dict[str, Any] | None = None,
 ) -> Any:
     try:
         if method == "GET":
-            response = requests.get(url, headers=headers, timeout=30)
+            response = requests.get(url, headers=headers, params=params, timeout=30)
         else:
             response = requests.post(url, json=payload, headers=headers, timeout=30)
     except requests.RequestException as exc:

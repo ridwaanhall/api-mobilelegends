@@ -172,12 +172,13 @@ def user_stats(
         )
     ] = LanguageEnum.ENGLISH,
 ) -> object:
-    payload = {}
     headers = MLBBHeaderBuilder.get_identity_header(
         lang=lang,
         x_token=jwt,
     )
-    return fetch_identity_actgateway("battlereport/stats", payload, headers)
+    payload = {}
+    params = {}
+    return fetch_identity_actgateway("battlereport/stats", headers, payload, params)
 
 
 @router.post(
@@ -202,9 +203,59 @@ def user_season(
         )
     ] = LanguageEnum.ENGLISH,
 ) -> object:
-    payload = {}
     headers = MLBBHeaderBuilder.get_identity_header(
         lang=lang,
         x_token=jwt,
     )
-    return fetch_identity_actgateway("battlereport/season/list", payload, headers)
+    payload = {}
+    params = {}
+    return fetch_identity_actgateway("battlereport/season/list", headers, payload, params)
+
+
+@router.post(
+    path="/user-matches-recent",
+    summary="User Recent Matches",
+    description="Retrieve the authenticated player's recent matches information using a valid X-Token.",
+)
+def user_recent_matches(
+    jwt: Annotated[
+        str,
+        Body(
+            title="JWT",
+            description="The JWT obtained from the /login endpoint.",
+            embed=True,
+        )
+    ],
+    sid: Annotated[
+        int,
+        Query(
+            title="Season ID",
+            description="The season ID for filtering recent matches. Use 0 for all seasons.",
+        )
+    ],
+    limit: Annotated[
+        int,
+        Query(
+            title="Limit",
+            description="The maximum number of recent matches to retrieve.",
+            ge=1,
+        )
+    ] = 10,
+    lang: Annotated[
+        LanguageEnum,
+        Query(
+            title=TITLE_LANGUAGE,
+            description=DESCRIPTION_LANGUAGE,
+        )
+    ] = LanguageEnum.ENGLISH,
+) -> object:
+    headers = MLBBHeaderBuilder.get_identity_header(
+        lang=lang,
+        x_token=jwt,
+    )
+    payload = {}
+    params = {
+        "sid": sid,
+        "limit": limit,
+    }
+    return fetch_identity_actgateway("battlereport/matches/recent", headers, payload, params)

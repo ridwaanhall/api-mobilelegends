@@ -124,6 +124,7 @@ def request_json(
     except ValueError as exc:
         raise AppError(status_code=502, code="UPSTREAM_INVALID_RESPONSE", message="Failed to fetch data", details="Invalid JSON from upstream") from exc
 
+
 def request_form(
     *,
     url: str,

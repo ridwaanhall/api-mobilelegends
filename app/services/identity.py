@@ -9,9 +9,9 @@ from app.core.security import BaseIdentityPathProvider
 def fetch_identity_post(path: str, headers: dict, payload: dict[str, Any]) -> Any:
     base_path = BaseIdentityPathProvider.get_base_url_path_auth()
     url = f"{base_path}/{path}"
-    return request_form(method="POST", url=url, payload=payload, headers=headers)
+    return request_form(method="POST", url=url, headers=headers, payload=payload)
 
-def fetch_identity_actgateway(path: str, headers: dict, payload: dict[str, Any], params: dict[str, Any]) -> Any:
+def fetch_identity_actgateway(path: str, headers: dict, params: dict[str, Any]) -> Any:
     base_path = BaseIdentityPathProvider.get_base_url_path_stats()
     url = f"{base_path}/{path}"
-    return request_json(method="GET", url=url, headers=headers, payload=payload, params=params)
+    return request_json(method="GET", url=url, headers=headers, params=params)

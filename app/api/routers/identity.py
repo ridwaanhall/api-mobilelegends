@@ -36,12 +36,12 @@ def send_vc(
         )
     ],
 ) -> object:
+    headers = MLBBHeaderBuilder.get_identity_header()
     payload = {
         "roleId": role_id,
         "zoneId": zone_id,
     }
-    headers = MLBBHeaderBuilder.get_identity_header()
-    return fetch_identity_post("base/sendVc", payload, headers)
+    return fetch_identity_post("base/sendVc", headers, payload)
 
 
 @router.post(
@@ -75,6 +75,7 @@ def login(
         )
     ],
 ) -> object:
+    headers = MLBBHeaderBuilder.get_identity_header()
     payload = {
         "roleId": role_id,
         "zoneId": zone_id,
@@ -82,8 +83,7 @@ def login(
         "referer": "academy",
         "type": "web",
     }
-    headers = MLBBHeaderBuilder.get_identity_header()
-    return fetch_identity_post("base/login", payload, headers)
+    return fetch_identity_post("base/login", headers, payload)
 
 
 @router.post(
@@ -109,13 +109,13 @@ def logout(
         )
     ],
 ) -> object:
-    payload = {
-        "token": token,
-    }
     headers = MLBBHeaderBuilder.get_identity_header(
         jwt=jwt
     )
-    return fetch_identity_post("base/logout", payload, headers)
+    payload = {
+        "token": token,
+    }
+    return fetch_identity_post("base/logout", headers, payload)
 
 
 @router.post(
@@ -140,14 +140,14 @@ def user_info(
         )
     ] = LanguageEnum.ENGLISH,
 ) -> object:
-    payload = {}
     headers = MLBBHeaderBuilder.get_identity_header(
         lang=lang,
         x_actid="2728785",
         x_appid="2713644",
         jwt=jwt
     )
-    return fetch_identity_post("base/getBaseInfo", payload, headers)
+    payload = {}
+    return fetch_identity_post("base/getBaseInfo", headers, payload)
 
 
 @router.post(
@@ -176,9 +176,8 @@ def user_stats(
         lang=lang,
         x_token=jwt,
     )
-    payload = {}
     params = {}
-    return fetch_identity_actgateway("battlereport/stats", headers, payload, params)
+    return fetch_identity_actgateway("battlereport/stats", headers, params)
 
 
 @router.post(
@@ -207,9 +206,8 @@ def user_season(
         lang=lang,
         x_token=jwt,
     )
-    payload = {}
     params = {}
-    return fetch_identity_actgateway("battlereport/season/list", headers, payload, params)
+    return fetch_identity_actgateway("battlereport/season/list", headers, params)
 
 
 @router.post(
@@ -241,6 +239,13 @@ def user_recent_matches(
             ge=1,
         )
     ] = 10,
+    last_cursor: Annotated[
+        int | None,
+        Query(
+            title="Last Cursor",
+            description="The cursor for pagination to retrieve the next set of recent matches. (bid_s)",
+        )
+    ] = None,
     lang: Annotated[
         LanguageEnum,
         Query(
@@ -253,9 +258,11 @@ def user_recent_matches(
         lang=lang,
         x_token=jwt,
     )
-    payload = {}
     params = {
         "sid": sid,
         "limit": limit,
     }
-    return fetch_identity_actgateway("battlereport/matches/recent", headers, payload, params)
+    if last_cursor is not None:
+        params["last_cursor"] = last_cursor
+
+    return fetch_identity_actgateway("battlereport/matches/recent", headers, params)

@@ -18,12 +18,12 @@ This API provides access to hero analytics, in-game performance data, academy re
 
 ## Features
 
-- Hero listings, rankings, positions, and detailed analytics
-- Performance trends, skill combos, counters, and compatibility insights
-- MLBB Academy data: roles, equipment, emblems, spells, builds, and ratings
-- Player endpoints: authentication, stats, match history, and social data
-- Utility tools: win rate calculator and IP lookup
-- Interactive API documentation (Swagger & ReDoc)
+- **Hero listings**: Rankings, positions, and detailed analytics
+- **Performance trends**: Skill combos, counters, and compatibility insights
+- **MLBB Academy data**: Roles, equipment, emblems, spells, builds, and ratings
+- **Player endpoints**: Authentication, stats, match history, and social data
+- **Utility tools**: Win rate calculator and IP lookup
+- **Interactive API documentation**: Swagger & ReDoc
 
 ---
 

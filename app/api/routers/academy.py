@@ -90,7 +90,7 @@ def version(
 
 
 @router.get(
-    path="/heroes",
+    path="/heroes/old",
     summary="Hero Catalog",
     description=(
         "Retrieve a paginated list of all heroes with basic information. "
@@ -99,6 +99,7 @@ def version(
         "and lane/role assignments (`roadsort`). Useful for displaying hero collections, "
         "browsing available heroes, and analyzing their basic attributes."
     ),
+    deprecated=True,
 )
 def heroes(
     size: Annotated[
@@ -657,7 +658,7 @@ def recommended_detail(
 
 
 @router.get(
-    path="/guide",
+    path="/heroes",
     summary="Hero Filters",
     description=(
         "Retrieve a list of heroes with filtering options for role and lane. "
@@ -762,7 +763,7 @@ def guide(
 
 
 @router.get(
-    path="/guide/{hero_id}/stats",
+    path="/heroes/{hero_id}/stats",
     summary="Hero Statistics",
     description=(
         "Retrieve performance statistics for a specific hero by rank. "
@@ -841,7 +842,7 @@ def guide_stats(
 
 
 @router.get(
-    path="/guide/{hero_id}/lane",
+    path="/heroes/{hero_id}/lane",
     summary="Hero Lane Distribution",
     description=(
         "Retrieve lane distribution information for a specific hero. "
@@ -904,7 +905,7 @@ def guide_lane(
 
 
 @router.get(
-    path="/guide/{hero_id}/time-win-rate/{lane_id}",
+    path="/heroes/{hero_id}/time-win-rate/{lane_id}",
     summary="Hero Lane Time-based Win Rate",
     description=(
         "Retrieve time-based win rate statistics for a specific hero in a given lane. "
@@ -992,7 +993,7 @@ def guide_time_win_rate(
 
 
 @router.get(
-    path="/guide/{hero_id}/builds",
+    path="/heroes/{hero_id}/builds",
     summary="Hero Recommended Builds",
     description=(
         "Retrieve recommended equipment builds for a specific hero in a given lane. "
@@ -1005,6 +1006,7 @@ def guide_time_win_rate(
         "Useful for displaying historical or community-recommended builds, but should be replaced with newer endpoints "
         "for up-to-date build recommendations."
     ),
+    deprecated=True,
 )
 def guide_builds(
     hero_id: Annotated[
@@ -1073,7 +1075,7 @@ def guide_builds(
 
 
 @router.get(
-    path="/guide/{hero_id}/counters",
+    path="/heroes/{hero_id}/counters",
     summary="Hero Counters",
     description=(
         "Retrieve counter information for a specific hero. "
@@ -1152,7 +1154,7 @@ def guide_counters(
 
 
 @router.get(
-    path="/guide/{hero_id}/teammates",
+    path="/heroes/{hero_id}/teammates",
     summary="Hero Teammates",
     description=(
         "Retrieve teammate information for a specific hero. "
@@ -1231,7 +1233,7 @@ def guide_teammates(
 
 
 @router.get(
-    path="/guide/{hero_id}/trends",
+    path="/heroes/{hero_id}/trends",
     summary="Hero Performance Trends",
     description=(
         "Retrieve trend information for a specific hero over a selected time window. "
@@ -1322,7 +1324,7 @@ def guide_trends(
 
 
 @router.get(
-    path="/guide/{hero_id}/recommended",
+    path="/heroes/{hero_id}/recommended",
     summary="Hero Recommended Content",
     description=(
         "Retrieve recommended content for a specific hero. "
@@ -1425,7 +1427,7 @@ def guide_recommended(
 
 
 @router.get(
-    path="/hero-ratings",
+    path="/heroes-ratings",
     summary="Hero Ratings Index",
     description=(
         "Retrieve a list of all hero ratings and community polls. "
@@ -1450,7 +1452,7 @@ def hero_ratings(
 
 
 @router.get(
-    path="/hero-ratings/{subject}",
+    path="/heroes-ratings/{subject}",
     summary="Hero Ratings by Subject",
     description=(
         "Retrieve hero ratings for a specific subject from the ratings index. "

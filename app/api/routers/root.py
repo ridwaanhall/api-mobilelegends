@@ -1,11 +1,9 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from html import escape
-from urllib.parse import urljoin
 
 from fastapi import APIRouter
-from fastapi.responses import PlainTextResponse, RedirectResponse, Response
+from fastapi.responses import PlainTextResponse, RedirectResponse
 
 from app.core.config import (
     API_BASE_URL,
@@ -116,7 +114,9 @@ async def api_index(request: Request) -> dict:
     always_available: set[str] = {"/", "/api", "/api/docs", "/robots.txt"}
     endpoints = get_available_endpoints(app, include_methods={"GET", "POST"})
     if IS_AVAILABLE:
-        available_endpoints: list[str] = [ep["path"] for ep in endpoints if ep["include_in_schema"] and is_public_endpoint(ep["path"])]
+        available_endpoints: list[str] = [
+            ep["path"] for ep in endpoints if ep["include_in_schema"]
+        ]
     else:
         available_endpoints: list[str] = [ep["path"] for ep in endpoints if ep["path"] in always_available]
 

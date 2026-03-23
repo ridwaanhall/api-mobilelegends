@@ -1,34 +1,56 @@
-# Mobile Legends: Bang Bang (MLBB) Public Data API (MLBB + Academy)
+# MLBB Public Data API
 
-Production API service that provides Mobile Legends data endpoints for analytics, hero insights, and academy content.
+[![API Live](https://img.shields.io/badge/API-Live-brightgreen?logo=fastapi&logoColor=white)](https://mlbb-stats.rone.dev/api/docs)
+![Release](https://img.shields.io/github/v/release/ridwaanhall/api-mobilelegends?logo=github)
+![License](https://img.shields.io/github/license/ridwaanhall/api-mobilelegends?logo=opensourceinitiative&logoColor=white)
+![Stars](https://img.shields.io/github/stars/ridwaanhall/api-mobilelegends?logo=github)
+![Forks](https://img.shields.io/github/forks/ridwaanhall/api-mobilelegends?logo=github)
+![Python](https://img.shields.io/badge/Python-3.12+-blue?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
+![OpenAPI](https://img.shields.io/badge/OpenAPI-3.1-green?logo=openapiinitiative&logoColor=white)
 
-## What The API Can Do
+This API provides access to hero analytics, in-game performance data, academy resources, player endpoints, and utility tools. It is designed with a consistent RESTful structure, supports flexible hero identifiers (ID or name), and delivers standardized responses for seamless integration into applications, dashboards, and analytics systems.
 
-- Provide MLBB hero listings, rank performance, role/lane filters, matchup data, and win-rate utilities.
-- Provide MLBB Academy resources including heroes, roles, equipment, emblems, spells, guides, trends, and ratings.
-- Expose interactive API documentation for direct request testing in browser.
-- Return standardized error payloads for validation and service-level failures.
+---
+
+> [!IMPORTANT]
+> **Built with Dedication:** This project is the result of over [![wakatime](https://wakatime.com/badge/user/018b799e-de53-4f7a-bb65-edc2df9f26d8/project/07151d3c-c9e1-4f53-bb7f-f706f8261ac4.svg)](https://wakatime.com/badge/user/018b799e-de53-4f7a-bb65-edc2df9f26d8/project/07151d3c-c9e1-4f53-bb7f-f706f8261ac4) of meticulous coding, architecting, and performance tuning to ensure the best developer experience.
+
+## Features
+
+- Hero listings, rankings, positions, and detailed analytics
+- Performance trends, skill combos, counters, and compatibility insights
+- MLBB Academy data: roles, equipment, emblems, spells, builds, and ratings
+- Player endpoints: authentication, stats, match history, and social data
+- Utility tools: win rate calculator and IP lookup
+- Interactive API documentation (Swagger & ReDoc)
+
+---
 
 ## Documentation
 
-- Swagger UI: `/docs`
-- ReDoc: `/redoc`
-- Swagger alias: `/api/docs`
+- Swagger UI: `/api/docs`
+- ReDoc: `/api/redoc`
+- OpenAPI JSON: `/api/openapi.json`
 
-## Available URLs
+---
+
+## Base URLs
 
 ```txt
-https://mlbb-stats.rone.dev                # root (redirects to /docs)
-https://mlbb-stats.rone.dev/api            # API index and endpoint map
-https://mlbb-stats.rone.dev/docs           # Swagger UI
-https://mlbb-stats.rone.dev/redoc          # ReDoc
-https://mlbb-stats.rone.dev/api/docs       # Swagger alias (redirects to /docs)
+https://mlbb-stats.rone.dev                # root (redirects to /api/docs)
+https://mlbb-stats.rone.dev/api            # API index and status
+https://mlbb-stats.rone.dev/api/docs       # Swagger UI
+https://mlbb-stats.rone.dev/api/redoc      # ReDoc
+https://mlbb-stats.rone.dev/api/openapi.json
 https://mlbb-stats.rone.dev/robots.txt
-```
+````
 
-## Example Usage in FastAPI
+---
 
-1. Visit [mlbb-stats.rone.dev/docs](https://mlbb-stats.rone.dev/docs)
+## Quick Start
+
+1. Visit [mlbb-stats.rone.dev/api/docs](https://mlbb-stats.rone.dev/api/docs)
 
 2. Open any API (example: `/api/hero-rank`)
    ![Step 2](images/step-02.png)
@@ -49,52 +71,60 @@ https://mlbb-stats.rone.dev/robots.txt
    - **Yellow box**: Request URL to directly test the API
    - **Green Box**: The actual API output
 
+---
+
 ## API Coverage
 
-### Root API
+### Root
 
 - `GET /api` — API Index and Status
 - `GET /robots.txt` — Robots.txt for Web Crawlers
 
-### MLBB Game Data API
+---
 
-- `GET /api/hero-list` — List Heroes
-- `GET /api/hero-rank` — Hero Rank Statistics
-- `GET /api/hero-position` — Hero Position Filters
-- `GET /api/hero-detail/{hero_identifier}` — Hero Detail
-- `GET /api/hero-detail-stats/{hero_identifier}` — Hero Detail Statistics
-- `GET /api/hero-skill-combo/{hero_identifier}` — Hero Skill Combo
-- `GET /api/hero-rate/{hero_identifier}` — Hero Rate Trends
-- `GET /api/hero-relation/{hero_identifier}` — Hero Relations
-- `GET /api/hero-counter/{hero_identifier}` — Hero Counters
-- `GET /api/hero-compatibility/{hero_identifier}` — Hero Compatibility
+### MLBB
 
-### MLBB Academy API
+- `GET /api/heroes` — List Heroes
+- `GET /api/heroes/rank` — Hero Rank Statistics
+- `GET /api/heroes/positions` — Hero Position Filters
+- `GET /api/heroes/{hero_identifier}` — Hero Detail
+- `GET /api/heroes/{hero_identifier}/stats` — Hero Detail Statistics
+- `GET /api/heroes/{hero_identifier}/skill-combos` — Hero Skill Combos
+- `GET /api/heroes/{hero_identifier}/trends` — Hero Performance Trends
+- `GET /api/heroes/{hero_identifier}/relations` — Hero Relations
+- `GET /api/heroes/{hero_identifier}/counters` — Hero Counters
+- `GET /api/heroes/{hero_identifier}/compatibility` — Hero Compatibility
 
-- `GET /api/academy/version` — Game Version Info
-- `GET /api/academy/heroes/old` — Hero Catalog
+---
+
+### Academy
+
+- `GET /api/academy/meta/version` — Game Version Info
+- `GET /api/academy/heroes/catalog` — Hero Catalog
 - `GET /api/academy/roles` — Roles
 - `GET /api/academy/equipment` — Equipment (Items)
-- `GET /api/academy/equipment-details` — Equipment Details
+- `GET /api/academy/equipment/expanded` — Equipment Expanded
 - `GET /api/academy/spells` — Battle Spells
 - `GET /api/academy/emblems` — Emblems
-- `GET /api/academy/rank` — Rank List
-- `GET /api/academy/rank/{rank_id}` — Rank Details
+- `GET /api/academy/ranks` — Ranks List
+- `GET /api/academy/ranks/{rank_id}` — Ranks Details
 - `GET /api/academy/recommended` — Recommended Content
 - `GET /api/academy/recommended/{recommended_id}` — Recommended Detail
 - `GET /api/academy/heroes` — Hero Filters
-- `GET /api/academy/heroes/{hero_id}/stats` — Hero Statistics
-- `GET /api/academy/heroes/{hero_id}/lane` — Hero Lane Distribution
-- `GET /api/academy/heroes/{hero_id}/time-win-rate/{lane_id}` — Hero Lane Time-based Win Rate
-- `GET /api/academy/heroes/{hero_id}/builds` — Hero Recommended Builds
-- `GET /api/academy/heroes/{hero_id}/counters` — Hero Counters
-- `GET /api/academy/heroes/{hero_id}/teammates` — Hero Teammates
-- `GET /api/academy/heroes/{hero_id}/trends` — Hero Performance Trends
-- `GET /api/academy/heroes/{hero_id}/recommended` — Hero Recommended Content
+- `GET /api/academy/heroes/{hero_identifier}/stats` — Hero Statistics
+- `GET /api/academy/heroes/{hero_identifier}/lane` — Hero Lane Distribution
+- `GET /api/academy/heroes/{hero_identifier}/win-rate/timeline/{lane_id}` — Hero Lane Time-based Win Rate
+- `GET /api/academy/heroes/{hero_identifier}/builds` — Hero Recommended Builds
+- `GET /api/academy/heroes/{hero_identifier}/counters` — Hero Counters
+- `GET /api/academy/heroes/{hero_identifier}/teammates` — Hero Teammates
+- `GET /api/academy/heroes/{hero_identifier}/trends` — Hero Performance Trends
+- `GET /api/academy/heroes/{hero_identifier}/recommended` — Hero Recommended Content
 - `GET /api/academy/heroes/ratings` — Hero Ratings Index
 - `GET /api/academy/heroes/ratings/{subject}` — Hero Ratings by Subject
 
-### User API
+---
+
+### User
 
 - `POST /api/user/auth/send-vc` — Send Verification Code
 - `POST /api/user/auth/login` — Login with Verification Code
@@ -102,79 +132,63 @@ https://mlbb-stats.rone.dev/robots.txt
 - `POST /api/user/info` — User Info
 - `POST /api/user/stats` — User Statistics
 - `POST /api/user/season` — User Season List
-- `POST /api/user/match` — User Matches
-- `POST /api/user/match/{match_id}` — User Match Details
-- `POST /api/user/heros/frequent` — User Frequent Heroes
+- `POST /api/user/matches` — User Matches
+- `POST /api/user/matches/{match_id}` — User Match Details
+- `POST /api/user/heroes/frequent` — User Frequent Heroes
 - `POST /api/user/friends` — User Friends
 
-### Addon API
+---
 
-- `GET /api/addon/win-rate` — Win Rate Calculator for Consecutive Wins
-- `GET /api/addon/check-ip` — Check IP Address Location Details
+### Addon
+
+- `GET /api/addon/win-rate-calculator` — Win Rate Calculator
+- `GET /api/addon/ip` — IP Address Lookup
+
+---
 
 ## Changelog
 
-Migration notes are documented in [Releases](https://github.com/ridwaanhall/api-mobilelegends/releases).
+See [Releases](https://github.com/ridwaanhall/api-mobilelegends/releases) for migration notes and updates.
+
+---
 
 ## License
 
-This project is released under the **BSD 3-Clause License**. Attribution to **Moonton** and **ridwaanhall** should be preserved in downstream usage.
+This project is licensed under the **BSD 3-Clause License**.
+Attribution to **Moonton** and **ridwaanhall** must be preserved in downstream usage.
 
 ---
 
 <details>
-   <summary>Local Development (for ridwaanhall only)</summary>
+<summary>Local Development (internal)</summary>
 
-   1. **Create virtual environment**
+### Setup
 
-      ```bash
-      python -m venv .venv
-      ```
+```bash
+python -m venv .venv
+source .venv/bin/activate  # or .venv\Scripts\Activate.ps1 (Windows)
+pip install -r requirements.txt
+cp .env.example .env
+```
 
-   2. **Activate virtual environment**
+### Run
 
-      - On Linux/macOS:
+```bash
+uvicorn app.main:app --reload
+```
 
-      ```bash
-      source .venv/bin/activate
-      ```
+### Test
 
-      - On Windows (PowerShell):
+```bash
+pytest
+```
 
-      ```bash
-      .venv\Scripts\Activate.ps1
-      ```
+### Environment Variables
 
-   3. **Install dependencies**
+- `SECRET_KEY`
+- `RONE_DEV_ACCESS_KEY`
+- `RONE_DEV_ACCESS_KEY_V2`
 
-      ```bash
-      pip install -r requirements.txt
-      ```
+See `.env.example` for full configuration.
 
-   4. **Create environment file**
-
-      ```bash
-      cp .env.example .env
-      ```
-
-   5. **Run tests**
-
-      ```bash
-      pytest
-      ```
-
-   6. **Start FastAPI server**
-
-      ```bash
-      uvicorn app.main:app --reload
-      ```
-
-   Configuration
-
-   Required variables:
-      - `SECRET_KEY`
-      - `RONE_DEV_ACCESS_KEY`
-      - `RONE_DEV_ACCESS_KEY_V2`
-
-   See `.env.example` for full environment options.
-   </details>
+</details>

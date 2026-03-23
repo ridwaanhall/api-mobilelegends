@@ -102,7 +102,19 @@ def login(
 @router.post(
     path="/auth/logout",
     summary="Logout",
-    description="Invalidate the player's session using the JWT and session token obtained from /login.",
+    description=(
+        "Invalidate the player's session using the JWT obtained from `/api/user/auth/login`. "
+        "This endpoint terminates the current authenticated session, ensuring that the JWT can no longer be used "
+        "for authorized requests.\n\n"
+        "Request body:\n"
+        "- **jwt**: JSON Web Token obtained during login.\n\n"
+        "The response confirms whether the logout was successful:\n"
+        "- **code**: Status code (0 indicates success).\n"
+        "- **data**: Empty string (no payload returned).\n"
+        "- **msg**: Message string (e.g., 'ok').\n\n"
+        "Note: Although the login response also includes a `token` field, only the JWT is required for logout. "
+        "The server uses the JWT to invalidate the session."
+    ),
 )
 def logout(
     jwt: Annotated[
@@ -113,21 +125,11 @@ def logout(
             embed=True,
         )
     ],
-    token: Annotated[
-        str,
-        Body(
-            title="Session Token",
-            description="The session token obtained from the /login endpoint.",
-            embed=True,
-        )
-    ],
 ) -> object:
     headers = MLBBHeaderBuilder.get_user_header(
         jwt=jwt
     )
-    payload = {
-        "token": token,
-    }
+    payload = {}
     return fetch_user_post("base/logout", headers, payload)
 
 

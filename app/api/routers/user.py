@@ -312,3 +312,61 @@ def user_match_details(
         "sid": sid
     }
     return fetch_user_actgateway(f"battlereport/matches/{match_id}", headers, params)
+
+
+@router.post(
+    path="/heros/frequent",
+    summary="User Frequent Heroes",
+    description="Retrieve the authenticated player's frequent heroes information using a valid X-Token.",
+)
+def user_frequent_heros(
+    jwt: Annotated[
+        str,
+        Body(
+            title="JWT",
+            description="The JWT obtained from the /login endpoint.",
+            embed=True,
+        )
+    ],
+    sid: Annotated[
+        int,
+        Query(
+            title="Season ID",
+            description="The season ID for filtering frequent heroes. Use 0 for all seasons.",
+        )
+    ],
+    limit: Annotated[
+        int,
+        Query(
+            title="Limit",
+            description="The maximum number of frequent heroes to retrieve.",
+            ge=1,
+        )
+    ] = 5,
+    last_cursor: Annotated[
+        int | None,
+        Query(
+            title="Last Cursor",
+            description="The cursor for pagination to retrieve the next set of frequent heroes. (hero_id)",
+        )
+    ] = None,
+    lang: Annotated[
+        LanguageEnum,
+        Query(
+            title=TITLE_LANGUAGE,
+            description=DESCRIPTION_LANGUAGE,
+        )
+    ] = LanguageEnum.ENGLISH,
+) -> object:
+    headers = MLBBHeaderBuilder.get_user_header(
+        lang=lang,
+        x_token=jwt,
+    )
+    params = {
+        "sid": sid,
+        "limit": limit,
+    }
+    if last_cursor is not None:
+        params["last_cursor"] = last_cursor
+
+    return fetch_user_actgateway("battlereport/heros/frequent", headers, params)

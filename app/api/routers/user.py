@@ -307,7 +307,7 @@ def user_season(
 
 
 @router.post(
-    path="/match",
+    path="/matches",
     summary="User Matches",
     description=(
         "Retrieve the authenticated player's recent matches information using a valid JWT. "
@@ -337,8 +337,8 @@ def user_season(
         "- **hid_e**: Hero entity metadata (hero ID, name, images).\n"
         "- **bid_s**: Short battle ID (used for pagination cursor).\n\n"
         "Pagination example:\n"
-        "    First request: `/api/user/match?sid=40&limit=10&lang=en` → response includes `pageInfo.nextCursor = 4139649383291049463`.\n"
-        "    Second request: `/api/user/match?sid=40&limit=10&last_cursor=4139649383291049463&lang=en` → retrieves the next page, "
+        "    First request: `/api/user/matches?sid=40&limit=10&lang=en` → response includes `pageInfo.nextCursor = 4139649383291049463`.\n"
+        "    Second request: `/api/user/matches?sid=40&limit=10&last_cursor=4139649383291049463&lang=en` → retrieves the next page, "
         "starting from the match with `bid_s = 4139649383291049463`.\n\n"
         "The response also includes pagination metadata:\n"
         "- **pageInfo.nextCursor**: Cursor value for the next page.\n"
@@ -350,7 +350,7 @@ def user_season(
         "    - Enabling clients to paginate reliably through a player's matches."
     ),
 )
-def user_match(
+def user_matches(
     jwt: Annotated[
         str,
         Body(
@@ -404,7 +404,7 @@ def user_match(
 
 
 @router.post(
-    path="/match/{match_id}",
+    path="/matches/{match_id}",
     summary="User Match Details",
     description=(
         "Retrieve the authenticated player's detailed match information using a valid JWT. "
@@ -459,7 +459,7 @@ def user_match(
         "    - Evaluating player performance in detail."
     ),
 )
-def user_match_details(
+def user_matches_details(
     match_id: Annotated[
         int,
         Path(
@@ -501,7 +501,7 @@ def user_match_details(
 
 
 @router.post(
-    path="/heros/frequent",
+    path="/heroes/frequent",
     summary="User Frequent Heroes",
     description=(
         "Retrieve the authenticated player's frequent heroes information using a valid JWT. "
@@ -530,8 +530,8 @@ def user_match_details(
         "    - **i2x**: Alternate hero image URL.\n"
         "- **p**: Power score (weighted performance index for ranking frequent heroes).\n\n"
         "Pagination example:\n"
-        "    First request: `/api/user/heros/frequent?sid=37&limit=5&lang=en` → response includes `pageInfo.nextCursor = 11`.\n"
-        "    Second request: `/api/user/heros/frequent?sid=37&limit=5&last_cursor=11&lang=en` → retrieves the next page, "
+        "    First request: `/api/user/heroes/frequent?sid=37&limit=5&lang=en` → response includes `pageInfo.nextCursor = 11`.\n"
+        "    Second request: `/api/user/heroes/frequent?sid=37&limit=5&last_cursor=11&lang=en` → retrieves the next page, "
         "starting from the hero with `hid = 11`.\n\n"
         "The response also includes pagination metadata:\n"
         "- **pageInfo.nextCursor**: Cursor value for the next page.\n"
@@ -543,7 +543,7 @@ def user_match_details(
         "    - Comparing hero usage across different seasons."
     ),
 )
-def user_frequent_heros(
+def user_frequent_heroes(
     jwt: Annotated[
         str,
         Body(

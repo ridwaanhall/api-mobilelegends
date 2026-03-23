@@ -6,14 +6,21 @@ from fastapi import APIRouter, Query
 
 from app.core.param_descriptions import *
 from app.core.errors import AppError
+from app.services.user import fetch_ip_get
 
 router = APIRouter(prefix="/api/addon", tags=["addon"])
 
 
 @router.get(
     path="/win-rate",
-    summary=SUMMARY_ADDON_WIN_RATE,
-    description=DESCRIPTION_ADDON_WIN_RATE,
+    summary="Win Rate Calculator for Consecutive Wins",
+    description=(
+        "Calculate the number of consecutive wins required to reach a target win rate "
+        "based on current matches and current win rate. "
+        "The response includes current match count, current win rate, target win rate, "
+        "and the exact number of consecutive wins needed without any losses to achieve "
+        "the desired win rate."
+    ),
 )
 def win_rate(
     match_now: Annotated[
@@ -170,3 +177,16 @@ def win_rate(
             f"you need {required_matches_int} consecutive wins without any losses."
         ),
     }
+
+
+@router.get(
+    path="/check-ip",
+    summary="Check IP address location details",
+    description=(
+        "Retrieves geographic information associated with a given IP address. "
+        "The response includes details such as city, state, country code, and language. "
+        "It can be used to identify the approximate location and context of the IP address for analytics, security checks, or personalization purposes."
+    ),
+)
+def hero_ratings():
+    return fetch_ip_get("c/ip")

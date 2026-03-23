@@ -93,6 +93,15 @@ class MLBBHeaderBuilder:
             headers["x-lang"] = lang
 
         return headers
+    
+    @staticmethod
+    def get_ip_check_header() -> dict[str, str]:
+        headers = {
+            "User-Agent": MLBBHeaderBuilder.get_random_user_agent(),
+            "Accept": "application/json",
+        }
+        
+        return headers
 
 
 def request_json(

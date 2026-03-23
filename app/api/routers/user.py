@@ -153,7 +153,7 @@ def user_info(
 @router.post(
     path="/stats",
     summary="User Statistics",
-    description="Retrieve the authenticated player's statistics information using a valid X-Token.",
+    description="Retrieve the authenticated player's statistics information using a valid JWT.",
 )
 def user_stats(
     jwt: Annotated[
@@ -183,7 +183,7 @@ def user_stats(
 @router.post(
     path="/season",
     summary="User Season List",
-    description="Retrieve the authenticated player's season information using a valid X-Token.",
+    description="Retrieve the authenticated player's season information using a valid JWT.",
 )
 def user_season(
     jwt: Annotated[
@@ -213,7 +213,7 @@ def user_season(
 @router.post(
     path="/match",
     summary="User Matches",
-    description="Retrieve the authenticated player's matches information using a valid X-Token.",
+    description="Retrieve the authenticated player's matches information using a valid JWT.",
 )
 def user_match(
     jwt: Annotated[
@@ -271,7 +271,7 @@ def user_match(
 @router.post(
     path="/match/{match_id}",
     summary="User Match Details",
-    description="Retrieve the authenticated player's match details using a valid X-Token.",
+    description="Retrieve the authenticated player's match details using a valid JWT.",
 )
 def user_match_details(
     match_id: Annotated[
@@ -317,7 +317,7 @@ def user_match_details(
 @router.post(
     path="/heros/frequent",
     summary="User Frequent Heroes",
-    description="Retrieve the authenticated player's frequent heroes information using a valid X-Token.",
+    description="Retrieve the authenticated player's frequent heroes information using a valid JWT.",
 )
 def user_frequent_heros(
     jwt: Annotated[
@@ -370,3 +370,43 @@ def user_frequent_heros(
         params["last_cursor"] = last_cursor
 
     return fetch_user_actgateway("battlereport/heros/frequent", headers, params)
+
+
+@router.post(
+    path="/friends",
+    summary="User Friends",
+    description="Retrieve the authenticated player's friends information using a valid JWT.",
+)
+def user_friends(
+    jwt: Annotated[
+        str,
+        Body(
+            title="JWT",
+            description="The JWT obtained from the /login endpoint.",
+            embed=True,
+        )
+    ],
+    sid: Annotated[
+        int,
+        Query(
+            title="Season ID",
+            description="The season ID for filtering friends.",
+        )
+    ],
+    lang: Annotated[
+        LanguageEnum,
+        Query(
+            title=TITLE_LANGUAGE,
+            description=DESCRIPTION_LANGUAGE,
+        )
+    ] = LanguageEnum.ENGLISH,
+) -> object:
+    headers = MLBBHeaderBuilder.get_user_header(
+        lang=lang,
+        x_token=jwt,
+    )
+    params = {
+        "sid": sid,
+    }
+
+    return fetch_user_actgateway("battlereport/friends", headers, params)

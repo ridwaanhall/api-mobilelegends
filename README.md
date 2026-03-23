@@ -24,7 +24,6 @@ https://mlbb-stats.rone.dev/docs           # Swagger UI
 https://mlbb-stats.rone.dev/redoc          # ReDoc
 https://mlbb-stats.rone.dev/api/docs       # Swagger alias (redirects to /docs)
 https://mlbb-stats.rone.dev/robots.txt
-https://mlbb-stats.rone.dev/sitemap.xml
 ```
 
 ## Example Usage in FastAPI
@@ -56,7 +55,6 @@ https://mlbb-stats.rone.dev/sitemap.xml
 
 - `GET /api` — API Index and Status
 - `GET /robots.txt` — Robots.txt for Web Crawlers
-- `GET /sitemap.xml` — Sitemap for Search Engines
 
 ### MLBB Game Data API
 

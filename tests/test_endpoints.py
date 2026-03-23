@@ -72,22 +72,3 @@ def test_robots_txt_allows_all_crawlers() -> None:
     assert response.status_code == 200
     assert "User-agent: *" in content
     assert "Allow: /" in content
-    assert "Sitemap:" in content
-
-
-def test_sitemap_uses_latest_api_urls() -> None:
-    response = client.get("/sitemap.xml")
-    content = response.text
-    xml_root = ElementTree.fromstring(content)
-    namespace = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
-    loc_paths = {
-        urlparse(node.text).path
-        for node in xml_root.findall("sm:url/sm:loc", namespace)
-        if node.text
-    }
-
-    assert response.status_code == 200
-    assert "/api/hero-rank" in loc_paths
-    assert "/api/academy/guide" in loc_paths
-    assert "/docs" in loc_paths
-    assert "/hero-rank" not in loc_paths

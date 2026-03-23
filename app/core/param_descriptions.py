@@ -44,9 +44,6 @@ DESCRIPTION_API_DOCS = "Redirect to the API documentation."
 SUMMARY_ROBOTS_TXT = "Robots.txt for Web Crawlers"
 DESCRIPTION_ROBOTS_TXT = "Instructions for web crawlers and bots accessing the API."
 
-SUMMARY_SITEMAP_XML = "Sitemap for Search Engines"
-DESCRIPTION_SITEMAP_XML = "Sitemap for search engines to crawl the API endpoints."
-
 # =========================
 # mlbb
 # =========================

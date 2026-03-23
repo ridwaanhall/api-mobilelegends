@@ -20,6 +20,10 @@ router = APIRouter(prefix="/api", tags=["mlbb"], dependencies=[Depends(require_a
 
 @router.get(
     path="/hero-list",
+    include_in_schema=False,
+)
+@router.get(
+    path="/heroes",
     summary="List Heroes",
     description=(
         "Retrieve a paginated list of all heroes with basic information. "
@@ -108,6 +112,10 @@ def hero_list(
 
 @router.get(
     path="/hero-rank",
+    include_in_schema=False,
+)
+@router.get(
+    path="/heroes/rank",
     summary="Hero Rank Statistics",
     description=(
         "Fetch rank statistics for heroes over a specified time window. "
@@ -257,6 +265,10 @@ def hero_rank(
 
 @router.get(
     path="/hero-position",
+    include_in_schema=False,
+)
+@router.get(
+    path="/heroes/positions",
     summary="Hero Position Filters",
     description=(
         "Filter heroes by their position on the map using role and lane criteria. "
@@ -412,6 +424,10 @@ def hero_position(
 
 @router.get(
     path="/hero-detail/{hero_identifier}",
+    include_in_schema=False,
+)
+@router.get(
+    path="/heroes/{hero_identifier}",
     summary="Hero Detail",
     description=(
         "Get detailed information for a specific hero by ID or name. "
@@ -538,6 +554,10 @@ def hero_detail(
 
 @router.get(
     path="/hero-detail-stats/{hero_identifier}",
+    include_in_schema=False,
+)
+@router.get(
+    path="/heroes/{hero_identifier}/stats",
     summary="Hero Detail Statistics",
     description=(
         "Get detailed statistics for a specific hero by ID or name. "
@@ -665,7 +685,11 @@ def hero_detail_stats(
 
 @router.get(
     path="/hero-skill-combo/{hero_identifier}",
-    summary="Hero Skill Combo",
+    include_in_schema=False,
+)
+@router.get(
+    path="/heroes/{hero_identifier}/skill-combos",
+    summary="Hero Skill Combos",
     description=(
         "Get the most effective skill combos for a specific hero by ID or name. "
         "Supports query parameters for pagination and localization.\n\n"
@@ -751,7 +775,11 @@ def hero_skill_combo(
 
 @router.get(
     path="/hero-rate/{hero_identifier}",
-    summary="Hero Rate Trends",
+    include_in_schema=False,
+)
+@router.get(
+    path="/heroes/{hero_identifier}/trends",
+    summary="Hero Performance Trends",
     description=(
         "Get rate trends for a specific hero by ID or name over a specified time window. "
         "Supports query parameters for rank tier, past days window, pagination, and localization.\n\n"
@@ -865,6 +893,10 @@ def hero_rate(
 
 @router.get(
     path="/hero-relation/{hero_identifier}",
+    include_in_schema=False,
+)
+@router.get(
+    path="/heroes/{hero_identifier}/relations",
     summary="Hero Relations",
     description=(
         "Get information about the relations of a specific hero by ID or name. "
@@ -949,6 +981,10 @@ def hero_relation(
 
 @router.get(
     path="/hero-counter/{hero_identifier}",
+    include_in_schema=False,
+)
+@router.get(
+    path="/heroes/{hero_identifier}/counters",
     summary="Hero Counters",
     description=(
         "Get information about heroes that counter a specific hero by ID or name. "
@@ -1067,6 +1103,10 @@ def hero_counter(
 
 @router.get(
     path="/hero-compatibility/{hero_identifier}",
+    include_in_schema=False,
+)
+@router.get(
+    path="/heroes/{hero_identifier}/compatibility",
     summary="Hero Compatibility",
     description=(
         "Get compatibility information for a specific hero by ID or name. "

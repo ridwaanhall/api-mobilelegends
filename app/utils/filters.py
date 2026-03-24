@@ -78,6 +78,35 @@ def validate_and_map_multi(
         result.update(mapping[item])
     return list(result)
 
+def validate_and_single(
+    selected_raw: list[str],
+    mapping: dict[str, list[int]],
+    field_name: str,
+) -> int:
+    """
+    Validate and map a list of strings to a single mapped value.
+    Returns one integer instead of a list.
+    Raises HTTPException on invalid input, with typo suggestions.
+    """
+    selected = [v.strip().lower() for v in selected_raw if v.strip()]
+    if not selected:
+        raise HTTPException(
+            status_code=422,
+            detail=f"No {field_name} provided. Allowed: {', '.join(mapping.keys())}",
+        )
+
+    allowed = list(mapping.keys())
+    invalid = [item for item in selected if item not in mapping]
+    if invalid:
+        suggestions = [f"{item} (did you mean: {suggest_closest(item, allowed)})" for item in invalid]
+        raise HTTPException(
+            status_code=422,
+            detail=f"Invalid {field_name}: {', '.join(suggestions)}. Allowed: {', '.join(allowed)}",
+        )
+
+    # Return the first mapped integer only
+    return mapping[selected[0]][0]
+
 def validate_and_map_rank(rank_raw: str) -> str:
     """
     Validate and map a rank string to its code. Raises HTTPException on invalid input.

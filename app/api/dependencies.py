@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import cast
 
 from app.core.config import API_STATUS_MESSAGES, IS_AVAILABLE
-from app.core.errors import AppError, CONTACT_FORM_LINK, LIVECHAT_LINK
+from app.core.errors import AppError
 
 
 def require_api_available() -> None:
@@ -17,9 +17,5 @@ def require_api_available() -> None:
         message=cast(str, status_info["message"]),
         details={
             "available_endpoints": status_info["available_endpoints"],
-            "support": {
-                "livechat": LIVECHAT_LINK,
-                "contact": CONTACT_FORM_LINK,
-            },
         },
     )

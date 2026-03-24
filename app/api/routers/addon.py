@@ -4,24 +4,44 @@ from typing import Annotated
 
 from fastapi import APIRouter, Query
 
-from app.core.param_descriptions import *
 from app.core.errors import AppError
+from app.services.addon import fetch_ip_get
+from fastapi import Request
+from app.utils.client_ip import extract_client_ip
 
 router = APIRouter(prefix="/api/addon", tags=["addon"])
 
 
 @router.get(
-    path="/win-rate",
-    summary=SUMMARY_ADDON_WIN_RATE,
-    description=DESCRIPTION_ADDON_WIN_RATE,
+    path="/win-rate-calculator",
+    summary="Win Rate Calculator for Consecutive Wins",
+    description=(
+        "Calculate the number of consecutive wins required to reach a target win rate "
+        "based on current matches and current win rate.\n\n"
+        "Query parameters:\n"
+        "- **match-now**: Current total number of matches played (minimum: 0).\n"
+        "- **wr-now**: Current win rate in percent (range: 0–100).\n"
+        "- **wr-future**: Target win rate in percent. Must be greater than current win rate and between 0–100.\n\n"
+        "The response includes win rate calculation data:\n"
+        "- **status**: Response status (e.g., 'success').\n"
+        "- **match_now**: Current total matches played.\n"
+        "- **wr_now**: Current win rate.\n"
+        "- **wr_future**: Target win rate.\n"
+        "- **required_no_lose_matches**: Number of consecutive wins required without losses to reach the target win rate.\n"
+        "- **message**: Explanation message summarizing the result.\n\n"
+        "This endpoint is useful for:\n"
+        "- Calculating how many consecutive wins are needed to reach a desired win rate.\n"
+        "- Helping players set realistic performance goals.\n"
+        "- Providing analytics for win rate progression."
+    ),
 )
 def win_rate(
     match_now: Annotated[
         int,
         Query(
             alias="match-now",
-            title=TITLE_MATCH_NOW,
-            description=DESCRIPTION_MATCH_NOW,
+            title="Current Matches Played",
+            description="Current total number of matches played. Must be a non-negative integer.",
             ge=0,
         ),
     ],
@@ -29,8 +49,8 @@ def win_rate(
         float,
         Query(
             alias="wr-now",
-            title=TITLE_WR_NOW,
-            description=DESCRIPTION_WR_NOW,
+            title="Current Win Rate",
+            description="Current win rate in percent. Must be a value between 0 and 100.",
             ge=0,
             le=100,
         ),
@@ -39,8 +59,8 @@ def win_rate(
         float,
         Query(
             alias="wr-future",
-            title=TITLE_WR_FUTURE,
-            description=DESCRIPTION_WR_FUTURE,
+            title="Target Win Rate",
+            description="Target win rate in percent. Must be greater than the current win rate and between 0 and 100.",
             gt=0,
             le=100,
         ),
@@ -170,3 +190,28 @@ def win_rate(
             f"you need {required_matches_int} consecutive wins without any losses."
         ),
     }
+
+
+@router.get(
+    path="/ip",
+    summary="Check IP address location details",
+    description=(
+        "Retrieves geographic information associated with a given IP address. "
+        "No parameters required.\n\n"
+        "The response includes IP location data:\n"
+        "- **code**: Response code (e.g., 0).\n"
+        "- **msg**: Status message (e.g., 'ok').\n"
+        "- **data**:\n"
+        "    - **city**: City name (e.g., 'Yogyakarta').\n"
+        "    - **state**: State or region (e.g., 'Yogyakarta').\n"
+        "    - **country**: Country code (e.g., 'id').\n"
+        "    - **lang**: Language code (e.g., 'en').\n\n"
+        "This endpoint is useful for:\n"
+        "- Identifying approximate geographic location of an IP address.\n"
+        "- Supporting analytics and personalization.\n"
+        "- Performing security checks and contextual validation."
+    ),
+)
+async def ip(request: Request):
+    client_ip = extract_client_ip(request, public_only=True)
+    return fetch_ip_get("c/ip", client_ip)

@@ -53,3 +53,29 @@ class BasePathProvider:
     @classmethod
     def get_base_path_ratings(cls) -> str:
         return CryptoManager(SECRET_KEY).decrypt(cls.RONE_DEV_KEY_RATINGS)
+
+
+class BaseUserPathProvider:
+    RONE_DEV_KEY_AUTH = (
+        b"gAAAAABpv9lxb0XK9Gsa41L-d2gn4qZ2hEM9PXFV83nVXYUddiyUOAsev0SpyJ3uXuwLjlpMmZIO_267f7C1QKQGZWRjy4p0lTMlkNnVKVK1tqZeJ5eCg7W9xkRc7ALT2BqGbg2Y65LG"
+    )
+    
+    RONE_DEV_KEY_DATA = (
+        b"gAAAAABpv9n0ZIXgs7cuHKxXhR5-41rdZ2mbaSVT0VKUrfvtr3nkKYSFgIb-MhShVpkgujWBc40ID4jw0NShGVsPCPuqj_9EWg6qy_Idn1I0Uv3D7wlinm3wN7_TeGecSiLcSFoqSdxO"
+    )
+    
+    RONE_DEV_KEY_STATS = (
+        b"gAAAAABpv9o31xVMkulczTaQAkXyGYT48lgg5mXwspF5f3eOtHUl_G7KIRvxDzmM46Y5FxSlheJy2Ptty7dniI3-a-vQNJBJMhIxEHMzv92yeFakKzONZAQnq-VTn2wceB_Ic9yJLkRK"
+    )
+
+    @classmethod
+    def get_base_url_path_auth(cls) -> str:
+        return CryptoManager(SECRET_KEY).decrypt(cls.RONE_DEV_KEY_AUTH)
+
+    @classmethod
+    def get_base_url_path_data(cls) -> str:
+        return CryptoManager(SECRET_KEY).decrypt(cls.RONE_DEV_KEY_DATA)
+
+    @classmethod
+    def get_base_url_path_stats(cls) -> str:
+        return CryptoManager(SECRET_KEY).decrypt(cls.RONE_DEV_KEY_STATS)

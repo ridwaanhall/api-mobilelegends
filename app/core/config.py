@@ -19,28 +19,9 @@ DEBUG: bool = config("DEBUG", default=False, cast=bool)
 # =========================
 # Availability Settings
 # =========================
-API_VERSION: str = env_str("API_VERSION", default="3.0.1")
+API_VERSION: str = env_str("API_VERSION", default="3.1.0")
 IS_AVAILABLE: bool = config("IS_AVAILABLE", default=True, cast=bool)
-DATE_AVAILABLE: str = env_str("DATE_AVAILABLE", default="March 18, 2026")
-
-# =========================
-# FastAPI Site
-# =========================
-TITLE: str = env_str("TITLE", default="Mobile Legends: Bang Bang (MLBB) Public Data API")
-SUMMARY: str = env_str(
-    "SUMMARY",
-    default="Comprehensive MLBB stats, hero analytics, and academy resources for developers, analysts, and fans.",
-)
-DESCRIPTION: str = env_str(
-    "DESCRIPTION",
-    default=(
-        "This API provides public access to Mobile Legends: Bang Bang (MLBB) data, including hero listings, rank performance, "
-        "role and lane filters, matchup data, and win-rate utilities. It also exposes MLBB Academy resources such as heroes, roles, "
-        "equipment, emblems, spells, guides, trends, and ratings. All endpoints are designed for analytics, insights, and integration "
-        "into third-party tools. The API features interactive documentation, standardized error payloads, and is powered by data from "
-        "official MLBB sources. Ideal for developers, analysts, and fans seeking reliable, up-to-date MLBB information."
-    ),
-)
+DATE_AVAILABLE: str = env_str("DATE_AVAILABLE", default="March 23, 2026")
 
 # =========================
 # Support & Donation Details
@@ -100,9 +81,6 @@ API_BASE_URL: str = env_str("API_BASE_URL", default=f"{BASE_URL}api/")
 DOCS_BASE_URL: str = env_str("DOCS_BASE_URL", default=f"{BASE_URL}docs")
 
 PROD_URL: str = "http://127.0.0.1:8000/api/" if DEBUG else env_str("PROD_URL", default=API_BASE_URL)
-
-OG_IMAGE_URL: str = env_str("OG_IMAGE_URL", default=f"{BASE_URL}static/favicon.ico")
-TWITTER_HANDLE: str = env_str("TWITTER_HANDLE", default="@ridwaanhall")
 
 LIVECHAT_LINK: str = env_str("LIVECHAT_LINK", default="https://ridwaanhall.com/guestbook/")
 CONTACT_FORM_LINK: str = env_str("CONTACT_FORM_LINK", default="https://ridwaanhall.com/contact/")

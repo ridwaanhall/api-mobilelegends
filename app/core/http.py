@@ -50,13 +50,66 @@ class MLBBHeaderBuilder:
         return random.choice(cls.USER_AGENTS)
 
     @staticmethod
-    def get_lang_header(lang: str) -> dict[str, str]:
+    def get_academy_mlbb_header(lang: str, client_ip: str | None = None) -> dict[str, str]:
         headers = {
             "Content-Type": "application/json",
+            "Origin": "https://www.mobilelegends.com",
+            "Referer": "https://www.mobilelegends.com/",
             "User-Agent": MLBBHeaderBuilder.get_random_user_agent(),
+            "DNT": "1",
         }
+        if client_ip:
+            headers["X-Forwarded-For"] = client_ip
         if lang and lang != "en":
             headers["x-lang"] = lang
+        return headers
+    
+    @staticmethod
+    def get_user_header(
+        jwt: str | None = None,
+        x_token: str | None = None,
+        x_actid: str | None = None,
+        x_appid: str | None = None,
+        lang: str | None = None,
+    ) -> dict[str, str]:
+        headers = {
+            "User-Agent": MLBBHeaderBuilder.get_random_user_agent(),
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+            "Accept": "*/*",
+            "Origin": "https://www.mobilelegends.com",
+            "Referer": "https://www.mobilelegends.com/",
+            "DNT": "1",
+        }
+
+        if jwt:
+            headers["authorization"] = jwt
+            headers["x-token"] = jwt
+
+        if x_actid:
+            headers["x-actid"] = x_actid
+
+        if x_appid:
+            headers["x-appid"] = x_appid
+
+        if x_token:
+            headers["x-token"] = x_token
+
+        if lang:
+            headers["x-lang"] = lang
+
+        return headers
+    
+    @staticmethod
+    def get_ip_check_header(client_ip: str | None = None) -> dict[str, str]:
+        headers = {
+            "User-Agent": MLBBHeaderBuilder.get_random_user_agent(),
+            "Accept": "*/*",
+            "Origin": "https://www.mobilelegends.com",
+            "Referer": "https://www.mobilelegends.com/",
+            "DNT": "1",
+        }
+        if client_ip:
+            headers["X-Forwarded-For"] = client_ip
         return headers
 
 
@@ -66,10 +119,11 @@ def request_json(
     url: str,
     headers: dict[str, str],
     payload: dict[str, Any] | None = None,
+    params: dict[str, Any] | None = None,
 ) -> Any:
     try:
         if method == "GET":
-            response = requests.get(url, headers=headers, timeout=30)
+            response = requests.get(url, headers=headers, params=params, timeout=30)
         else:
             response = requests.post(url, json=payload, headers=headers, timeout=30)
     except requests.RequestException as exc:
@@ -80,7 +134,36 @@ def request_json(
             status_code=response.status_code,
             code="UPSTREAM_REQUEST_FAILED",
             message="Failed to fetch data",
-            details=response.text,
+            details="Received non-200 response from upstream",
+        )
+
+    try:
+        return response.json()
+    except ValueError as exc:
+        raise AppError(status_code=502, code="UPSTREAM_INVALID_RESPONSE", message="Failed to fetch data", details="Invalid JSON from upstream") from exc
+
+
+def request_form(
+    *,
+    url: str,
+    method: str,
+    headers: dict[str, str],
+    payload: dict[str, Any],
+) -> Any:
+    try:
+        if method == "GET":
+            response = requests.get(url, headers=headers, timeout=30)
+        else:
+            response = requests.post(url, data=payload, headers=headers, timeout=30)
+    except requests.RequestException as exc:
+        raise AppError(status_code=502, code="UPSTREAM_REQUEST_FAILED", message="Failed to fetch data", details=str(exc)) from exc
+
+    if response.status_code != 200:
+        raise AppError(
+            status_code=response.status_code,
+            code="UPSTREAM_REQUEST_FAILED",
+            message="Failed to fetch data",
+            details="Unable to fetch data from upstream service",
         )
 
     try:

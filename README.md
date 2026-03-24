@@ -44,7 +44,7 @@ https://mlbb-stats.rone.dev/api/docs       # Swagger UI
 https://mlbb-stats.rone.dev/api/redoc      # ReDoc
 https://mlbb-stats.rone.dev/api/openapi.json
 https://mlbb-stats.rone.dev/robots.txt
-````
+```
 
 ---
 
@@ -115,7 +115,7 @@ https://mlbb-stats.rone.dev/robots.txt
 - `GET /api/academy/heroes` — Hero Filters
 - `GET /api/academy/heroes/{hero_identifier}/stats` — Hero Statistics
 - `GET /api/academy/heroes/{hero_identifier}/lane` — Hero Lane Distribution
-- `GET /api/academy/heroes/{hero_identifier}/win-rate/timeline/{lane_id}` — Hero Lane Time-based Win Rate
+- `GET /api/academy/heroes/{hero_identifier}/win-rate/timeline` — Hero Lane Time-based Win Rate
 - `GET /api/academy/heroes/{hero_identifier}/builds` — Hero Recommended Builds
 - `GET /api/academy/heroes/{hero_identifier}/counters` — Hero Counters
 - `GET /api/academy/heroes/{hero_identifier}/teammates` — Hero Teammates

@@ -414,7 +414,7 @@ def user_matches(
         "Request body:\n"
         "- **jwt**: JSON Web Token obtained during login.\n\n"
         "Path parameters:\n"
-        "- **match_id**: Unique identifier of the match (from `bid_s` in `/api/user/match`).\n\n"
+        "- **match_id**: Unique identifier of the match (from `bid_s` in `/api/user/matches`).\n\n"
         "Query parameters:\n"
         "- **sid**: Season ID for filtering (must be a valid season ID from `/api/user/season`).\n"
         "- **lang**: Language code for localized content (default: `en`).\n\n"

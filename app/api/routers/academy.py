@@ -1302,16 +1302,16 @@ def heroes_lane(
 
 
 @router.get(
-    path="/heroes/{hero_identifier}/win-rate/timeline/{lane_id}",
+    path="/heroes/{hero_identifier}/win-rate/timeline",
     summary="Hero Lane Time-based Win Rate",
     description=(
         "Retrieve time-based win rate statistics for a specific hero in a given lane. "
         "Supports query parameters for rank, pagination, and localization.\n\n"
         "Path parameters:\n"
         "- **hero_identifier**: Hero identifier as numeric hero ID or hero name. "
-        "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Fanny' → `fanny`).\n"
-        "- **lane**: Lane. Allowed values: `exp`, `mid`, `roam`, `jungle`, `gold`. from `/api/academy/heroes/{hero_identifier}/lane` \n\n"
+        "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Fanny' → `fanny`).\n\n"
         "Query parameters:\n"
+        "- **lane**: Lane. Allowed values: `exp`, `mid`, `roam`, `jungle`, `gold`. from `/api/academy/heroes/{hero_identifier}/lane` \n"
         "- **rank**: Rank filter. Allowed values: `all`, `epic`, `legend`, `mythic`, `honor`, `glory`.\n"
         "- **size**: Number of items per page (minimum: 1).\n"
         "- **index**: Page index (starting from 1).\n"

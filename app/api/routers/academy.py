@@ -1351,7 +1351,7 @@ def heroes_time_win_rate(
         HeroLaneEnum,
         Query(
             title="Lane",
-            description="Filter heroes by lane.",
+            description="Filter heroes by lane `/api/academy/heroes/{hero_identifier}/lane`.",
         )
     ],
     rank: Annotated[
@@ -1417,12 +1417,12 @@ def heroes_time_win_rate(
     path="/heroes/{hero_identifier}/builds",
     summary="Hero Recommended Builds",
     description=(
-        "This endpoint is maintained for backward compatibility but may be replaced in future versions.\n\n"
         "Path parameters:\n"
         "- **hero_identifier**: Hero identifier as numeric hero ID or hero name. "
         "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Fanny' → `fanny`).\n\n"
         "Query parameters:\n"
         "- **rank**: Rank filter. Allowed values: `all`, `epic`, `legend`, `mythic`, `honor`, `glory`.\n"
+        "- **lane**: Lane. Allowed values: `exp`, `mid`, `roam`, `jungle`, `gold`. from `/api/academy/heroes/{hero_identifier}/lane` \n"
         "- **size**: Number of items per page (minimum: 1).\n"
         "- **index**: Page index (starting from 1).\n"
         "- **lang**: Language code for localized content (default: `en`).\n\n"
@@ -1457,7 +1457,6 @@ def heroes_time_win_rate(
         "- Providing backward compatibility for older integrations.\n"
         "- Should be replaced with newer endpoints for up-to-date build recommendations."
     ),
-    deprecated=True,
 )
 def heroes_builds(
     hero_identifier: Annotated[
@@ -1468,6 +1467,13 @@ def heroes_builds(
                 "Hero identifier as numeric hero ID or hero name. "
                 "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Luo Yi' → `luoyi`)."
             ),
+        )
+    ],
+    lane: Annotated[
+        HeroLaneEnum,
+        Query(
+            title="Lane",
+            description="Filter heroes by lane (`/api/academy/heroes/{hero_identifier}/lane`).",
         )
     ],
     rank: Annotated[
@@ -1502,6 +1508,7 @@ def heroes_builds(
     ] = LanguageEnum.ENGLISH
 ) -> object:
     hero_id = _hero_id_or_404(hero_identifier, lang)
+    lane_value = validate_and_single([lane], LANE_MAP, "lane")
     payload = {
         "pageSize": size,
         "pageIndex": index,
@@ -1514,7 +1521,7 @@ def heroes_builds(
             {
                 "field": "real_road",
                 "operator": "eq",
-                "value": "2"
+                "value": lane_value
             },
             {
                 "field": "big_rank",

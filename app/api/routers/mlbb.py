@@ -50,9 +50,9 @@ router = APIRouter(prefix="/api", tags=["mlbb"], dependencies=[Depends(require_a
         "            - **weak**:\n"
         "                - **target_hero_id**: Array of hero IDs this hero is weak against.\n\n"
         "This endpoint is useful for:\n"
-        "    - Displaying hero collections.\n"
-        "    - Browsing hero details.\n"
-        "    - Analyzing hero relationships (assist, strong, weak)."
+        "- Displaying hero collections.\n"
+        "- Browsing hero details.\n"
+        "- Analyzing hero relationships (assist, strong, weak)."
     ),
 )
 def hero_list(
@@ -150,9 +150,9 @@ def hero_list(
         "                - **id**: Channel ID reference.\n"
         "            - **increase_win_rate**: Impact of sub-hero on win rate.\n\n"
         "This endpoint is useful for:\n"
-        "    - Analyzing hero performance trends across different ranks.\n"
-        "    - Tracking pick, ban, and win rates over time.\n"
-        "    - Understanding synergies and counters via sub-hero relationships."
+        "- Analyzing hero performance trends across different ranks.\n"
+        "- Tracking pick, ban, and win rates over time.\n"
+        "- Understanding synergies and counters via sub-hero relationships."
     ),
 )
 def hero_rank(
@@ -325,9 +325,9 @@ def hero_rank(
         "                - **target_hero_id**: Array of hero IDs this hero is weak against.\n"
         "    - **id**: Record identifier.\n\n"
         "This endpoint is useful for:\n"
-        "    - Building filtered hero lists.\n"
-        "    - Analyzing hero roles and lane assignments.\n"
-        "    - Understanding hero relationships (assist, strong, weak)."
+        "- Building filtered hero lists.\n"
+        "- Analyzing hero roles and lane assignments.\n"
+        "- Understanding hero relationships (assist, strong, weak)."
     ),
 )
 def hero_position(
@@ -497,10 +497,10 @@ def hero_position(
         "                - **target_hero**: Array of counter hero metadata (images).\n"
         "        - **url**: Official lore or profile URL.\n\n"
         "This endpoint is useful for:\n"
-        "    - Displaying comprehensive hero profiles.\n"
-        "    - Analyzing hero abilities and skill tags.\n"
-        "    - Understanding hero synergies and counters.\n"
-        "    - Linking lane and role assignments to gameplay analysis."
+        "- Displaying comprehensive hero profiles.\n"
+        "- Analyzing hero abilities and skill tags.\n"
+        "- Understanding hero synergies and counters.\n"
+        "- Linking lane and role assignments to gameplay analysis."
     ),
 )
 def hero_detail(
@@ -615,10 +615,10 @@ def hero_detail(
         "            - **increase_win_rate**: Negative impact on win rate.\n"
         "            - **min_win_rate6** through **min_win_rate20**: Win rate breakdown across match durations.\n\n"
         "This endpoint is useful for:\n"
-        "    - Analyzing hero performance trends across different ranks.\n"
-        "    - Tracking pick, ban, and win rates.\n"
-        "    - Understanding synergy with other heroes.\n"
-        "    - Identifying counters and negative synergies across match durations."
+        "- Analyzing hero performance trends across different ranks.\n"
+        "- Tracking pick, ban, and win rates.\n"
+        "- Understanding synergy with other heroes.\n"
+        "- Identifying counters and negative synergies across match durations."
     ),
 )
 def hero_detail_stats(
@@ -725,9 +725,9 @@ def hero_detail_stats(
         "    - **updatedAt**: Last update timestamp.\n"
         "    - **updatedUser**: Last updater username.\n\n"
         "This endpoint is useful for:\n"
-        "    - Guiding players on optimal skill usage patterns.\n"
-        "    - Teaching effective combos for laning and teamfight scenarios.\n"
-        "    - Helping maximize hero performance in different situations."
+        "- Guiding players on optimal skill usage patterns.\n"
+        "- Teaching effective combos for laning and teamfight scenarios.\n"
+        "- Helping maximize hero performance in different situations."
     ),
 )
 def hero_skill_combo(
@@ -817,9 +817,9 @@ def hero_skill_combo(
         "            - **ban_rate**: Ban rate.\n"
         "            - **win_rate**: Win rate.\n\n"
         "This endpoint is useful for:\n"
-        "    - Tracking hero performance trends over time.\n"
-        "    - Monitoring hero popularity and ban frequency.\n"
-        "    - Comparing win rates across different ranks and time periods."
+        "- Tracking hero performance trends over time.\n"
+        "- Monitoring hero popularity and ban frequency.\n"
+        "- Comparing win rates across different ranks and time periods."
     ),
 )
 def hero_rate(
@@ -935,10 +935,10 @@ def hero_rate(
         "            - **weak**:\n"
         "                - **target_hero_id**: Array of hero IDs that counter this hero.\n\n"
         "This endpoint is useful for:\n"
-        "    - Understanding hero synergies (assist).\n"
-        "    - Identifying heroes that are countered (strong).\n"
-        "    - Recognizing heroes that counter the selected hero (weak).\n"
-        "    - Building balanced team compositions."
+        "- Understanding hero synergies (assist).\n"
+        "- Identifying heroes that are countered (strong).\n"
+        "- Recognizing heroes that counter the selected hero (weak).\n"
+        "- Building balanced team compositions."
     ),
 )
 def hero_relation(
@@ -1046,9 +1046,9 @@ def hero_relation(
         "            - **increase_win_rate**: Negative impact on win rate.\n"
         "            - **min_win_rate6** through **min_win_rate20**: Win rate breakdown across match durations.\n\n"
         "This endpoint is useful for:\n"
-        "    - Identifying which heroes are effective counters.\n"
-        "    - Analyzing matchup dynamics.\n"
-        "    - Understanding performance trends across different ranks and match durations."
+        "- Identifying which heroes are effective counters.\n"
+        "- Analyzing matchup dynamics.\n"
+        "- Understanding performance trends across different ranks and match durations."
     ),
 )
 def hero_counter(
@@ -1171,10 +1171,10 @@ def hero_counter(
         "            - **increase_win_rate**: Negative impact on win rate.\n"
         "            - **min_win_rate6** through **min_win_rate20**: Win rate breakdown across match durations.\n\n"
         "This endpoint is useful for:\n"
-        "    - Identifying which heroes pair well with the selected hero.\n"
-        "    - Analyzing synergy and team composition effectiveness.\n"
-        "    - Recognizing combinations that reduce performance.\n"
-        "    - Understanding matchup dynamics across ranks and match durations."
+        "- Identifying which heroes pair well with the selected hero.\n"
+        "- Analyzing synergy and team composition effectiveness.\n"
+        "- Recognizing combinations that reduce performance.\n"
+        "- Understanding matchup dynamics across ranks and match durations."
     ),
 )
 def hero_compatibility(

@@ -30,9 +30,9 @@ router = APIRouter(prefix="/api/addon", tags=["addon"])
         "- **required_no_lose_matches**: Number of consecutive wins required without losses to reach the target win rate.\n"
         "- **message**: Explanation message summarizing the result.\n\n"
         "This endpoint is useful for:\n"
-        "    - Calculating how many consecutive wins are needed to reach a desired win rate.\n"
-        "    - Helping players set realistic performance goals.\n"
-        "    - Providing analytics for win rate progression."
+        "- Calculating how many consecutive wins are needed to reach a desired win rate.\n"
+        "- Helping players set realistic performance goals.\n"
+        "- Providing analytics for win rate progression."
     ),
 )
 def win_rate(
@@ -207,9 +207,9 @@ def win_rate(
         "    - **country**: Country code (e.g., 'id').\n"
         "    - **lang**: Language code (e.g., 'en').\n\n"
         "This endpoint is useful for:\n"
-        "    - Identifying approximate geographic location of an IP address.\n"
-        "    - Supporting analytics and personalization.\n"
-        "    - Performing security checks and contextual validation."
+        "- Identifying approximate geographic location of an IP address.\n"
+        "- Supporting analytics and personalization.\n"
+        "- Performing security checks and contextual validation."
     ),
 )
 async def ip(request: Request):

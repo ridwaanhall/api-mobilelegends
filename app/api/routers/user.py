@@ -231,8 +231,10 @@ def user_info(
         "    - **i2x**: Alternate hero image URL.\n"
         "    - **bid**: Battle ID reference.\n"
         "    - **ts**: Timestamp of the highlight.\n\n"
-        "This endpoint is useful for analyzing overall player performance, "
-        "identifying favorite heroes, and showcasing personal achievements in MLBB."
+        "This endpoint is useful for:\n"
+        "- Analyzing overall player performance.\n"
+        "- Identifying favorite heroes.\n"
+        "- Showcasing personal achievements in MLBB."
     ),
 )
 def user_stats(
@@ -275,9 +277,9 @@ def user_stats(
         "- **sids**: List of season identifiers representing the seasons in which the player has participated "
         "or has tracked statistics.\n\n"
         "This endpoint is useful for:\n"
-        "    - Displaying season history.\n"
-        "    - Linking performance data to specific seasons.\n"
-        "    - Enabling clients to fetch season-specific stats or achievements."
+        "- Displaying season history.\n"
+        "- Linking performance data to specific seasons.\n"
+        "- Enabling clients to fetch season-specific stats or achievements."
     ),
 )
 def user_season(
@@ -344,9 +346,9 @@ def user_season(
         "- **pageInfo.hasNext**: Boolean flag indicating if more results are available.\n"
         "- **pageInfo.count**: Number of results returned in the current page.\n\n"
         "This endpoint is useful for:\n"
-        "    - Reconstructing match history.\n"
-        "    - Analyzing player performance.\n"
-        "    - Enabling clients to paginate reliably through a player's matches."
+        "- Reconstructing match history.\n"
+        "- Analyzing player performance.\n"
+        "- Enabling clients to paginate reliably through a player's matches."
     ),
 )
 def user_matches(
@@ -537,9 +539,9 @@ def user_matches_details(
         "- **pageInfo.hasNext**: Boolean flag indicating if more results are available.\n"
         "- **pageInfo.count**: Number of results returned in the current page.\n\n"
         "This endpoint is useful for:\n"
-        "    - Analyzing which heroes a player uses most often.\n"
-        "    - Tracking win rates and performance scores.\n"
-        "    - Comparing hero usage across different seasons."
+        "- Analyzing which heroes a player uses most often.\n"
+        "- Tracking win rates and performance scores.\n"
+        "- Comparing hero usage across different seasons."
     ),
 )
 def user_frequent_heroes(
@@ -623,8 +625,10 @@ def user_frequent_heroes(
         "    - **l**: Level (same as cl, sometimes duplicated).\n"
         "    - **tbc**: Total Battle Count (matches played together).\n"
         "    - **twc**: Total Win Count (matches won together).\n\n"
-        "This endpoint is useful for displaying a player's friend list, tracking shared match history, "
-        "and analyzing cooperative performance with friends across different seasons."
+        "This endpoint is useful for:\n"
+        "- Displaying a player's friend list.\n"
+        "- Tracking shared match history.\n"
+        "- Analyzing cooperative performance with friends across different seasons."
     ),
 )
 def user_friends(

@@ -88,11 +88,11 @@ def api_docs_redirect() -> RedirectResponse:
         "    - **api_url**: Base API URL.\n"
         "    - **docs**: Documentation link.\n\n"
         "This endpoint is useful for:\n"
-        "    - Checking API operational status.\n"
-        "    - Retrieving metadata such as version and author.\n"
-        "    - Discovering available endpoints.\n"
-        "    - Accessing support and donation information.\n"
-        "    - Linking to API documentation."
+        "- Checking API operational status.\n"
+        "- Retrieving metadata such as version and author.\n"
+        "- Discovering available endpoints.\n"
+        "- Accessing support and donation information.\n"
+        "- Linking to API documentation."
     ),
 )
 async def api_index(request: Request) -> dict:

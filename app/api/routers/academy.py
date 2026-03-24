@@ -52,9 +52,9 @@ router = APIRouter(
         "        - **vote**:\n"
         "            - **id**: Vote ID.\n\n"
         "This endpoint is useful for:\n"
-        "    - Tracking game version history.\n"
-        "    - Monitoring release cycles.\n"
-        "    - Ensuring compatibility with specific patches or updates."
+        "- Tracking game version history.\n"
+        "- Monitoring release cycles.\n"
+        "- Ensuring compatibility with specific patches or updates."
     ),
 )
 def version(
@@ -148,9 +148,9 @@ def version(
         "                    - **updatedUser**: Last updater username.\n"
         "        - **hero_id**: Unique hero identifier.\n\n"
         "This endpoint is useful for:\n"
-        "    - Displaying hero collections.\n"
-        "    - Browsing available heroes.\n"
-        "    - Analyzing basic hero attributes.\n\n"
+        "- Displaying hero collections.\n"
+        "- Browsing available heroes.\n"
+        "- Analyzing basic hero attributes.\n\n"
     ),
     deprecated=True,
 )
@@ -227,9 +227,9 @@ def heroes_old(
         "                - **attriicon2**: Secondary attribute icon URL (optional).\n"
         "                - **emblembg**: Background indicator.\n\n"
         "This endpoint is useful for:\n"
-        "    - Displaying role categories.\n"
-        "    - Explaining role-specific attributes and emblem bonuses.\n"
-        "    - Guiding players in hero selection based on roles."
+        "- Displaying role categories.\n"
+        "- Explaining role-specific attributes and emblem bonuses.\n"
+        "- Guiding players in hero selection based on roles."
     ),
 )
 def roles(
@@ -305,9 +305,9 @@ def roles(
         "    - **id**: Internal record ID.\n"
         "    - **sourceId**: Source reference ID.\n\n"
         "This endpoint is useful for:\n"
-        "    - Displaying the full equipment catalog.\n"
-        "    - Browsing available items.\n"
-        "    - Analyzing basic item attributes."
+        "- Displaying the full equipment catalog.\n"
+        "- Browsing available items.\n"
+        "- Analyzing basic item attributes."
     ),
 )
 def equipment(
@@ -372,9 +372,9 @@ def equipment(
         "    - **id**: Internal record ID.\n"
         "    - **sourceId**: Source reference ID.\n\n"
         "This endpoint is useful for:\n"
-        "    - Displaying full item details.\n"
-        "    - Explaining equipment effects and passive skills.\n"
-        "    - Guiding players in equipment selection and strategy."
+        "- Displaying full item details.\n"
+        "- Explaining equipment effects and passive skills.\n"
+        "- Guiding players in equipment selection and strategy."
     ),
 )
 def equipment_details(
@@ -437,9 +437,9 @@ def equipment_details(
         "    - **id**: Internal record ID.\n"
         "    - **sourceId**: Source reference ID.\n\n"
         "This endpoint is useful for:\n"
-        "    - Displaying the complete catalog of battle spells.\n"
-        "    - Explaining spell effects and mechanics.\n"
-        "    - Guiding players in spell selection and strategy."
+        "- Displaying the complete catalog of battle spells.\n"
+        "- Explaining spell effects and mechanics.\n"
+        "- Guiding players in spell selection and strategy."
     ),
 )
 def spells(
@@ -505,9 +505,9 @@ def spells(
         "    - **id**: Internal record ID.\n"
         "    - **sourceId**: Source reference ID.\n\n"
         "This endpoint is useful for:\n"
-        "    - Displaying the full emblem catalog.\n"
-        "    - Explaining emblem effects and associated skills.\n"
-        "    - Guiding players in emblem selection and optimization."
+        "- Displaying the full emblem catalog.\n"
+        "- Explaining emblem effects and associated skills.\n"
+        "- Guiding players in emblem selection and optimization."
     ),
 )
 def emblems(
@@ -573,9 +573,9 @@ def emblems(
         "    - **id**: Internal record ID.\n"
         "    - **sort**: Sorting index.\n\n"
         "This endpoint is useful for:\n"
-        "    - Displaying the full rank progression system.\n"
-        "    - Explaining rank tiers and ranges.\n"
-        "    - Guiding players in understanding MLBB's ranking structure."
+        "- Displaying the full rank progression system.\n"
+        "- Explaining rank tiers and ranges.\n"
+        "- Guiding players in understanding MLBB's ranking structure."
     ),
 )
 def ranks(
@@ -643,9 +643,9 @@ def ranks(
         "    - **linkId**: Linked object references.\n"
         "    - **sort**: Sorting index.\n\n"
         "This endpoint is useful for:\n"
-        "    - Displaying detailed information about a single rank tier.\n"
-        "    - Explaining its position in the progression system.\n"
-        "    - Guiding players in understanding MLBB's ranking structure."
+        "- Displaying detailed information about a single rank tier.\n"
+        "- Explaining its position in the progression system.\n"
+        "- Guiding players in understanding MLBB's ranking structure."
     ),
 )
 def ranks_details(
@@ -743,10 +743,10 @@ def ranks_details(
         "            - **user_count**: Number of users voted.\n"
         "            - **vote**: Vote ID reference.\n\n"
         "This endpoint is useful for:\n"
-        "    - Surfacing community guides and builds.\n"
-        "    - Providing personalized hero strategies.\n"
-        "    - Highlighting cooperative and counter hero recommendations.\n"
-        "    - Guiding players with contextual tips and strategic insights."
+        "- Surfacing community guides and builds.\n"
+        "- Providing personalized hero strategies.\n"
+        "- Highlighting cooperative and counter hero recommendations.\n"
+        "- Guiding players with contextual tips and strategic insights."
     ),
 )
 def recommended(
@@ -903,9 +903,9 @@ def recommended(
         "            - **user_count**: Number of users voted.\n"
         "            - **vote**: Vote ID reference.\n\n"
         "This endpoint is useful for:\n"
-        "    - Displaying full details of a single guide or build.\n"
-        "    - Explaining strategic recommendations.\n"
-        "    - Surfacing community-generated content for MLBB players."
+        "- Displaying full details of a single guide or build.\n"
+        "- Explaining strategic recommendations.\n"
+        "- Surfacing community-generated content for MLBB players."
     ),
 )
 def recommended_detail(
@@ -992,9 +992,9 @@ def recommended_detail(
         "            - **data**:\n"
         "                - **name**: Hero name (e.g., 'Miya').\n\n"
         "This endpoint is useful for:\n"
-        "    - Filtering heroes by gameplay role.\n"
-        "    - Filtering heroes by lane assignment.\n"
-        "    - Displaying customized hero lists in MLBB Academy."
+        "- Filtering heroes by gameplay role.\n"
+        "- Filtering heroes by lane assignment.\n"
+        "- Displaying customized hero lists in MLBB Academy."
     ),
 )
 def heroes(
@@ -1138,9 +1138,9 @@ def heroes(
         "            - **increase_win_rate**: Negative impact on win rate.\n"
         "            - **min_win_rate6–20**: Win rate breakdown across match durations.\n\n"
         "This endpoint is useful for:\n"
-        "    - Analyzing hero performance across different ranks.\n"
-        "    - Understanding meta trends.\n"
-        "    - Guiding players in hero selection and strategy."
+        "- Analyzing hero performance across different ranks.\n"
+        "- Understanding meta trends.\n"
+        "- Guiding players in hero selection and strategy."
     ),
 )
 def heroes_stats(
@@ -1243,9 +1243,9 @@ def heroes_stats(
         "                        - **road_sort_title**: Lane title (e.g., 'Jungle').\n"
         "                        - **road_sort_icon**: Lane icon URL.\n\n"
         "This endpoint is useful for:\n"
-        "    - Analyzing hero lane preferences.\n"
-        "    - Understanding optimal lane assignments.\n"
-        "    - Guiding players in hero positioning strategies."
+        "- Analyzing hero lane preferences.\n"
+        "- Understanding optimal lane assignments.\n"
+        "- Guiding players in hero positioning strategies."
     ),
 )
 def heroes_lane(
@@ -1453,9 +1453,9 @@ def heroes_time_win_rate(
         "            - **build_pick_rate**: Pick rate of the build.\n"
         "            - **build_win_rate**: Win rate of the build.\n\n"
         "This endpoint is useful for:\n"
-        "    - Displaying historical or community-recommended builds.\n"
-        "    - Providing backward compatibility for older integrations.\n"
-        "    - Should be replaced with newer endpoints for up-to-date build recommendations."
+        "- Displaying historical or community-recommended builds.\n"
+        "- Providing backward compatibility for older integrations.\n"
+        "- Should be replaced with newer endpoints for up-to-date build recommendations."
     ),
     deprecated=True,
 )
@@ -1556,9 +1556,9 @@ def heroes_builds(
         "            - **hero_win_rate**: Win rate of the counter hero.\n"
         "            - **increase_win_rate**: Impact value showing how much this hero improves or reduces win rate against the target.\n\n"
         "This endpoint is useful for:\n"
-        "    - Analyzing which heroes perform well against the target hero.\n"
-        "    - Understanding matchup dynamics.\n"
-        "    - Guiding players in drafting strategies."
+        "- Analyzing which heroes perform well against the target hero.\n"
+        "- Understanding matchup dynamics.\n"
+        "- Guiding players in drafting strategies."
     ),
 )
 def heroes_counters(
@@ -1658,9 +1658,9 @@ def heroes_counters(
         "            - **hero_win_rate**: Win rate of the teammate hero.\n"
         "            - **increase_win_rate**: Impact value showing how much this hero improves or reduces win rate when paired with the target.\n\n"
         "This endpoint is useful for:\n"
-        "    - Analyzing which heroes synergize well with the target hero.\n"
-        "    - Understanding team composition dynamics.\n"
-        "    - Guiding players in drafting strategies."
+        "- Analyzing which heroes synergize well with the target hero.\n"
+        "- Understanding team composition dynamics.\n"
+        "- Guiding players in drafting strategies."
     ),
 )
 def heroes_teammates(
@@ -1762,9 +1762,9 @@ def heroes_teammates(
         "            - **ban_rate**: Ban rate.\n"
         "            - **win_rate**: Win rate.\n\n"
         "This endpoint is useful for:\n"
-        "    - Tracking hero performance changes over time.\n"
-        "    - Identifying meta shifts across ranks.\n"
-        "    - Guiding players in understanding how a hero’s effectiveness evolves across different ranks and timeframes."
+        "- Tracking hero performance changes over time.\n"
+        "- Identifying meta shifts across ranks.\n"
+        "- Guiding players in understanding how a hero’s effectiveness evolves across different ranks and timeframes."
     ),
 )
 def heroes_trends(
@@ -1904,10 +1904,10 @@ def heroes_trends(
         "            - **target**: Target content ID.\n"
         "            - **vote**: Vote ID reference.\n\n"
         "This endpoint is useful for:\n"
-        "    - Surfacing curated or community-recommended hero guides.\n"
-        "    - Providing builds, emblems, and strategies tailored to a hero.\n"
-        "    - Highlighting cooperative and counter hero recommendations.\n"
-        "    - Guiding players with contextual tips and shared experiences."
+        "- Surfacing curated or community-recommended hero guides.\n"
+        "- Providing builds, emblems, and strategies tailored to a hero.\n"
+        "- Highlighting cooperative and counter hero recommendations.\n"
+        "- Guiding players with contextual tips and shared experiences."
     ),
 )
 def heroes_recommended(
@@ -2028,9 +2028,9 @@ def heroes_recommended(
         "        - **hot_comment**: Highlighted comment.\n"
         "        - **hashtags**: Optional hashtags associated with the poll.\n\n"
         "This endpoint is useful for:\n"
-        "    - Displaying community-driven hero ratings.\n"
-        "    - Tracking popularity trends.\n"
-        "    - Surfacing thematic polls such as 'Most Charismatic Hero' or 'Top Jungler'."
+        "- Displaying community-driven hero ratings.\n"
+        "- Tracking popularity trends.\n"
+        "- Surfacing thematic polls such as 'Most Charismatic Hero' or 'Top Jungler'."
     ),
 )
 def heroes_ratings(
@@ -2068,9 +2068,9 @@ def heroes_ratings(
         "    - **hot_comment**: Highlighted community comment.\n"
         "    - **hashtags**: Optional hashtags associated with the poll.\n\n"
         "This endpoint is useful for:\n"
-        "    - Displaying detailed ratings within a chosen poll or theme.\n"
-        "    - Allowing players to explore community sentiment.\n"
-        "    - Surfacing popularity for heroes in specific categories (e.g., 'Top Jungler', 'Most Charismatic Hero')."
+        "- Displaying detailed ratings within a chosen poll or theme.\n"
+        "- Allowing players to explore community sentiment.\n"
+        "- Surfacing popularity for heroes in specific categories (e.g., 'Top Jungler', 'Most Charismatic Hero')."
     ),
 )
 def heroes_ratings_subject(

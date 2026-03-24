@@ -50,7 +50,7 @@ class MLBBHeaderBuilder:
         return random.choice(cls.USER_AGENTS)
 
     @staticmethod
-    def get_academy_mlbb_header(lang: str) -> dict[str, str]:
+    def get_academy_mlbb_header(lang: str, client_ip: str | None = None) -> dict[str, str]:
         headers = {
             "Content-Type": "application/json",
             "Origin": "https://www.mobilelegends.com",
@@ -58,6 +58,8 @@ class MLBBHeaderBuilder:
             "User-Agent": MLBBHeaderBuilder.get_random_user_agent(),
             "DNT": "1",
         }
+        if client_ip:
+            headers["X-Forwarded-For"] = client_ip
         if lang and lang != "en":
             headers["x-lang"] = lang
         return headers

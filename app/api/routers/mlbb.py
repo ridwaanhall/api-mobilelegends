@@ -10,11 +10,12 @@ from app.services.mlbb import fetch_mlbb_post
 
 from app.core.enums import LanguageEnum, RankEnum, SortOrderEnum, HeroRoleEnum, HeroLaneEnum
 from app.core.errors import _hero_id_or_404
+from app.utils.client_ip import bind_client_ip
 from app.utils.filters import (
     ROLE_MAP, LANE_MAP, validate_and_map_multi, validate_and_map_rank
 )
 
-router = APIRouter(prefix="/api", tags=["mlbb"], dependencies=[Depends(require_api_available)])
+router = APIRouter(prefix="/api", tags=["mlbb"], dependencies=[Depends(require_api_available), Depends(bind_client_ip)])
 
 
 @router.get(

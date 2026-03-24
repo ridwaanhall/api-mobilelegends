@@ -7,6 +7,7 @@ from fastapi import APIRouter, Query
 from app.core.errors import AppError
 from app.services.addon import fetch_ip_get
 from fastapi import Request
+from app.utils.client_ip import extract_client_ip
 
 router = APIRouter(prefix="/api/addon", tags=["addon"])
 
@@ -212,9 +213,5 @@ def win_rate(
     ),
 )
 async def ip(request: Request):
-    x_forwarded_for = request.headers.get("x-forwarded-for")
-    if x_forwarded_for:
-        client_ip = x_forwarded_for.split(",")[0].strip()
-    else:
-        client_ip = request.client.host if request.client else None
+    client_ip = extract_client_ip(request, public_only=True)
     return fetch_ip_get("c/ip", client_ip)

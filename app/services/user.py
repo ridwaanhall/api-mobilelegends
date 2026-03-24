@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from app.core.http import MLBBHeaderBuilder, request_form, request_json
+from app.core.http import request_form, request_json
 from app.core.security import BaseUserPathProvider
 
 
@@ -15,9 +15,3 @@ def fetch_user_actgateway(path: str, headers: dict, params: dict[str, Any]) -> A
     base_path = BaseUserPathProvider.get_base_url_path_stats()
     url = f"{base_path}/{path}"
     return request_json(method="GET", url=url, headers=headers, params=params)
-
-def fetch_ip_get(path: str) -> Any:
-    base_path = BaseUserPathProvider.get_base_url_path_auth()
-    url = f"{base_path}/{path}"
-    headers = MLBBHeaderBuilder.get_ip_check_header()
-    return request_json(method="GET", url=url, headers=headers, payload=None, params=None)

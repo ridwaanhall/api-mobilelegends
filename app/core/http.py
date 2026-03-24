@@ -53,7 +53,10 @@ class MLBBHeaderBuilder:
     def get_academy_mlbb_header(lang: str) -> dict[str, str]:
         headers = {
             "Content-Type": "application/json",
+            "Origin": "https://www.mobilelegends.com",
+            "Referer": "https://www.mobilelegends.com/",
             "User-Agent": MLBBHeaderBuilder.get_random_user_agent(),
+            "DNT": "1",
         }
         if lang and lang != "en":
             headers["x-lang"] = lang
@@ -95,12 +98,16 @@ class MLBBHeaderBuilder:
         return headers
     
     @staticmethod
-    def get_ip_check_header() -> dict[str, str]:
+    def get_ip_check_header(client_ip: str | None = None) -> dict[str, str]:
         headers = {
             "User-Agent": MLBBHeaderBuilder.get_random_user_agent(),
-            "Accept": "application/json",
+            "Accept": "*/*",
+            "Origin": "https://www.mobilelegends.com",
+            "Referer": "https://www.mobilelegends.com/",
+            "DNT": "1",
         }
-        
+        if client_ip:
+            headers["X-Forwarded-For"] = client_ip
         return headers
 
 

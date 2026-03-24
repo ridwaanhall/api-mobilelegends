@@ -16,11 +16,11 @@ router = APIRouter(prefix="/api/user", tags=["user"], dependencies=[Depends(requ
     path="/auth/send-vc",
     summary="Send Verification Code",
     description=(
-        "Send an in-game verification code to the player's account. "
+        "Send an in-game verification code to the player's account, valid for 5 mins. "
         "This endpoint is part of the authentication flow and is used to validate ownership of a game account.\n\n"
         "Request body:\n"
-        "- **role_id**: Player role identifier.\n"
-        "- **zone_id**: Server zone identifier.\n\n"
+        "- **role_id**: Player role identifier (Game ID).\n"
+        "- **zone_id**: Server zone identifier (Server ID).\n\n"
         "The response confirms whether the verification code was successfully dispatched:\n"
         "- **code**: Status code (0 indicates success).\n"
         "- **data**: Empty string (no payload returned).\n"
@@ -33,7 +33,7 @@ def send_vc(
         int,
         Body(
             title="Role ID",
-            description="The unique role ID of the player's account.",
+            description="The unique role ID of the player's account. (Game ID)",
             embed=True,
         )
     ],
@@ -41,7 +41,7 @@ def send_vc(
         int,
         Body(
             title="Zone ID",
-            description="The zone ID associated with the player's server region.",
+            description="The zone ID associated with the player's server region. (Server ID)",
             embed=True,
         )
     ],
@@ -64,7 +64,7 @@ def send_vc(
         "Request body:\n"
         "- **role_id**: Player role identifier.\n"
         "- **zone_id**: Server zone identifier.\n"
-        "- **vc**: Verification code sent to the player.\n\n"
+        "- **vc**: Verification code sent to the player via in-game mail, valid 5 mins.\n\n"
         "The response includes authentication details:\n"
         "- **code**: Status code (0 indicates success).\n"
         "- **data.jwt**: JSON Web Token used for subsequent authenticated requests.\n"
@@ -97,7 +97,7 @@ def login(
         int,
         Body(
             title="Verification Code",
-            description="The 4-digit verification code received in-game via the send-vc endpoint.",
+            description="The 4-digit verification code, obtained through in-game mail via the send-vc endpoint, remains valid for 5 minutes.",
             embed=True,
         )
     ],

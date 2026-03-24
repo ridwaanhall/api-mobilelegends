@@ -13,7 +13,6 @@ from app.core.errors import _hero_id_or_404
 from app.core.filters import (
     ROLE_MAP, LANE_MAP, validate_and_map_multi, validate_and_map_rank
 )
-from app.core.param_descriptions import *
 
 router = APIRouter(prefix="/api", tags=["mlbb"], dependencies=[Depends(require_api_available)])
 
@@ -59,31 +58,31 @@ def hero_list(
     size: Annotated[
         int,
         Query(
-            title=TITLE_PAGE_SIZE,
-            description=DESCRIPTION_PAGE_SIZE,
+            title="Page Size",
+            description="Number of items per page.",
             ge=1,
         )
     ] = 20,
     index: Annotated[
         int,
         Query(
-            title=TITLE_PAGE_INDEX,
-            description=DESCRIPTION_PAGE_INDEX,
+            title="Page Index",
+            description="Page index for pagination.",
             ge=1,
         )
     ] = 1,
     order: Annotated[
         SortOrderEnum,
         Query(
-            title=TITLE_SORT_ORDER,
-            description=DESCRIPTION_SORT_ORDER,
+            title="Sort Order",
+            description="Sort order by hero ID.",
         )
     ] = SortOrderEnum.DESCENDING,
     lang: Annotated[
         LanguageEnum,
         Query(
-            title=TITLE_LANGUAGE,
-            description=DESCRIPTION_LANGUAGE,
+            title="Language",
+            description="Language code for localized content.",
         )
     ] = LanguageEnum.ENGLISH
 ) -> object:
@@ -159,52 +158,52 @@ def hero_rank(
     days: Annotated[
         Literal["1", "3", "7", "15", "30"],
         Query(
-            title=TITLE_PAST_DAYS,
-            description=DESCRIPTION_PAST_DAYS,
+            title="Past Days",
+            description="Past day window for rank statistics.",
         )
     ] = "1",
     rank: Annotated[
         RankEnum,
         Query(
-            title=TITLE_RANK,
-            description=DESCRIPTION_RANK,
+            title="Rank",
+            description="Rank filter for hero statistics.",
         ),
     ] = RankEnum.ALL,
     sort_field: Annotated[
         Literal["pick_rate", "ban_rate", "win_rate"],
         Query(
-            title=TITLE_SORT_FIELD,
-            description=DESCRIPTION_SORT_FIELD,
+            title="Sort Field",
+            description="Field to sort hero statistics.",
         )
     ] = "win_rate",
     sort_order: Annotated[
         SortOrderEnum,
         Query(
-            title=TITLE_SORT_ORDER,
-            description=DESCRIPTION_SORT_ORDER,
+            title="Sort Order",
+            description="Sort order by field.",
         )
     ] = SortOrderEnum.DESCENDING,
     size: Annotated[
         int,
         Query(
-            title=TITLE_PAGE_SIZE,
-            description=DESCRIPTION_PAGE_SIZE,
+            title="Page Size",
+            description="Number of items per page.",
             ge=1,
         )
     ] = 20,
     index: Annotated[
         int,
         Query(
-            title=TITLE_PAGE_INDEX,
-            description=DESCRIPTION_PAGE_INDEX,
+            title="Page Index",
+            description="Page index for pagination.",
             ge=1,
         )
     ] = 1,
     lang: Annotated[
         LanguageEnum,
         Query(
-            title=TITLE_LANGUAGE,
-            description=DESCRIPTION_LANGUAGE,
+            title="Language",
+            description="Language code for localized content.",
         )
     ] = LanguageEnum.ENGLISH
 ) -> object:
@@ -334,8 +333,8 @@ def hero_position(
     role: Annotated[
         list[str],
         Query(
-            title=TITLE_ROLE,
-            description=DESCRIPTION_ROLE,
+            title="Role",
+            description="Filter heroes by role.",
         )
     ] = [
         HeroRoleEnum.TANK,
@@ -348,8 +347,8 @@ def hero_position(
     lane: Annotated[
         list[str],
         Query(
-            title=TITLE_LANE,
-            description=DESCRIPTION_LANE,
+            title="Lane",
+            description="Filter heroes by lane.",
         )
     ] = [
         HeroLaneEnum.EXP,
@@ -361,31 +360,31 @@ def hero_position(
     size: Annotated[
         int,
         Query(
-            title=TITLE_PAGE_SIZE,
-            description=DESCRIPTION_PAGE_SIZE,
+            title="Page Size",
+            description="Number of items per page.",
             ge=1,
         )
     ] = 20,
     index: Annotated[
         int,
         Query(
-            title=TITLE_PAGE_INDEX,
-            description=DESCRIPTION_PAGE_INDEX,
+            title="Page Index",
+            description="Page index for pagination.",
             ge=1,
         )
     ] = 1,
     order: Annotated[
         SortOrderEnum,
         Query(
-            title=TITLE_SORT_ORDER,
-            description=DESCRIPTION_SORT_ORDER,
+            title="Sort Order",
+            description="Sort order by hero ID.",
         )
     ] = SortOrderEnum.DESCENDING,
     lang: Annotated[
         LanguageEnum,
         Query(
-            title=TITLE_LANGUAGE,
-            description=DESCRIPTION_LANGUAGE,
+            title="Language",
+            description="Language code for localized content.",
         )
     ] = LanguageEnum.ENGLISH
 ) -> object:
@@ -507,31 +506,34 @@ def hero_detail(
     hero_identifier: Annotated[
         str,
         Path(
-            title=TITLE_HERO_IDENTIFIER,
-            description=DESCRIPTION_HERO_IDENTIFIER,
+            title="Hero Identifier",
+            description=(
+                "Hero identifier as numeric hero ID or hero name. "
+                "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Luo Yi' → `luoyi`)."
+            )
         )
     ],
     size: Annotated[
         int,
         Query(
-            title=TITLE_PAGE_SIZE,
-            description=DESCRIPTION_PAGE_SIZE,
+            title="Page Size",
+            description="Number of items per page.",
             ge=1,
         )
     ] = 20,
     index: Annotated[
         int,
         Query(
-            title=TITLE_PAGE_INDEX,
-            description=DESCRIPTION_PAGE_INDEX,
+            title="Page Index",
+            description="Page index for pagination.",
             ge=1,
         )
     ] = 1,
     lang: Annotated[
         LanguageEnum,
         Query(
-            title=TITLE_LANGUAGE,
-            description=DESCRIPTION_LANGUAGE,
+            title="Language",
+            description="Language code for localized content.",
         )
     ] = LanguageEnum.ENGLISH
 ) -> object:
@@ -622,38 +624,41 @@ def hero_detail_stats(
     hero_identifier: Annotated[
         str,
         Path(
-            title=TITLE_HERO_IDENTIFIER,
-            description=DESCRIPTION_HERO_IDENTIFIER,
+            title="Hero Identifier",
+            description=(
+                "Hero identifier as numeric hero ID or hero name. "
+                "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Luo Yi' → `luoyi`)."
+            ),
         )
     ],
     rank: Annotated[
         RankEnum,
         Query(
-            title=TITLE_RANK,
-            description=DESCRIPTION_RANK,
+            title="Rank",
+            description="Rank filter for hero statistics.",
         ),
     ] = RankEnum.ALL,
     size: Annotated[
         int,
         Query(
-            title=TITLE_PAGE_SIZE,
-            description=DESCRIPTION_PAGE_SIZE,
+            title="Page Size",
+            description="Number of items per page.",
             ge=1,
         )
     ] = 20,
     index: Annotated[
         int,
         Query(
-            title=TITLE_PAGE_INDEX,
-            description=DESCRIPTION_PAGE_INDEX,
+            title="Page Index",
+            description="Page index for pagination.",
             ge=1,
         )
     ] = 1,
     lang: Annotated[
         LanguageEnum,
         Query(
-            title=TITLE_LANGUAGE,
-            description=DESCRIPTION_LANGUAGE,
+            title="Language",
+            description="Language code for localized content.",
         )
     ] = LanguageEnum.ENGLISH
 ) -> object:
@@ -728,31 +733,34 @@ def hero_skill_combo(
     hero_identifier: Annotated[
         str,
         Path(
-            title=TITLE_HERO_IDENTIFIER,
-            description=DESCRIPTION_HERO_IDENTIFIER,
+            title="Hero Identifier",
+            description=(
+                "Hero identifier as numeric hero ID or hero name. "
+                "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Luo Yi' → `luoyi`)."
+            ),
         )
     ],
     size: Annotated[
         int,
         Query(
-            title=TITLE_PAGE_SIZE,
-            description=DESCRIPTION_PAGE_SIZE,
+            title="Page Size",
+            description="Number of items per page.",
             ge=1,
         )
     ] = 20,
     index: Annotated[
         int,
         Query(
-            title=TITLE_PAGE_INDEX,
-            description=DESCRIPTION_PAGE_INDEX,
+            title="Page Index",
+            description="Page index for pagination.",
             ge=1,
         )
     ] = 1,
     lang: Annotated[
         LanguageEnum,
         Query(
-            title=TITLE_LANGUAGE,
-            description=DESCRIPTION_LANGUAGE,
+            title="Language",
+            description="Language code for localized content.",
         )
     ] = LanguageEnum.ENGLISH
 ) -> object:
@@ -817,46 +825,49 @@ def hero_rate(
     hero_identifier: Annotated[
         str,
         Path(
-            title=TITLE_HERO_IDENTIFIER,
-            description=DESCRIPTION_HERO_IDENTIFIER,
+            title="Hero Identifier",
+            description=(
+                "Hero identifier as numeric hero ID or hero name. "
+                "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Luo Yi' → `luoyi`)."
+            ),
         )
     ],
     rank: Annotated[
         RankEnum,
         Query(
-            title=TITLE_RANK,
-            description=DESCRIPTION_RANK,
+            title="Rank",
+            description="Rank filter for hero statistics.",
         ),
     ] = RankEnum.ALL,
     past_days: Annotated[
         Literal["7", "15", "30"],
         Query(
             alias="past-days",
-            title=TITLE_RATE_WINDOW,
-            description=DESCRIPTION_RATE_WINDOW,
+            title="Rate Window",
+            description="Rate window in days.",
         ),
     ] = "7",
     size: Annotated[
         int,
         Query(
-            title=TITLE_PAGE_SIZE,
-            description=DESCRIPTION_PAGE_SIZE,
+            title="Page Size",
+            description="Number of items per page.",
             ge=1,
         )
     ] = 20,
     index: Annotated[
         int,
         Query(
-            title=TITLE_PAGE_INDEX,
-            description=DESCRIPTION_PAGE_INDEX,
+            title="Page Index",
+            description="Page index for pagination.",
             ge=1,
         )
     ] = 1,
     lang: Annotated[
         LanguageEnum,
         Query(
-            title=TITLE_LANGUAGE,
-            description=DESCRIPTION_LANGUAGE,
+            title="Language",
+            description="Language code for localized content.",
         )
     ] = LanguageEnum.ENGLISH
 ) -> object:
@@ -933,31 +944,34 @@ def hero_relation(
     hero_identifier: Annotated[
         str,
         Path(
-            title=TITLE_HERO_IDENTIFIER,
-            description=DESCRIPTION_HERO_IDENTIFIER,
+            title="Hero Identifier",
+            description=(
+                "Hero identifier as numeric hero ID or hero name. "
+                "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Luo Yi' → `luoyi`)."
+            ),
         )
     ],
     size: Annotated[
         int,
         Query(
-            title=TITLE_PAGE_SIZE,
-            description=DESCRIPTION_PAGE_SIZE,
+            title="Page Size",
+            description="Number of items per page.",
             ge=1,
         )
     ] = 20,
     index: Annotated[
         int,
         Query(
-            title=TITLE_PAGE_INDEX,
-            description=DESCRIPTION_PAGE_INDEX,
+            title="Page Index",
+            description="Page index for pagination.",
             ge=1,
         )
     ] = 1,
     lang: Annotated[
         LanguageEnum,
         Query(
-            title=TITLE_LANGUAGE,
-            description=DESCRIPTION_LANGUAGE,
+            title="Language",
+            description="Language code for localized content.",
         )
     ] = LanguageEnum.ENGLISH
 ) -> object:
@@ -1040,38 +1054,41 @@ def hero_counter(
     hero_identifier: Annotated[
         str,
         Path(
-            title=TITLE_HERO_IDENTIFIER,
-            description=DESCRIPTION_HERO_IDENTIFIER,
+            title="Hero Identifier",
+            description=(
+                "Hero identifier as numeric hero ID or hero name. "
+                "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Luo Yi' → `luoyi`)."
+            ),
         )
     ],
     rank: Annotated[
         RankEnum,
         Query(
-            title=TITLE_RANK,
-            description=DESCRIPTION_RANK,
+            title="Rank",
+            description="Rank filter for hero statistics.",
         ),
     ] = RankEnum.ALL,
     size: Annotated[
         int,
         Query(
-            title=TITLE_PAGE_SIZE,
-            description=DESCRIPTION_PAGE_SIZE,
+            title="Page Size",
+            description="Number of items per page.",
             ge=1,
         )
     ] = 20,
     index: Annotated[
         int,
         Query(
-            title=TITLE_PAGE_INDEX,
-            description=DESCRIPTION_PAGE_INDEX,
+            title="Page Index",
+            description="Page index for pagination.",
             ge=1,
         )
     ] = 1,
     lang: Annotated[
         LanguageEnum,
         Query(
-            title=TITLE_LANGUAGE,
-            description=DESCRIPTION_LANGUAGE,
+            title="Language",
+            description="Language code for localized content.",
         )
     ] = LanguageEnum.ENGLISH
 ) -> object:
@@ -1163,38 +1180,41 @@ def hero_compatibility(
     hero_identifier: Annotated[
         str,
         Path(
-            title=TITLE_HERO_IDENTIFIER,
-            description=DESCRIPTION_HERO_IDENTIFIER,
+            title="Hero Identifier",
+            description=(
+                "Hero identifier as numeric hero ID or hero name. "
+                "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Luo Yi' → `luoyi`)."
+            ),
         )
     ],
     rank: Annotated[
         RankEnum,
         Query(
-            title=TITLE_RANK,
-            description=DESCRIPTION_RANK,
+            title="Rank",
+            description="Rank filter for hero statistics.",
         ),
     ] = RankEnum.ALL,
     size: Annotated[
         int,
         Query(
-            title=TITLE_PAGE_SIZE,
-            description=DESCRIPTION_PAGE_SIZE,
+            title="Page Size",
+            description="Number of items per page.",
             ge=1,
         )
     ] = 20,
     index: Annotated[
         int,
         Query(
-            title=TITLE_PAGE_INDEX,
-            description=DESCRIPTION_PAGE_INDEX,
+            title="Page Index",
+            description="Page index for pagination.",
             ge=1,
         )
     ] = 1,
     lang: Annotated[
         LanguageEnum,
         Query(
-            title=TITLE_LANGUAGE,
-            description=DESCRIPTION_LANGUAGE,
+            title="Language",
+            description="Language code for localized content.",
         )
     ] = LanguageEnum.ENGLISH
 ) -> object:

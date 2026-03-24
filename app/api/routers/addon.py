@@ -4,7 +4,6 @@ from typing import Annotated
 
 from fastapi import APIRouter, Query
 
-from app.core.param_descriptions import *
 from app.core.errors import AppError
 from app.services.user import fetch_ip_get
 
@@ -39,8 +38,8 @@ def win_rate(
         int,
         Query(
             alias="match-now",
-            title=TITLE_MATCH_NOW,
-            description=DESCRIPTION_MATCH_NOW,
+            title="Current Matches Played",
+            description="Current total number of matches played. Must be a non-negative integer.",
             ge=0,
         ),
     ],
@@ -48,8 +47,8 @@ def win_rate(
         float,
         Query(
             alias="wr-now",
-            title=TITLE_WR_NOW,
-            description=DESCRIPTION_WR_NOW,
+            title="Current Win Rate",
+            description="Current win rate in percent. Must be a value between 0 and 100.",
             ge=0,
             le=100,
         ),
@@ -58,8 +57,8 @@ def win_rate(
         float,
         Query(
             alias="wr-future",
-            title=TITLE_WR_FUTURE,
-            description=DESCRIPTION_WR_FUTURE,
+            title="Target Win Rate",
+            description="Target win rate in percent. Must be greater than the current win rate and between 0 and 100.",
             gt=0,
             le=100,
         ),

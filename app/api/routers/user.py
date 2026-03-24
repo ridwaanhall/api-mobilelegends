@@ -5,7 +5,6 @@ from app.api.dependencies import require_api_available
 from app.services.user import fetch_user_post, fetch_user_actgateway
 
 from app.core.http import MLBBHeaderBuilder
-from app.core.param_descriptions import *
 from app.core.enums import LanguageEnum
 
 from typing import Annotated
@@ -184,8 +183,8 @@ def user_info(
     lang: Annotated[
         LanguageEnum,
         Query(
-            title=TITLE_LANGUAGE,
-            description=DESCRIPTION_LANGUAGE,
+            title="Language",
+            description="Language code for localized content.",
         )
     ] = LanguageEnum.ENGLISH,
 ) -> object:
@@ -248,8 +247,8 @@ def user_stats(
     lang: Annotated[
         LanguageEnum,
         Query(
-            title=TITLE_LANGUAGE,
-            description=DESCRIPTION_LANGUAGE,
+            title="Language",
+            description="Language code for localized content.",
         )
     ] = LanguageEnum.ENGLISH,
 ) -> object:
@@ -293,8 +292,8 @@ def user_season(
     lang: Annotated[
         LanguageEnum,
         Query(
-            title=TITLE_LANGUAGE,
-            description=DESCRIPTION_LANGUAGE,
+            title="Language",
+            description="Language code for localized content.",
         )
     ] = LanguageEnum.ENGLISH,
 ) -> object:
@@ -384,8 +383,8 @@ def user_matches(
     lang: Annotated[
         LanguageEnum,
         Query(
-            title=TITLE_LANGUAGE,
-            description=DESCRIPTION_LANGUAGE,
+            title="Language",
+            description="Language code for localized content.",
         )
     ] = LanguageEnum.ENGLISH,
 ) -> object:
@@ -485,8 +484,8 @@ def user_matches_details(
     lang: Annotated[
         LanguageEnum,
         Query(
-            title=TITLE_LANGUAGE,
-            description=DESCRIPTION_LANGUAGE,
+            title="Language",
+            description="Language code for localized content.",
         )
     ] = LanguageEnum.ENGLISH,
 ) -> object:
@@ -577,8 +576,8 @@ def user_frequent_heroes(
     lang: Annotated[
         LanguageEnum,
         Query(
-            title=TITLE_LANGUAGE,
-            description=DESCRIPTION_LANGUAGE,
+            title="Language",
+            description="Language code for localized content.",
         )
     ] = LanguageEnum.ENGLISH,
 ) -> object:
@@ -647,8 +646,8 @@ def user_friends(
     lang: Annotated[
         LanguageEnum,
         Query(
-            title=TITLE_LANGUAGE,
-            description=DESCRIPTION_LANGUAGE,
+            title="Language",
+            description="Language code for localized content.",
         )
     ] = LanguageEnum.ENGLISH,
 ) -> object:

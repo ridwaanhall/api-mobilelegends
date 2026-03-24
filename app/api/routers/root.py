@@ -105,7 +105,7 @@ async def api_index(request: Request) -> dict:
     docs_url = DOCS_BASE_URL.rstrip("/")
 
 
-    always_available: set[str] = {"/", "/api", "/api/docs", "/robots.txt"}
+    always_available: set[str] = {"/", "/api", "/docs", "/api/docs", "/robots.txt"}
     endpoints = get_available_endpoints(app, include_methods={"GET", "POST"})
     if IS_AVAILABLE:
         available_endpoints: list[str] = [

@@ -1310,7 +1310,7 @@ def heroes_lane(
         "Path parameters:\n"
         "- **hero_identifier**: Hero identifier as numeric hero ID or hero name. "
         "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Fanny' → `fanny`).\n"
-        "- **lane_id**: Lane ID. Allowed values: `exp`, `mid`, `roam`, `jungle`, `gold`..\n\n"
+        "- **lane**: Lane. Allowed values: `exp`, `mid`, `roam`, `jungle`, `gold`. from `/api/academy/heroes/{hero_identifier}/lane` \n\n"
         "Query parameters:\n"
         "- **rank**: Rank filter. Allowed values: `all`, `epic`, `legend`, `mythic`, `honor`, `glory`.\n"
         "- **size**: Number of items per page (minimum: 1).\n"

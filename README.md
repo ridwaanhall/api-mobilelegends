@@ -86,8 +86,6 @@ https://mlbb-stats.rone.dev/robots.txt
 - `GET /api` — API Index and Status
 - `GET /robots.txt` — Robots.txt for Web Crawlers
 
----
-
 ### MLBB
 
 - `GET /api/heroes` — List Heroes
@@ -100,8 +98,6 @@ https://mlbb-stats.rone.dev/robots.txt
 - `GET /api/heroes/{hero_identifier}/relations` — Hero Relations
 - `GET /api/heroes/{hero_identifier}/counters` — Hero Counters
 - `GET /api/heroes/{hero_identifier}/compatibility` — Hero Compatibility
-
----
 
 ### Academy
 
@@ -128,8 +124,6 @@ https://mlbb-stats.rone.dev/robots.txt
 - `GET /api/academy/heroes/ratings` — Hero Ratings Index
 - `GET /api/academy/heroes/ratings/{subject}` — Hero Ratings by Subject
 
----
-
 ### User
 
 - `POST /api/user/auth/send-vc` — Send Verification Code
@@ -142,8 +136,6 @@ https://mlbb-stats.rone.dev/robots.txt
 - `POST /api/user/matches/{match_id}` — User Match Details
 - `POST /api/user/heroes/frequent` — User Frequent Heroes
 - `POST /api/user/friends` — User Friends
-
----
 
 ### Addon
 

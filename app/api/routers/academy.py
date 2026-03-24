@@ -13,7 +13,7 @@ from app.core.errors import _hero_id_or_404
 from app.core.enums import LanguageEnum, RankEnum, SortOrderEnum, HeroRoleEnum, HeroLaneEnum
 from app.utils.client_ip import bind_client_ip
 from app.utils.filters import (
-    ROLE_MAP, LANE_MAP, validate_and_map_multi, validate_and_map_rank
+    ROLE_MAP, LANE_MAP, validate_and_map_multi, validate_and_map_rank, validate_and_single
 )
 
 router = APIRouter(
@@ -1310,7 +1310,7 @@ def heroes_lane(
         "Path parameters:\n"
         "- **hero_identifier**: Hero identifier as numeric hero ID or hero name. "
         "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Fanny' → `fanny`).\n"
-        "- **lane_id**: Lane ID. Allowed values: `1` (exp), `2` (mid), `3` (roam), `4` (jungle), `5` (gold).\n\n"
+        "- **lane_id**: Lane ID. Allowed values: `exp`, `mid`, `roam`, `jungle`, `gold`..\n\n"
         "Query parameters:\n"
         "- **rank**: Rank filter. Allowed values: `all`, `epic`, `legend`, `mythic`, `honor`, `glory`.\n"
         "- **size**: Number of items per page (minimum: 1).\n"
@@ -1331,9 +1331,9 @@ def heroes_lane(
         "            - **time_max**: Maximum time interval (minutes).\n"
         "            - **win_rate**: Win rate within that time range.\n\n"
         "This endpoint is useful for:\n"
-        "    - Analyzing hero performance progression over match duration.\n"
-        "    - Understanding lane-specific strengths.\n"
-        "    - Guiding players in timing strategies for optimal hero usage."
+        "- Analyzing hero performance progression over match duration.\n"
+        "- Understanding lane-specific strengths.\n"
+        "- Guiding players in timing strategies for optimal hero usage."
     ),
 )
 def heroes_time_win_rate(
@@ -1347,13 +1347,11 @@ def heroes_time_win_rate(
             ),
         )
     ],
-    lane_id: Annotated[
-        int,
-        Path(
-            title="Lane ID",
-            description="Lane ID. Allowed values: 1 (exp), 2 (mid), 3 (roam), 4 (jungle), 5 (gold).",
-            ge=1,
-            le=5,
+    lane: Annotated[
+        HeroLaneEnum,
+        Query(
+            title="Lane",
+            description="Filter heroes by lane.",
         )
     ],
     rank: Annotated[
@@ -1388,6 +1386,8 @@ def heroes_time_win_rate(
     ] = LanguageEnum.ENGLISH
 ) -> object:
     hero_id = _hero_id_or_404(hero_identifier, lang)
+    lane_value = validate_and_single([lane], LANE_MAP, "lane")
+    
     payload = {
         "pageSize": size,
         "pageIndex": index,
@@ -1405,7 +1405,7 @@ def heroes_time_win_rate(
             {
                 "field": "real_road",
                 "operator": "eq",
-                "value": lane_id
+                "value": lane_value
             },
         ],
         "sorts": [],

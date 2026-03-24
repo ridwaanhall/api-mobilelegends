@@ -1343,7 +1343,7 @@ def heroes_time_win_rate(
             title="Hero Identifier",
             description=(
                 "Hero identifier as numeric hero ID or hero name. "
-                "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Luo Yi' → `luoyi`)."
+                "Name matching ignores spaces/symbols and is case-insensitive (e.g., `Luo Yi` to `luoyi`)."
             ),
         )
     ],

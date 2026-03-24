@@ -134,7 +134,7 @@ def request_json(
             status_code=response.status_code,
             code="UPSTREAM_REQUEST_FAILED",
             message="Failed to fetch data",
-            details=response.text,
+            details="Received non-200 response from upstream",
         )
 
     try:
@@ -163,7 +163,7 @@ def request_form(
             status_code=response.status_code,
             code="UPSTREAM_REQUEST_FAILED",
             message="Failed to fetch data",
-            details=response.text,
+            details="Unable to fetch data from upstream service",
         )
 
     try:

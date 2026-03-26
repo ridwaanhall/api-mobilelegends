@@ -19,9 +19,9 @@ DEBUG: bool = config("DEBUG", default=False, cast=bool)
 # =========================
 # Availability Settings
 # =========================
-API_VERSION: str = env_str("API_VERSION", default="3.1.0")
+API_VERSION: str = env_str("API_VERSION", default="3.2.0")
 IS_AVAILABLE: bool = config("IS_AVAILABLE", default=True, cast=bool)
-DATE_AVAILABLE: str = env_str("DATE_AVAILABLE", default="March 23, 2026")
+DATE_AVAILABLE: str = env_str("DATE_AVAILABLE", default="April 10, 2026")
 
 # =========================
 # Support & Donation Details

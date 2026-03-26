@@ -24,6 +24,7 @@ router = APIRouter(prefix="/api", tags=["mlbb"], dependencies=[Depends(require_a
 )
 @router.get(
     path="/heroes",
+    name="api.mlbb.hero_list",
     summary="List Heroes",
     description=(
         "Retrieve a paginated list of all heroes with basic information. "
@@ -116,6 +117,7 @@ def hero_list(
 )
 @router.get(
     path="/heroes/rank",
+    name="api.mlbb.hero_rank",
     summary="Hero Rank Statistics",
     description=(
         "Fetch rank statistics for heroes over a specified time window. "
@@ -269,6 +271,7 @@ def hero_rank(
 )
 @router.get(
     path="/heroes/positions",
+    name="api.mlbb.hero_position",
     summary="Hero Position Filters",
     description=(
         "Filter heroes by their position on the map using role and lane criteria. "
@@ -428,6 +431,7 @@ def hero_position(
 )
 @router.get(
     path="/heroes/{hero_identifier}",
+    name="api.mlbb.hero_detail",
     summary="Hero Detail",
     description=(
         "Get detailed information for a specific hero by ID or name. "
@@ -561,6 +565,7 @@ def hero_detail(
 )
 @router.get(
     path="/heroes/{hero_identifier}/stats",
+    name="api.mlbb.hero_detail_stats",
     summary="Hero Detail Statistics",
     description=(
         "Get detailed statistics for a specific hero by ID or name. "
@@ -695,6 +700,7 @@ def hero_detail_stats(
 )
 @router.get(
     path="/heroes/{hero_identifier}/skill-combos",
+    name="api.mlbb.hero_skill_combo",
     summary="Hero Skill Combos",
     description=(
         "Get the most effective skill combos for a specific hero by ID or name. "
@@ -788,6 +794,7 @@ def hero_skill_combo(
 )
 @router.get(
     path="/heroes/{hero_identifier}/trends",
+    name="api.mlbb.hero_rate",
     summary="Hero Performance Trends",
     description=(
         "Get rate trends for a specific hero by ID or name over a specified time window. "
@@ -909,6 +916,7 @@ def hero_rate(
 )
 @router.get(
     path="/heroes/{hero_identifier}/relations",
+    name="api.mlbb.hero_relation",
     summary="Hero Relations",
     description=(
         "Get information about the relations of a specific hero by ID or name. "
@@ -1000,6 +1008,7 @@ def hero_relation(
 )
 @router.get(
     path="/heroes/{hero_identifier}/counters",
+    name="api.mlbb.hero_counter",
     summary="Hero Counters",
     description=(
         "Get information about heroes that counter a specific hero by ID or name. "
@@ -1125,6 +1134,7 @@ def hero_counter(
 )
 @router.get(
     path="/heroes/{hero_identifier}/compatibility",
+    name="api.mlbb.hero_compatibility",
     summary="Hero Compatibility",
     description=(
         "Get compatibility information for a specific hero by ID or name. "

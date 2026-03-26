@@ -14,6 +14,7 @@ router = APIRouter(prefix="/api/user", tags=["user"], dependencies=[Depends(requ
 
 @router.post(
     path="/auth/send-vc",
+    name="api.user.send_verification_code",
     summary="Send Verification Code",
     description=(
         "Send an in-game verification code to the player's account, valid for 5 mins. "
@@ -56,6 +57,7 @@ def send_vc(
 
 @router.post(
     path="/auth/login",
+    name="api.user.login",
     summary="Login with Verification Code",
     description=(
         "Authenticate the player using a verification code to obtain a JWT and session token. "
@@ -115,6 +117,7 @@ def login(
 
 @router.post(
     path="/auth/logout",
+    name="api.user.logout",
     summary="Logout",
     description=(
         "Invalidate the player's session using the JWT obtained from `/api/user/auth/login`. "
@@ -149,6 +152,7 @@ def logout(
 
 @router.post(
     path="/info",
+    name="api.user.info",
     summary="User Info",
     description=(
         "Retrieve the authenticated player's base profile information using a valid JWT. "
@@ -200,6 +204,7 @@ def user_info(
 
 @router.post(
     path="/stats",
+    name="api.user.stats",
     summary="User Statistics",
     description=(
         "Retrieve the authenticated player's overall statistics using a valid JWT. "
@@ -264,6 +269,7 @@ def user_stats(
 
 @router.post(
     path="/season",
+    name="api.user.season",
     summary="User Season List",
     description=(
         "Retrieve the authenticated player's season information using a valid JWT. "
@@ -309,6 +315,7 @@ def user_season(
 
 @router.post(
     path="/matches",
+    name="api.user.matches",
     summary="User Matches",
     description=(
         "Retrieve the authenticated player's recent matches information using a valid JWT. "
@@ -406,6 +413,7 @@ def user_matches(
 
 @router.post(
     path="/matches/{match_id}",
+    name="api.user.match_details",
     summary="User Match Details",
     description=(
         "Retrieve the authenticated player's detailed match information using a valid JWT. "
@@ -503,6 +511,7 @@ def user_matches_details(
 
 @router.post(
     path="/heroes/frequent",
+    name="api.user.frequent_heroes",
     summary="User Frequent Heroes",
     description=(
         "Retrieve the authenticated player's frequent heroes information using a valid JWT. "
@@ -599,6 +608,7 @@ def user_frequent_heroes(
 
 @router.post(
     path="/friends",
+    name="api.user.friends",
     summary="User Friends",
     description=(
         "Retrieve the authenticated player's friends information using a valid JWT. "

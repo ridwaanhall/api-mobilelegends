@@ -14,6 +14,7 @@ router = APIRouter(prefix="/api/addon", tags=["addon"])
 
 @router.get(
     path="/win-rate-calculator",
+    name="api.addon.win_rate_calculator",
     summary="Win Rate Calculator for Consecutive Wins",
     description=(
         "Calculate the number of consecutive wins required to reach a target win rate "
@@ -194,6 +195,7 @@ def win_rate(
 
 @router.get(
     path="/ip",
+    name="api.addon.ip_location",
     summary="Check IP address location details",
     description=(
         "Retrieves geographic information associated with a given IP address. "

@@ -1,4 +1,11 @@
 [project]
 name = "mlbb"
 version = "3.1.2"
-required-python = ">=3.14"
+requires-python = ">=3.14"
+
+dependencies = [
+    "fastapi[standard]>=0.135.2",
+    "python-decouple==3.8",
+    "requests==2.33.0",
+    "cryptography==46.0.6",
+]

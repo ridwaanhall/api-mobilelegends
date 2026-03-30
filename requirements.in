@@ -1,9 +1,0 @@
-# core
-fastapi[standard]==0.135.2
-python-decouple==3.8
-requests==2.33.0
-cryptography==46.0.6
-
-# dev
-pytest==9.0.2
-httpx==0.28.1

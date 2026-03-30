@@ -9,3 +9,9 @@ dependencies = [
     "requests==2.33.0",
     "cryptography==46.0.6",
 ]
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "pytest>=9.0.2",
+]

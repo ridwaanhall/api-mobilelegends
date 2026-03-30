@@ -1,6 +1,6 @@
 # MLBB Public Data API
 
-[![API Live](https://img.shields.io/badge/API-Live-brightgreen?logo=fastapi&logoColor=white)](https://mlbb-stats.rone.dev/api/docs)
+[![API Live](https://img.shields.io/badge/API-Live-brightgreen?logo=fastapi&logoColor=white)](https://mlbb.rone.dev/api/docs)
 ![Release](https://img.shields.io/github/v/release/ridwaanhall/api-mobilelegends?logo=github)
 ![License](https://img.shields.io/github/license/ridwaanhall/api-mobilelegends?logo=opensourceinitiative&logoColor=white)
 ![Stars](https://img.shields.io/github/stars/ridwaanhall/api-mobilelegends?logo=github)
@@ -38,19 +38,19 @@ This API provides access to hero analytics, in-game performance data, academy re
 ## Base URLs
 
 ```txt
-https://mlbb-stats.rone.dev                # root (redirects to /api/docs)
-https://mlbb-stats.rone.dev/api            # API index and status
-https://mlbb-stats.rone.dev/api/docs       # Swagger UI
-https://mlbb-stats.rone.dev/api/redoc      # ReDoc
-https://mlbb-stats.rone.dev/api/openapi.json
-https://mlbb-stats.rone.dev/robots.txt
+https://mlbb.rone.dev                # root (redirects to /api/docs)
+https://mlbb.rone.dev/api            # API index and status
+https://mlbb.rone.dev/api/docs       # Swagger UI
+https://mlbb.rone.dev/api/redoc      # ReDoc
+https://mlbb.rone.dev/api/openapi.json
+https://mlbb.rone.dev/robots.txt
 ```
 
 ---
 
 ## Quick Start
 
-### 1. Visit [mlbb-stats.rone.dev/api/docs](https://mlbb-stats.rone.dev/api/docs)
+### 1. Visit [mlbb.rone.dev/api/docs](https://mlbb.rone.dev/api/docs)
 
 ### 2. Open any API (example: `/api/hero-rank`)
 

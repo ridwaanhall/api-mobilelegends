@@ -75,7 +75,7 @@ MAINTENANCE_INFO_URL: str = env_str(
 # =========================
 # URLs & Endpoints & SEO
 # =========================
-BASE_URL: str = env_str("BASE_URL", default="https://mlbb-stats.rone.dev/")
+BASE_URL: str = env_str("BASE_URL", default="https://mlbb.rone.dev/")
 
 API_BASE_URL: str = env_str("API_BASE_URL", default=f"{BASE_URL}api/")
 DOCS_BASE_URL: str = env_str("DOCS_BASE_URL", default=f"{BASE_URL}docs")

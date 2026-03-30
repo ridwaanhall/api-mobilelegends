@@ -70,12 +70,17 @@ app = FastAPI(
     ]
 )
 
+# api routers
 app.include_router(root_router)
 app.include_router(mlbb_router)
 app.include_router(academy_router)
 app.include_router(user_router)
 app.include_router(addon_router)
 
+# web routes
+
+
+# exception handlers
 app.add_exception_handler(AppError, app_error_handler)  # type: ignore[arg-type]
 app.add_exception_handler(Exception, unhandled_error_handler)  # type: ignore[arg-type]
 

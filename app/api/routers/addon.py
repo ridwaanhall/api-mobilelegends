@@ -35,6 +35,23 @@ router = APIRouter(prefix="/api/addon", tags=["addon"])
         "- Helping players set realistic performance goals.\n"
         "- Providing analytics for win rate progression."
     ),
+    responses={
+        200: {
+            "description": "Successful Response",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "status": "success",
+                        "match_now": 100,
+                        "wr_now": 50,
+                        "wr_future": 75,
+                        "required_no_lose_matches": 100,
+                        "message": "To achieve a win rate of 75.0%, you need 100 consecutive wins without any losses."
+                    }
+                }
+            }
+        }
+    }
 )
 def win_rate(
     match_now: Annotated[
@@ -213,6 +230,25 @@ def win_rate(
         "- Supporting analytics and personalization.\n"
         "- Performing security checks and contextual validation."
     ),
+    responses={
+        200: {
+            "description": "Successful Response",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "code": 0,
+                        "data": {
+                            "city": "Yogyakarta",
+                            "country": "id",
+                            "lang": "en",
+                            "state": "Yogyakarta"
+                        },
+                        "msg": "ok"
+                    }
+                }
+            }
+        }
+    }
 )
 async def ip(request: Request):
     client_ip = extract_client_ip(request, public_only=True)

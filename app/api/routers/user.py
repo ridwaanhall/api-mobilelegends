@@ -6,7 +6,7 @@ from app.services.user import fetch_user_post, fetch_user_actgateway, fetch_user
 
 from app.core.exceptions import AppError
 from app.core.http import MLBBHeaderBuilder
-from app.core.enums import LanguageEnum, PrivacySettingEnum
+from app.core.enums import LanguageEnum, VisibilityEnum
 from app.schemas.user import (
     UserAuthSimpleResponse,
     UserFriendsResponse,
@@ -533,8 +533,8 @@ def user_privacy_settings(
         "Headers:\n"
         "- **Authorization**: `Bearer <jwt>` (JWT obtained during login).\n\n"
         "Query parameters:\n"
-        "- **privacy**: Privacy mode value. Use `1` to activate profile visibility to friends, "
-        "and `2` to deactivate it. This parameter is required.\n"
+        "- **visibility**: Visibility mode. Use `visible` to allow friends to view your profile, "
+        "and `invisible` to hide your profile from friends. This parameter is required.\n"
         "- **lang**: Language code for localized content (default: `en`)."
     ),
     responses={
@@ -561,13 +561,13 @@ def user_update_privacy_settings(
         str,
         Depends(require_user_jwt),
     ],
-    privacy: Annotated[
-        PrivacySettingEnum,
+    visibility: Annotated[
+        VisibilityEnum,
         Query(
-            title="Privacy Mode",
+            title="Profile Visibility",
             description=(
-                "Privacy mode value. Use `1` to activate profile visibility to friends, "
-                "and `2` to deactivate it."
+                "Profile visibility mode. Choose `visible` to let friends view your profile, "
+                "or `invisible` to hide your profile from friends."
             ),
         )
     ],
@@ -583,10 +583,10 @@ def user_update_privacy_settings(
         lang=lang,
         x_token=jwt,
     )
-    payload = {
-        "privacy": privacy.value,
+    params = {
+        "privacy": 1 if visibility == VisibilityEnum.VISIBLE else 2,
     }
-    response = _require_dict_response(fetch_user_actgateway_post("battlereport/privacy/settings", headers, payload))
+    response = _require_dict_response(fetch_user_actgateway_post("battlereport/privacy/settings", headers, params))
     _require_key(response, "code")
     _require_key(response, "data")
     return response

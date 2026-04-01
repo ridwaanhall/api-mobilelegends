@@ -133,7 +133,10 @@ def request_json(
         if method == "GET":
             response = requests.get(url, headers=headers, params=params, timeout=30)
         else:
-            response = requests.post(url, json=payload, headers=headers, timeout=30)
+            if payload is None:
+                response = requests.post(url, headers=headers, params=params, timeout=30)
+            else:
+                response = requests.post(url, json=payload, headers=headers, params=params, timeout=30)
     except requests.RequestException as exc:
         raise AppError(status_code=502, code="UPSTREAM_REQUEST_FAILED", message="Failed to fetch data", details=str(exc)) from exc
 

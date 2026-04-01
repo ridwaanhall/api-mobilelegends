@@ -51,7 +51,7 @@ class HeroLaneEnum(str, Enum):
     GOLD = "gold"
 
 
-class PrivacySettingEnum(int, Enum):
-    '''Enum for user privacy setting update.'''
-    ACTIVATE = 1
-    DEACTIVATE = 2
+class VisibilityEnum(str, Enum):
+    '''Visibility mode for user privacy setting update.'''
+    VISIBLE = "visible"
+    INVISIBLE = "invisible"

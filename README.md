@@ -216,10 +216,23 @@ See [Releases](https://github.com/ridwaanhall/api-mobilelegends/releases) for mi
 
 ---
 
-## License
+## License & Attribution
 
 This project is licensed under the **BSD 3-Clause License**.
-Attribution to **Moonton** and **ridwaanhall** must be preserved in downstream usage.
+Attribution must be preserved to **Moonton (the creator of Mobile Legends)** and either
+**ridwaanhall (the maintainer of this API project)** *or*
+**RoneAI (the organization behind this API)** in all downstream usage and derivative projects.
+
+### Notice
+
+All data is sourced from publicly available content and provided for educational, analytical, and community purposes only.
+Visual assets and references are used respectfully and do not imply official partnership.
+
+### Example Attribution (README or app footer)
+
+> Powered by MLBB Public Data API
+> Data © Moonton (Mobile Legends)
+> API maintained by ridwaanhall / RoneAI
 
 ---
 

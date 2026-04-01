@@ -140,10 +140,16 @@ def custom_openapi() -> dict[str, object]:
     openapi_schema = get_openapi(
         title=app.title,
         version=app.version,
+        openapi_version=app.openapi_version,
         summary=app.summary,
         description=app.description,
         routes=app.routes,
         tags=app.openapi_tags,
+        servers=app.servers,
+        terms_of_service=app.terms_of_service,
+        contact=app.contact,
+        license_info=app.license_info,
+        separate_input_output_schemas=app.separate_input_output_schemas,
     )
 
     _inline_enum_defaults_in_parameters(openapi_schema)

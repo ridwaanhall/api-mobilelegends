@@ -163,16 +163,24 @@ Attribution to **Moonton** and **ridwaanhall** must be preserved in downstream u
 ### Setup
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate  # or .venv\Scripts\Activate.ps1 (Windows)
-pip install -r requirements.txt
+# skip this if already have
+uv init # create pyproject.toml
+uv add fastapi # add deps
+uv add pytest --dev # add deps for dev
+
+# use this if already have pyproject.toml and uv.lock
+uv sync
 cp .env.example .env
 ```
 
 ### Run
 
 ```bash
-uvicorn app.main:app --reload
+# for development
+fastapi dev
+
+# production
+fastapi run
 ```
 
 ### Test

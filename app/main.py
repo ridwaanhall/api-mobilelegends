@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+from copy import deepcopy
+
 from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
+from fastapi.openapi.utils import get_openapi
 from fastapi.responses import JSONResponse
 
 from app.core.config import DEBUG, API_VERSION
@@ -75,8 +78,84 @@ app = FastAPI(
     ]
 )
 
-# ReDoc currently renders OpenAPI 3.0.x specs more consistently in this project.
-app.openapi_version = "3.0.3"
+def _inline_enum_defaults_in_parameters(schema: dict[str, object]) -> None:
+    components = schema.get("components", {})
+    if not isinstance(components, dict):
+        return
+
+    component_schemas = components.get("schemas", {})
+    if not isinstance(component_schemas, dict):
+        return
+
+    paths = schema.get("paths", {})
+    if not isinstance(paths, dict):
+        return
+
+    for path_item in paths.values():
+        if not isinstance(path_item, dict):
+            continue
+
+        for operation in path_item.values():
+            if not isinstance(operation, dict):
+                continue
+
+            parameters = operation.get("parameters", [])
+            if not isinstance(parameters, list):
+                continue
+
+            for parameter in parameters:
+                if not isinstance(parameter, dict):
+                    continue
+
+                param_schema = parameter.get("schema", {})
+                if not isinstance(param_schema, dict):
+                    continue
+
+                ref = param_schema.get("$ref")
+                has_default = "default" in param_schema
+                if not isinstance(ref, str) or not has_default:
+                    continue
+
+                prefix = "#/components/schemas/"
+                if not ref.startswith(prefix):
+                    continue
+
+                component_name = ref[len(prefix):]
+                component_schema = component_schemas.get(component_name, {})
+                if not isinstance(component_schema, dict) or "enum" not in component_schema:
+                    continue
+
+                inlined_schema = {
+                    "type": component_schema.get("type", "string"),
+                    "enum": deepcopy(component_schema.get("enum", [])),
+                }
+
+                for key in ("title", "description", "default"):
+                    if key in param_schema:
+                        inlined_schema[key] = deepcopy(param_schema[key])
+
+                parameter["schema"] = inlined_schema
+
+
+def custom_openapi() -> dict[str, object]:
+    if app.openapi_schema is not None:
+        return app.openapi_schema
+
+    openapi_schema = get_openapi(
+        title=app.title,
+        version=app.version,
+        summary=app.summary,
+        description=app.description,
+        routes=app.routes,
+        tags=app.openapi_tags,
+    )
+
+    _inline_enum_defaults_in_parameters(openapi_schema)
+    app.openapi_schema = openapi_schema
+    return app.openapi_schema
+
+
+app.openapi = custom_openapi
 
 # api routers
 app.include_router(root_router)

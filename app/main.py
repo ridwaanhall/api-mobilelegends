@@ -56,8 +56,8 @@ app = FastAPI(
 
     openapi_tags=[
         {
-            "name": "root",
-            "description": "API status, index, and crawler-related files.",
+            "name": "user",
+            "description": "Authentication and player-related data.",
         },
         {
             "name": "mlbb",
@@ -66,10 +66,6 @@ app = FastAPI(
         {
             "name": "academy",
             "description": "Game guides, builds, and reference data.",
-        },
-        {
-            "name": "user",
-            "description": "Authentication and player-related data.",
         },
         {
             "name": "addon",

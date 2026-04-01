@@ -68,10 +68,10 @@ def api_docs_redirect() -> RedirectResponse:
     return RedirectResponse(url="/api/docs", status_code=307)
 
 
-
 @router.get(
     path="/api",
     summary="API Index and Status",
+    include_in_schema=False,
     description=(
         "Provides API metadata, current status, and available endpoints.\n\n"
         "No parameters.\n\n"
@@ -156,6 +156,7 @@ async def api_index(request: Request) -> dict:
 @router.get(
     path="/robots.txt",
     summary="Robots.txt for Web Crawlers",
+    include_in_schema=False,
     description=(
         "Provides instructions for web crawlers and bots accessing the API. "
         "The response defines rules for user-agents, allowed/disallowed paths, "

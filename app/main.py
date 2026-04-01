@@ -34,6 +34,11 @@ app = FastAPI(
     docs_url="/api/docs",
     redoc_url="/api/redoc",
     openapi_url="/api/openapi.json",
+    swagger_ui_parameters={
+        "persistAuthorization": True,
+        "defaultModelsExpandDepth": -1,
+        "displayRequestDuration": True,
+    },
 
     contact={
         "name": "RoneAI",

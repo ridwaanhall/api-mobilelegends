@@ -23,6 +23,20 @@ def test_docs_and_redoc_available() -> None:
     assert redoc_response.status_code == 200
 
 
+def test_docs_html_configures_persist_authorization() -> None:
+    response = client.get("/api/docs")
+
+    assert response.status_code == 200
+    assert "persistAuthorization" in response.text
+    assert ": true" in response.text
+
+
+def test_docs_auth_script_route_removed() -> None:
+    response = client.get("/api/docs/auth.js")
+
+    assert response.status_code == 404
+
+
 def test_api_docs_redirects_to_swagger() -> None:
     response = client.get("/docs", follow_redirects=False)
 

@@ -1,9 +1,15 @@
 from __future__ import annotations
 
-from typing import cast
+from typing import Annotated, cast
 
+from fastapi import Depends
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from app.core.config import API_STATUS_MESSAGES, IS_AVAILABLE
-from app.core.errors import AppError
+from app.core.exceptions import AppError
+from app.core.http import MLBBHeaderBuilder
+
+
+user_bearer = HTTPBearer(auto_error=False)
 
 
 def require_api_available() -> None:
@@ -18,4 +24,18 @@ def require_api_available() -> None:
         details={
             "available_endpoints": status_info["available_endpoints"],
         },
+    )
+
+
+def require_user_jwt(
+    credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(user_bearer)],
+) -> str:
+    if credentials and credentials.credentials:
+        return MLBBHeaderBuilder.normalize_auth_token(credentials.credentials)
+
+    raise AppError(
+        status_code=401,
+        code="UNAUTHORIZED",
+        message="Authorization header is required",
+        details="Provide Authorization: Bearer <jwt>.",
     )

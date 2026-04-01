@@ -38,7 +38,7 @@ This API provides access to hero analytics, in-game performance data, academy re
 ## Base URLs
 
 ```txt
-https://mlbb.rone.dev                # root (redirects to /api/docs)
+https://mlbb.rone.dev                # Landing Page
 https://mlbb.rone.dev/api            # API index and status
 https://mlbb.rone.dev/api/docs       # Swagger UI
 https://mlbb.rone.dev/api/redoc      # ReDoc
@@ -79,12 +79,91 @@ https://mlbb.rone.dev/robots.txt
 
 ---
 
+## Authentication (User)
+
+### 1. [send-vc] Provide Role ID and Zone ID
+
+![Step 1](images/auth-step-01.png)
+
+- **Red box**: Endpoint  
+- **Yellow box**: Click **Try it out**  
+- **Green box**: Enter `role_id` and `zone_id`
+
+Click **Execute** and check your in‑game mail for the verification code (`vc`).
+
+---
+
+### 2. [login] Provide Verification Code
+
+Same as Step 1, but also enter the `vc` received via in‑game mail. Click **Execute** to authenticate.
+
+**Example request:**
+
+```json
+{
+  "role_id": 1234567890,
+  "zone_id": 1234,
+  "vc": 1234
+}
+```
+
+---
+
+### 3. Copy `jwt` Value
+
+Copy the `jwt` string from the response (e.g., `eyJhbGciOiJI...REDACTED`). Only copy the JWT itself. Check the curl code after clicking **Execute**.
+
+**Example response:**
+
+```json
+{
+  "code": 0,
+  "data": {
+    "email": "",
+    "jwt": "eyJhbGciOiJI...REDACTED",
+    "mobile": "",
+    "module": "",
+    "name": "",
+    "open_id": "",
+    "roleid": 1234567890,
+    "time": 1774975992,
+    "token": "MTc3ND...REDACTED",
+    "zoneid": 1234
+  },
+  "msg": "ok"
+}
+```
+
+---
+
+### 4. Authorize Using `jwt`
+
+Paste the copied `jwt` into the authorization field and click **Authorize**.
+
+![Step 1](images/auth-step-04.png)
+
+---
+
+### 5. Authentication Complete
+
+You are now authenticated and can use all user endpoints. Check `curl` code to usage.
+
+---
+
 ## API Coverage
 
-### Root
+### User
 
-- `GET /api` — API Index and Status
-- `GET /robots.txt` — Robots.txt for Web Crawlers
+- `POST /api/user/auth/send-vc` — Send Verification Code
+- `POST /api/user/auth/login` — Login with Verification Code
+- `POST /api/user/auth/logout` — Logout
+- `POST /api/user/info` — User Info
+- `POST /api/user/stats` — User Statistics
+- `POST /api/user/season` — User Season List
+- `POST /api/user/matches` — User Matches
+- `POST /api/user/matches/{match_id}` — User Match Details
+- `POST /api/user/heroes/frequent` — User Frequent Heroes
+- `POST /api/user/friends` — User Friends
 
 ### MLBB
 
@@ -123,19 +202,6 @@ https://mlbb.rone.dev/robots.txt
 - `GET /api/academy/heroes/{hero_identifier}/recommended` — Hero Recommended Content
 - `GET /api/academy/heroes/ratings` — Hero Ratings Index
 - `GET /api/academy/heroes/ratings/{subject}` — Hero Ratings by Subject
-
-### User
-
-- `POST /api/user/auth/send-vc` — Send Verification Code
-- `POST /api/user/auth/login` — Login with Verification Code
-- `POST /api/user/auth/logout` — Logout
-- `POST /api/user/info` — User Info
-- `POST /api/user/stats` — User Statistics
-- `POST /api/user/season` — User Season List
-- `POST /api/user/matches` — User Matches
-- `POST /api/user/matches/{match_id}` — User Match Details
-- `POST /api/user/heroes/frequent` — User Frequent Heroes
-- `POST /api/user/friends` — User Friends
 
 ### Addon
 

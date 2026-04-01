@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Body, Depends, Header, Path, Query
+from fastapi import APIRouter, Body, Depends, Path, Query
 
-from app.api.dependencies import require_api_available
+from app.api.dependencies import require_api_available, require_user_jwt
 
 from app.services.user import fetch_user_post, fetch_user_actgateway
 
@@ -13,18 +13,7 @@ from typing import Annotated
 router = APIRouter(prefix="/api/user", tags=["user"], dependencies=[Depends(require_api_available)])
 
 
-def _jwt_from_authorization_header(authorization: str) -> str:
-    if not authorization.strip():
-        raise AppError(
-            status_code=401,
-            code="UNAUTHORIZED",
-            message="Authorization header is required",
-            details="Provide Authorization: Bearer <jwt>.",
-        )
-    return MLBBHeaderBuilder.normalize_auth_token(authorization)
-
-
-def _require_dict_response(data: object) -> dict:
+def _require_dict_response(data: object) -> dict[str, object]:
     if not isinstance(data, dict):
         raise AppError(
             status_code=502,
@@ -285,12 +274,9 @@ def logout(
     }
 )
 def user_info(
-    authorization: Annotated[
+    jwt: Annotated[
         str,
-        Header(
-            title="Authorization",
-            description="Bearer token from /api/user/auth/login, format: Bearer <jwt>.",
-        ),
+        Depends(require_user_jwt),
     ],
     lang: Annotated[
         LanguageEnum,
@@ -300,7 +286,6 @@ def user_info(
         )
     ] = LanguageEnum.ENGLISH,
 ) -> object:
-    jwt = _jwt_from_authorization_header(authorization)
     headers = MLBBHeaderBuilder.get_user_header(
         lang=lang,
         x_actid="2728785",
@@ -476,12 +461,9 @@ def user_info(
     }
 )
 def user_stats(
-    authorization: Annotated[
+    jwt: Annotated[
         str,
-        Header(
-            title="Authorization",
-            description="Bearer token from /api/user/auth/login, format: Bearer <jwt>.",
-        ),
+        Depends(require_user_jwt),
     ],
     lang: Annotated[
         LanguageEnum,
@@ -491,7 +473,6 @@ def user_stats(
         )
     ] = LanguageEnum.ENGLISH,
 ) -> object:
-    jwt = _jwt_from_authorization_header(authorization)
     headers = MLBBHeaderBuilder.get_user_header(
         lang=lang,
         x_token=jwt,
@@ -542,12 +523,9 @@ def user_stats(
     }
 )
 def user_season(
-    authorization: Annotated[
+    jwt: Annotated[
         str,
-        Header(
-            title="Authorization",
-            description="Bearer token from /api/user/auth/login, format: Bearer <jwt>.",
-        ),
+        Depends(require_user_jwt),
     ],
     lang: Annotated[
         LanguageEnum,
@@ -557,7 +535,6 @@ def user_season(
         )
     ] = LanguageEnum.ENGLISH,
 ) -> object:
-    jwt = _jwt_from_authorization_header(authorization)
     headers = MLBBHeaderBuilder.get_user_header(
         lang=lang,
         x_token=jwt,
@@ -658,12 +635,9 @@ def user_season(
     }
 )
 def user_matches(
-    authorization: Annotated[
+    jwt: Annotated[
         str,
-        Header(
-            title="Authorization",
-            description="Bearer token from /api/user/auth/login, format: Bearer <jwt>.",
-        ),
+        Depends(require_user_jwt),
     ],
     sid: Annotated[
         int,
@@ -695,7 +669,6 @@ def user_matches(
         )
     ] = LanguageEnum.ENGLISH,
 ) -> object:
-    jwt = _jwt_from_authorization_header(authorization)
     headers = MLBBHeaderBuilder.get_user_header(
         lang=lang,
         x_token=jwt,
@@ -833,12 +806,9 @@ def user_match_details(
             description="The unique identifier of the match to retrieve details for.",
         )
     ],
-    authorization: Annotated[
+    jwt: Annotated[
         str,
-        Header(
-            title="Authorization",
-            description="Bearer token from /api/user/auth/login, format: Bearer <jwt>.",
-        ),
+        Depends(require_user_jwt),
     ],
     sid: Annotated[
         int,
@@ -855,7 +825,6 @@ def user_match_details(
         )
     ] = LanguageEnum.ENGLISH,
 ) -> object:
-    jwt = _jwt_from_authorization_header(authorization)
     headers = MLBBHeaderBuilder.get_user_header(
         lang=lang,
         x_token=jwt,
@@ -952,12 +921,9 @@ def user_match_details(
     }
 )
 def user_frequent_heroes(
-    authorization: Annotated[
+    jwt: Annotated[
         str,
-        Header(
-            title="Authorization",
-            description="Bearer token from /api/user/auth/login, format: Bearer <jwt>.",
-        ),
+        Depends(require_user_jwt),
     ],
     sid: Annotated[
         int,
@@ -989,7 +955,6 @@ def user_frequent_heroes(
         )
     ] = LanguageEnum.ENGLISH,
 ) -> object:
-    jwt = _jwt_from_authorization_header(authorization)
     headers = MLBBHeaderBuilder.get_user_header(
         lang=lang,
         x_token=jwt,
@@ -1078,12 +1043,9 @@ def user_frequent_heroes(
     }
 )
 def user_friends(
-    authorization: Annotated[
+    jwt: Annotated[
         str,
-        Header(
-            title="Authorization",
-            description="Bearer token from /api/user/auth/login, format: Bearer <jwt>.",
-        ),
+        Depends(require_user_jwt),
     ],
     sid: Annotated[
         int,
@@ -1100,7 +1062,6 @@ def user_friends(
         )
     ] = LanguageEnum.ENGLISH,
 ) -> object:
-    jwt = _jwt_from_authorization_header(authorization)
     headers = MLBBHeaderBuilder.get_user_header(
         lang=lang,
         x_token=jwt,

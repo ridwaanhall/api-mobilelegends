@@ -65,6 +65,13 @@ class MLBBHeaderBuilder:
         return headers
     
     @staticmethod
+    def normalize_auth_token(token: str) -> str:
+        value = token.strip()
+        if value.lower().startswith("bearer "):
+            return value[7:].strip()
+        return value
+
+    @staticmethod
     def get_user_header(
         jwt: str | None = None,
         x_token: str | None = None,
@@ -82,8 +89,9 @@ class MLBBHeaderBuilder:
         }
 
         if jwt:
-            headers["authorization"] = jwt
-            headers["x-token"] = jwt
+            normalized_jwt = MLBBHeaderBuilder.normalize_auth_token(jwt)
+            headers["authorization"] = normalized_jwt
+            headers["x-token"] = normalized_jwt
 
         if x_actid:
             headers["x-actid"] = x_actid
@@ -92,7 +100,7 @@ class MLBBHeaderBuilder:
             headers["x-appid"] = x_appid
 
         if x_token:
-            headers["x-token"] = x_token
+            headers["x-token"] = MLBBHeaderBuilder.normalize_auth_token(x_token)
 
         if lang:
             headers["x-lang"] = lang

@@ -1,15 +1,48 @@
-from fastapi import APIRouter, Body, Depends, Path, Query
+from fastapi import APIRouter, Body, Depends, Header, Path, Query
 
 from app.api.dependencies import require_api_available
 
 from app.services.user import fetch_user_post, fetch_user_actgateway
 
+from app.core.exceptions import AppError
 from app.core.http import MLBBHeaderBuilder
 from app.core.enums import LanguageEnum
 
 from typing import Annotated
 
 router = APIRouter(prefix="/api/user", tags=["user"], dependencies=[Depends(require_api_available)])
+
+
+def _jwt_from_authorization_header(authorization: str) -> str:
+    if not authorization.strip():
+        raise AppError(
+            status_code=401,
+            code="UNAUTHORIZED",
+            message="Authorization header is required",
+            details="Provide Authorization: Bearer <jwt>.",
+        )
+    return MLBBHeaderBuilder.normalize_auth_token(authorization)
+
+
+def _require_dict_response(data: object) -> dict:
+    if not isinstance(data, dict):
+        raise AppError(
+            status_code=502,
+            code="UPSTREAM_INVALID_RESPONSE",
+            message="Failed to fetch data",
+            details="Upstream response format is invalid.",
+        )
+    return data
+
+
+def _require_key(response_data: dict, key: str) -> None:
+    if key not in response_data:
+        raise AppError(
+            status_code=502,
+            code="UPSTREAM_INVALID_RESPONSE",
+            message="Failed to fetch data",
+            details=f"Upstream response missing required field: {key}.",
+        )
 
 
 @router.post(
@@ -203,16 +236,16 @@ def logout(
     return fetch_user_post("base/logout", headers, payload)
 
 
-@router.post(
+@router.get(
     path="/info",
     name="api.user.info",
     summary="User Info",
     description=(
         "Retrieve the authenticated player's base profile information using a valid JWT. "
-        "Supports query parameter for localization (`lang`). Requires a JSON body containing `jwt` "
-        "(JSON Web Token obtained from login).\n\n"
-        "Request body:\n"
-        "- **jwt**: JSON Web Token obtained during login.\n\n"
+        "Supports query parameter for localization (`lang`). Requires an Authorization header "
+        "with the JWT from login.\n\n"
+        "Headers:\n"
+        "- **Authorization**: `Bearer <jwt>` (JWT obtained during login).\n\n"
         "Query parameters:\n"
         "- **lang**: Language code for localized content (default: `en`).\n\n"
         "The response includes player details:\n"
@@ -252,13 +285,12 @@ def logout(
     }
 )
 def user_info(
-    jwt: Annotated[
+    authorization: Annotated[
         str,
-        Body(
-            title="JWT",
-            description="The JWT obtained from the /login endpoint.",
-            embed=True,
-        )
+        Header(
+            title="Authorization",
+            description="Bearer token from /api/user/auth/login, format: Bearer <jwt>.",
+        ),
     ],
     lang: Annotated[
         LanguageEnum,
@@ -268,6 +300,7 @@ def user_info(
         )
     ] = LanguageEnum.ENGLISH,
 ) -> object:
+    jwt = _jwt_from_authorization_header(authorization)
     headers = MLBBHeaderBuilder.get_user_header(
         lang=lang,
         x_actid="2728785",
@@ -275,19 +308,22 @@ def user_info(
         jwt=jwt
     )
     payload = {}
-    return fetch_user_post("base/getBaseInfo", headers, payload)
+    response = _require_dict_response(fetch_user_post("base/getBaseInfo", headers, payload))
+    _require_key(response, "code")
+    _require_key(response, "data")
+    return response
 
 
-@router.post(
+@router.get(
     path="/stats",
     name="api.user.stats",
     summary="User Statistics",
     description=(
         "Retrieve the authenticated player's overall statistics using a valid JWT. "
-        "Supports query parameter for localization (`lang`). Requires a JSON body containing `jwt` "
-        "(JSON Web Token obtained from login).\n\n"
-        "Request body:\n"
-        "- **jwt**: JSON Web Token obtained during login.\n\n"
+        "Supports query parameter for localization (`lang`). Requires an Authorization header "
+        "with the JWT from login.\n\n"
+        "Headers:\n"
+        "- **Authorization**: `Bearer <jwt>` (JWT obtained during login).\n\n"
         "Query parameters:\n"
         "- **lang**: Language code for localized content (default: `en`).\n\n"
         "The response includes general player statistics:\n"
@@ -440,13 +476,12 @@ def user_info(
     }
 )
 def user_stats(
-    jwt: Annotated[
+    authorization: Annotated[
         str,
-        Body(
-            title="JWT",
-            description="The JWT obtained from the /login endpoint.",
-            embed=True,
-        )
+        Header(
+            title="Authorization",
+            description="Bearer token from /api/user/auth/login, format: Bearer <jwt>.",
+        ),
     ],
     lang: Annotated[
         LanguageEnum,
@@ -456,24 +491,28 @@ def user_stats(
         )
     ] = LanguageEnum.ENGLISH,
 ) -> object:
+    jwt = _jwt_from_authorization_header(authorization)
     headers = MLBBHeaderBuilder.get_user_header(
         lang=lang,
         x_token=jwt,
     )
     params = {}
-    return fetch_user_actgateway("battlereport/stats", headers, params)
+    response = _require_dict_response(fetch_user_actgateway("battlereport/stats", headers, params))
+    _require_key(response, "code")
+    _require_key(response, "data")
+    return response
 
 
-@router.post(
+@router.get(
     path="/season",
     name="api.user.season",
     summary="User Season List",
     description=(
         "Retrieve the authenticated player's season information using a valid JWT. "
-        "Supports query parameter for localization (`lang`). Requires a JSON body containing `jwt` "
-        "(JSON Web Token obtained from login).\n\n"
-        "Request body:\n"
-        "- **jwt**: JSON Web Token obtained during login.\n\n"
+        "Supports query parameter for localization (`lang`). Requires an Authorization header "
+        "with the JWT from login.\n\n"
+        "Headers:\n"
+        "- **Authorization**: `Bearer <jwt>` (JWT obtained during login).\n\n"
         "Query parameters:\n"
         "- **lang**: Language code for localized content (default: `en`).\n\n"
         "The response includes:\n"
@@ -503,13 +542,12 @@ def user_stats(
     }
 )
 def user_season(
-    jwt: Annotated[
+    authorization: Annotated[
         str,
-        Body(
-            title="JWT",
-            description="The JWT obtained from the /login endpoint.",
-            embed=True,
-        )
+        Header(
+            title="Authorization",
+            description="Bearer token from /api/user/auth/login, format: Bearer <jwt>.",
+        ),
     ],
     lang: Annotated[
         LanguageEnum,
@@ -519,24 +557,28 @@ def user_season(
         )
     ] = LanguageEnum.ENGLISH,
 ) -> object:
+    jwt = _jwt_from_authorization_header(authorization)
     headers = MLBBHeaderBuilder.get_user_header(
         lang=lang,
         x_token=jwt,
     )
     params = {}
-    return fetch_user_actgateway("battlereport/season/list", headers, params)
+    response = _require_dict_response(fetch_user_actgateway("battlereport/season/list", headers, params))
+    _require_key(response, "code")
+    _require_key(response, "data")
+    return response
 
 
-@router.post(
+@router.get(
     path="/matches",
     name="api.user.matches",
     summary="User Matches",
     description=(
         "Retrieve the authenticated player's recent matches information using a valid JWT. "
-        "Supports query parameters for season filtering, pagination, and localization. Requires a JSON body containing `jwt` "
-        "(JSON Web Token obtained from login).\n\n"
-        "Request body:\n"
-        "- **jwt**: JSON Web Token obtained during login.\n\n"
+        "Supports query parameters for season filtering, pagination, and localization. Requires an Authorization header "
+        "with the JWT from login.\n\n"
+        "Headers:\n"
+        "- **Authorization**: `Bearer <jwt>` (JWT obtained during login).\n\n"
         "Query parameters:\n"
         "- **sid**: Season ID for filtering matches (must be a valid season ID from `/api/user/season`).\n"
         "- **limit**: Maximum number of matches to retrieve (minimum: 1).\n"
@@ -616,13 +658,12 @@ def user_season(
     }
 )
 def user_matches(
-    jwt: Annotated[
+    authorization: Annotated[
         str,
-        Body(
-            title="JWT",
-            description="The JWT obtained from the /login endpoint.",
-            embed=True,
-        )
+        Header(
+            title="Authorization",
+            description="Bearer token from /api/user/auth/login, format: Bearer <jwt>.",
+        ),
     ],
     sid: Annotated[
         int,
@@ -654,6 +695,7 @@ def user_matches(
         )
     ] = LanguageEnum.ENGLISH,
 ) -> object:
+    jwt = _jwt_from_authorization_header(authorization)
     headers = MLBBHeaderBuilder.get_user_header(
         lang=lang,
         x_token=jwt,
@@ -665,19 +707,22 @@ def user_matches(
     if last_cursor is not None:
         params["last_cursor"] = last_cursor
 
-    return fetch_user_actgateway("battlereport/matches/recent", headers, params)
+    response = _require_dict_response(fetch_user_actgateway("battlereport/matches/recent", headers, params))
+    _require_key(response, "code")
+    _require_key(response, "data")
+    return response
 
 
-@router.post(
+@router.get(
     path="/matches/{match_id}",
     name="api.user.match_details",
     summary="User Match Details",
     description=(
         "Retrieve the authenticated player's detailed match information using a valid JWT. "
-        "Supports query parameters for season filtering and localization. Requires a JSON body containing `jwt` "
-        "(JSON Web Token obtained from login).\n\n"
-        "Request body:\n"
-        "- **jwt**: JSON Web Token obtained during login.\n\n"
+        "Supports query parameters for season filtering and localization. Requires an Authorization header "
+        "with the JWT from login.\n\n"
+        "Headers:\n"
+        "- **Authorization**: `Bearer <jwt>` (JWT obtained during login).\n\n"
         "Path parameters:\n"
         "- **match_id**: Unique identifier of the match (from `bid_s` in `/api/user/matches`).\n\n"
         "Query parameters:\n"
@@ -788,13 +833,12 @@ def user_match_details(
             description="The unique identifier of the match to retrieve details for.",
         )
     ],
-    jwt: Annotated[
+    authorization: Annotated[
         str,
-        Body(
-            title="JWT",
-            description="The JWT obtained from the /login endpoint.",
-            embed=True,
-        )
+        Header(
+            title="Authorization",
+            description="Bearer token from /api/user/auth/login, format: Bearer <jwt>.",
+        ),
     ],
     sid: Annotated[
         int,
@@ -811,6 +855,7 @@ def user_match_details(
         )
     ] = LanguageEnum.ENGLISH,
 ) -> object:
+    jwt = _jwt_from_authorization_header(authorization)
     headers = MLBBHeaderBuilder.get_user_header(
         lang=lang,
         x_token=jwt,
@@ -818,19 +863,22 @@ def user_match_details(
     params = {
         "sid": sid
     }
-    return fetch_user_actgateway(f"battlereport/matches/{match_id}", headers, params)
+    response = _require_dict_response(fetch_user_actgateway(f"battlereport/matches/{match_id}", headers, params))
+    _require_key(response, "code")
+    _require_key(response, "data")
+    return response
 
 
-@router.post(
+@router.get(
     path="/heroes/frequent",
     name="api.user.frequent_heroes",
     summary="User Frequent Heroes",
     description=(
         "Retrieve the authenticated player's frequent heroes information using a valid JWT. "
-        "Supports query parameters for season filtering, pagination, and localization. Requires a JSON body containing `jwt` "
-        "(JSON Web Token obtained from login).\n\n"
-        "Request body:\n"
-        "- **jwt**: JSON Web Token obtained during login.\n\n"
+        "Supports query parameters for season filtering, pagination, and localization. Requires an Authorization header "
+        "with the JWT from login.\n\n"
+        "Headers:\n"
+        "- **Authorization**: `Bearer <jwt>` (JWT obtained during login).\n\n"
         "Query parameters:\n"
         "- **sid**: Season ID for filtering frequent heroes (must be a valid season ID from `/api/user/season`).\n"
         "- **limit**: Maximum number of heroes to retrieve (minimum: 1).\n"
@@ -904,13 +952,12 @@ def user_match_details(
     }
 )
 def user_frequent_heroes(
-    jwt: Annotated[
+    authorization: Annotated[
         str,
-        Body(
-            title="JWT",
-            description="The JWT obtained from the /login endpoint.",
-            embed=True,
-        )
+        Header(
+            title="Authorization",
+            description="Bearer token from /api/user/auth/login, format: Bearer <jwt>.",
+        ),
     ],
     sid: Annotated[
         int,
@@ -942,6 +989,7 @@ def user_frequent_heroes(
         )
     ] = LanguageEnum.ENGLISH,
 ) -> object:
+    jwt = _jwt_from_authorization_header(authorization)
     headers = MLBBHeaderBuilder.get_user_header(
         lang=lang,
         x_token=jwt,
@@ -953,19 +1001,22 @@ def user_frequent_heroes(
     if last_cursor is not None:
         params["last_cursor"] = last_cursor
 
-    return fetch_user_actgateway("battlereport/heros/frequent", headers, params)
+    response = _require_dict_response(fetch_user_actgateway("battlereport/heros/frequent", headers, params))
+    _require_key(response, "code")
+    _require_key(response, "data")
+    return response
 
 
-@router.post(
+@router.get(
     path="/friends",
     name="api.user.friends",
     summary="User Friends",
     description=(
         "Retrieve the authenticated player's friends information using a valid JWT. "
-        "Supports query parameters for season filtering and localization. Requires a JSON body containing `jwt` "
-        "(JSON Web Token obtained from login).\n\n"
-        "Request body:\n"
-        "- **jwt**: JSON Web Token obtained during login.\n\n"
+        "Supports query parameters for season filtering and localization. Requires an Authorization header "
+        "with the JWT from login.\n\n"
+        "Headers:\n"
+        "- **Authorization**: `Bearer <jwt>` (JWT obtained during login).\n\n"
         "Query parameters:\n"
         "- **sid**: Season ID for filtering friends (must be a valid season ID from `/api/user/season`).\n"
         "- **lang**: Language code for localized content (default: `en`).\n\n"
@@ -1027,13 +1078,12 @@ def user_frequent_heroes(
     }
 )
 def user_friends(
-    jwt: Annotated[
+    authorization: Annotated[
         str,
-        Body(
-            title="JWT",
-            description="The JWT obtained from the /login endpoint.",
-            embed=True,
-        )
+        Header(
+            title="Authorization",
+            description="Bearer token from /api/user/auth/login, format: Bearer <jwt>.",
+        ),
     ],
     sid: Annotated[
         int,
@@ -1050,6 +1100,7 @@ def user_friends(
         )
     ] = LanguageEnum.ENGLISH,
 ) -> object:
+    jwt = _jwt_from_authorization_header(authorization)
     headers = MLBBHeaderBuilder.get_user_header(
         lang=lang,
         x_token=jwt,
@@ -1058,4 +1109,7 @@ def user_friends(
         "sid": sid,
     }
 
-    return fetch_user_actgateway("battlereport/friends", headers, params)
+    response = _require_dict_response(fetch_user_actgateway("battlereport/friends", headers, params))
+    _require_key(response, "code")
+    _require_key(response, "data")
+    return response

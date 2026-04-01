@@ -31,9 +31,15 @@ def test_openapi_user_read_endpoints_use_get_and_authorization_header() -> None:
         assert "post" not in openapi["paths"][path]
         assert {"HTTPBearer": []} in openapi["paths"][path]["get"]["security"]
 
-    logout_op = openapi["paths"]["/api/user/auth/logout"]["post"]
-    assert {"HTTPBearer": []} in logout_op["security"]
+    logout_op = openapi["paths"].get("/api/user/auth/logout", {}).get("post", {})
+    assert {"HTTPBearer": []} in logout_op.get("security", [])
     assert "requestBody" not in logout_op
+    logout_schema = logout_op.get("responses", {}).get("200", {}).get("content", {}).get("application/json", {}).get("schema", {})
+    assert logout_schema.get("$ref") == "#/components/schemas/UserAuthSimpleResponse"
+
+    login_op = openapi["paths"].get("/api/user/auth/login", {}).get("post", {})
+    login_schema = login_op.get("responses", {}).get("200", {}).get("content", {}).get("application/json", {}).get("schema", {})
+    assert login_schema.get("$ref") == "#/components/schemas/UserLoginResponse"
 
 
 def test_user_info_endpoint_strips_bearer_before_forwarding_upstream(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -43,7 +49,7 @@ def test_user_info_endpoint_strips_bearer_before_forwarding_upstream(monkeypatch
         captured["path"] = path
         captured["authorization"] = headers["authorization"]
         captured["x-token"] = headers["x-token"]
-        return {"code": 0, "data": {}, "msg": "ok"}
+        return {"code": 0, "data": "", "msg": "ok"}
 
     monkeypatch.setattr("app.api.routers.user.fetch_user_post", fake_fetch_user_post)
 
@@ -65,7 +71,7 @@ def test_user_logout_uses_authorization_header(monkeypatch: pytest.MonkeyPatch) 
         captured["path"] = path
         captured["authorization"] = headers["authorization"]
         captured["x-token"] = headers["x-token"]
-        return {"code": 0, "data": {}, "msg": "ok"}
+        return {"code": 0, "data": "", "msg": "ok"}
 
     monkeypatch.setattr("app.api.routers.user.fetch_user_post", fake_fetch_user_post)
 

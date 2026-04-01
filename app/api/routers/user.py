@@ -7,6 +7,7 @@ from app.services.user import fetch_user_post, fetch_user_actgateway
 from app.core.exceptions import AppError
 from app.core.http import MLBBHeaderBuilder
 from app.core.enums import LanguageEnum
+from app.schemas.user import UserAuthSimpleResponse, UserLoginResponse
 
 from typing import Annotated
 
@@ -24,7 +25,7 @@ def _require_dict_response(data: object) -> dict[str, object]:
     return data
 
 
-def _require_key(response_data: dict, key: str) -> None:
+def _require_key(response_data: dict[str, object], key: str) -> None:
     if key not in response_data:
         raise AppError(
             status_code=502,
@@ -37,6 +38,7 @@ def _require_key(response_data: dict, key: str) -> None:
 @router.post(
     path="/auth/send-vc",
     name="api.user.send_verification_code",
+    response_model=UserAuthSimpleResponse,
     summary="Send Verification Code",
     description=(
         "Send an in-game verification code to the player's account, valid for 5 mins. "
@@ -94,6 +96,7 @@ def send_vc(
 @router.post(
     path="/auth/login",
     name="api.user.login",
+    response_model=UserLoginResponse,
     summary="Login with Verification Code",
     description=(
         "Authenticate the player using a verification code to obtain a JWT and session token. "
@@ -179,6 +182,7 @@ def login(
 @router.post(
     path="/auth/logout",
     name="api.user.logout",
+    response_model=UserAuthSimpleResponse,
     summary="Logout",
     description=(
         "Invalidate the player's session using the JWT obtained from `/api/user/auth/login`. "

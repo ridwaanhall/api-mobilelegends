@@ -39,7 +39,7 @@ app = FastAPI(
     openapi_url="/api/openapi.json",
     swagger_ui_parameters={
         "persistAuthorization": True,
-        "defaultModelsExpandDepth": 1,
+        "defaultModelsExpandDepth": -1,
         "displayRequestDuration": True,
     },
 

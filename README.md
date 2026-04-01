@@ -157,13 +157,13 @@ You are now authenticated and can use all user endpoints. Check `curl` code to u
 - `POST /api/user/auth/send-vc` — Send Verification Code
 - `POST /api/user/auth/login` — Login with Verification Code
 - `POST /api/user/auth/logout` — Logout
-- `POST /api/user/info` — User Info
-- `POST /api/user/stats` — User Statistics
-- `POST /api/user/season` — User Season List
-- `POST /api/user/matches` — User Matches
-- `POST /api/user/matches/{match_id}` — User Match Details
-- `POST /api/user/heroes/frequent` — User Frequent Heroes
-- `POST /api/user/friends` — User Friends
+- `GET /api/user/info` — User Info
+- `GET /api/user/stats` — User Statistics
+- `GET /api/user/season` — User Season List
+- `GET /api/user/matches` — User Matches
+- `GET /api/user/matches/{match_id}` — User Match Details
+- `GET /api/user/heroes/frequent` — User Frequent Heroes
+- `GET /api/user/friends` — User Friends
 
 ### MLBB
 

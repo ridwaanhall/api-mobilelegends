@@ -159,6 +159,8 @@ You are now authenticated and can use all user endpoints. Check `curl` code to u
 - `POST /api/user/auth/logout` — Logout
 - `GET /api/user/info` — User Info
 - `GET /api/user/stats` — User Statistics
+- `GET /api/user/privacy/settings` — User Privacy Settings
+- `POST /api/user/privacy/settings` — Update User Privacy Settings
 - `GET /api/user/season` — User Season List
 - `GET /api/user/matches` — User Matches
 - `GET /api/user/matches/{match_id}` — User Match Details

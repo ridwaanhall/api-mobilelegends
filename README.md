@@ -1,6 +1,6 @@
 # MLBB Public Data API
 
-[![API Live](https://img.shields.io/badge/API-Live-brightgreen?logo=fastapi&logoColor=white)](https://mlbb-stats.rone.dev/api/docs)
+[![API Live](https://img.shields.io/badge/API-Live-brightgreen?logo=fastapi&logoColor=white)](https://mlbb.rone.dev/api/docs)
 ![Release](https://img.shields.io/github/v/release/ridwaanhall/api-mobilelegends?logo=github)
 ![License](https://img.shields.io/github/license/ridwaanhall/api-mobilelegends?logo=opensourceinitiative&logoColor=white)
 ![Stars](https://img.shields.io/github/stars/ridwaanhall/api-mobilelegends?logo=github)
@@ -38,19 +38,19 @@ This API provides access to hero analytics, in-game performance data, academy re
 ## Base URLs
 
 ```txt
-https://mlbb-stats.rone.dev                # root (redirects to /api/docs)
-https://mlbb-stats.rone.dev/api            # API index and status
-https://mlbb-stats.rone.dev/api/docs       # Swagger UI
-https://mlbb-stats.rone.dev/api/redoc      # ReDoc
-https://mlbb-stats.rone.dev/api/openapi.json
-https://mlbb-stats.rone.dev/robots.txt
+https://mlbb.rone.dev                # Landing Page
+https://mlbb.rone.dev/api            # API index and status
+https://mlbb.rone.dev/api/docs       # Swagger UI
+https://mlbb.rone.dev/api/redoc      # ReDoc
+https://mlbb.rone.dev/api/openapi.json
+https://mlbb.rone.dev/robots.txt
 ```
 
 ---
 
 ## Quick Start
 
-### 1. Visit [mlbb-stats.rone.dev/api/docs](https://mlbb-stats.rone.dev/api/docs)
+### 1. Visit [mlbb.rone.dev/api/docs](https://mlbb.rone.dev/api/docs)
 
 ### 2. Open any API (example: `/api/hero-rank`)
 
@@ -79,12 +79,91 @@ https://mlbb-stats.rone.dev/robots.txt
 
 ---
 
+## Authentication (User)
+
+### 1. [send-vc] Provide Role ID and Zone ID
+
+![Step 1](images/auth-step-01.png)
+
+- **Red box**: Endpoint  
+- **Yellow box**: Click **Try it out**  
+- **Green box**: Enter `role_id` and `zone_id`
+
+Click **Execute** and check your in‑game mail for the verification code (`vc`).
+
+---
+
+### 2. [login] Provide Verification Code
+
+Same as Step 1, but also enter the `vc` received via in‑game mail. Click **Execute** to authenticate.
+
+**Example request:**
+
+```json
+{
+  "role_id": 1234567890,
+  "zone_id": 1234,
+  "vc": 1234
+}
+```
+
+---
+
+### 3. Copy `jwt` Value
+
+Copy the `jwt` string from the response (e.g., `eyJhbGciOiJI...REDACTED`). Only copy the JWT itself. Check the curl code after clicking **Execute**.
+
+**Example response:**
+
+```json
+{
+  "code": 0,
+  "data": {
+    "email": "",
+    "jwt": "eyJhbGciOiJI...REDACTED",
+    "mobile": "",
+    "module": "",
+    "name": "",
+    "open_id": "",
+    "roleid": 1234567890,
+    "time": 1774975992,
+    "token": "MTc3ND...REDACTED",
+    "zoneid": 1234
+  },
+  "msg": "ok"
+}
+```
+
+---
+
+### 4. Authorize Using `jwt`
+
+Paste the copied `jwt` into the authorization field and click **Authorize**.
+
+![Step 1](images/auth-step-04.png)
+
+---
+
+### 5. Authentication Complete
+
+You are now authenticated and can use all user endpoints. Check `curl` code to usage.
+
+---
+
 ## API Coverage
 
-### Root
+### User
 
-- `GET /api` — API Index and Status
-- `GET /robots.txt` — Robots.txt for Web Crawlers
+- `POST /api/user/auth/send-vc` — Send Verification Code
+- `POST /api/user/auth/login` — Login with Verification Code
+- `POST /api/user/auth/logout` — Logout
+- `GET /api/user/info` — User Info
+- `GET /api/user/stats` — User Statistics
+- `GET /api/user/season` — User Season List
+- `GET /api/user/matches` — User Matches
+- `GET /api/user/matches/{match_id}` — User Match Details
+- `GET /api/user/heroes/frequent` — User Frequent Heroes
+- `GET /api/user/friends` — User Friends
 
 ### MLBB
 
@@ -124,19 +203,6 @@ https://mlbb-stats.rone.dev/robots.txt
 - `GET /api/academy/heroes/ratings` — Hero Ratings Index
 - `GET /api/academy/heroes/ratings/{subject}` — Hero Ratings by Subject
 
-### User
-
-- `POST /api/user/auth/send-vc` — Send Verification Code
-- `POST /api/user/auth/login` — Login with Verification Code
-- `POST /api/user/auth/logout` — Logout
-- `POST /api/user/info` — User Info
-- `POST /api/user/stats` — User Statistics
-- `POST /api/user/season` — User Season List
-- `POST /api/user/matches` — User Matches
-- `POST /api/user/matches/{match_id}` — User Match Details
-- `POST /api/user/heroes/frequent` — User Frequent Heroes
-- `POST /api/user/friends` — User Friends
-
 ### Addon
 
 - `GET /api/addon/win-rate-calculator` — Win Rate Calculator
@@ -163,16 +229,24 @@ Attribution to **Moonton** and **ridwaanhall** must be preserved in downstream u
 ### Setup
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate  # or .venv\Scripts\Activate.ps1 (Windows)
-pip install -r requirements.txt
+# skip this if already have
+uv init # create pyproject.toml
+uv add fastapi # add deps
+uv add pytest --dev # add deps for dev
+
+# use this if already have pyproject.toml and uv.lock
+uv sync
 cp .env.example .env
 ```
 
 ### Run
 
 ```bash
-uvicorn app.main:app --reload
+# for development
+fastapi dev
+
+# production
+fastapi run
 ```
 
 ### Test

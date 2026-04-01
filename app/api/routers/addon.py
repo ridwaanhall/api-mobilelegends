@@ -7,6 +7,7 @@ from fastapi import APIRouter, Query
 from app.core.errors import AppError
 from app.services.addon import fetch_ip_get
 from fastapi import Request
+from app.schemas.addon import AddonIpResponse, AddonWinRateResponse
 from app.utils.client_ip import extract_client_ip
 
 router = APIRouter(prefix="/api/addon", tags=["addon"])
@@ -14,6 +15,8 @@ router = APIRouter(prefix="/api/addon", tags=["addon"])
 
 @router.get(
     path="/win-rate-calculator",
+    name="api.addon.win_rate_calculator",
+    response_model=AddonWinRateResponse,
     summary="Win Rate Calculator for Consecutive Wins",
     description=(
         "Calculate the number of consecutive wins required to reach a target win rate "
@@ -34,6 +37,23 @@ router = APIRouter(prefix="/api/addon", tags=["addon"])
         "- Helping players set realistic performance goals.\n"
         "- Providing analytics for win rate progression."
     ),
+    responses={
+        200: {
+            "description": "Successful Response",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "status": "success",
+                        "match_now": 100,
+                        "wr_now": 50,
+                        "wr_future": 75,
+                        "required_no_lose_matches": 100,
+                        "message": "To achieve a win rate of 75.0%, you need 100 consecutive wins without any losses."
+                    }
+                }
+            }
+        }
+    }
 )
 def win_rate(
     match_now: Annotated[
@@ -194,6 +214,8 @@ def win_rate(
 
 @router.get(
     path="/ip",
+    name="api.addon.ip_location",
+    response_model=AddonIpResponse,
     summary="Check IP address location details",
     description=(
         "Retrieves geographic information associated with a given IP address. "
@@ -211,6 +233,25 @@ def win_rate(
         "- Supporting analytics and personalization.\n"
         "- Performing security checks and contextual validation."
     ),
+    responses={
+        200: {
+            "description": "Successful Response",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "code": 0,
+                        "data": {
+                            "city": "Yogyakarta",
+                            "country": "id",
+                            "lang": "en",
+                            "state": "Yogyakarta"
+                        },
+                        "msg": "ok"
+                    }
+                }
+            }
+        }
+    }
 )
 async def ip(request: Request):
     client_ip = extract_client_ip(request, public_only=True)

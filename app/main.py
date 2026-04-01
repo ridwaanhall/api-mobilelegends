@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+from copy import deepcopy
+
 from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
+from fastapi.openapi.utils import get_openapi
 from fastapi.responses import JSONResponse
 
 from app.core.config import DEBUG, API_VERSION
@@ -34,6 +37,11 @@ app = FastAPI(
     docs_url="/api/docs",
     redoc_url="/api/redoc",
     openapi_url="/api/openapi.json",
+    swagger_ui_parameters={
+        "persistAuthorization": True,
+        "defaultModelsExpandDepth": -1,
+        "displayRequestDuration": True,
+    },
 
     contact={
         "name": "RoneAI",
@@ -48,8 +56,8 @@ app = FastAPI(
 
     openapi_tags=[
         {
-            "name": "root",
-            "description": "API status, index, and crawler-related files.",
+            "name": "user",
+            "description": "Authentication and player-related data.",
         },
         {
             "name": "mlbb",
@@ -60,22 +68,108 @@ app = FastAPI(
             "description": "Game guides, builds, and reference data.",
         },
         {
-            "name": "user",
-            "description": "Authentication and player-related data.",
-        },
-        {
             "name": "addon",
             "description": "Utility tools and extra features.",
         },
     ]
 )
 
+def _inline_enum_defaults_in_parameters(schema: dict[str, object]) -> None:
+    components = schema.get("components", {})
+    if not isinstance(components, dict):
+        return
+
+    component_schemas = components.get("schemas", {})
+    if not isinstance(component_schemas, dict):
+        return
+
+    paths = schema.get("paths", {})
+    if not isinstance(paths, dict):
+        return
+
+    for path_item in paths.values():
+        if not isinstance(path_item, dict):
+            continue
+
+        for operation in path_item.values():
+            if not isinstance(operation, dict):
+                continue
+
+            parameters = operation.get("parameters", [])
+            if not isinstance(parameters, list):
+                continue
+
+            for parameter in parameters:
+                if not isinstance(parameter, dict):
+                    continue
+
+                param_schema = parameter.get("schema", {})
+                if not isinstance(param_schema, dict):
+                    continue
+
+                ref = param_schema.get("$ref")
+                has_default = "default" in param_schema
+                if not isinstance(ref, str) or not has_default:
+                    continue
+
+                prefix = "#/components/schemas/"
+                if not ref.startswith(prefix):
+                    continue
+
+                component_name = ref[len(prefix):]
+                component_schema = component_schemas.get(component_name, {})
+                if not isinstance(component_schema, dict) or "enum" not in component_schema:
+                    continue
+
+                inlined_schema = {
+                    "type": component_schema.get("type", "string"),
+                    "enum": deepcopy(component_schema.get("enum", [])),
+                }
+
+                for key in ("title", "description", "default"):
+                    if key in param_schema:
+                        inlined_schema[key] = deepcopy(param_schema[key])
+
+                parameter["schema"] = inlined_schema
+
+
+def custom_openapi() -> dict[str, object]:
+    if app.openapi_schema is not None:
+        return app.openapi_schema
+
+    openapi_schema = get_openapi(
+        title=app.title,
+        version=app.version,
+        openapi_version=app.openapi_version,
+        summary=app.summary,
+        description=app.description,
+        routes=app.routes,
+        tags=app.openapi_tags,
+        servers=app.servers,
+        terms_of_service=app.terms_of_service,
+        contact=app.contact,
+        license_info=app.license_info,
+        separate_input_output_schemas=app.separate_input_output_schemas,
+    )
+
+    _inline_enum_defaults_in_parameters(openapi_schema)
+    app.openapi_schema = openapi_schema
+    return app.openapi_schema
+
+
+app.openapi = custom_openapi
+
+# api routers
 app.include_router(root_router)
 app.include_router(mlbb_router)
 app.include_router(academy_router)
 app.include_router(user_router)
 app.include_router(addon_router)
 
+# web routes
+
+
+# exception handlers
 app.add_exception_handler(AppError, app_error_handler)  # type: ignore[arg-type]
 app.add_exception_handler(Exception, unhandled_error_handler)  # type: ignore[arg-type]
 

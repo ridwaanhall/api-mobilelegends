@@ -30,12 +30,21 @@ router = APIRouter(tags=["root"])
 
 def get_available_endpoints(app, include_methods: set[str] | None = None) -> list[dict]:
     endpoints: list[dict] = []
+    internal_paths = {
+        "/openapi.json",
+        "/docs",
+        "/redoc",
+        "/api/openapi.json",
+        "/api/docs",
+        "/api/redoc",
+        "/static",
+    }
     for route in app.routes:
         if not isinstance(route, APIRoute):
             continue
         if include_methods and not (set(route.methods) & include_methods):
             continue
-        if route.path in {"/openapi.json", "/docs", "/redoc", "/static"}:
+        if route.path in internal_paths:
             continue
         endpoints.append({
             "path": route.path,
@@ -59,10 +68,10 @@ def api_docs_redirect() -> RedirectResponse:
     return RedirectResponse(url="/api/docs", status_code=307)
 
 
-
 @router.get(
     path="/api",
     summary="API Index and Status",
+    include_in_schema=False,
     description=(
         "Provides API metadata, current status, and available endpoints.\n\n"
         "No parameters.\n\n"
@@ -147,6 +156,7 @@ async def api_index(request: Request) -> dict:
 @router.get(
     path="/robots.txt",
     summary="Robots.txt for Web Crawlers",
+    include_in_schema=False,
     description=(
         "Provides instructions for web crawlers and bots accessing the API. "
         "The response defines rules for user-agents, allowed/disallowed paths, "

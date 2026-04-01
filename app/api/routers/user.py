@@ -1,19 +1,56 @@
-from fastapi import APIRouter, Body, Depends, Path, Query
+from fastapi import APIRouter, Depends, Path, Query
 
-from app.api.dependencies import require_api_available
+from app.api.dependencies import require_api_available, require_user_jwt
 
 from app.services.user import fetch_user_post, fetch_user_actgateway
 
+from app.core.exceptions import AppError
 from app.core.http import MLBBHeaderBuilder
 from app.core.enums import LanguageEnum
+from app.schemas.user import (
+    UserAuthSimpleResponse,
+    UserFriendsResponse,
+    UserFrequentHeroesResponse,
+    UserInfoResponse,
+    UserLoginRequest,
+    UserLoginResponse,
+    UserMatchDetailsResponse,
+    UserMatchesResponse,
+    UserSendVcRequest,
+    UserSeasonResponse,
+    UserStatsResponse,
+)
 
 from typing import Annotated
 
 router = APIRouter(prefix="/api/user", tags=["user"], dependencies=[Depends(require_api_available)])
 
 
+def _require_dict_response(data: object) -> dict[str, object]:
+    if not isinstance(data, dict):
+        raise AppError(
+            status_code=502,
+            code="UPSTREAM_INVALID_RESPONSE",
+            message="Failed to fetch data",
+            details="Upstream response format is invalid.",
+        )
+    return data
+
+
+def _require_key(response_data: dict[str, object], key: str) -> None:
+    if key not in response_data:
+        raise AppError(
+            status_code=502,
+            code="UPSTREAM_INVALID_RESPONSE",
+            message="Failed to fetch data",
+            details=f"Upstream response missing required field: {key}.",
+        )
+
+
 @router.post(
     path="/auth/send-vc",
+    name="api.user.send_verification_code",
+    response_model=UserAuthSimpleResponse,
     summary="Send Verification Code",
     description=(
         "Send an in-game verification code to the player's account, valid for 5 mins. "
@@ -27,35 +64,36 @@ router = APIRouter(prefix="/api/user", tags=["user"], dependencies=[Depends(requ
         "- **msg**: Message string (e.g., 'ok').\n\n"
         "Useful for account authentication flows, linking user identity, and validating account ownership."
     ),
+    responses={
+        200: {
+            "description": "Successful Response",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "code": 0,
+                        "data": "",
+                        "msg": "ok"
+                    }
+                }
+            }
+        }
+    }
 )
 def send_vc(
-    role_id: Annotated[
-        int,
-        Body(
-            title="Role ID",
-            description="The unique role ID of the player's account. (Game ID)",
-            embed=True,
-        )
-    ],
-    zone_id: Annotated[
-        int,
-        Body(
-            title="Zone ID",
-            description="The zone ID associated with the player's server region. (Server ID)",
-            embed=True,
-        )
-    ],
+    body: UserSendVcRequest,
 ) -> object:
     headers = MLBBHeaderBuilder.get_user_header()
     payload = {
-        "roleId": role_id,
-        "zoneId": zone_id,
+        "roleId": body.role_id,
+        "zoneId": body.zone_id,
     }
     return fetch_user_post("base/sendVc", headers, payload)
 
 
 @router.post(
     path="/auth/login",
+    name="api.user.login",
+    response_model=UserLoginResponse,
     summary="Login with Verification Code",
     description=(
         "Authenticate the player using a verification code to obtain a JWT and session token. "
@@ -75,38 +113,40 @@ def send_vc(
         "- **data.module, name, email, mobile, open_id**: Metadata fields (may be empty depending on account).\n\n"
         "The response confirms successful login and provides the credentials required for accessing other user endpoints."
     ),
+    responses={
+        200: {
+            "description": "Successful Response",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "code": 0,
+                        "data": {
+                            "email": "",
+                            "jwt": "eyJhbGciOiJI...REDACTED",
+                            "mobile": "",
+                            "module": "",
+                            "name": "",
+                            "open_id": "",
+                            "roleid": 1234567890,
+                            "time": 1774975992,
+                            "token": "MTc3ND...REDACTED",
+                            "zoneid": 1234
+                        },
+                        "msg": "ok"
+                    }
+                }
+            }
+        }
+    }
 )
 def login(
-    role_id: Annotated[
-        int,
-        Body(
-            title="Role ID",
-            description="The unique role ID of the player's account.",
-            embed=True,
-        )
-    ],
-    zone_id: Annotated[
-        int,
-        Body(
-            title="Zone ID",
-            description="The zone ID associated with the player's server region.",
-            embed=True,
-        )
-    ],
-    vc: Annotated[
-        int,
-        Body(
-            title="Verification Code",
-            description="The 4-digit verification code, obtained through in-game mail via the send-vc endpoint, remains valid for 5 minutes.",
-            embed=True,
-        )
-    ],
+    body: UserLoginRequest,
 ) -> object:
     headers = MLBBHeaderBuilder.get_user_header()
     payload = {
-        "roleId": role_id,
-        "zoneId": zone_id,
-        "vc": vc,
+        "roleId": body.role_id,
+        "zoneId": body.zone_id,
+        "vc": body.vc,
         "referer": "academy",
         "type": "web",
     }
@@ -115,13 +155,15 @@ def login(
 
 @router.post(
     path="/auth/logout",
+    name="api.user.logout",
+    response_model=UserAuthSimpleResponse,
     summary="Logout",
     description=(
         "Invalidate the player's session using the JWT obtained from `/api/user/auth/login`. "
         "This endpoint terminates the current authenticated session, ensuring that the JWT can no longer be used "
         "for authorized requests.\n\n"
-        "Request body:\n"
-        "- **jwt**: JSON Web Token obtained during login.\n\n"
+        "Headers:\n"
+        "- **Authorization**: `Bearer <jwt>` (JWT obtained during login).\n\n"
         "The response confirms whether the logout was successful:\n"
         "- **code**: Status code (0 indicates success).\n"
         "- **data**: Empty string (no payload returned).\n"
@@ -129,15 +171,25 @@ def login(
         "Note: Although the login response also includes a `token` field, only the JWT is required for logout. "
         "The server uses the JWT to invalidate the session."
     ),
+    responses={
+        200: {
+            "description": "Successful Response",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "code": 0,
+                        "data": "",
+                        "msg": "ok"
+                    }
+                }
+            }
+        }
+    }
 )
 def logout(
     jwt: Annotated[
         str,
-        Body(
-            title="JWT",
-            description="The JWT obtained from the /login endpoint.",
-            embed=True,
-        )
+        Depends(require_user_jwt),
     ],
 ) -> object:
     headers = MLBBHeaderBuilder.get_user_header(
@@ -147,15 +199,17 @@ def logout(
     return fetch_user_post("base/logout", headers, payload)
 
 
-@router.post(
+@router.get(
     path="/info",
+    name="api.user.info",
+    response_model=UserInfoResponse,
     summary="User Info",
     description=(
         "Retrieve the authenticated player's base profile information using a valid JWT. "
-        "Supports query parameter for localization (`lang`). Requires a JSON body containing `jwt` "
-        "(JSON Web Token obtained from login).\n\n"
-        "Request body:\n"
-        "- **jwt**: JSON Web Token obtained during login.\n\n"
+        "Supports query parameter for localization (`lang`). Requires an Authorization header "
+        "with the JWT from login.\n\n"
+        "Headers:\n"
+        "- **Authorization**: `Bearer <jwt>` (JWT obtained during login).\n\n"
         "Query parameters:\n"
         "- **lang**: Language code for localized content (default: `en`).\n\n"
         "The response includes player details:\n"
@@ -170,15 +224,34 @@ def logout(
         "Useful for displaying identity card information, verifying account ownership, "
         "and populating player profile data in client applications."
     ),
+    responses={
+        200: {
+            "description": "Successful Response",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "code": 0,
+                        "data": {
+                            "avatar": "https://akmpicture.youngjoygame.com/dist/face/57060/66/96/1149309666_26_new_9ced56d6-3625-48c3-85d1-0b862a2044e7.jpg",
+                            "history_rank_level": 9999,
+                            "level": 200,
+                            "name": "SAYA AKAN LAWAN",
+                            "rank_level": 8000,
+                            "reg_country": "ID",
+                            "roleId": 1234567890,
+                            "zoneId": 123456
+                        },
+                        "msg": "ok"
+                    }
+                }
+            }
+        }
+    }
 )
 def user_info(
     jwt: Annotated[
         str,
-        Body(
-            title="JWT",
-            description="The JWT obtained from the /login endpoint.",
-            embed=True,
-        )
+        Depends(require_user_jwt),
     ],
     lang: Annotated[
         LanguageEnum,
@@ -195,18 +268,23 @@ def user_info(
         jwt=jwt
     )
     payload = {}
-    return fetch_user_post("base/getBaseInfo", headers, payload)
+    response = _require_dict_response(fetch_user_post("base/getBaseInfo", headers, payload))
+    _require_key(response, "code")
+    _require_key(response, "data")
+    return response
 
 
-@router.post(
+@router.get(
     path="/stats",
+    name="api.user.stats",
+    response_model=UserStatsResponse,
     summary="User Statistics",
     description=(
         "Retrieve the authenticated player's overall statistics using a valid JWT. "
-        "Supports query parameter for localization (`lang`). Requires a JSON body containing `jwt` "
-        "(JSON Web Token obtained from login).\n\n"
-        "Request body:\n"
-        "- **jwt**: JSON Web Token obtained during login.\n\n"
+        "Supports query parameter for localization (`lang`). Requires an Authorization header "
+        "with the JWT from login.\n\n"
+        "Headers:\n"
+        "- **Authorization**: `Bearer <jwt>` (JWT obtained during login).\n\n"
         "Query parameters:\n"
         "- **lang**: Language code for localized content (default: `en`).\n\n"
         "The response includes general player statistics:\n"
@@ -236,15 +314,132 @@ def user_info(
         "- Identifying favorite heroes.\n"
         "- Showcasing personal achievements in MLBB."
     ),
+    responses={
+        200: {
+            "description": "Successful Response",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "code": 0,
+                        "message": "Success",
+                        "traceID": "b506b47e790797eb1f9762d2f1586496",
+                        "data": {
+                            "wc": 188,
+                            "tc": 308,
+                            "as": 762.3552,
+                            "gt": 77.95,
+                            "mvpc": 73,
+                            "wsc": 11,
+                            "mo": {
+                                "v": 112848,
+                                "ts": 1726010389,
+                                "hid": 36,
+                                "bid": 4110381620662451700,
+                                "sid": 0,
+                                "hid_e": {
+                                    "id": 36,
+                                    "n": "Aurora",
+                                    "ix": "https://akmweb.youngjoygame.com/web/gms/image/ed2295c60bd772b89b7bdbbc2aee6095.png",
+                                    "i2x": "https://akmweb.youngjoygame.com/web/svnres/file/mlbb/homepage/100_58b97db6a5c286059057d42289612b16.jpg"
+                                },
+                                "bid_s": "4110381620662451526"
+                            },
+                            "hk": {
+                                "v": 25,
+                                "ts": 1672500616,
+                                "hid": 84,
+                                "bid": 4108435467847910000,
+                                "sid": 0,
+                                "hid_e": {
+                                    "id": 84,
+                                    "n": "Ling",
+                                    "ix": "https://akmweb.youngjoygame.com/web/svnres/img/mlbb/community/100_af4312bae7aa443129b46a17b4dce3a6.png",
+                                    "i2x": "https://akmweb.youngjoygame.com/web/svnres/file/mlbb/homepage/100_f76a7dfe805afa316e5ec44295b75772.jpg"
+                                },
+                                "bid_s": "4108435467847910024"
+                            },
+                            "ma": {
+                                "v": 31,
+                                "ts": 1725653347,
+                                "hid": 20,
+                                "bid": 4109721990994840000,
+                                "sid": 0,
+                                "hid_e": {
+                                    "id": 20,
+                                    "n": "Lolita",
+                                    "ix": "https://akmweb.youngjoygame.com/web/gms/image/ce1c7af1a946f70585e40296ba85c9c0.jpg",
+                                    "i2x": "https://akmweb.youngjoygame.com/web/svnres/file/mlbb/homepage/100_1bc4973e512cf4958fe639e12391666e.jpg"
+                                },
+                                "bid_s": "4109721990994840266"
+                            },
+                            "ms": {
+                                "v": 1330,
+                                "ts": 1715555863,
+                                "hid": 84,
+                                "bid": 4110821683001146000,
+                                "sid": 0,
+                                "hid_e": {
+                                    "id": 84,
+                                    "n": "Ling",
+                                    "ix": "https://akmweb.youngjoygame.com/web/svnres/img/mlbb/community/100_af4312bae7aa443129b46a17b4dce3a6.png",
+                                    "i2x": "https://akmweb.youngjoygame.com/web/svnres/file/mlbb/homepage/100_f76a7dfe805afa316e5ec44295b75772.jpg"
+                                },
+                                "bid_s": "4110821683001146109"
+                            },
+                            "mdt": {
+                                "v": 372063,
+                                "ts": 1727227888,
+                                "hid": 20,
+                                "bid": 4109978035471765500,
+                                "sid": 0,
+                                "hid_e": {
+                                    "id": 20,
+                                    "n": "Lolita",
+                                    "ix": "https://akmweb.youngjoygame.com/web/gms/image/ce1c7af1a946f70585e40296ba85c9c0.jpg",
+                                    "i2x": "https://akmweb.youngjoygame.com/web/svnres/file/mlbb/homepage/100_1bc4973e512cf4958fe639e12391666e.jpg"
+                                },
+                                "bid_s": "4109978035471765660"
+                            },
+                            "mg": {
+                                "v": 22282,
+                                "ts": 1718939040,
+                                "hid": 84,
+                                "bid": 4116060748536699000,
+                                "sid": 0,
+                                "hid_e": {
+                                    "id": 84,
+                                    "n": "Ling",
+                                    "ix": "https://akmweb.youngjoygame.com/web/svnres/img/mlbb/community/100_af4312bae7aa443129b46a17b4dce3a6.png",
+                                    "i2x": "https://akmweb.youngjoygame.com/web/svnres/file/mlbb/homepage/100_f76a7dfe805afa316e5ec44295b75772.jpg"
+                                },
+                                "bid_s": "4116060748536698631"
+                            },
+                            "mtd": {
+                                "v": 27152,
+                                "ts": 1719290587,
+                                "hid": 65,
+                                "bid": 4110233968270030300,
+                                "sid": 0,
+                                "hid_e": {
+                                    "id": 65,
+                                    "n": "Claude",
+                                    "ix": "https://akmweb.youngjoygame.com/web/svnres/img/mlbb/community/100_7ed528f154dd4f460c59361ab0ed7942.png",
+                                    "i2x": "https://akmweb.youngjoygame.com/web/svnres/file/mlbb/homepage/100_1edf19b0839ffd2bffb60b4ee4953239.jpg"
+                                },
+                                "bid_s": "4110233968270030438"
+                            },
+                            "sids": [40, 39, 38, 37]
+                        }
+                    }
+                }
+            }
+        }
+    }
 )
 def user_stats(
     jwt: Annotated[
         str,
-        Body(
-            title="JWT",
-            description="The JWT obtained from the /login endpoint.",
-            embed=True,
-        )
+        Depends(require_user_jwt),
     ],
     lang: Annotated[
         LanguageEnum,
@@ -259,18 +454,23 @@ def user_stats(
         x_token=jwt,
     )
     params = {}
-    return fetch_user_actgateway("battlereport/stats", headers, params)
+    response = _require_dict_response(fetch_user_actgateway("battlereport/stats", headers, params))
+    _require_key(response, "code")
+    _require_key(response, "data")
+    return response
 
 
-@router.post(
+@router.get(
     path="/season",
+    name="api.user.season",
+    response_model=UserSeasonResponse,
     summary="User Season List",
     description=(
         "Retrieve the authenticated player's season information using a valid JWT. "
-        "Supports query parameter for localization (`lang`). Requires a JSON body containing `jwt` "
-        "(JSON Web Token obtained from login).\n\n"
-        "Request body:\n"
-        "- **jwt**: JSON Web Token obtained during login.\n\n"
+        "Supports query parameter for localization (`lang`). Requires an Authorization header "
+        "with the JWT from login.\n\n"
+        "Headers:\n"
+        "- **Authorization**: `Bearer <jwt>` (JWT obtained during login).\n\n"
         "Query parameters:\n"
         "- **lang**: Language code for localized content (default: `en`).\n\n"
         "The response includes:\n"
@@ -281,15 +481,28 @@ def user_stats(
         "- Linking performance data to specific seasons.\n"
         "- Enabling clients to fetch season-specific stats or achievements."
     ),
+    responses={
+        200: {
+            "description": "Successful Response",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "code": 0,
+                        "message": "Success",
+                        "traceID": "74879d32961c1784a762671398979ac6",
+                        "data": {
+                            "sids": [40, 39, 38, 37]
+                        }
+                    }
+                }
+            }
+        }
+    }
 )
 def user_season(
     jwt: Annotated[
         str,
-        Body(
-            title="JWT",
-            description="The JWT obtained from the /login endpoint.",
-            embed=True,
-        )
+        Depends(require_user_jwt),
     ],
     lang: Annotated[
         LanguageEnum,
@@ -304,18 +517,23 @@ def user_season(
         x_token=jwt,
     )
     params = {}
-    return fetch_user_actgateway("battlereport/season/list", headers, params)
+    response = _require_dict_response(fetch_user_actgateway("battlereport/season/list", headers, params))
+    _require_key(response, "code")
+    _require_key(response, "data")
+    return response
 
 
-@router.post(
+@router.get(
     path="/matches",
+    name="api.user.matches",
+    response_model=UserMatchesResponse,
     summary="User Matches",
     description=(
         "Retrieve the authenticated player's recent matches information using a valid JWT. "
-        "Supports query parameters for season filtering, pagination, and localization. Requires a JSON body containing `jwt` "
-        "(JSON Web Token obtained from login).\n\n"
-        "Request body:\n"
-        "- **jwt**: JSON Web Token obtained during login.\n\n"
+        "Supports query parameters for season filtering, pagination, and localization. Requires an Authorization header "
+        "with the JWT from login.\n\n"
+        "Headers:\n"
+        "- **Authorization**: `Bearer <jwt>` (JWT obtained during login).\n\n"
         "Query parameters:\n"
         "- **sid**: Season ID for filtering matches (must be a valid season ID from `/api/user/season`).\n"
         "- **limit**: Maximum number of matches to retrieve (minimum: 1).\n"
@@ -350,21 +568,60 @@ def user_season(
         "- Analyzing player performance.\n"
         "- Enabling clients to paginate reliably through a player's matches."
     ),
+    responses={
+        200: {
+            "description": "Successful Response",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "code": 0,
+                        "message": "Success",
+                        "traceID": "53cd62802d24dc512ffd908e1d6d06bc",
+                        "data": {
+                            "pageInfo": {
+                                "nextCursor": "4143043017340290910",
+                                "hasNext": True,
+                                "count": 1
+                            },
+                            "result": [
+                                {
+                                    "sid": 40,
+                                    "bid": 4132717739868068400,
+                                    "hid": 17,
+                                    "k": 14,
+                                    "d": 1,
+                                    "a": 11,
+                                    "lid": 4,
+                                    "s": 1180,
+                                    "mvp": 0,
+                                    "res": 1,
+                                    "ts": 1774857999,
+                                    "hid_e": {
+                                        "id": 17,
+                                        "n": "Fanny",
+                                        "ix": "https://akmweb.youngjoygame.com/web/svnres/img/mlbb/community/100_ae8ca46da01da69619a6c03dc7069921.png",
+                                        "i2x": "https://akmweb.youngjoygame.com/web/svnres/file/mlbb/homepage/100_74fabc6c0d5db065fbb836b6879f36ca.jpg"
+                                    },
+                                    "bid_s": "4132717739868068534"
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    }
 )
 def user_matches(
     jwt: Annotated[
         str,
-        Body(
-            title="JWT",
-            description="The JWT obtained from the /login endpoint.",
-            embed=True,
-        )
+        Depends(require_user_jwt),
     ],
     sid: Annotated[
         int,
         Query(
             title="Season ID",
-            description="The season ID for filtering recent matches. Use 0 for all seasons.",
+            description="The season ID for filtering recent matches.",
         )
     ],
     limit: Annotated[
@@ -401,18 +658,23 @@ def user_matches(
     if last_cursor is not None:
         params["last_cursor"] = last_cursor
 
-    return fetch_user_actgateway("battlereport/matches/recent", headers, params)
+    response = _require_dict_response(fetch_user_actgateway("battlereport/matches/recent", headers, params))
+    _require_key(response, "code")
+    _require_key(response, "data")
+    return response
 
 
-@router.post(
+@router.get(
     path="/matches/{match_id}",
+    name="api.user.match_details",
+    response_model=UserMatchDetailsResponse,
     summary="User Match Details",
     description=(
         "Retrieve the authenticated player's detailed match information using a valid JWT. "
-        "Supports query parameters for season filtering and localization. Requires a JSON body containing `jwt` "
-        "(JSON Web Token obtained from login).\n\n"
-        "Request body:\n"
-        "- **jwt**: JSON Web Token obtained during login.\n\n"
+        "Supports query parameters for season filtering and localization. Requires an Authorization header "
+        "with the JWT from login.\n\n"
+        "Headers:\n"
+        "- **Authorization**: `Bearer <jwt>` (JWT obtained during login).\n\n"
         "Path parameters:\n"
         "- **match_id**: Unique identifier of the match (from `bid_s` in `/api/user/matches`).\n\n"
         "Query parameters:\n"
@@ -459,8 +721,63 @@ def user_matches(
         "    - Analyzing team compositions.\n"
         "    - Evaluating player performance in detail."
     ),
+    responses={
+        200: {
+            "description": "Successful Response",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "code": 0,
+                        "message": "Success",
+                        "traceID": "4d96357b092ade76774481366567bcaf",
+                        "data": {
+                            "result": [
+                                {
+                                    "f": 2,
+                                    "hid": 31,
+                                    "rid": 1880233572,
+                                    "zid": 57027,
+                                    "k": 4,
+                                    "d": 9,
+                                    "a": 6,
+                                    "tfr": 0.4167,
+                                    "o": 83974,
+                                    "op": 0.2202,
+                                    "s": 509,
+                                    "mvp": 0,
+                                    "its": [2305, 3002, 3005, 3015, 3003, 3013, 0],
+                                    "eq": 0,
+                                    "ts": 1773837471,
+                                    "bd": 1292,
+                                    "fk": 24,
+                                    "fw": 0,
+                                    "hid_e": {
+                                        "id": 31,
+                                        "n": "Moskov",
+                                        "ix": "https://akmweb.youngjoygame.com/web/gms/image/5c4587c25e681be1aecfda0cfbe44714.png",
+                                        "i2x": "https://akmweb.youngjoygame.com/web/svnres/file/mlbb/homepage/100_843f1c2c3a1b2d4da2fc2ec73cf47cfa.jpg"
+                                    },
+                                    "its_e": [
+                                        {
+                                            "id": 2305,
+                                            "n": "Swift Boots",
+                                            "ix": "https://akmweb.youngjoygame.com/web/svnres/img/mlbb/homepage/100_b31a355cc85682eed8d9e0dc163fd756.png",
+                                            "i2x": ""
+                                        },
+                                        None
+                                    ],
+                                    "hlvl": 15,
+                                    "rname": "ᴵᵐŦungiℓ"
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    }
 )
-def user_matches_details(
+def user_match_details(
     match_id: Annotated[
         int,
         Path(
@@ -470,11 +787,7 @@ def user_matches_details(
     ],
     jwt: Annotated[
         str,
-        Body(
-            title="JWT",
-            description="The JWT obtained from the /login endpoint.",
-            embed=True,
-        )
+        Depends(require_user_jwt),
     ],
     sid: Annotated[
         int,
@@ -498,18 +811,23 @@ def user_matches_details(
     params = {
         "sid": sid
     }
-    return fetch_user_actgateway(f"battlereport/matches/{match_id}", headers, params)
+    response = _require_dict_response(fetch_user_actgateway(f"battlereport/matches/{match_id}", headers, params))
+    _require_key(response, "code")
+    _require_key(response, "data")
+    return response
 
 
-@router.post(
+@router.get(
     path="/heroes/frequent",
+    name="api.user.frequent_heroes",
+    response_model=UserFrequentHeroesResponse,
     summary="User Frequent Heroes",
     description=(
         "Retrieve the authenticated player's frequent heroes information using a valid JWT. "
-        "Supports query parameters for season filtering, pagination, and localization. Requires a JSON body containing `jwt` "
-        "(JSON Web Token obtained from login).\n\n"
-        "Request body:\n"
-        "- **jwt**: JSON Web Token obtained during login.\n\n"
+        "Supports query parameters for season filtering, pagination, and localization. Requires an Authorization header "
+        "with the JWT from login.\n\n"
+        "Headers:\n"
+        "- **Authorization**: `Bearer <jwt>` (JWT obtained during login).\n\n"
         "Query parameters:\n"
         "- **sid**: Season ID for filtering frequent heroes (must be a valid season ID from `/api/user/season`).\n"
         "- **limit**: Maximum number of heroes to retrieve (minimum: 1).\n"
@@ -543,21 +861,55 @@ def user_matches_details(
         "- Tracking win rates and performance scores.\n"
         "- Comparing hero usage across different seasons."
     ),
+    responses={
+        200: {
+            "description": "Successful Response",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "code": 0,
+                        "message": "Success",
+                        "traceID": "6b098c3c683f977217a91bb6c630e7be",
+                        "data": {
+                            "pageInfo": {
+                                "nextCursor": "",
+                                "hasNext": True,
+                                "count": 0
+                            },
+                            "result": [
+                                {
+                                    "hid": 17,
+                                    "tc": 8,
+                                    "wc": 7,
+                                    "bs": 844.875,
+                                    "mr": 6626,
+                                    "mrp": 0.6188,
+                                    "hid_e": {
+                                        "id": 17,
+                                        "n": "Fanny",
+                                        "ix": "https://akmweb.youngjoygame.com/web/svnres/img/mlbb/community/100_ae8ca46da01da69619a6c03dc7069921.png",
+                                        "i2x": "https://akmweb.youngjoygame.com/web/svnres/file/mlbb/homepage/100_74fabc6c0d5db065fbb836b6879f36ca.jpg"
+                                    },
+                                    "p": 1460
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    }
 )
 def user_frequent_heroes(
     jwt: Annotated[
         str,
-        Body(
-            title="JWT",
-            description="The JWT obtained from the /login endpoint.",
-            embed=True,
-        )
+        Depends(require_user_jwt),
     ],
     sid: Annotated[
         int,
         Query(
             title="Season ID",
-            description="The season ID for filtering frequent heroes. Use 0 for all seasons.",
+            description="The season ID for filtering frequent heroes.",
         )
     ],
     limit: Annotated[
@@ -594,18 +946,23 @@ def user_frequent_heroes(
     if last_cursor is not None:
         params["last_cursor"] = last_cursor
 
-    return fetch_user_actgateway("battlereport/heros/frequent", headers, params)
+    response = _require_dict_response(fetch_user_actgateway("battlereport/heros/frequent", headers, params))
+    _require_key(response, "code")
+    _require_key(response, "data")
+    return response
 
 
-@router.post(
+@router.get(
     path="/friends",
+    name="api.user.friends",
+    response_model=UserFriendsResponse,
     summary="User Friends",
     description=(
         "Retrieve the authenticated player's friends information using a valid JWT. "
-        "Supports query parameters for season filtering and localization. Requires a JSON body containing `jwt` "
-        "(JSON Web Token obtained from login).\n\n"
-        "Request body:\n"
-        "- **jwt**: JSON Web Token obtained during login.\n\n"
+        "Supports query parameters for season filtering and localization. Requires an Authorization header "
+        "with the JWT from login.\n\n"
+        "Headers:\n"
+        "- **Authorization**: `Bearer <jwt>` (JWT obtained during login).\n\n"
         "Query parameters:\n"
         "- **sid**: Season ID for filtering friends (must be a valid season ID from `/api/user/season`).\n"
         "- **lang**: Language code for localized content (default: `en`).\n\n"
@@ -630,15 +987,46 @@ def user_frequent_heroes(
         "- Tracking shared match history.\n"
         "- Analyzing cooperative performance with friends across different seasons."
     ),
+    responses={
+        200: {
+            "description": "Successful Response",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "code": 0,
+                        "message": "Success",
+                        "traceID": "e0516a11c845c6ca93a1a43178c2f510",
+                        "data": {
+                            "bfs": None,
+                            "wfs": [],
+                            "fs": [
+                                {
+                                    "f": {
+                                        "rid": 0,
+                                        "zid": 0,
+                                        "n": "",
+                                        "ax": "",
+                                        "pri": True
+                                    },
+                                    "frid": 0,
+                                    "fzid": 0,
+                                    "cl": 42,
+                                    "l": 42,
+                                    "tbc": 7,
+                                    "twc": 6
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    }
 )
 def user_friends(
     jwt: Annotated[
         str,
-        Body(
-            title="JWT",
-            description="The JWT obtained from the /login endpoint.",
-            embed=True,
-        )
+        Depends(require_user_jwt),
     ],
     sid: Annotated[
         int,
@@ -663,4 +1051,7 @@ def user_friends(
         "sid": sid,
     }
 
-    return fetch_user_actgateway("battlereport/friends", headers, params)
+    response = _require_dict_response(fetch_user_actgateway("battlereport/friends", headers, params))
+    _require_key(response, "code")
+    _require_key(response, "data")
+    return response

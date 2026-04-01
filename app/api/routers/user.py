@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Body, Depends, Path, Query
+from fastapi import APIRouter, Depends, Path, Query
 
 from app.api.dependencies import require_api_available, require_user_jwt
 
@@ -12,9 +12,11 @@ from app.schemas.user import (
     UserFriendsResponse,
     UserFrequentHeroesResponse,
     UserInfoResponse,
+    UserLoginRequest,
     UserLoginResponse,
     UserMatchDetailsResponse,
     UserMatchesResponse,
+    UserSendVcRequest,
     UserSeasonResponse,
     UserStatsResponse,
 )
@@ -78,27 +80,12 @@ def _require_key(response_data: dict[str, object], key: str) -> None:
     }
 )
 def send_vc(
-    role_id: Annotated[
-        int,
-        Body(
-            title="Role ID",
-            description="The unique role ID of the player's account. (Game ID)",
-            embed=True,
-        )
-    ],
-    zone_id: Annotated[
-        int,
-        Body(
-            title="Zone ID",
-            description="The zone ID associated with the player's server region. (Server ID)",
-            embed=True,
-        )
-    ],
+    body: UserSendVcRequest,
 ) -> object:
     headers = MLBBHeaderBuilder.get_user_header()
     payload = {
-        "roleId": role_id,
-        "zoneId": zone_id,
+        "roleId": body.role_id,
+        "zoneId": body.zone_id,
     }
     return fetch_user_post("base/sendVc", headers, payload)
 
@@ -153,36 +140,13 @@ def send_vc(
     }
 )
 def login(
-    role_id: Annotated[
-        int,
-        Body(
-            title="Role ID",
-            description="The unique role ID of the player's account.",
-            embed=True,
-        )
-    ],
-    zone_id: Annotated[
-        int,
-        Body(
-            title="Zone ID",
-            description="The zone ID associated with the player's server region.",
-            embed=True,
-        )
-    ],
-    vc: Annotated[
-        int,
-        Body(
-            title="Verification Code",
-            description="The 4-digit verification code, obtained through in-game mail via the send-vc endpoint, remains valid for 5 minutes.",
-            embed=True,
-        )
-    ],
+    body: UserLoginRequest,
 ) -> object:
     headers = MLBBHeaderBuilder.get_user_header()
     payload = {
-        "roleId": role_id,
-        "zoneId": zone_id,
-        "vc": vc,
+        "roleId": body.role_id,
+        "zoneId": body.zone_id,
+        "vc": body.vc,
         "referer": "academy",
         "type": "web",
     }

@@ -12,6 +12,63 @@ class UserAuthBaseResponse(BaseModel):
     msg: str | None = None
 
 
+class UserRequestBase(BaseModel):
+    """Base model containing common fields for user requests (role_id and zone_id)."""
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+
+    role_id: int = Field(
+        title="Role ID",
+        description="The unique role ID of the player's account. (Game ID)",
+        examples=[1234567890],
+    )
+    zone_id: int = Field(
+        title="Zone ID",
+        description="The zone ID associated with the player's server region. (Server ID)",
+        examples=[1234],
+    )
+
+
+class UserSendVcRequest(UserRequestBase):
+    """Request model for sending a verification code."""
+
+    model_config = ConfigDict(
+        extra="forbid",
+        json_schema_extra={
+            "example": {
+                "role_id": 1234567890,
+                "zone_id": 1234,
+            }
+        },
+    )
+
+
+class UserLoginRequest(UserRequestBase):
+    """Request model for user login with verification code."""
+
+    model_config = ConfigDict(
+        extra="forbid",
+        json_schema_extra={
+            "example": {
+                "role_id": 1234567890,
+                "zone_id": 1234,
+                "vc": 1234,
+            }
+        },
+    )
+
+    vc: int = Field(
+        title="Verification Code",
+        description=(
+            "The 4-digit verification code, obtained through in-game mail "
+            "via the send-vc endpoint, remains valid for 5 minutes."
+        ),
+        examples=[1234],
+    )
+
+
 class UserAuthSimpleResponse(UserAuthBaseResponse):
     data: str | dict[str, Any] | None = None
 

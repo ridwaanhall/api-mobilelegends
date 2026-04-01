@@ -49,3 +49,9 @@ class HeroLaneEnum(str, Enum):
     ROAM = "roam"
     JUNGLE = "jungle"
     GOLD = "gold"
+
+
+class PrivacySettingEnum(int, Enum):
+    '''Enum for user privacy setting update.'''
+    ACTIVATE = 1
+    DEACTIVATE = 2

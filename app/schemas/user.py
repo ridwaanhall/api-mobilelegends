@@ -307,3 +307,14 @@ class UserFriendsData(BaseModel):
 
 class UserFriendsResponse(UserDataBaseResponse):
     data: UserFriendsData | dict[str, Any] | None = None
+
+
+class UserPrivacySettingsData(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    popup_shown: bool | None = None
+    privacy: bool | None = None
+
+
+class UserPrivacySettingsResponse(UserDataBaseResponse):
+    data: UserPrivacySettingsData | dict[str, Any] | None = None

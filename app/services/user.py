@@ -15,3 +15,9 @@ def fetch_user_actgateway(path: str, headers: dict, params: dict[str, Any]) -> A
     base_path = BaseUserPathProvider.get_base_url_path_stats()
     url = f"{base_path}/{path}"
     return request_json(method="GET", url=url, headers=headers, params=params)
+
+
+def fetch_user_actgateway_post(path: str, headers: dict, payload: dict[str, Any]) -> Any:
+    base_path = BaseUserPathProvider.get_base_url_path_stats()
+    url = f"{base_path}/{path}"
+    return request_json(method="POST", url=url, headers=headers, payload=payload)

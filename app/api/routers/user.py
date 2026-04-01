@@ -2,11 +2,11 @@ from fastapi import APIRouter, Depends, Path, Query
 
 from app.api.dependencies import require_api_available, require_user_jwt
 
-from app.services.user import fetch_user_post, fetch_user_actgateway
+from app.services.user import fetch_user_post, fetch_user_actgateway, fetch_user_actgateway_post
 
 from app.core.exceptions import AppError
 from app.core.http import MLBBHeaderBuilder
-from app.core.enums import LanguageEnum
+from app.core.enums import LanguageEnum, PrivacySettingEnum
 from app.schemas.user import (
     UserAuthSimpleResponse,
     UserFriendsResponse,
@@ -16,6 +16,7 @@ from app.schemas.user import (
     UserLoginResponse,
     UserMatchDetailsResponse,
     UserMatchesResponse,
+    UserPrivacySettingsResponse,
     UserSendVcRequest,
     UserSeasonResponse,
     UserStatsResponse,
@@ -455,6 +456,137 @@ def user_stats(
     )
     params = {}
     response = _require_dict_response(fetch_user_actgateway("battlereport/stats", headers, params))
+    _require_key(response, "code")
+    _require_key(response, "data")
+    return response
+
+
+@router.get(
+    path="/privacy/settings",
+    name="api.user.privacy_settings",
+    response_model=UserPrivacySettingsResponse,
+    summary="User Privacy Settings",
+    description=(
+        "Retrieve the authenticated player's privacy settings using a valid JWT. "
+        "Supports query parameter for localization (`lang`). Requires an Authorization header "
+        "with the JWT from login.\n\n"
+        "Headers:\n"
+        "- **Authorization**: `Bearer <jwt>` (JWT obtained during login).\n\n"
+        "Query parameters:\n"
+        "- **lang**: Language code for localized content (default: `en`).\n\n"
+        "The response includes:\n"
+        "- **popup_shown**: Whether the privacy popup has been shown to the user.\n"
+        "- **privacy**: Current privacy state (true/false)."
+    ),
+    responses={
+        200: {
+            "description": "Successful Response",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "code": 0,
+                        "message": "Success",
+                        "traceID": "410b98229c4a2ab35edddb49df774922",
+                        "data": {
+                            "popup_shown": True,
+                            "privacy": False,
+                        },
+                    }
+                }
+            }
+        }
+    }
+)
+def user_privacy_settings(
+    jwt: Annotated[
+        str,
+        Depends(require_user_jwt),
+    ],
+    lang: Annotated[
+        LanguageEnum,
+        Query(
+            title="Language",
+            description="Language code for localized content.",
+        )
+    ] = LanguageEnum.ENGLISH,
+) -> object:
+    headers = MLBBHeaderBuilder.get_user_header(
+        lang=lang,
+        x_token=jwt,
+    )
+    params = {}
+    response = _require_dict_response(fetch_user_actgateway("battlereport/privacy/settings", headers, params))
+    _require_key(response, "code")
+    _require_key(response, "data")
+    return response
+
+
+@router.post(
+    path="/privacy/settings",
+    name="api.user.update_privacy_settings",
+    response_model=UserPrivacySettingsResponse,
+    summary="Update User Privacy Settings",
+    description=(
+        "Update the authenticated player's privacy settings using a valid JWT. "
+        "Supports query parameter for localization (`lang`). Requires an Authorization header "
+        "with the JWT from login.\n\n"
+        "Headers:\n"
+        "- **Authorization**: `Bearer <jwt>` (JWT obtained during login).\n\n"
+        "Query parameters:\n"
+        "- **privacy**: Privacy mode value. Use `1` to activate profile visibility to friends, "
+        "and `2` to deactivate it. This parameter is required.\n"
+        "- **lang**: Language code for localized content (default: `en`)."
+    ),
+    responses={
+        200: {
+            "description": "Successful Response",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "code": 0,
+                        "message": "Success",
+                        "traceID": "410b98229c4a2ab35edddb49df774922",
+                        "data": {
+                            "popup_shown": True,
+                            "privacy": False,
+                        },
+                    }
+                }
+            }
+        }
+    }
+)
+def user_update_privacy_settings(
+    jwt: Annotated[
+        str,
+        Depends(require_user_jwt),
+    ],
+    privacy: Annotated[
+        PrivacySettingEnum,
+        Query(
+            title="Privacy Mode",
+            description=(
+                "Privacy mode value. Use `1` to activate profile visibility to friends, "
+                "and `2` to deactivate it."
+            ),
+        )
+    ],
+    lang: Annotated[
+        LanguageEnum,
+        Query(
+            title="Language",
+            description="Language code for localized content.",
+        )
+    ] = LanguageEnum.ENGLISH,
+) -> object:
+    headers = MLBBHeaderBuilder.get_user_header(
+        lang=lang,
+        x_token=jwt,
+    )
+    payload = {
+        "privacy": privacy.value,
+    }
+    response = _require_dict_response(fetch_user_actgateway_post("battlereport/privacy/settings", headers, payload))
     _require_key(response, "code")
     _require_key(response, "data")
     return response

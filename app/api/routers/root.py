@@ -56,10 +56,10 @@ def get_available_endpoints(app, include_methods: set[str] | None = None) -> lis
     return endpoints
 
 
-# @router.get(
-#     path="/",
-#     include_in_schema=False,
-# )
+@router.get(
+    path="/",
+    include_in_schema=False,
+)
 @router.get(
     path="/docs",
     include_in_schema=False,

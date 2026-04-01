@@ -7,7 +7,17 @@ from app.services.user import fetch_user_post, fetch_user_actgateway
 from app.core.exceptions import AppError
 from app.core.http import MLBBHeaderBuilder
 from app.core.enums import LanguageEnum
-from app.schemas.user import UserAuthSimpleResponse, UserLoginResponse
+from app.schemas.user import (
+    UserAuthSimpleResponse,
+    UserFriendsResponse,
+    UserFrequentHeroesResponse,
+    UserInfoResponse,
+    UserLoginResponse,
+    UserMatchDetailsResponse,
+    UserMatchesResponse,
+    UserSeasonResponse,
+    UserStatsResponse,
+)
 
 from typing import Annotated
 
@@ -228,6 +238,7 @@ def logout(
 @router.get(
     path="/info",
     name="api.user.info",
+    response_model=UserInfoResponse,
     summary="User Info",
     description=(
         "Retrieve the authenticated player's base profile information using a valid JWT. "
@@ -302,6 +313,7 @@ def user_info(
 @router.get(
     path="/stats",
     name="api.user.stats",
+    response_model=UserStatsResponse,
     summary="User Statistics",
     description=(
         "Retrieve the authenticated player's overall statistics using a valid JWT. "
@@ -487,6 +499,7 @@ def user_stats(
 @router.get(
     path="/season",
     name="api.user.season",
+    response_model=UserSeasonResponse,
     summary="User Season List",
     description=(
         "Retrieve the authenticated player's season information using a valid JWT. "
@@ -549,6 +562,7 @@ def user_season(
 @router.get(
     path="/matches",
     name="api.user.matches",
+    response_model=UserMatchesResponse,
     summary="User Matches",
     description=(
         "Retrieve the authenticated player's recent matches information using a valid JWT. "
@@ -689,6 +703,7 @@ def user_matches(
 @router.get(
     path="/matches/{match_id}",
     name="api.user.match_details",
+    response_model=UserMatchDetailsResponse,
     summary="User Match Details",
     description=(
         "Retrieve the authenticated player's detailed match information using a valid JWT. "
@@ -841,6 +856,7 @@ def user_match_details(
 @router.get(
     path="/heroes/frequent",
     name="api.user.frequent_heroes",
+    response_model=UserFrequentHeroesResponse,
     summary="User Frequent Heroes",
     description=(
         "Retrieve the authenticated player's frequent heroes information using a valid JWT. "
@@ -975,6 +991,7 @@ def user_frequent_heroes(
 @router.get(
     path="/friends",
     name="api.user.friends",
+    response_model=UserFriendsResponse,
     summary="User Friends",
     description=(
         "Retrieve the authenticated player's friends information using a valid JWT. "

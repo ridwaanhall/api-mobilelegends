@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends, Path, Query
 from app.api.dependencies import require_api_available
 
 from app.services.mlbb import fetch_mlbb_post
+from app.schemas.mlbb import MlbbCollectionResponse
 
 from app.core.enums import LanguageEnum, RankEnum, SortOrderEnum, HeroRoleEnum, HeroLaneEnum
 from app.core.errors import _hero_id_or_404
@@ -20,11 +21,13 @@ router = APIRouter(prefix="/api", tags=["mlbb"], dependencies=[Depends(require_a
 
 @router.get(
     path="/hero-list",
+    response_model=MlbbCollectionResponse,
     include_in_schema=False,
 )
 @router.get(
     path="/heroes",
     name="api.mlbb.hero_list",
+    response_model=MlbbCollectionResponse,
     summary="List Heroes",
     description=(
         "Retrieve a paginated list of all heroes with basic information. "
@@ -154,11 +157,13 @@ def hero_list(
 
 @router.get(
     path="/hero-rank",
+    response_model=MlbbCollectionResponse,
     include_in_schema=False,
 )
 @router.get(
     path="/heroes/rank",
     name="api.mlbb.hero_rank",
+    response_model=MlbbCollectionResponse,
     summary="Hero Rank Statistics",
     description=(
         "Fetch rank statistics for heroes over a specified time window. "
@@ -357,11 +362,13 @@ def hero_rank(
 
 @router.get(
     path="/hero-position",
+    response_model=MlbbCollectionResponse,
     include_in_schema=False,
 )
 @router.get(
     path="/heroes/positions",
     name="api.mlbb.hero_position",
+    response_model=MlbbCollectionResponse,
     summary="Hero Position Filters",
     description=(
         "Filter heroes by their position on the map using role and lane criteria. "
@@ -602,11 +609,13 @@ def hero_position(
 
 @router.get(
     path="/hero-detail/{hero_identifier}",
+    response_model=MlbbCollectionResponse,
     include_in_schema=False,
 )
 @router.get(
     path="/heroes/{hero_identifier}",
     name="api.mlbb.hero_detail",
+    response_model=MlbbCollectionResponse,
     summary="Hero Detail",
     description=(
         "Get detailed information for a specific hero by ID or name. "
@@ -911,11 +920,13 @@ def hero_detail(
 
 @router.get(
     path="/hero-detail-stats/{hero_identifier}",
+    response_model=MlbbCollectionResponse,
     include_in_schema=False,
 )
 @router.get(
     path="/heroes/{hero_identifier}/stats",
     name="api.mlbb.hero_detail_stats",
+    response_model=MlbbCollectionResponse,
     summary="Hero Detail Statistics",
     description=(
         "Get detailed statistics for a specific hero by ID or name. "
@@ -1133,11 +1144,13 @@ def hero_detail_stats(
 
 @router.get(
     path="/hero-skill-combo/{hero_identifier}",
+    response_model=MlbbCollectionResponse,
     include_in_schema=False,
 )
 @router.get(
     path="/heroes/{hero_identifier}/skill-combos",
     name="api.mlbb.hero_skill_combo",
+    response_model=MlbbCollectionResponse,
     summary="Hero Skill Combos",
     description=(
         "Get the most effective skill combos for a specific hero by ID or name. "
@@ -1277,11 +1290,13 @@ def hero_skill_combo(
 
 @router.get(
     path="/hero-rate/{hero_identifier}",
+    response_model=MlbbCollectionResponse,
     include_in_schema=False,
 )
 @router.get(
     path="/heroes/{hero_identifier}/trends",
     name="api.mlbb.hero_rate",
+    response_model=MlbbCollectionResponse,
     summary="Hero Performance Trends",
     description=(
         "Get rate trends for a specific hero by ID or name over a specified time window. "
@@ -1438,11 +1453,13 @@ def hero_rate(
 
 @router.get(
     path="/hero-relation/{hero_identifier}",
+    response_model=MlbbCollectionResponse,
     include_in_schema=False,
 )
 @router.get(
     path="/heroes/{hero_identifier}/relations",
     name="api.mlbb.hero_relation",
+    response_model=MlbbCollectionResponse,
     summary="Hero Relations",
     description=(
         "Get information about the relations of a specific hero by ID or name. "
@@ -1569,11 +1586,13 @@ def hero_relation(
 
 @router.get(
     path="/hero-counter/{hero_identifier}",
+    response_model=MlbbCollectionResponse,
     include_in_schema=False,
 )
 @router.get(
     path="/heroes/{hero_identifier}/counters",
     name="api.mlbb.hero_counter",
+    response_model=MlbbCollectionResponse,
     summary="Hero Counters",
     description=(
         "Get information about heroes that counter a specific hero by ID or name. "
@@ -1790,11 +1809,13 @@ def hero_counter(
 
 @router.get(
     path="/hero-compatibility/{hero_identifier}",
+    response_model=MlbbCollectionResponse,
     include_in_schema=False,
 )
 @router.get(
     path="/heroes/{hero_identifier}/compatibility",
     name="api.mlbb.hero_compatibility",
+    response_model=MlbbCollectionResponse,
     summary="Hero Compatibility",
     description=(
         "Get compatibility information for a specific hero by ID or name. "

@@ -7,6 +7,7 @@ from fastapi import APIRouter, Query
 from app.core.errors import AppError
 from app.services.addon import fetch_ip_get
 from fastapi import Request
+from app.schemas.addon import AddonIpResponse, AddonWinRateResponse
 from app.utils.client_ip import extract_client_ip
 
 router = APIRouter(prefix="/api/addon", tags=["addon"])
@@ -15,6 +16,7 @@ router = APIRouter(prefix="/api/addon", tags=["addon"])
 @router.get(
     path="/win-rate-calculator",
     name="api.addon.win_rate_calculator",
+    response_model=AddonWinRateResponse,
     summary="Win Rate Calculator for Consecutive Wins",
     description=(
         "Calculate the number of consecutive wins required to reach a target win rate "
@@ -213,6 +215,7 @@ def win_rate(
 @router.get(
     path="/ip",
     name="api.addon.ip_location",
+    response_model=AddonIpResponse,
     summary="Check IP address location details",
     description=(
         "Retrieves geographic information associated with a given IP address. "

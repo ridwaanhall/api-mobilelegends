@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends, Path, Query
 from app.api.dependencies import require_api_available
 
 from app.services.academy import fetch_academy_post, fetch_ratings_all, fetch_ratings_subject
+from app.schemas.academy import AcademyCollectionResponse, AcademyRatingsResponse
 
 from app.core.errors import _hero_id_or_404
 
@@ -29,6 +30,7 @@ router = APIRouter(
 @router.get(
     path="/meta/version",
     name="api.academy.meta_version",
+    response_model=AcademyCollectionResponse,
     summary="Game Version Info",
     description=(
         "Fetch a list of game versions with their release dates. "
@@ -150,6 +152,7 @@ def version(
 @router.get(
     path="/heroes/catalog",
     name="api.academy.heroes_catalog",
+    response_model=AcademyCollectionResponse,
     summary="Hero Catalog",
     description=(
         "Supports query parameters for pagination and localization.\n\n"
@@ -278,6 +281,7 @@ def heroes_old(
 @router.get(
     path="/roles",
     name="api.academy.roles",
+    response_model=AcademyCollectionResponse,
     summary="Roles",
     description=(
         "List all hero roles available in the game (Tank, Fighter, Assassin, Mage, Marksman, Support). "
@@ -429,6 +433,7 @@ def roles(
 @router.get(
     path="/equipment",
     name="api.academy.equipment",
+    response_model=AcademyCollectionResponse,
     summary="Equipment (Items)",
     description=(
         "List all equipment (items). Supports query parameters for pagination and localization.\n\n"
@@ -520,6 +525,7 @@ def equipment(
 @router.get(
     path="/equipment/expanded",
     name="api.academy.equipment_expanded",
+    response_model=AcademyCollectionResponse,
     summary="Equipment Expanded",
     description=(
         "Get detailed information about a specific equipment item. "
@@ -630,6 +636,7 @@ def equipment_expanded(
 @router.get(
     path="/spells",
     name="api.academy.spells",
+    response_model=AcademyCollectionResponse,
     summary="Battle Spells",
     description=(
         "List all battle spells with details. Supports query parameters for pagination and localization.\n\n"
@@ -735,6 +742,7 @@ def spells(
 @router.get(
     path="/emblems",
     name="api.academy.emblems",
+    response_model=AcademyCollectionResponse,
     summary="Emblems",
     description=(
         "List all emblems with details. Supports query parameters for pagination and localization.\n\n"
@@ -843,6 +851,7 @@ def emblems(
 @router.get(
     path="/ranks",
     name="api.academy.ranks",
+    response_model=AcademyCollectionResponse,
     summary="Ranks List",
     description=(
         "Retrieve all rank information for MLBB. Supports query parameters for pagination and localization.\n\n"
@@ -953,6 +962,7 @@ def ranks(
 @router.get(
     path="/ranks/{rank_id}",
     name="api.academy.ranks_details",
+    response_model=AcademyCollectionResponse,
     summary="Ranks Details",
     description=(
         "Retrieve details for a specific rank in MLBB by rank ID. "
@@ -1067,6 +1077,7 @@ def ranks_details(
 @router.get(
     path="/recommended",
     name="api.academy.recommended",
+    response_model=AcademyCollectionResponse,
     summary="Recommended Content",
     description=(
         "List recommended content for players. Supports query parameters for pagination, sorting, and localization.\n\n"
@@ -1385,6 +1396,7 @@ def recommended(
 @router.get(
     path="/recommended/{recommended_id}",
     name="api.academy.recommended_detail",
+    response_model=AcademyCollectionResponse,
     summary="Recommended Detail",
     description=(
         "Get details for a specific recommended content item by its identifier. "
@@ -1654,6 +1666,7 @@ def recommended_detail(
 @router.get(
     path="/heroes",
     name="api.academy.heroes",
+    response_model=AcademyCollectionResponse,
     summary="Hero Filters",
     description=(
         "Retrieve a list of heroes with filtering options for role and lane. "
@@ -1806,6 +1819,7 @@ def heroes(
 @router.get(
     path="/heroes/{hero_identifier}/stats",
     name="api.academy.heroes_stats",
+    response_model=AcademyCollectionResponse,
     summary="Hero Statistics",
     description=(
         "Retrieve performance statistics for a specific hero by rank. "
@@ -2017,6 +2031,7 @@ def heroes_stats(
 @router.get(
     path="/heroes/{hero_identifier}/lane",
     name="api.academy.heroes_lane",
+    response_model=AcademyCollectionResponse,
     summary="Hero Lane Distribution",
     description=(
         "Retrieve lane distribution information for a specific hero. "
@@ -2157,6 +2172,7 @@ def heroes_lane(
 @router.get(
     path="/heroes/{hero_identifier}/win-rate/timeline",
     name="api.academy.heroes_time_win_rate",
+    response_model=AcademyCollectionResponse,
     summary="Hero Lane Time-based Win Rate",
     description=(
         "Retrieve time-based win rate statistics for a specific hero in a given lane. "
@@ -2309,6 +2325,7 @@ def heroes_time_win_rate(
 @router.get(
     path="/heroes/{hero_identifier}/builds",
     name="api.academy.heroes_builds",
+    response_model=AcademyCollectionResponse,
     summary="Hero Recommended Builds",
     description=(
         "Path parameters:\n"
@@ -2497,6 +2514,7 @@ def heroes_builds(
 @router.get(
     path="/heroes/{hero_identifier}/counters",
     name="api.academy.heroes_counters",
+    response_model=AcademyCollectionResponse,
     summary="Hero Counters",
     description=(
         "Retrieve counter information for a specific hero. "
@@ -2640,6 +2658,7 @@ def heroes_counters(
 @router.get(
     path="/heroes/{hero_identifier}/teammates",
     name="api.academy.heroes_teammates",
+    response_model=AcademyCollectionResponse,
     summary="Hero Teammates",
     description=(
         "Retrieve teammate information for a specific hero. "
@@ -2783,6 +2802,7 @@ def heroes_teammates(
 @router.get(
     path="/heroes/{hero_identifier}/trends",
     name="api.academy.heroes_trends",
+    response_model=AcademyCollectionResponse,
     summary="Hero Performance Trends",
     description=(
         "Retrieve trend information for a specific hero over a selected time window. "
@@ -2942,6 +2962,7 @@ def heroes_trends(
 @router.get(
     path="/heroes/{hero_identifier}/recommended",
     name="api.academy.heroes_recommended",
+    response_model=AcademyCollectionResponse,
     summary="Hero Recommended Content",
     description=(
         "Retrieve recommended content for a specific hero. "
@@ -3204,6 +3225,7 @@ def heroes_recommended(
 @router.get(
     path="/heroes/ratings",
     name="api.academy.heroes_ratings",
+    response_model=AcademyRatingsResponse,
     summary="Hero Ratings Index",
     description=(
         "Retrieve a list of all hero ratings and community polls. "
@@ -3287,6 +3309,7 @@ def heroes_ratings(
 @router.get(
     path="/heroes/ratings/{subject}",
     name="api.academy.heroes_ratings_subject",
+    response_model=AcademyRatingsResponse,
     summary="Hero Ratings by Subject",
     description=(
         "Retrieve hero ratings for a specific subject from the ratings index. "

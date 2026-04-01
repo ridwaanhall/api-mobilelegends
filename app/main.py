@@ -36,7 +36,7 @@ app = FastAPI(
     openapi_url="/api/openapi.json",
     swagger_ui_parameters={
         "persistAuthorization": True,
-        "defaultModelsExpandDepth": -1,
+        "defaultModelsExpandDepth": 1,
         "displayRequestDuration": True,
     },
 
@@ -74,6 +74,9 @@ app = FastAPI(
         },
     ]
 )
+
+# ReDoc currently renders OpenAPI 3.0.x specs more consistently in this project.
+app.openapi_version = "3.0.3"
 
 # api routers
 app.include_router(root_router)

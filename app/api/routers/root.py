@@ -30,12 +30,21 @@ router = APIRouter(tags=["root"])
 
 def get_available_endpoints(app, include_methods: set[str] | None = None) -> list[dict]:
     endpoints: list[dict] = []
+    internal_paths = {
+        "/openapi.json",
+        "/docs",
+        "/redoc",
+        "/api/openapi.json",
+        "/api/docs",
+        "/api/redoc",
+        "/static",
+    }
     for route in app.routes:
         if not isinstance(route, APIRoute):
             continue
         if include_methods and not (set(route.methods) & include_methods):
             continue
-        if route.path in {"/openapi.json", "/docs", "/redoc", "/static"}:
+        if route.path in internal_paths:
             continue
         endpoints.append({
             "path": route.path,

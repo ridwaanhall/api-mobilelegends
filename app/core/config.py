@@ -1,26 +1,58 @@
 from __future__ import annotations
 
-from typing import cast
+import os
+from typing import Callable, TypeVar
 
-from decouple import config
+from dotenv import load_dotenv
+
+load_dotenv()
+
+T = TypeVar("T")
+
+
+def _env_cast(key: str, caster: Callable[[str], T], default: T | None = None) -> T:
+    value = os.getenv(key)
+    if value is None:
+        if default is None:
+            raise RuntimeError(f"Missing required environment variable: {key}")
+        return default
+    try:
+        return caster(value)
+    except (TypeError, ValueError) as exc:
+        raise RuntimeError(f"Invalid value for environment variable {key}: {value!r}") from exc
+
+
+def _to_bool(value: str) -> bool:
+    normalized = value.strip().lower()
+    if normalized in {"1", "true", "yes", "on"}:
+        return True
+    if normalized in {"0", "false", "no", "off"}:
+        return False
+    raise ValueError("Expected boolean string")
 
 
 def env_str(key: str, default: str | None = None) -> str:
-    if default is None:
-        return cast(str, config(key))
-    return cast(str, config(key, default=default))
+    return _env_cast(key, str, default)
+
+
+def env_bool(key: str, default: bool) -> bool:
+    return _env_cast(key, _to_bool, default)
+
+
+def env_int(key: str, default: int) -> int:
+    return _env_cast(key, int, default)
 
 
 # =========================
 # Debugging
 # =========================
-DEBUG: bool = config("DEBUG", default=False, cast=bool)
+DEBUG: bool = env_bool("DEBUG", default=False)
 
 # =========================
 # Availability Settings
 # =========================
 API_VERSION: str = env_str("API_VERSION", default="3.1.2")
-IS_AVAILABLE: bool = config("IS_AVAILABLE", default=True, cast=bool)
+IS_AVAILABLE: bool = env_bool("IS_AVAILABLE", default=True)
 DATE_AVAILABLE: str = env_str("DATE_AVAILABLE", default="April 10, 2026")
 
 # =========================
@@ -35,9 +67,9 @@ SUPPORT_DETAILS: dict[str, str] = {
     "id_zone_adv": "advanced server: 1149309666 (57060)",
 }
 
-DONATION_MIN: int = config("DONATION_MIN", default=1, cast=int)
-DONATION_NOW: int = config("DONATION_NOW", default=0, cast=int)
-DONATION_TARGET: int = config("DONATION_TARGET", default=500, cast=int)
+DONATION_MIN: int = env_int("DONATION_MIN", default=1)
+DONATION_NOW: int = env_int("DONATION_NOW", default=0)
+DONATION_TARGET: int = env_int("DONATION_TARGET", default=500)
 DONATION_CURRENCY: str = env_str("DONATION_CURRENCY", default="USD")
 
 # =========================

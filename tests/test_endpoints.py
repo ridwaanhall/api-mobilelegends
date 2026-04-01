@@ -23,6 +23,21 @@ def test_docs_and_redoc_available() -> None:
     assert redoc_response.status_code == 200
 
 
+def test_docs_html_injects_auth_persistence_script() -> None:
+    response = client.get("/api/docs")
+
+    assert response.status_code == 200
+    assert '/api/docs/auth.js' in response.text
+
+
+def test_docs_auth_script_contains_ttl_and_logout_sync() -> None:
+    response = client.get("/api/docs/auth.js")
+
+    assert response.status_code == 200
+    assert 'const TTL_MS = 86400 * 1000;' in response.text
+    assert 'const LOGOUT_PATH = "/api/user/auth/logout";' in response.text
+
+
 def test_api_docs_redirects_to_swagger() -> None:
     response = client.get("/docs", follow_redirects=False)
 

@@ -31,6 +31,10 @@ def test_openapi_user_read_endpoints_use_get_and_authorization_header() -> None:
         assert "post" not in openapi["paths"][path]
         assert {"HTTPBearer": []} in openapi["paths"][path]["get"]["security"]
 
+    logout_op = openapi["paths"]["/api/user/auth/logout"]["post"]
+    assert {"HTTPBearer": []} in logout_op["security"]
+    assert "requestBody" not in logout_op
+
 
 def test_user_info_endpoint_strips_bearer_before_forwarding_upstream(monkeypatch: pytest.MonkeyPatch) -> None:
     captured: dict[str, str] = {}
@@ -54,22 +58,24 @@ def test_user_info_endpoint_strips_bearer_before_forwarding_upstream(monkeypatch
     assert captured["x-token"] == "test-jwt-token"
 
 
-def test_user_info_accepts_raw_jwt_authorization_header(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_user_logout_uses_authorization_header(monkeypatch: pytest.MonkeyPatch) -> None:
     captured: dict[str, str] = {}
 
     def fake_fetch_user_post(path: str, headers: dict[str, str], payload: dict[str, object]) -> dict[str, object]:
+        captured["path"] = path
         captured["authorization"] = headers["authorization"]
         captured["x-token"] = headers["x-token"]
         return {"code": 0, "data": {}, "msg": "ok"}
 
     monkeypatch.setattr("app.api.routers.user.fetch_user_post", fake_fetch_user_post)
 
-    response = client.get(
-        "/api/user/info?lang=en",
-        headers={"Authorization": "test-jwt-token"},
+    response = client.post(
+        "/api/user/auth/logout",
+        headers={"Authorization": "Bearer test-jwt-token"},
     )
 
     assert response.status_code == 200
+    assert captured["path"] == "base/logout"
     assert captured["authorization"] == "test-jwt-token"
     assert captured["x-token"] == "test-jwt-token"
 

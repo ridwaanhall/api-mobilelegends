@@ -2,9 +2,10 @@ from __future__ import annotations
 
 from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse
 
 from app.core.config import DEBUG, API_VERSION
+from app.core.docs import build_swagger_ui_html, swagger_auth_script
 
 
 from app.api.routers.root import router as root_router
@@ -31,7 +32,7 @@ app = FastAPI(
 
     version=API_VERSION,
 
-    docs_url="/api/docs",
+    docs_url=None,
     redoc_url="/api/redoc",
     openapi_url="/api/openapi.json",
 
@@ -78,6 +79,21 @@ app.include_router(user_router)
 app.include_router(addon_router)
 
 # web routes
+
+
+@app.get("/api/docs", include_in_schema=False)
+def custom_swagger_ui_html() -> HTMLResponse:
+    return build_swagger_ui_html(
+        openapi_url=app.openapi_url or "/api/openapi.json",
+        title=f"{app.title} - Swagger UI",
+        swagger_js_url="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js",
+        swagger_css_url="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css",
+    )
+
+
+@app.get("/api/docs/auth.js", include_in_schema=False)
+def swagger_auth_js() -> PlainTextResponse:
+    return PlainTextResponse(swagger_auth_script(), media_type="application/javascript")
 
 
 # exception handlers

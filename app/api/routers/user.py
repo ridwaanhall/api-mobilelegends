@@ -184,8 +184,8 @@ def login(
         "Invalidate the player's session using the JWT obtained from `/api/user/auth/login`. "
         "This endpoint terminates the current authenticated session, ensuring that the JWT can no longer be used "
         "for authorized requests.\n\n"
-        "Request body:\n"
-        "- **jwt**: JSON Web Token obtained during login.\n\n"
+        "Headers:\n"
+        "- **Authorization**: `Bearer <jwt>` (JWT obtained during login).\n\n"
         "The response confirms whether the logout was successful:\n"
         "- **code**: Status code (0 indicates success).\n"
         "- **data**: Empty string (no payload returned).\n"
@@ -211,11 +211,7 @@ def login(
 def logout(
     jwt: Annotated[
         str,
-        Body(
-            title="JWT",
-            description="The JWT obtained from the /login endpoint.",
-            embed=True,
-        )
+        Depends(require_user_jwt),
     ],
 ) -> object:
     headers = MLBBHeaderBuilder.get_user_header(

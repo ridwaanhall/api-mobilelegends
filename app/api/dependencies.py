@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Annotated, cast
 
-from fastapi import Depends, Header
+from fastapi import Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from app.core.config import API_STATUS_MESSAGES, IS_AVAILABLE
 from app.core.exceptions import AppError
@@ -29,13 +29,9 @@ def require_api_available() -> None:
 
 def require_user_jwt(
     credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(user_bearer)],
-    authorization: Annotated[str | None, Header(alias="Authorization")] = None,
 ) -> str:
     if credentials and credentials.credentials:
         return MLBBHeaderBuilder.normalize_auth_token(credentials.credentials)
-
-    if authorization and authorization.strip():
-        return MLBBHeaderBuilder.normalize_auth_token(authorization)
 
     raise AppError(
         status_code=401,

@@ -32,6 +32,7 @@ This API provides access to hero analytics, in-game performance data, academy re
 - Swagger UI: `/api/docs`
 - ReDoc: `/api/redoc`
 - OpenAPI JSON: `/api/openapi.json`
+- Web Demo: `/web/user`, `/web/mlbb`, `/web/academy`, `/web/addon`
 
 ---
 
@@ -39,6 +40,11 @@ This API provides access to hero analytics, in-game performance data, academy re
 
 ```txt
 https://mlbb.rone.dev                # Landing Page
+https://mlbb.rone.dev/web            # Web interface (redirects to /web/user)
+https://mlbb.rone.dev/web/user       # User endpoint forms
+https://mlbb.rone.dev/web/mlbb       # MLBB endpoint forms
+https://mlbb.rone.dev/web/academy    # Academy endpoint forms
+https://mlbb.rone.dev/web/addon      # Addon endpoint forms
 https://mlbb.rone.dev/api            # API index and status
 https://mlbb.rone.dev/api/docs       # Swagger UI
 https://mlbb.rone.dev/api/redoc      # ReDoc

@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<section class="mx-auto w-full max-w-4xl border border-zinc-800 p-6 md:p-10">
+	<p class="text-xs uppercase tracking-[0.22em] text-zinc-500">MLBB Public Data API</p>
+	<h1 class="mt-3 text-3xl font-semibold tracking-tight text-zinc-100 md:text-5xl">
+		Interactive Access Hub
+	</h1>
+	<p class="mt-4 max-w-2xl text-sm leading-7 text-zinc-400 md:text-base">
+		Choose between API documentation and the demo web interface. The web interface mirrors all API routes for user, mlbb,
+		academy, and addon groups with interactive forms.
+	</p>
+
+	<div class="mt-8 grid gap-4 md:grid-cols-2">
+		<a href="/api/docs" class="group border border-zinc-700 p-5 transition hover:border-zinc-300">
+			<p class="text-xs uppercase tracking-[0.18em] text-zinc-500 group-hover:text-zinc-300">Option 1</p>
+			<h2 class="mt-2 text-xl font-medium text-zinc-100">Open API Docs</h2>
+			<p class="mt-2 text-sm text-zinc-400">Swagger UI with Try it out, schema references, and cURL examples.</p>
+		</a>
+
+		<a href="/web/user" class="group border border-zinc-700 p-5 transition hover:border-zinc-300">
+			<p class="text-xs uppercase tracking-[0.18em] text-zinc-500 group-hover:text-zinc-300">Option 2</p>
+			<h2 class="mt-2 text-xl font-medium text-zinc-100">Open Demo Website</h2>
+			<p class="mt-2 text-sm text-zinc-400">Web forms for all API endpoints, grouped by service and ready to execute.</p>
+		</a>
+	</div>
+</section>
+{% endblock %}

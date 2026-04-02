@@ -1,0 +1,22 @@
+<header class="sticky top-0 z-30 border-b border-zinc-800 bg-black/95 backdrop-blur">
+	<div class="mx-auto flex w-full max-w-[1600px] flex-wrap items-center justify-between gap-3 px-4 py-3 lg:px-6">
+		<a href="/" class="border border-zinc-700 px-3 py-1 text-sm font-semibold tracking-wide text-zinc-100 hover:border-zinc-400">
+			MLBB API Web
+		</a>
+
+		<nav class="flex flex-wrap items-center gap-2 text-xs md:text-sm">
+			<a href="/api/docs" class="border border-zinc-700 px-3 py-1 hover:border-zinc-400">Docs</a>
+			<a href="/web/user" class="border border-zinc-700 px-3 py-1 hover:border-zinc-400">User</a>
+			<a href="/web/mlbb" class="border border-zinc-700 px-3 py-1 hover:border-zinc-400">MLBB</a>
+			<a href="/web/academy" class="border border-zinc-700 px-3 py-1 hover:border-zinc-400">Academy</a>
+			<a href="/web/addon" class="border border-zinc-700 px-3 py-1 hover:border-zinc-400">Addon</a>
+		</nav>
+
+		<div class="flex items-center gap-2 text-xs md:text-sm">
+			<span id="jwt-status" class="border border-zinc-700 px-3 py-1 text-zinc-300">JWT: not set</span>
+			<button id="jwt-clear" type="button" class="border border-zinc-700 px-3 py-1 text-zinc-300 hover:border-zinc-400 hover:text-zinc-100">
+				Clear JWT
+			</button>
+		</div>
+	</div>
+</header>

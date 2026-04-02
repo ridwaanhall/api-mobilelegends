@@ -15,6 +15,7 @@ from app.api.routers.mlbb import router as mlbb_router
 from app.api.routers.academy import router as academy_router
 from app.api.routers.addon import router as addon_router
 from app.api.routers.user import router as user_router
+from app.web.routers.root import router as web_router
 
 from app.core.errors import AppError, app_error_handler, safe_error_payload, unhandled_error_handler
 
@@ -167,6 +168,7 @@ app.include_router(user_router)
 app.include_router(addon_router)
 
 # web routes
+app.include_router(web_router)
 
 
 # exception handlers

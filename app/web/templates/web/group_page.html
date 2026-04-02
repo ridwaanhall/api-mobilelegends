@@ -1,0 +1,247 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<section class="space-y-4">
+    <div class="border border-zinc-800 p-5 md:p-6">
+        <p class="text-xs uppercase tracking-[0.22em] text-zinc-500">Web Playground</p>
+        <h1 class="mt-2 text-2xl font-semibold tracking-tight text-zinc-100 md:text-4xl">{{ title }}</h1>
+        <p class="mt-2 text-sm leading-7 text-zinc-400">{{ subtitle }}</p>
+        <p class="mt-3 text-xs text-zinc-500">
+            Each card below maps directly to an API endpoint. Query, path, and request body fields are generated from OpenAPI.
+        </p>
+    </div>
+
+    {% if not operations %}
+        <div class="border border-zinc-800 p-6 text-sm text-zinc-400">
+            No endpoint metadata found for this group.
+        </div>
+    {% else %}
+        <div class="space-y-4">
+            {% for operation in operations %}
+                {% include "web/endpoint_card.html" %}
+            {% endfor %}
+        </div>
+    {% endif %}
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(() => {
+    const AUTH_KEY = "mlbb_user_auth";
+    const AUTH_TTL_MS = 24 * 60 * 60 * 1000;
+
+    function parseJson(text) {
+        try {
+            return JSON.parse(text);
+        } catch {
+            return null;
+        }
+    }
+
+    function readAuth() {
+        const raw = localStorage.getItem(AUTH_KEY);
+        if (!raw) {
+            return null;
+        }
+
+        const parsed = parseJson(raw);
+        if (!parsed || typeof parsed !== "object") {
+            localStorage.removeItem(AUTH_KEY);
+            return null;
+        }
+
+        const jwt = parsed.jwt;
+        const expiresAt = parsed.expiresAt;
+        if (typeof jwt !== "string" || typeof expiresAt !== "number") {
+            localStorage.removeItem(AUTH_KEY);
+            return null;
+        }
+
+        if (Date.now() > expiresAt) {
+            localStorage.removeItem(AUTH_KEY);
+            return null;
+        }
+
+        return parsed;
+    }
+
+    function writeAuth(jwt) {
+        localStorage.setItem(
+            AUTH_KEY,
+            JSON.stringify({
+                jwt,
+                expiresAt: Date.now() + AUTH_TTL_MS,
+            })
+        );
+        renderJwtStatus();
+    }
+
+    function clearAuth() {
+        localStorage.removeItem(AUTH_KEY);
+        renderJwtStatus();
+    }
+
+    function renderJwtStatus() {
+        const badge = document.getElementById("jwt-status");
+        if (!badge) {
+            return;
+        }
+
+        const auth = readAuth();
+        if (!auth) {
+            badge.textContent = "JWT: not set";
+            return;
+        }
+
+        const remaining = Math.max(0, Math.floor((auth.expiresAt - Date.now()) / (60 * 60 * 1000)));
+        badge.textContent = `JWT: active (${remaining}h)`;
+    }
+
+    function getValuesFromInput(input) {
+        if (input.tagName === "SELECT") {
+            if (input.multiple) {
+                return Array.from(input.selectedOptions).map((option) => option.value).filter(Boolean);
+            }
+            return input.value ? [input.value] : [];
+        }
+
+        const rawValue = input.value.trim();
+        if (!rawValue) {
+            return [];
+        }
+
+        if (input.dataset.array === "true") {
+            return rawValue
+                .split(",")
+                .map((part) => part.trim())
+                .filter(Boolean);
+        }
+
+        return [rawValue];
+    }
+
+    function setResponse(form, statusText, responseText) {
+        const wrapper = form.querySelector("[data-response-wrapper]");
+        const status = form.querySelector("[data-response-status]");
+        const content = form.querySelector("[data-response-content]");
+        if (!wrapper || !status || !content) {
+            return;
+        }
+
+        status.textContent = statusText;
+        content.textContent = responseText;
+        wrapper.classList.remove("hidden");
+    }
+
+    document.getElementById("jwt-clear")?.addEventListener("click", clearAuth);
+    renderJwtStatus();
+
+    document.querySelectorAll(".api-operation-form").forEach((formElement) => {
+        const form = formElement;
+
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            const method = form.dataset.method || "GET";
+            let apiPath = form.dataset.apiPath || "";
+            const requiresAuth = form.dataset.requiresAuth === "true";
+
+            const pathInputs = form.querySelectorAll('[data-param-in="path"]');
+            for (const input of pathInputs) {
+                const parameterName = input.dataset.paramName;
+                const values = getValuesFromInput(input);
+
+                if (!parameterName || values.length === 0) {
+                    setResponse(form, "Missing path parameter", "Please fill all required path parameters.");
+                    return;
+                }
+
+                apiPath = apiPath.replace(`{${parameterName}}`, encodeURIComponent(values[0]));
+            }
+
+            const url = new URL(apiPath, window.location.origin);
+
+            const queryInputs = form.querySelectorAll('[data-param-in="query"]');
+            for (const input of queryInputs) {
+                const parameterName = input.dataset.paramName;
+                const required = input.hasAttribute("required");
+                const values = getValuesFromInput(input);
+
+                if (!parameterName) {
+                    continue;
+                }
+
+                if (required && values.length === 0) {
+                    setResponse(form, "Missing query parameter", `Please fill required query parameter: ${parameterName}.`);
+                    return;
+                }
+
+                values.forEach((value) => {
+                    url.searchParams.append(parameterName, value);
+                });
+            }
+
+            const headers = {
+                accept: "application/json",
+            };
+
+            if (requiresAuth) {
+                const auth = readAuth();
+                if (!auth || typeof auth.jwt !== "string") {
+                    setResponse(
+                        form,
+                        "JWT required",
+                        "This endpoint requires login. Use /web/user/auth/login first; JWT is cached for 1 day."
+                    );
+                    return;
+                }
+                headers["Authorization"] = `Bearer ${auth.jwt}`;
+            }
+
+            let requestBody;
+            const bodyField = form.querySelector("textarea[data-request-body='true']");
+            if (bodyField) {
+                const rawBody = bodyField.value.trim();
+                if (rawBody) {
+                    const parsedBody = parseJson(rawBody);
+                    if (parsedBody === null) {
+                        setResponse(form, "Invalid JSON", "Request body must be valid JSON.");
+                        return;
+                    }
+                    requestBody = JSON.stringify(parsedBody);
+                    headers["content-type"] = "application/json";
+                }
+            }
+
+            try {
+                const response = await fetch(url.toString(), {
+                    method,
+                    headers,
+                    body: method === "GET" ? undefined : requestBody,
+                });
+
+                const responseRawText = await response.text();
+                const parsedResponse = parseJson(responseRawText);
+                const prettyResponse = parsedResponse
+                    ? JSON.stringify(parsedResponse, null, 2)
+                    : responseRawText;
+
+                if (apiPath === "/api/user/auth/login" && parsedResponse?.data?.jwt) {
+                    writeAuth(parsedResponse.data.jwt);
+                }
+
+                if (apiPath === "/api/user/auth/logout" && response.ok) {
+                    clearAuth();
+                }
+
+                setResponse(form, `HTTP ${response.status}`, prettyResponse || "(empty response)");
+            } catch (error) {
+                const message = error instanceof Error ? error.message : "Request failed.";
+                setResponse(form, "Request Error", message);
+            }
+        });
+    });
+})();
+</script>
+{% endblock %}

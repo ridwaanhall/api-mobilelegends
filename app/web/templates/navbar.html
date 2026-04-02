@@ -13,9 +13,6 @@
         <nav class="flex flex-wrap items-center gap-4 text-xs md:text-sm">
             <!-- API group -->
             <div class="flex flex-wrap items-center gap-2">
-                <a href="/api/docs" class="border border-zinc-700 px-3 py-1 rounded hover:border-zinc-400">
-                    API Docs
-                </a>
                 <a href="https://mlbb-card.rone.dev" class="border border-zinc-700 px-3 py-1 rounded hover:border-zinc-400">
                     MLBB Card
                 </a>
@@ -23,10 +20,16 @@
 
             <!-- Web group -->
             <div class="flex flex-wrap items-center gap-2">
-                <a href="/web/user" class="border border-zinc-700 px-3 py-1 rounded hover:border-zinc-400">User</a>
-                <a href="/web/mlbb" class="border border-zinc-700 px-3 py-1 rounded hover:border-zinc-400">MLBB</a>
-                <a href="/web/academy" class="border border-zinc-700 px-3 py-1 rounded hover:border-zinc-400">Academy</a>
-                <a href="/web/addon" class="border border-zinc-700 px-3 py-1 rounded hover:border-zinc-400">Addon</a>
+                {% for group in groups %}
+                    <a
+                        href="/web/{{ group }}"
+                        class="border border-zinc-700 px-3 py-1 rounded 
+                            {{ 'text-zinc-100 hover:border-zinc-400' if current_group == group 
+                                else 'text-zinc-400 hover:border-zinc-500 hover:text-zinc-100' }}"
+                    >
+                        {{ group_meta[group]["title"] }}
+                    </a>
+                {% endfor %}
             </div>
         </nav>
 

@@ -5,16 +5,43 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>{{ title if title else "MLBB Web Interface" }}</title>
 	<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+	<style>
+		html,
+		body {
+			overflow-x: hidden;
+			scrollbar-color: #52525b #09090b;
+			scrollbar-width: thin;
+		}
+
+		*::-webkit-scrollbar {
+			width: 10px;
+			height: 10px;
+		}
+
+		*::-webkit-scrollbar-track {
+			background: #09090b;
+		}
+
+		*::-webkit-scrollbar-thumb {
+			background: #3f3f46;
+			border: 2px solid #09090b;
+			border-radius: 999px;
+		}
+
+		*::-webkit-scrollbar-thumb:hover {
+			background: #52525b;
+		}
+	</style>
 </head>
-<body class="min-h-screen bg-black text-zinc-100">
+<body class="min-h-screen overflow-x-hidden bg-black text-zinc-100">
 	{% include "navbar.html" %}
 
-	<div class="mx-auto flex w-full max-w-[1600px] gap-4 px-4 pb-8 pt-6 lg:px-6">
+	<div class="mx-auto flex w-full max-w-[1600px] min-w-0 gap-4 px-4 pb-8 pt-6 lg:px-6">
 		{% if request.url.path.startswith('/web') %}
 			{% include "sidebar.html" %}
 		{% endif %}
 
-		<main class="w-full">
+		<main class="w-full min-w-0 overflow-x-hidden">
 			{% block content %}{% endblock %}
 		</main>
 	</div>

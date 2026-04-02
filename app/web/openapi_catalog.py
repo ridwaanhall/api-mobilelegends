@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import html
+import re
 from copy import deepcopy
 from typing import Any
 
@@ -123,7 +125,7 @@ def _build_request_body(operation: dict[str, Any], component_schemas: dict[str, 
 
     if example_data is None:
         properties = schema.get("properties", {})
-        if isinstance(properties, dict):
+        if isinstance(properties, dict) and properties:
             generated_example: dict[str, Any] = {}
             for prop_name, prop_schema in properties.items():
                 if not isinstance(prop_schema, dict):
@@ -133,9 +135,15 @@ def _build_request_body(operation: dict[str, Any], component_schemas: dict[str, 
                     continue
                 if "default" in prop_schema:
                     generated_example[prop_name] = prop_schema["default"]
-            example_data = generated_example if generated_example else {}
-        else:
-            example_data = {}
+            if generated_example:
+                example_data = generated_example
+
+    # Do not render request body input for endpoints that do not define a meaningful body.
+    if example_data is None and not request_body.get("required", False):
+        return None
+
+    if example_data is None:
+        example_data = {}
 
     try:
         example_json = json.dumps(example_data, indent=2, ensure_ascii=True)
@@ -163,12 +171,57 @@ def _to_web_path(group: str, api_path: str) -> str:
     return f"/web/{group}{suffix}"
 
 
-def _operation_sort_key(operation: dict[str, Any]) -> tuple[str, int]:
-    method = operation["method"]
-    return (
-        operation["web_path"],
-        0 if method == "GET" else 1,
+def _render_inline_markdown(text: str) -> str:
+    escaped = html.escape(text)
+    escaped = re.sub(
+        r"\*\*(.+?)\*\*",
+        r"<strong class=\"font-semibold text-zinc-100\">\1</strong>",
+        escaped,
     )
+    escaped = re.sub(
+        r"`([^`]+)`",
+        r"<code class=\"rounded border border-zinc-700 bg-zinc-950 px-1 py-0.5 font-mono text-[11px] text-zinc-200\">\1</code>",
+        escaped,
+    )
+    return escaped
+
+
+def _render_description_html(text: str) -> str:
+    if not text.strip():
+        return ""
+
+    lines = text.splitlines()
+    blocks: list[str] = []
+    list_items: list[str] = []
+
+    def flush_list() -> None:
+        nonlocal list_items
+        if not list_items:
+            return
+        blocks.append(
+            "<ul class=\"my-2 list-disc space-y-1 pl-5 text-zinc-300\">"
+            + "".join(f"<li>{_render_inline_markdown(item)}</li>" for item in list_items)
+            + "</ul>"
+        )
+        list_items = []
+
+    for raw_line in lines:
+        line = raw_line.strip()
+        if not line:
+            flush_list()
+            continue
+
+        if line.startswith("- "):
+            list_items.append(line[2:])
+            continue
+
+        flush_list()
+        blocks.append(
+            f"<p class=\"my-2 leading-6 text-zinc-300\">{_render_inline_markdown(line)}</p>"
+        )
+
+    flush_list()
+    return "".join(blocks)
 
 
 def get_group_operations(app: FastAPI, group: str) -> list[dict[str, Any]]:
@@ -237,13 +290,14 @@ def get_group_operations(app: FastAPI, group: str) -> list[dict[str, Any]]:
                     "web_path": _to_web_path(group, api_path),
                     "summary": operation.get("summary") or operation_id,
                     "description": operation.get("description") or "",
+                    "description_html": _render_description_html(str(operation.get("description") or "")),
                     "parameters": parsed_parameters,
                     "request_body": request_body,
                     "requires_auth": requires_auth,
                 }
             )
 
-    operations.sort(key=_operation_sort_key)
+    # Preserve operation order as produced by OpenAPI generation, which follows router declaration order.
     return operations
 
 

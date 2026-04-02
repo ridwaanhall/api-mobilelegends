@@ -1,4 +1,4 @@
-<article class="border border-zinc-800 p-4 md:p-5" data-operation-id="{{ operation.operation_id }}">
+<article class="min-w-0 overflow-hidden border border-zinc-800 p-4 md:p-5" data-operation-id="{{ operation.operation_id }}">
     <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
         <div>
             <p class="text-[10px] uppercase tracking-[0.18em] text-zinc-500">{{ operation.method }}</p>
@@ -10,8 +10,8 @@
         </a>
     </div>
 
-    {% if operation.description %}
-        <p class="mb-4 whitespace-pre-line text-sm leading-6 text-zinc-400">{{ operation.description }}</p>
+    {% if operation.description_html %}
+        <div class="mb-4 min-w-0 break-words text-sm leading-6 text-zinc-300">{{ operation.description_html | safe }}</div>
     {% endif %}
 
     <form
@@ -107,9 +107,10 @@
             <span class="text-xs text-zinc-500">{{ operation.method }} {{ operation.api_path }}</span>
         </div>
 
-        <div class="hidden border border-zinc-800 p-3 text-xs text-zinc-300" data-response-wrapper>
+        <div class="hidden min-w-0 overflow-hidden border border-zinc-800 p-3 text-xs text-zinc-300" data-response-wrapper>
             <p class="mb-2 text-[11px] uppercase tracking-[0.14em] text-zinc-400" data-response-status></p>
-            <pre class="max-h-96 overflow-auto border border-zinc-900 bg-black p-3 text-xs text-zinc-200" data-response-content></pre>
+            <div class="mb-3 max-h-96 min-w-0 overflow-auto border border-zinc-900 bg-black p-3" data-response-readable></div>
+            <pre class="max-h-96 w-full max-w-full overflow-auto border border-zinc-900 bg-black p-3 text-xs text-zinc-200" data-response-content></pre>
         </div>
     </form>
 </article>

@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<section class="space-y-4">
+<section class="min-w-0 space-y-4 overflow-x-hidden">
     <div class="border border-zinc-800 p-5 md:p-6">
         <p class="text-xs uppercase tracking-[0.22em] text-zinc-500">Web Playground</p>
         <h1 class="mt-2 text-2xl font-semibold tracking-tight text-zinc-100 md:text-4xl">{{ title }}</h1>
@@ -29,6 +29,7 @@
 <script>
 (() => {
     const AUTH_KEY = "mlbb_user_auth";
+    const USER_INFO_KEY = "mlbb_user_info";
     const AUTH_TTL_MS = 24 * 60 * 60 * 1000;
 
     function parseJson(text) {
@@ -55,18 +56,66 @@
         const expiresAt = parsed.expiresAt;
         if (typeof jwt !== "string" || typeof expiresAt !== "number") {
             localStorage.removeItem(AUTH_KEY);
+            localStorage.removeItem(USER_INFO_KEY);
             return null;
         }
 
         if (Date.now() > expiresAt) {
             localStorage.removeItem(AUTH_KEY);
+            localStorage.removeItem(USER_INFO_KEY);
             return null;
         }
 
         return parsed;
     }
 
+    function readUserInfo(auth) {
+        if (!auth) {
+            localStorage.removeItem(USER_INFO_KEY);
+            return null;
+        }
+
+        const raw = localStorage.getItem(USER_INFO_KEY);
+        if (!raw) {
+            return null;
+        }
+
+        const parsed = parseJson(raw);
+        if (!parsed || typeof parsed !== "object") {
+            localStorage.removeItem(USER_INFO_KEY);
+            return null;
+        }
+
+        if (parsed.expiresAt !== auth.expiresAt || Date.now() > auth.expiresAt) {
+            localStorage.removeItem(USER_INFO_KEY);
+            return null;
+        }
+
+        if (!parsed.data || typeof parsed.data !== "object") {
+            localStorage.removeItem(USER_INFO_KEY);
+            return null;
+        }
+
+        return parsed.data;
+    }
+
+    function writeUserInfo(userInfo, expiresAt) {
+        if (!userInfo || typeof userInfo !== "object" || typeof expiresAt !== "number") {
+            return;
+        }
+
+        localStorage.setItem(
+            USER_INFO_KEY,
+            JSON.stringify({
+                data: userInfo,
+                expiresAt,
+            })
+        );
+        renderNavbarState();
+    }
+
     function writeAuth(jwt) {
+        localStorage.removeItem(USER_INFO_KEY);
         localStorage.setItem(
             AUTH_KEY,
             JSON.stringify({
@@ -74,16 +123,20 @@
                 expiresAt: Date.now() + AUTH_TTL_MS,
             })
         );
-        renderJwtStatus();
+        renderNavbarState();
     }
 
     function clearAuth() {
         localStorage.removeItem(AUTH_KEY);
-        renderJwtStatus();
+        localStorage.removeItem(USER_INFO_KEY);
+        renderNavbarState();
     }
 
-    function renderJwtStatus() {
+    function renderNavbarState() {
         const badge = document.getElementById("jwt-status");
+        const userBadge = document.getElementById("user-badge");
+        const userAvatar = document.getElementById("user-avatar");
+        const userName = document.getElementById("user-name");
         if (!badge) {
             return;
         }
@@ -91,11 +144,34 @@
         const auth = readAuth();
         if (!auth) {
             badge.textContent = "JWT: not set";
+            if (userBadge) {
+                userBadge.classList.add("hidden");
+            }
             return;
         }
 
         const remaining = Math.max(0, Math.floor((auth.expiresAt - Date.now()) / (60 * 60 * 1000)));
         badge.textContent = `JWT: active (${remaining}h)`;
+
+        const userInfo = readUserInfo(auth);
+        if (!userInfo || !userBadge || !userAvatar || !userName) {
+            if (userBadge) {
+                userBadge.classList.add("hidden");
+            }
+            return;
+        }
+
+        const avatar = typeof userInfo.avatar === "string" ? userInfo.avatar : "";
+        const name = typeof userInfo.name === "string" && userInfo.name.trim() ? userInfo.name.trim() : "Player";
+
+        if (avatar) {
+            userAvatar.src = avatar;
+        } else {
+            userAvatar.src = "https://placehold.co/48x48/000000/FFFFFF?text=U";
+        }
+        userName.textContent = name;
+        userBadge.classList.remove("hidden");
+        userBadge.classList.add("inline-flex");
     }
 
     function getValuesFromInput(input) {
@@ -121,21 +197,85 @@
         return [rawValue];
     }
 
-    function setResponse(form, statusText, responseText) {
+    function escapeHtml(value) {
+        return String(value)
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#39;");
+    }
+
+    function renderReadableValue(value) {
+        if (value === null || value === undefined) {
+            return '<span class="text-zinc-500">null</span>';
+        }
+
+        if (Array.isArray(value)) {
+            if (value.length === 0) {
+                return '<span class="text-zinc-500">[]</span>';
+            }
+
+            return (
+                '<div class="space-y-2">' +
+                value
+                    .map((item, index) => (
+                        '<div class="border border-zinc-800 p-2">' +
+                        `<p class="mb-2 text-[11px] uppercase tracking-[0.12em] text-zinc-500">Item ${index + 1}</p>` +
+                        renderReadableValue(item) +
+                        '</div>'
+                    ))
+                    .join("") +
+                '</div>'
+            );
+        }
+
+        if (typeof value === "object") {
+            const entries = Object.entries(value);
+            if (entries.length === 0) {
+                return '<span class="text-zinc-500">{}</span>';
+            }
+
+            return (
+                '<div class="space-y-2">' +
+                entries
+                    .map(([key, nested]) => (
+                        '<div class="border border-zinc-800 p-2">' +
+                        `<p class="mb-2 text-[11px] uppercase tracking-[0.12em] text-zinc-500">${escapeHtml(key)}</p>` +
+                        renderReadableValue(nested) +
+                        '</div>'
+                    ))
+                    .join("") +
+                '</div>'
+            );
+        }
+
+        if (typeof value === "string") {
+            return `<span class="break-words text-zinc-200">${escapeHtml(value)}</span>`;
+        }
+
+        return `<span class="text-zinc-200">${escapeHtml(value)}</span>`;
+    }
+
+    function setResponse(form, statusText, responseText, parsedResponse = null) {
         const wrapper = form.querySelector("[data-response-wrapper]");
         const status = form.querySelector("[data-response-status]");
         const content = form.querySelector("[data-response-content]");
-        if (!wrapper || !status || !content) {
+        const readable = form.querySelector("[data-response-readable]");
+        if (!wrapper || !status || !content || !readable) {
             return;
         }
 
         status.textContent = statusText;
         content.textContent = responseText;
+        readable.innerHTML = parsedResponse
+            ? renderReadableValue(parsedResponse)
+            : '<span class="text-zinc-500">Response is not JSON.</span>';
         wrapper.classList.remove("hidden");
     }
 
     document.getElementById("jwt-clear")?.addEventListener("click", clearAuth);
-    renderJwtStatus();
+    renderNavbarState();
 
     document.querySelectorAll(".api-operation-form").forEach((formElement) => {
         const form = formElement;
@@ -231,11 +371,18 @@
                     writeAuth(parsedResponse.data.jwt);
                 }
 
+                if (apiPath === "/api/user/info" && parsedResponse?.data) {
+                    const activeAuth = readAuth();
+                    if (activeAuth) {
+                        writeUserInfo(parsedResponse.data, activeAuth.expiresAt);
+                    }
+                }
+
                 if (apiPath === "/api/user/auth/logout" && response.ok) {
                     clearAuth();
                 }
 
-                setResponse(form, `HTTP ${response.status}`, prettyResponse || "(empty response)");
+                setResponse(form, `HTTP ${response.status}`, prettyResponse || "(empty response)", parsedResponse);
             } catch (error) {
                 const message = error instanceof Error ? error.message : "Request failed.";
                 setResponse(form, "Request Error", message);

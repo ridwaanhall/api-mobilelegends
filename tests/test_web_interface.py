@@ -8,6 +8,7 @@ from fastapi.testclient import TestClient
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from app.main import app
+from app.web.openapi_catalog import get_group_operations
 
 
 client = TestClient(app)
@@ -78,3 +79,50 @@ def test_user_privacy_page_renders_get_and_post_forms() -> None:
     assert 'data-method="GET"' in response.text
     assert 'data-method="POST"' in response.text
     assert "visibility" in response.text
+
+
+def test_user_privacy_post_without_body_does_not_render_body_editor() -> None:
+    response = client.get("/web/user/privacy/settings")
+
+    assert response.status_code == 200
+    assert "<textarea" not in response.text
+
+
+def test_web_operations_keep_openapi_router_order() -> None:
+    openapi = client.get("/api/openapi.json").json()
+    openapi_user_order: list[str] = []
+
+    for path_item in openapi["paths"].values():
+        for method in ("get", "post"):
+            operation = path_item.get(method)
+            if not isinstance(operation, dict):
+                continue
+            tags = operation.get("tags", [])
+            if not tags or tags[0] != "user":
+                continue
+            operation_id = operation.get("operationId")
+            if isinstance(operation_id, str):
+                openapi_user_order.append(operation_id)
+
+    web_order = [operation["operation_id"] for operation in get_group_operations(app, "user")]
+    assert web_order == openapi_user_order
+
+
+def test_login_description_renders_markdown_tokens_as_readable_html() -> None:
+    response = client.get("/web/user/auth/login")
+
+    assert response.status_code == 200
+    assert "**role_id**" not in response.text
+    assert "<strong" in response.text
+
+    privacy_response = client.get("/web/user/privacy/settings")
+    assert privacy_response.status_code == 200
+    assert "<code" in privacy_response.text
+
+
+def test_response_panel_has_readable_and_raw_views() -> None:
+    response = client.get("/web/addon/win-rate-calculator")
+
+    assert response.status_code == 200
+    assert "data-response-readable" in response.text
+    assert "data-response-content" in response.text

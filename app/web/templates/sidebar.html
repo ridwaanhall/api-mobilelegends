@@ -32,7 +32,7 @@
 					{% elif method == 'DELETE' %}
 						{% set method_class = 'border-rose-500/60 bg-rose-950/30 text-rose-300' %}
 					{% else %}
-						{% set method_class = 'border-zinc-500/60 bg-zinc-900/50 text-zinc-300' %}
+						{% set method_class = 'border-zinc-500/60 text-zinc-300' %}
 					{% endif %}
 
 					<div class="mb-1 inline-flex border px-1 py-0.2 text-[10px] uppercase tracking-[0.16em] {{ method_class }}">{{ method }}</div>

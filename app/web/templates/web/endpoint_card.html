@@ -11,7 +11,7 @@
     {% elif method == 'DELETE' %}
         {% set method_class = 'border-rose-500/60 bg-rose-950/30 text-rose-300' %}
     {% else %}
-        {% set method_class = 'border-zinc-500/60 bg-zinc-900/50 text-zinc-300' %}
+        {% set method_class = 'border-zinc-500/60 text-zinc-300' %}
     {% endif %}
 
     <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
@@ -85,7 +85,7 @@
                             </div>
                         {% elif parameter.enum_values %}
                             <select
-                                class="w-full border border-zinc-700 bg-black px-3 py-2 text-sm text-zinc-100 outline-none"
+                                class="w-full border border-zinc-700 px-3 py-2 text-sm text-zinc-100 outline-none"
                                 data-param-in="{{ parameter.location }}"
                                 data-param-name="{{ parameter.name }}"
                                 data-array="{{ 'true' if parameter.is_array else 'false' }}"
@@ -100,7 +100,7 @@
                             </select>
                         {% else %}
                             <input
-                                class="w-full border border-zinc-700 bg-black px-3 py-2 text-sm text-zinc-100 outline-none"
+                                class="w-full border border-zinc-700 px-3 py-2 text-sm text-zinc-100 outline-none"
                                 type="{{ parameter.input_type }}"
                                 value="{{ parameter.default_display }}"
                                 placeholder="{{ 'comma separated' if parameter.is_array else 'value' }}"
@@ -149,7 +149,7 @@
                     <span class="text-[10px] uppercase tracking-[0.14em] text-zinc-500">json</span>
                 </div>
                 <textarea
-                    class="min-h-20 w-full border border-zinc-700 bg-black px-3 py-2 font-mono text-xs text-zinc-100 outline-none"
+                    class="min-h-20 w-full border border-zinc-700 px-3 py-2 font-mono text-xs text-zinc-100 outline-none"
                     rows="5"
                     data-request-body="true"
                     {% if operation.request_body.required %}required{% endif %}
@@ -168,7 +168,7 @@
             <p class="mb-2 text-[11px] uppercase tracking-[0.14em] text-zinc-400" data-response-status></p>
 
             <div class="space-y-3">
-                <section class="border border-zinc-900 bg-black p-3">
+                <section class="border border-zinc-900 p-3">
                     <div class="mb-2 flex flex-wrap items-center justify-between gap-2">
                         <p class="text-[11px] tracking-[0.08em] text-zinc-500">Languages</p>
                         <button type="button" class="cursor-pointer border border-zinc-700 px-2 py-1 text-[11px] text-zinc-300 hover:border-zinc-500 hover:text-zinc-100" data-copy-btn data-copy-target="language">
@@ -188,12 +188,12 @@
                     <pre class="custom-scroll max-h-56 w-full max-w-full overflow-auto text-xs text-zinc-200" data-language-content></pre>
                 </section>
 
-                <section class="border border-zinc-900 bg-black p-3">
+                <section class="border border-zinc-900 p-3">
                     <p class="mb-2 text-[11px] uppercase tracking-[0.14em] text-zinc-500">Readable Response</p>
                     <div class="custom-scroll max-h-[34rem] min-w-0 overflow-auto" data-response-readable></div>
                 </section>
 
-                <section class="border border-zinc-900 bg-black p-3">
+                <section class="border border-zinc-900 p-3">
                     <div class="mb-2 flex items-center justify-between gap-2">
                         <p class="text-[11px] uppercase tracking-[0.14em] text-zinc-500">Raw JSON</p>
                         <button type="button" class="cursor-pointer border border-zinc-700 px-2 py-1 text-[10px] uppercase tracking-[0.12em] text-zinc-300 hover:border-zinc-500 hover:text-zinc-100" data-copy-btn data-copy-target="response">

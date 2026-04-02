@@ -1,9 +1,9 @@
-<header class="sticky top-0 z-30 border-b border-zinc-800 bg-black/80 backdrop-blur-sm">
+<header class="sticky top-0 z-30 border-b border-zinc-800 backdrop-blur-sm">
     <div class="mx-auto w-full max-w-[1600px] px-3 py-2.5 sm:px-4 lg:px-6">
-        <div class="grid gap-2 border border-zinc-800 bg-zinc-950/50 p-2.5 sm:p-3">
+        <div class="grid gap-2 border border-zinc-800 p-2.5 sm:p-3">
             <div class="flex flex-wrap items-center justify-between gap-2">
                 <div class="flex min-w-0 items-center gap-2">
-                    <a href="/" class="inline-flex items-center gap-1.5 border border-zinc-700 bg-black/60 px-2.5 py-1.5 text-xs font-semibold tracking-wide text-zinc-100 hover:border-cyan-400 hover:text-cyan-200 sm:text-sm">
+                    <a href="/" class="inline-flex items-center gap-1.5 border border-zinc-700 px-2.5 py-1.5 text-xs font-semibold tracking-wide text-zinc-100 hover:border-cyan-400 hover:text-cyan-200 sm:text-sm">
                         <span class="truncate">MLBB API Web</span>
                         <span class="border border-cyan-500/40 bg-cyan-950/40 px-1.5 py-0.5 text-[10px] text-cyan-200">v{{ api_version }}</span>
                     </a>
@@ -29,16 +29,16 @@
                 </div>
 
                 <div class="relative flex min-w-0 flex-wrap items-center justify-end gap-1.5 text-[11px] sm:text-xs">
-                    <button id="user-menu-trigger" type="button" class="inline-flex shrink-0 items-center gap-1.5 border border-zinc-700 bg-black/60 px-2 py-1 hover:border-zinc-500">
+                    <button id="user-menu-trigger" type="button" class="inline-flex shrink-0 items-center gap-1.5 border border-zinc-700 px-2 py-1 hover:border-zinc-500">
                         <span id="user-badge" class="inline-flex items-center gap-1.5">
                             <img id="user-avatar" src="" alt="User avatar" class="h-5 w-5 border border-zinc-700 object-cover sm:h-6 sm:w-6" />
                             <span id="user-name" class="max-w-24 truncate text-zinc-200 sm:max-w-36"></span>
                         </span>
                     </button>
 
-                    <div id="user-menu-panel" class="absolute right-0 top-full z-40 mt-1 hidden w-48 border border-zinc-700 bg-black/95 p-2 shadow-[0_0_0_1px_rgba(255,255,255,0.03)]">
-                        <span id="jwt-status" class="mb-2 block truncate border border-zinc-700 bg-black/60 px-2.5 py-1 text-zinc-300">Not Signed In</span>
-                        <button id="jwt-auth-action" type="button" class="w-full border border-zinc-700 bg-black/60 px-2.5 py-1 text-left text-zinc-300 hover:border-zinc-400 hover:text-zinc-100">Sign In</button>
+                    <div id="user-menu-panel" class="absolute right-0 top-full z-40 mt-1 hidden w-48 border border-zinc-700 p-2 shadow-[0_0_0_1px_rgba(255,255,255,0.03)]">
+                        <span id="jwt-status" class="mb-2 block truncate border border-zinc-700 px-2.5 py-1 text-zinc-300">Not Signed In</span>
+                        <button id="jwt-auth-action" type="button" class="w-full border border-zinc-700 px-2.5 py-1 text-left text-zinc-300 hover:border-zinc-400 hover:text-zinc-100">Sign In</button>
                     </div>
                 </div>
             </div>

@@ -9,9 +9,9 @@
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
 ![OpenAPI](https://img.shields.io/badge/OpenAPI-3.1-green?logo=openapiinitiative&logoColor=white)
 
-This API & Web provides access to hero analytics, in-game performance data, academy resources, player endpoints, and utility tools. It is designed with a consistent RESTful structure, supports flexible hero identifiers (ID or name), and delivers standardized responses for seamless integration into applications, dashboards, analytics systems, and internal tooling.
+![Landing Page](images/landing-page.png)
 
----
+This API & Web provides access to hero analytics, in-game performance data, academy resources, player endpoints, and utility tools. It is designed with a consistent RESTful structure, supports flexible hero identifiers (ID or name), and delivers standardized responses for seamless integration into applications, dashboards, analytics systems, and internal tooling.
 
 > [!IMPORTANT]
 > **Built with Dedication:** This project is the result of over [![wakatime](https://wakatime.com/badge/user/018b799e-de53-4f7a-bb65-edc2df9f26d8/project/07151d3c-c9e1-4f53-bb7f-f706f8261ac4.svg)](https://wakatime.com/badge/user/018b799e-de53-4f7a-bb65-edc2df9f26d8/project/07151d3c-c9e1-4f53-bb7f-f706f8261ac4) of meticulous coding, architecting, and performance tuning to ensure the best developer experience.
@@ -30,8 +30,6 @@ This API & Web provides access to hero analytics, in-game performance data, acad
 - **Auth-aware navbar**: Sign In/Sign Out state toggles based on cached JWT session
 - **Version visibility**: API version badge shown in navbar and landing page
 
----
-
 ## Documentation
 
 - Swagger UI: `/api/docs`
@@ -45,8 +43,6 @@ This API & Web provides access to hero analytics, in-game performance data, acad
 - Navbar reflects auth state: `Sign In` when not signed in, `Sign Out` when signed in
 - Cached JWT and user profile badge are shared across landing and web pages
 - Endpoint cards support long-description expand/collapse, readable response tables, and copy actions
-
----
 
 ## Base URLs
 
@@ -63,8 +59,6 @@ https://mlbb.rone.dev/api/redoc      # ReDoc
 https://mlbb.rone.dev/api/openapi.json
 https://mlbb.rone.dev/robots.txt
 ```
-
----
 
 ## Quick Start
 
@@ -95,8 +89,6 @@ https://mlbb.rone.dev/robots.txt
 - **Yellow box**: Request URL to directly test the API
 - **Green Box**: The actual API output
 
----
-
 ## Authentication (User)
 
 ### 1. [send-vc] Provide Role ID and Zone ID
@@ -108,8 +100,6 @@ https://mlbb.rone.dev/robots.txt
 - **Green box**: Enter `role_id` and `zone_id`
 
 Click **Execute** and check your in‑game mail for the verification code (`vc`).
-
----
 
 ### 2. [login] Provide Verification Code
 
@@ -124,8 +114,6 @@ Same as Step 1, but also enter the `vc` received via in‑game mail. Click **Exe
   "vc": 1234
 }
 ```
-
----
 
 ### 3. Copy `jwt` Value
 
@@ -152,21 +140,15 @@ Copy the `jwt` string from the response (e.g., `eyJhbGciOiJI...REDACTED`). Only 
 }
 ```
 
----
-
 ### 4. Authorize Using `jwt`
 
 Paste the copied `jwt` into the authorization field and click **Authorize**.
 
 ![Step 1](images/auth-step-04.png)
 
----
-
 ### 5. Authentication Complete
 
 You are now authenticated and can use all user endpoints. Check `curl` code to usage.
-
----
 
 ## API Coverage
 
@@ -228,13 +210,9 @@ You are now authenticated and can use all user endpoints. Check `curl` code to u
 - `GET /api/addon/win-rate-calculator` — Win Rate Calculator
 - `GET /api/addon/ip` — IP Address Lookup
 
----
-
 ## Changelog
 
 See [Releases](https://github.com/ridwaanhall/api-mobilelegends/releases) for migration notes and updates.
-
----
 
 ## License & Attribution
 
@@ -253,8 +231,6 @@ Visual assets and references are used respectfully and do not imply official par
 > Powered by MLBB Public Data API
 > Data © Moonton (Mobile Legends)
 > API maintained by ridwaanhall / RoneAI
-
----
 
 <details>
 <summary>Local Development (internal)</summary>

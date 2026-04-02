@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import UTC, datetime
 from pathlib import Path
 
 from fastapi import APIRouter, HTTPException, Request
@@ -20,6 +21,7 @@ def _shared_context(request: Request, current_group: str | None = None) -> dict[
 		"group_meta": GROUP_META,
 		"groups": WEB_GROUPS,
 		"current_group": current_group,
+		"current_year": datetime.now(UTC).year,
 	}
 
 

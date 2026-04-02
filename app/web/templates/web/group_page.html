@@ -259,14 +259,6 @@
 
         if (typeof value === "string") {
             if (looksLikeUrl(value)) {
-                const link = document.createElement("a");
-                link.href = value;
-                link.target = "_blank";
-                link.rel = "noreferrer noopener";
-                link.className = "block break-all text-sky-300 hover:text-sky-200 underline underline-offset-2";
-                link.textContent = value;
-                wrapper.appendChild(link);
-
                 const preview = document.createElement("img");
                 preview.src = value;
                 preview.alt = "Image preview";
@@ -277,10 +269,21 @@
                 };
 
                 if (looksLikeImageUrl(value)) {
-                    wrapper.appendChild(preview);
+                    const imageLink = document.createElement("a");
+                    imageLink.href = value;
+                    imageLink.target = "_blank";
+                    imageLink.rel = "noreferrer noopener";
+                    imageLink.className = "inline-block";
+                    imageLink.appendChild(preview);
+                    wrapper.appendChild(imageLink);
                 } else {
-                    // Try graceful preview for unknown extension image URLs.
-                    wrapper.appendChild(preview);
+                    const link = document.createElement("a");
+                    link.href = value;
+                    link.target = "_blank";
+                    link.rel = "noreferrer noopener";
+                    link.className = "block break-all text-sky-300 hover:text-sky-200 underline underline-offset-2";
+                    link.textContent = value;
+                    wrapper.appendChild(link);
                 }
 
                 return wrapper;
@@ -296,7 +299,7 @@
 
     function createObjectTable(value) {
         const container = document.createElement("div");
-        container.className = "w-full overflow-auto";
+        container.className = "custom-scroll w-full overflow-auto";
 
         const table = document.createElement("table");
         table.className = "w-full min-w-[20rem] border-collapse text-xs";
@@ -326,7 +329,7 @@
 
     function createArrayTable(value) {
         const container = document.createElement("div");
-        container.className = "w-full overflow-auto";
+        container.className = "custom-scroll w-full overflow-auto";
 
         const table = document.createElement("table");
         table.className = "w-full min-w-[20rem] border-collapse text-xs";

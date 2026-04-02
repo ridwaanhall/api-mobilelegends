@@ -9,12 +9,21 @@
 	<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 	<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 	<style>
+		:root {
+			--scroll-track: #050507;
+			--scroll-track-edge: #18181b;
+			--scroll-thumb: linear-gradient(180deg, #71717a 0%, #3f3f46 100%);
+			--scroll-thumb-hover: linear-gradient(180deg, #a1a1aa 0%, #52525b 100%);
+		}
+
 		html,
 		body {
 			overflow-x: hidden;
-			scrollbar-color: #52525b #09090b;
-			scrollbar-width: thin;
+			scrollbar-color: #71717a #050507;
+			scrollbar-width: auto;
 			font-family: "Plus Jakarta Sans", sans-serif;
+			text-rendering: optimizeLegibility;
+			-webkit-font-smoothing: antialiased;
 		}
 
 		code,
@@ -23,30 +32,61 @@
 			font-family: "Space Mono", monospace;
 		}
 
+		* {
+			scrollbar-gutter: stable both-edges;
+		}
+
 		*::-webkit-scrollbar {
-			width: 10px;
-			height: 10px;
+			width: 14px;
+			height: 14px;
 		}
 
 		*::-webkit-scrollbar-track {
-			background: #09090b;
+			background: var(--scroll-track);
+			border: 1px solid var(--scroll-track-edge);
+			border-radius: 999px;
+			box-shadow: inset 0 0 0 1px #09090b;
 		}
 
 		*::-webkit-scrollbar-thumb {
-			background: #3f3f46;
-			border: 2px solid #09090b;
+			background: var(--scroll-thumb);
+			border: 3px solid var(--scroll-track);
 			border-radius: 999px;
+			box-shadow: inset 0 0 0 1px #27272a;
 		}
 
 		*::-webkit-scrollbar-thumb:hover {
-			background: #52525b;
+			background: var(--scroll-thumb-hover);
+		}
+
+		*::-webkit-scrollbar-corner {
+			background: var(--scroll-track);
+		}
+
+		.custom-scroll {
+			overflow: auto;
+		}
+
+		.custom-scroll::-webkit-scrollbar-thumb {
+			background: linear-gradient(180deg, #a1a1aa 0%, #52525b 100%);
+		}
+
+		@media (max-width: 768px) {
+			*::-webkit-scrollbar {
+				width: 10px;
+				height: 10px;
+			}
+
+			* {
+				scrollbar-gutter: auto;
+			}
 		}
 	</style>
 </head>
-<body class="min-h-screen overflow-x-hidden bg-black text-zinc-100">
+<body class="flex min-h-screen flex-col overflow-x-hidden bg-black text-zinc-100">
 	{% include "navbar.html" %}
 
-	<div class="mx-auto flex w-full max-w-[1600px] min-w-0 gap-4 px-4 pb-8 pt-6 lg:px-6">
+	<div class="mx-auto flex w-full max-w-[1600px] min-w-0 flex-1 gap-4 px-4 pb-8 pt-6 lg:px-6">
 		{% if request.url.path.startswith('/web') %}
 			{% include "sidebar.html" %}
 		{% endif %}

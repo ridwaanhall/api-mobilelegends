@@ -14,7 +14,7 @@
 	{% if sidebar_operations %}
 		<hr class="my-4 border-zinc-800" />
 		<p class="mb-3 text-xs uppercase tracking-[0.2em] text-zinc-500">Endpoints</p>
-		<div class="max-h-[70vh] space-y-2 overflow-y-auto pr-1 text-xs">
+		<div class="custom-scroll max-h-[70vh] space-y-2 overflow-y-auto pr-1 text-xs">
 			{% for operation in sidebar_operations %}
 				<a
 					href="{{ operation.web_path }}"

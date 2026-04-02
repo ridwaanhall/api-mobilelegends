@@ -175,10 +175,10 @@
     function buildLanguageSnippets(method, url, headers, requestBody) {
         const headerEntries = Object.entries(headers);
         const hasBody = Boolean(requestBody);
-        const jsHeaders = JSON.stringify(headers, null, 2);
-        const pyHeaders = JSON.stringify(headers, null, 2);
+        const jsHeaders = JSON.stringify(headers, null, 4);
+        const pyHeaders = JSON.stringify(headers, null, 4);
         const parsedBody = requestBody ? parseJson(requestBody) : null;
-        const pyJsonBody = parsedBody ? JSON.stringify(parsedBody, null, 2) : "None";
+        const pyJsonBody = parsedBody ? JSON.stringify(parsedBody, null, 4) : "None";
         const goBody = requestBody || "";
         const jsBody = hasBody ? (parsedBody ?? requestBody) : null;
 
@@ -196,7 +196,7 @@
             python: `import requests\n\nurl = ${JSON.stringify(url)}\nheaders = ${pyHeaders}\n${hasBody ? `payload = ${pyJsonBody}` : "payload = None"}\n\nresponse = requests.request(${JSON.stringify(method)}, url, headers=headers${hasBody ? ", json=payload" : ""})\nprint(response.json())`,
             javascript: `const response = await fetch(${JSON.stringify(url)}, {\n    method: ${JSON.stringify(method)},\n    headers: ${jsHeaders},${hasBody ? `\n    body: ${JSON.stringify(requestBody)}` : ""}\n});\n\nconst data = await response.json();\nconsole.log(data);`,
             go: `package main\n\nimport (\n    "fmt"\n    "io"\n    "net/http"\n    "strings"\n)\n\nfunc main() {\n    client := &http.Client{}\n    ${hasBody ? `body := strings.NewReader(${JSON.stringify(goBody)})` : "body := strings.NewReader(\"\")"}\n    req, err := http.NewRequest(${JSON.stringify(method)}, ${JSON.stringify(url)}, body)\n    if err != nil {\n        panic(err)\n    }\n\n${goHeaderLines || "    // No headers required"}\n\n    res, err := client.Do(req)\n    if err != nil {\n        panic(err)\n    }\n    defer res.Body.Close()\n\n    raw, _ := io.ReadAll(res.Body)\n    fmt.Println(string(raw))\n}`,
-            node: `const axios = require("axios");\n\n(async () => {\n    const response = await axios({\n        method: ${JSON.stringify(method.toLowerCase())},\n        url: ${JSON.stringify(url)},\n        headers: ${jsHeaders},${hasBody ? `\n        data: ${JSON.stringify(jsBody, null, 2)}` : ""}\n    });\n\n    console.log(response.data);\n})();`,
+            node: `const axios = require("axios");\n\n(async () => {\n    const response = await axios({\n        method: ${JSON.stringify(method.toLowerCase())},\n        url: ${JSON.stringify(url)},\n        headers: ${jsHeaders},${hasBody ? `\n        data: ${JSON.stringify(jsBody, null, 4)}` : ""}\n    });\n\n    console.log(response.data);\n})();`,
             php: `<?php\n$ch = curl_init();\n\ncurl_setopt_array($ch, [\n    CURLOPT_URL => ${JSON.stringify(url)},\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => ${JSON.stringify(method)},\n    CURLOPT_HTTPHEADER => [\n        ${phpHeaders}\n    ],${hasBody ? `\n    CURLOPT_POSTFIELDS => ${JSON.stringify(requestBody)},` : ""}\n]);\n\n$response = curl_exec($ch);\ncurl_close($ch);\n\necho $response;`,
             java: `HttpRequest request = HttpRequest.newBuilder()\n    .uri(URI.create(${JSON.stringify(url)}))\n    .method(${JSON.stringify(method)}, ${hasBody ? `HttpRequest.BodyPublishers.ofString(${JSON.stringify(requestBody)})` : "HttpRequest.BodyPublishers.noBody()"})\n${headerEntries.map(([key, value]) => `    .header(${JSON.stringify(key)}, ${JSON.stringify(value)})`).join("\n")}\n    .build();\n\nHttpClient client = HttpClient.newHttpClient();\nHttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());\nSystem.out.println(response.body());`,
             csharp: `using System.Net.Http;\nusing System.Text;\n\nvar client = new HttpClient();\nvar request = new HttpRequestMessage(HttpMethod.${method.toUpperCase()}, ${JSON.stringify(url)});\n${headerEntries.map(([key, value]) => `request.Headers.TryAddWithoutValidation(${JSON.stringify(key)}, ${JSON.stringify(value)});`).join("\n")}\n${hasBody ? `request.Content = new StringContent(${JSON.stringify(requestBody)}, Encoding.UTF8, "application/json");` : ""}\n\nvar response = await client.SendAsync(request);\nvar content = await response.Content.ReadAsStringAsync();\nConsole.WriteLine(content);`,

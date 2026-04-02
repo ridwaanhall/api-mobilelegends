@@ -48,7 +48,7 @@
         {% if operation.parameters %}
             <div class="grid gap-4 md:grid-cols-2">
                 {% for parameter in operation.parameters %}
-                    <label class="block border border-zinc-800 p-3 text-xs text-zinc-300">
+                    <div class="block border border-zinc-800 p-3 text-xs text-zinc-300">
                         <div class="mb-2 flex items-center justify-between gap-2">
                             <span class="font-semibold text-zinc-200">{{ parameter.name }}</span>
                             <span class="text-[10px] uppercase tracking-[0.14em] text-zinc-500">{{ parameter.location }}</span>
@@ -137,7 +137,7 @@
                                 <span class="text-zinc-400">Max length: {{ parameter.max_length }}.</span>
                             {% endif %}
                         </p>
-                    </label>
+                    </div>
                 {% endfor %}
             </div>
         {% endif %}
@@ -158,7 +158,7 @@
         {% endif %}
 
         <div class="flex flex-wrap items-center gap-2">
-            <button type="submit" class="cursor-pointer border border-zinc-600 px-4 py-2 text-sm font-medium text-zinc-100 hover:border-zinc-200">
+            <button type="submit" class="cursor-pointer border border-cyan-500/60 bg-cyan-950/30 px-4 py-2 text-sm font-medium text-cyan-100 hover:border-cyan-300 hover:bg-cyan-900/40">
                 Execute
             </button>
             <span class="text-xs text-zinc-500">{{ operation.method }} {{ operation.api_path }}</span>

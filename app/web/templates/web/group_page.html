@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<section class="min-w-0 space-y-4 overflow-x-hidden">
+<section class="min-w-0 space-y-4">
     <div class="border border-zinc-800 p-5 md:p-6">
         <p class="text-xs uppercase tracking-[0.22em] text-zinc-500">Web Playground</p>
         <h1 class="mt-2 text-2xl font-semibold tracking-tight text-zinc-100 md:text-4xl">{{ title }}</h1>
@@ -37,6 +37,55 @@
             return JSON.parse(text);
         } catch {
             return null;
+        }
+    }
+
+    function hasCoreUserInfo(userInfo) {
+        if (!userInfo || typeof userInfo !== "object") {
+            return false;
+        }
+
+        const avatar = typeof userInfo.avatar === "string" ? userInfo.avatar.trim() : "";
+        const name = typeof userInfo.name === "string" ? userInfo.name.trim() : "";
+        return Boolean(avatar && name);
+    }
+
+    async function hydrateUserInfoIfMissing() {
+        const authApi = getAuthApi();
+        if (!authApi) {
+            return;
+        }
+
+        const auth = authApi.readAuth?.();
+        if (!auth || typeof auth.jwt !== "string") {
+            return;
+        }
+
+        const cachedInfo = authApi.readUserInfo?.(auth);
+        if (hasCoreUserInfo(cachedInfo)) {
+            return;
+        }
+
+        try {
+            const response = await fetch("/api/user/info", {
+                method: "GET",
+                headers: {
+                    accept: "application/json",
+                    Authorization: `Bearer ${auth.jwt}`,
+                },
+            });
+
+            if (!response.ok) {
+                return;
+            }
+
+            const rawText = await response.text();
+            const parsed = parseJson(rawText);
+            if (parsed?.data && hasCoreUserInfo(parsed.data)) {
+                authApi.writeUserInfo?.(parsed.data, auth.expiresAt);
+            }
+        } catch {
+            // Skip silent background hydration failures.
         }
     }
 
@@ -129,7 +178,7 @@
                     const preview = document.createElement("img");
                     preview.src = value;
                     preview.alt = "Image preview";
-                    preview.className = "mt-2 max-h-44 rounded border border-zinc-700 object-contain";
+                    preview.className = "mt-2 max-h-44 border border-zinc-700 object-contain";
                     preview.loading = "lazy";
                     const imageLink = document.createElement("a");
                     imageLink.href = value;
@@ -467,12 +516,17 @@
 
                 if (apiPath === "/api/user/auth/login" && parsedResponse?.data?.jwt) {
                     getAuthApi()?.writeAuth?.(parsedResponse.data.jwt);
+                    void hydrateUserInfoIfMissing();
                 }
 
                 if (apiPath === "/api/user/info" && parsedResponse?.data) {
-                    const activeAuth = getAuthApi()?.readAuth?.();
+                    const authApi = getAuthApi();
+                    const activeAuth = authApi?.readAuth?.();
                     if (activeAuth) {
-                        getAuthApi()?.writeUserInfo?.(parsedResponse.data, activeAuth.expiresAt);
+                        const cachedInfo = authApi?.readUserInfo?.(activeAuth);
+                        if (!hasCoreUserInfo(cachedInfo) && hasCoreUserInfo(parsedResponse.data)) {
+                            authApi?.writeUserInfo?.(parsedResponse.data, activeAuth.expiresAt);
+                        }
                     }
                 }
 

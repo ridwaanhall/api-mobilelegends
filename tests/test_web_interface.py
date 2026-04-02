@@ -31,6 +31,17 @@ def test_landing_page_has_docs_and_demo_options() -> None:
     assert "application/ld+json" in response.text
     assert "const AUTH_KEY = \"mlbb_user_auth\";" in response.text
     assert "renderNavbarState()" in response.text
+    assert "Not Signed In" in response.text
+    assert "Sign In" in response.text
+    assert "API Version" in response.text
+
+
+def test_navbar_shows_api_version_badge() -> None:
+    response = client.get("/web/user")
+
+    assert response.status_code == 200
+    assert "MLBB API Web" in response.text
+    assert "v3.2.0" in response.text
 
 
 def test_web_group_pages_are_available() -> None:

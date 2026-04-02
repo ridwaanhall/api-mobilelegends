@@ -134,6 +134,7 @@
 
     function renderNavbarState() {
         const badge = document.getElementById("jwt-status");
+        const authAction = document.getElementById("jwt-auth-action");
         const userBadge = document.getElementById("user-badge");
         const userAvatar = document.getElementById("user-avatar");
         const userName = document.getElementById("user-name");
@@ -144,6 +145,9 @@
         const auth = readAuth();
         if (!auth) {
             badge.textContent = "Not Signed In";
+            if (authAction) {
+                authAction.textContent = "Sign In";
+            }
             if (userBadge) {
                 userBadge.classList.add("hidden");
             }
@@ -152,6 +156,9 @@
 
         const remaining = Math.max(0, Math.floor((auth.expiresAt - Date.now()) / (60 * 60 * 1000)));
         badge.textContent = `Signed In (${remaining}h)`;
+        if (authAction) {
+            authAction.textContent = "Sign Out";
+        }
 
         const userInfo = readUserInfo(auth);
         if (!userInfo || !userBadge || !userAvatar || !userName) {
@@ -507,7 +514,6 @@
         });
     }
 
-    document.getElementById("jwt-clear")?.addEventListener("click", clearAuth);
     renderNavbarState();
     setupDescriptionToggles();
     setupCopyButtons();

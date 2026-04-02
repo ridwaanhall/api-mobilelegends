@@ -7,6 +7,7 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
+from app.core.config import API_VERSION
 from app.web.openapi_catalog import GROUP_META, WEB_GROUPS, get_group_operations
 
 router = APIRouter(tags=["web"])
@@ -22,6 +23,7 @@ def _shared_context(request: Request, current_group: str | None = None) -> dict[
 		"groups": WEB_GROUPS,
 		"current_group": current_group,
 		"current_year": datetime.now(UTC).year,
+		"api_version": API_VERSION,
 		"seo_description": "Interactive web interface for MLBB Public Data API with endpoint forms, readable response tables, and cURL output.",
 		"seo_keywords": "mlbb api, mobile legends api, web ui, fastapi, openapi, response table",
 	}

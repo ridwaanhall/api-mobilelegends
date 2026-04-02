@@ -1,8 +1,13 @@
 <header class="sticky top-0 z-30 border-b border-zinc-800 bg-black/95 backdrop-blur">
 	<div class="mx-auto flex w-full max-w-[1600px] flex-wrap items-center justify-between gap-3 px-4 py-3 lg:px-6">
-		<a href="/" class="border border-zinc-700 px-3 py-1 text-sm font-semibold tracking-wide text-zinc-100 hover:border-zinc-400">
-			MLBB API Web
-		</a>
+        <div class="inline-flex items-baseline gap-1 border border-zinc-700 px-3 py-1 rounded">
+            <a href="/" class="text-sm font-semibold tracking-wide text-zinc-100 hover:text-zinc-400">
+                MLBB API Web
+            </a>
+            <span class="text-[10px] font-medium text-cyan-300 align-super">
+                v{{ api_version }}
+            </span>
+        </div>
 
 		<nav class="flex flex-wrap items-center gap-2 text-xs md:text-sm">
 			<a href="/api/docs" class="border border-zinc-700 px-3 py-1 hover:border-zinc-400">Docs</a>
@@ -18,8 +23,8 @@
 				<span id="user-name" class="max-w-40 truncate text-zinc-200"></span>
 			</div>
 			<span id="jwt-status" class="border border-zinc-700 px-3 py-1 text-zinc-300">Not Signed In</span>
-			<button id="jwt-clear" type="button" class="border border-zinc-700 px-3 py-1 text-zinc-300 hover:border-zinc-400 hover:text-zinc-100">
-				Sign Out
+			<button id="jwt-auth-action" type="button" class="border border-zinc-700 px-3 py-1 text-zinc-300 hover:border-zinc-400 hover:text-zinc-100">
+				Sign In
 			</button>
 		</div>
 	</div>

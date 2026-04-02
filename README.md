@@ -1,4 +1,4 @@
-# MLBB Public Data API
+# MLBB Public Data API & Web
 
 [![API Live](https://img.shields.io/badge/API-Live-brightgreen?logo=fastapi&logoColor=white)](https://mlbb.rone.dev/api/docs)
 ![Release](https://img.shields.io/github/v/release/ridwaanhall/api-mobilelegends?logo=github)
@@ -9,7 +9,7 @@
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
 ![OpenAPI](https://img.shields.io/badge/OpenAPI-3.1-green?logo=openapiinitiative&logoColor=white)
 
-This API provides access to hero analytics, in-game performance data, academy resources, player endpoints, and utility tools. It is designed with a consistent RESTful structure, supports flexible hero identifiers (ID or name), and delivers standardized responses for seamless integration into applications, dashboards, and analytics systems.
+This API & Web provides access to hero analytics, in-game performance data, academy resources, player endpoints, and utility tools. It is designed with a consistent RESTful structure, supports flexible hero identifiers (ID or name), and delivers standardized responses for seamless integration into applications, dashboards, analytics systems, and internal tooling.
 
 ---
 
@@ -24,6 +24,11 @@ This API provides access to hero analytics, in-game performance data, academy re
 - **Player endpoints**: Authentication, stats, match history, and social data
 - **Utility tools**: Win rate calculator and IP lookup
 - **Interactive API documentation**: Swagger & ReDoc
+- **Modern web playground**: Responsive interface for all endpoint groups (`/web/*`)
+- **Readable response UX**: Structured tables, media previews, and raw JSON views
+- **Developer helpers**: Generated cURL output and one-click copy actions
+- **Auth-aware navbar**: Sign In/Sign Out state toggles based on cached JWT session
+- **Version visibility**: API version badge shown in navbar and landing page
 
 ---
 
@@ -33,6 +38,13 @@ This API provides access to hero analytics, in-game performance data, academy re
 - ReDoc: `/api/redoc`
 - OpenAPI JSON: `/api/openapi.json`
 - Web Demo: `/web/user`, `/web/mlbb`, `/web/academy`, `/web/addon`
+
+### Web Interface Highlights
+
+- Base URL `/` includes quick access cards for docs and web playground
+- Navbar reflects auth state: `Sign In` when not signed in, `Sign Out` when signed in
+- Cached JWT and user profile badge are shared across landing and web pages
+- Endpoint cards support long-description expand/collapse, readable response tables, and copy actions
 
 ---
 

@@ -168,7 +168,7 @@ def test_parameter_description_renders_inline_code_and_constraints() -> None:
     response = client.get("/web/academy/equipment")
 
     assert response.status_code == 200
-    assert '<code class="border border-zinc-700 bg-zinc-950 px-1 py-0.5 font-mono text-[11px] text-zinc-200">en</code>' in response.text
+    assert '<code class="border border-zinc-700 px-1 py-0.5 font-mono text-[11px] text-zinc-200">en</code>' in response.text
     assert "Minimum: 1." in response.text
 
 

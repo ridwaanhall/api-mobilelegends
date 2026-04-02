@@ -141,6 +141,7 @@
 	(() => {
 		const AUTH_KEY = "mlbb_user_auth";
 		const USER_INFO_KEY = "mlbb_user_info";
+		const AUTH_TTL_MS = 24 * 60 * 60 * 1000;
 
 		function parseJson(value) {
 			try {
@@ -255,15 +256,55 @@
 			renderNavbarState();
 		}
 
+		function writeAuth(jwt) {
+			if (typeof jwt !== "string" || !jwt.trim()) {
+				return;
+			}
+
+			localStorage.removeItem(USER_INFO_KEY);
+			localStorage.setItem(
+				AUTH_KEY,
+				JSON.stringify({
+					jwt,
+					expiresAt: Date.now() + AUTH_TTL_MS,
+				})
+			);
+			renderNavbarState();
+		}
+
+		function writeUserInfo(userInfo, expiresAt) {
+			if (!userInfo || typeof userInfo !== "object" || typeof expiresAt !== "number") {
+				return;
+			}
+
+			localStorage.setItem(
+				USER_INFO_KEY,
+				JSON.stringify({
+					data: userInfo,
+					expiresAt,
+				})
+			);
+			renderNavbarState();
+		}
+
+		window.MLBBWebAuth = {
+			readAuth,
+			readUserInfo,
+			writeAuth,
+			writeUserInfo,
+			clearAuth,
+			renderNavbarState,
+		};
+
 		document.getElementById("jwt-auth-action")?.addEventListener("click", () => {
-			const auth = readAuth();
+			const auth = window.MLBBWebAuth.readAuth();
 			if (auth) {
-				clearAuth();
+				window.MLBBWebAuth.clearAuth();
 				return;
 			}
 			window.location.href = "/web/user/auth/send-vc";
 		});
-		renderNavbarState();
+		window.MLBBWebAuth.renderNavbarState();
 	})();
 	</script>
 	{% block scripts %}{% endblock %}

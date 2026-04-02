@@ -28,9 +28,9 @@
 {% block scripts %}
 <script>
 (() => {
-    const AUTH_KEY = "mlbb_user_auth";
-    const USER_INFO_KEY = "mlbb_user_info";
-    const AUTH_TTL_MS = 24 * 60 * 60 * 1000;
+    function getAuthApi() {
+        return window.MLBBWebAuth || null;
+    }
 
     function parseJson(text) {
         try {
@@ -38,147 +38,6 @@
         } catch {
             return null;
         }
-    }
-
-    function readAuth() {
-        const raw = localStorage.getItem(AUTH_KEY);
-        if (!raw) {
-            return null;
-        }
-
-        const parsed = parseJson(raw);
-        if (!parsed || typeof parsed !== "object") {
-            localStorage.removeItem(AUTH_KEY);
-            return null;
-        }
-
-        const jwt = parsed.jwt;
-        const expiresAt = parsed.expiresAt;
-        if (typeof jwt !== "string" || typeof expiresAt !== "number") {
-            localStorage.removeItem(AUTH_KEY);
-            localStorage.removeItem(USER_INFO_KEY);
-            return null;
-        }
-
-        if (Date.now() > expiresAt) {
-            localStorage.removeItem(AUTH_KEY);
-            localStorage.removeItem(USER_INFO_KEY);
-            return null;
-        }
-
-        return parsed;
-    }
-
-    function readUserInfo(auth) {
-        if (!auth) {
-            localStorage.removeItem(USER_INFO_KEY);
-            return null;
-        }
-
-        const raw = localStorage.getItem(USER_INFO_KEY);
-        if (!raw) {
-            return null;
-        }
-
-        const parsed = parseJson(raw);
-        if (!parsed || typeof parsed !== "object") {
-            localStorage.removeItem(USER_INFO_KEY);
-            return null;
-        }
-
-        if (parsed.expiresAt !== auth.expiresAt || Date.now() > auth.expiresAt) {
-            localStorage.removeItem(USER_INFO_KEY);
-            return null;
-        }
-
-        if (!parsed.data || typeof parsed.data !== "object") {
-            localStorage.removeItem(USER_INFO_KEY);
-            return null;
-        }
-
-        return parsed.data;
-    }
-
-    function writeUserInfo(userInfo, expiresAt) {
-        if (!userInfo || typeof userInfo !== "object" || typeof expiresAt !== "number") {
-            return;
-        }
-
-        localStorage.setItem(
-            USER_INFO_KEY,
-            JSON.stringify({
-                data: userInfo,
-                expiresAt,
-            })
-        );
-        renderNavbarState();
-    }
-
-    function writeAuth(jwt) {
-        localStorage.removeItem(USER_INFO_KEY);
-        localStorage.setItem(
-            AUTH_KEY,
-            JSON.stringify({
-                jwt,
-                expiresAt: Date.now() + AUTH_TTL_MS,
-            })
-        );
-        renderNavbarState();
-    }
-
-    function clearAuth() {
-        localStorage.removeItem(AUTH_KEY);
-        localStorage.removeItem(USER_INFO_KEY);
-        renderNavbarState();
-    }
-
-    function renderNavbarState() {
-        const badge = document.getElementById("jwt-status");
-        const authAction = document.getElementById("jwt-auth-action");
-        const userBadge = document.getElementById("user-badge");
-        const userAvatar = document.getElementById("user-avatar");
-        const userName = document.getElementById("user-name");
-        if (!badge) {
-            return;
-        }
-
-        const auth = readAuth();
-        if (!auth) {
-            badge.textContent = "Not Signed In";
-            if (authAction) {
-                authAction.textContent = "Sign In";
-            }
-            if (userBadge) {
-                userBadge.classList.add("hidden");
-            }
-            return;
-        }
-
-        const remaining = Math.max(0, Math.floor((auth.expiresAt - Date.now()) / (60 * 60 * 1000)));
-        badge.textContent = `Signed In (${remaining}h)`;
-        if (authAction) {
-            authAction.textContent = "Sign Out";
-        }
-
-        const userInfo = readUserInfo(auth);
-        if (!userInfo || !userBadge || !userAvatar || !userName) {
-            if (userBadge) {
-                userBadge.classList.add("hidden");
-            }
-            return;
-        }
-
-        const avatar = typeof userInfo.avatar === "string" ? userInfo.avatar : "";
-        const name = typeof userInfo.name === "string" && userInfo.name.trim() ? userInfo.name.trim() : "Player";
-
-        if (avatar) {
-            userAvatar.src = avatar;
-        } else {
-            userAvatar.src = "https://placehold.co/48x48/000000/FFFFFF?text=U";
-        }
-        userName.textContent = name;
-        userBadge.classList.remove("hidden");
-        userBadge.classList.add("inline-flex");
     }
 
     function getValuesFromInput(input) {
@@ -266,16 +125,12 @@
 
         if (typeof value === "string") {
             if (looksLikeUrl(value)) {
-                const preview = document.createElement("img");
-                preview.src = value;
-                preview.alt = "Image preview";
-                preview.className = "mt-2 max-h-44 rounded border border-zinc-700 object-contain";
-                preview.loading = "lazy";
-                preview.onerror = () => {
-                    preview.remove();
-                };
-
                 if (looksLikeImageUrl(value)) {
+                    const preview = document.createElement("img");
+                    preview.src = value;
+                    preview.alt = "Image preview";
+                    preview.className = "mt-2 max-h-44 rounded border border-zinc-700 object-contain";
+                    preview.loading = "lazy";
                     const imageLink = document.createElement("a");
                     imageLink.href = value;
                     imageLink.target = "_blank";
@@ -514,7 +369,7 @@
         });
     }
 
-    renderNavbarState();
+    getAuthApi()?.renderNavbarState?.();
     setupDescriptionToggles();
     setupCopyButtons();
 
@@ -568,7 +423,7 @@
             };
 
             if (requiresAuth) {
-                const auth = readAuth();
+                const auth = getAuthApi()?.readAuth?.();
                 if (!auth || typeof auth.jwt !== "string") {
                     setResponse(
                         form,
@@ -611,18 +466,18 @@
                     : responseRawText;
 
                 if (apiPath === "/api/user/auth/login" && parsedResponse?.data?.jwt) {
-                    writeAuth(parsedResponse.data.jwt);
+                    getAuthApi()?.writeAuth?.(parsedResponse.data.jwt);
                 }
 
                 if (apiPath === "/api/user/info" && parsedResponse?.data) {
-                    const activeAuth = readAuth();
+                    const activeAuth = getAuthApi()?.readAuth?.();
                     if (activeAuth) {
-                        writeUserInfo(parsedResponse.data, activeAuth.expiresAt);
+                        getAuthApi()?.writeUserInfo?.(parsedResponse.data, activeAuth.expiresAt);
                     }
                 }
 
                 if (apiPath === "/api/user/auth/logout" && response.ok) {
-                    clearAuth();
+                    getAuthApi()?.clearAuth?.();
                 }
 
                 setResponse(form, `HTTP ${response.status}`, prettyResponse || "(empty response)", curlText, parsedResponse);

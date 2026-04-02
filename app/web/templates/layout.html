@@ -183,7 +183,7 @@
 
 			const auth = readAuth();
 			if (!auth) {
-				badge.textContent = "JWT: not set";
+				badge.textContent = "Not Signed In";
 				if (userBadge) {
 					userBadge.classList.add("hidden");
 					userBadge.classList.remove("inline-flex");
@@ -192,7 +192,7 @@
 			}
 
 			const remaining = Math.max(0, Math.floor((auth.expiresAt - Date.now()) / (60 * 60 * 1000)));
-			badge.textContent = `JWT: active (${remaining}h)`;
+			badge.textContent = `Signed In (${remaining}h)`;
 
 			const userInfo = readUserInfo(auth);
 			if (!userInfo || !userBadge || !userAvatar || !userName) {

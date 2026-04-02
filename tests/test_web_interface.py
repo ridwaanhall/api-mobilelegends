@@ -27,6 +27,8 @@ def test_landing_page_has_docs_and_demo_options() -> None:
     assert "/web/user" in response.text
     assert "Plus+Jakarta+Sans" in response.text
     assert "Space+Mono" in response.text
+    assert "mlbb-card.rone.dev/static/favicon.ico" in response.text
+    assert "application/ld+json" in response.text
 
 
 def test_web_group_pages_are_available() -> None:
@@ -129,6 +131,9 @@ def test_response_panel_has_readable_and_raw_views() -> None:
     assert "data-response-readable" in response.text
     assert "data-response-content" in response.text
     assert "data-curl-content" in response.text
+    assert "data-copy-btn" in response.text
+    assert "Copy cURL" in response.text
+    assert "Copy Response" in response.text
 
 
 def test_web_script_contains_readable_table_and_image_render_helpers() -> None:
@@ -138,3 +143,27 @@ def test_web_script_contains_readable_table_and_image_render_helpers() -> None:
     assert "looksLikeImageUrl" in response.text
     assert "createObjectTable" in response.text
     assert "buildCurl" in response.text
+    assert "setupDescriptionToggles" in response.text
+    assert "setupCopyButtons" in response.text
+
+
+def test_footer_contains_repository_link() -> None:
+    response = client.get("/web/user")
+
+    assert response.status_code == 200
+    assert "https://github.com/ridwaanhall/api-mobilelegends" in response.text
+
+
+def test_method_badges_are_colorized() -> None:
+    response = client.get("/web/user/auth/login")
+
+    assert response.status_code == 200
+    assert "border-sky-500/60" in response.text
+
+
+def test_description_expand_markers_present() -> None:
+    response = client.get("/web/user/auth/login")
+
+    assert response.status_code == 200
+    assert "data-desc-toggle" in response.text
+    assert "Show more" in response.text

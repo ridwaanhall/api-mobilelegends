@@ -2,28 +2,42 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 	<title>{{ title if title else "MLBB Web Interface" }}</title>
+	<meta name="description" content="{{ seo_description if seo_description else 'Interactive web interface for MLBB Public Data API with docs, endpoint forms, readable responses, and cURL output.' }}" />
+	<meta name="keywords" content="{{ seo_keywords if seo_keywords else 'mlbb api, mobile legends api, fastapi, analytics, hero data, openapi, web interface' }}" />
+	<meta name="robots" content="index, follow" />
+	<meta name="theme-color" content="#000000" />
+	<meta property="og:type" content="website" />
+	<meta property="og:title" content="{{ title if title else 'MLBB Web Interface' }}" />
+	<meta property="og:description" content="{{ seo_description if seo_description else 'Interactive web interface for MLBB Public Data API.' }}" />
+	<meta property="og:url" content="{{ request.url }}" />
+	<meta property="og:image" content="https://mlbb-card.rone.dev/static/favicon.ico" />
+	<meta name="twitter:card" content="summary" />
+	<meta name="twitter:title" content="{{ title if title else 'MLBB Web Interface' }}" />
+	<meta name="twitter:description" content="{{ seo_description if seo_description else 'Interactive web interface for MLBB Public Data API.' }}" />
+	<link rel="canonical" href="{{ request.url }}" />
+	<link rel="icon" type="image/x-icon" href="https://mlbb-card.rone.dev/static/favicon.ico" />
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 	<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 	<style>
 		:root {
-			--scroll-track: #050507;
-			--scroll-track-edge: #18181b;
-			--scroll-thumb: linear-gradient(180deg, #71717a 0%, #3f3f46 100%);
-			--scroll-thumb-hover: linear-gradient(180deg, #a1a1aa 0%, #52525b 100%);
+			--scroll-track: rgba(255, 255, 255, 0.04);
+			--scroll-thumb: linear-gradient(180deg, #67e8f9 0%, #14b8a6 100%);
+			--scroll-thumb-hover: linear-gradient(180deg, #a5f3fc 0%, #2dd4bf 100%);
 		}
 
 		html,
 		body {
 			overflow-x: hidden;
-			scrollbar-color: #71717a #050507;
+			scrollbar-color: #14b8a6 rgba(255, 255, 255, 0.04);
 			scrollbar-width: auto;
 			font-family: "Plus Jakarta Sans", sans-serif;
 			text-rendering: optimizeLegibility;
 			-webkit-font-smoothing: antialiased;
+			background: #000;
 		}
 
 		code,
@@ -33,26 +47,22 @@
 		}
 
 		* {
-			scrollbar-gutter: stable both-edges;
+			scrollbar-gutter: stable;
 		}
 
 		*::-webkit-scrollbar {
-			width: 14px;
-			height: 14px;
+			width: 2px;
+			height: 2px;
 		}
 
 		*::-webkit-scrollbar-track {
 			background: var(--scroll-track);
-			border: 1px solid var(--scroll-track-edge);
 			border-radius: 999px;
-			box-shadow: inset 0 0 0 1px #09090b;
 		}
 
 		*::-webkit-scrollbar-thumb {
 			background: var(--scroll-thumb);
-			border: 3px solid var(--scroll-track);
 			border-radius: 999px;
-			box-shadow: inset 0 0 0 1px #27272a;
 		}
 
 		*::-webkit-scrollbar-thumb:hover {
@@ -60,7 +70,7 @@
 		}
 
 		*::-webkit-scrollbar-corner {
-			background: var(--scroll-track);
+			background: transparent;
 		}
 
 		.custom-scroll {
@@ -68,13 +78,13 @@
 		}
 
 		.custom-scroll::-webkit-scrollbar-thumb {
-			background: linear-gradient(180deg, #a1a1aa 0%, #52525b 100%);
+			background: linear-gradient(180deg, #5eead4 0%, #0d9488 100%);
 		}
 
 		@media (max-width: 768px) {
 			*::-webkit-scrollbar {
-				width: 10px;
-				height: 10px;
+				width: 2px;
+				height: 2px;
 			}
 
 			* {

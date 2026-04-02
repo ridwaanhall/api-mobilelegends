@@ -1,28 +1,70 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<section class="mx-auto w-full max-w-4xl border border-zinc-800 p-6 md:p-10">
-	<p class="text-xs uppercase tracking-[0.22em] text-zinc-500">MLBB Public Data API</p>
-	<h1 class="mt-3 text-3xl font-semibold tracking-tight text-zinc-100 md:text-5xl">
-		Interactive Access Hub
-	</h1>
-	<p class="mt-4 max-w-2xl text-sm leading-7 text-zinc-400 md:text-base">
-		Choose between API documentation and the demo web interface. The web interface mirrors all API routes for user, mlbb,
-		academy, and addon groups with interactive forms.
-	</p>
+<section class="mx-auto w-full max-w-6xl space-y-6">
+	<div class="relative overflow-hidden border border-zinc-800 p-6 md:p-10">
+		<div class="pointer-events-none absolute -right-24 top-0 h-64 w-64 rounded-full bg-cyan-500/10 blur-3xl"></div>
+		<div class="pointer-events-none absolute -left-20 bottom-0 h-56 w-56 rounded-full bg-teal-500/10 blur-3xl"></div>
 
-	<div class="mt-8 grid gap-4 md:grid-cols-2">
-		<a href="/api/docs" class="group border border-zinc-700 p-5 transition hover:border-zinc-300">
-			<p class="text-xs uppercase tracking-[0.18em] text-zinc-500 group-hover:text-zinc-300">Option 1</p>
-			<h2 class="mt-2 text-xl font-medium text-zinc-100">Open API Docs</h2>
-			<p class="mt-2 text-sm text-zinc-400">Swagger UI with Try it out, schema references, and cURL examples.</p>
-		</a>
+		<p class="relative z-10 text-xs uppercase tracking-[0.24em] text-zinc-500">MLBB Public Data API</p>
+		<h1 class="relative z-10 mt-3 max-w-3xl text-3xl font-semibold tracking-tight text-zinc-100 md:text-5xl">
+			Modern Interface for Real-Time Mobile Legends Data
+		</h1>
+		<p class="relative z-10 mt-4 max-w-3xl text-sm leading-7 text-zinc-300 md:text-base">
+			Explore endpoint documentation or use the redesigned web playground. Every API group is available with optimized forms,
+			readable response tables, media previews, and cURL generation for faster integration.
+		</p>
 
-		<a href="/web/user" class="group border border-zinc-700 p-5 transition hover:border-zinc-300">
-			<p class="text-xs uppercase tracking-[0.18em] text-zinc-500 group-hover:text-zinc-300">Option 2</p>
-			<h2 class="mt-2 text-xl font-medium text-zinc-100">Open Demo Website</h2>
-			<p class="mt-2 text-sm text-zinc-400">Interactive web playground with readable response tables, media previews, cURL output, and endpoint-aware forms.</p>
-		</a>
+		<div class="relative z-10 mt-8 grid gap-4 md:grid-cols-2">
+			<a href="/api/docs" class="group border border-zinc-700 bg-black/60 p-5 transition hover:-translate-y-0.5 hover:border-cyan-300">
+				<p class="text-xs uppercase tracking-[0.18em] text-zinc-500 group-hover:text-cyan-200">Option 1</p>
+				<h2 class="mt-2 text-xl font-medium text-zinc-100">Open API Docs</h2>
+				<p class="mt-2 text-sm text-zinc-400">Swagger UI with try-it execution, full schemas, and request examples.</p>
+			</a>
+
+			<a href="/web/user" class="group border border-zinc-700 bg-black/60 p-5 transition hover:-translate-y-0.5 hover:border-teal-300">
+				<p class="text-xs uppercase tracking-[0.18em] text-zinc-500 group-hover:text-teal-200">Option 2</p>
+				<h2 class="mt-2 text-xl font-medium text-zinc-100">Open Demo Website</h2>
+				<p class="mt-2 text-sm text-zinc-400">Interactive endpoint workspace with readable tables, image previews, cURL, and copy tools.</p>
+			</a>
+		</div>
+	</div>
+
+	<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+		<div class="border border-zinc-800 p-4">
+			<p class="text-xs uppercase tracking-[0.16em] text-zinc-500">Coverage</p>
+			<p class="mt-2 text-xl font-semibold text-zinc-100">4 Service Groups</p>
+			<p class="mt-1 text-xs text-zinc-400">user, mlbb, academy, addon</p>
+		</div>
+		<div class="border border-zinc-800 p-4">
+			<p class="text-xs uppercase tracking-[0.16em] text-zinc-500">Execution</p>
+			<p class="mt-2 text-xl font-semibold text-zinc-100">Live Request Forms</p>
+			<p class="mt-1 text-xs text-zinc-400">path, query, enum, and body aware</p>
+		</div>
+		<div class="border border-zinc-800 p-4">
+			<p class="text-xs uppercase tracking-[0.16em] text-zinc-500">Response UX</p>
+			<p class="mt-2 text-xl font-semibold text-zinc-100">Readable Tables</p>
+			<p class="mt-1 text-xs text-zinc-400">with image rendering for media fields</p>
+		</div>
+		<div class="border border-zinc-800 p-4">
+			<p class="text-xs uppercase tracking-[0.16em] text-zinc-500">Developer Tools</p>
+			<p class="mt-2 text-xl font-semibold text-zinc-100">cURL + Copy</p>
+			<p class="mt-1 text-xs text-zinc-400">ready for CLI and integration tests</p>
+		</div>
 	</div>
 </section>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "MLBB Public Data API",
+  "url": "{{ request.url }}",
+  "description": "Interactive interface for MLBB Public Data API documentation and endpoint testing.",
+  "publisher": {
+    "@type": "Organization",
+    "name": "RoneAI"
+  }
+}
+</script>
 {% endblock %}

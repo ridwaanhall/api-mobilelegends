@@ -22,6 +22,8 @@ def _shared_context(request: Request, current_group: str | None = None) -> dict[
 		"groups": WEB_GROUPS,
 		"current_group": current_group,
 		"current_year": datetime.now(UTC).year,
+		"seo_description": "Interactive web interface for MLBB Public Data API with endpoint forms, readable response tables, and cURL output.",
+		"seo_keywords": "mlbb api, mobile legends api, web ui, fastapi, openapi, response table",
 	}
 
 
@@ -33,6 +35,13 @@ def _normalize_path(value: str) -> str:
 @router.get(path="/", include_in_schema=False, response_class=HTMLResponse)
 def landing_page(request: Request) -> HTMLResponse:
 	context = _shared_context(request)
+	context.update(
+		{
+			"title": "MLBB Public Data API | Landing",
+			"seo_description": "Modern landing page for MLBB Public Data API. Access docs and a full interactive web playground for all endpoints.",
+			"seo_keywords": "mlbb, mobile legends, api docs, web playground, analytics api",
+		}
+	)
 	return templates.TemplateResponse(request, "root/landing_page.html", context)
 
 
@@ -52,6 +61,8 @@ def web_group_page(request: Request, group: str) -> HTMLResponse:
 		{
 			"title": f"{GROUP_META[group]['title']} Endpoints",
 			"subtitle": GROUP_META[group]["description"],
+			"seo_description": f"Browse and execute {GROUP_META[group]['title']} endpoints from the MLBB Public Data API web interface.",
+			"seo_keywords": f"mlbb api, {group} endpoints, openapi web ui",
 			"operations": operations,
 			"sidebar_operations": operations,
 			"selected_web_path": None,
@@ -81,6 +92,8 @@ def web_endpoint_page(request: Request, group: str, endpoint_path: str) -> HTMLR
 		{
 			"title": f"{GROUP_META[group]['title']} Endpoint",
 			"subtitle": "Interactive request form for this API endpoint.",
+			"seo_description": f"Execute and inspect a {GROUP_META[group]['title']} endpoint from the MLBB API web interface.",
+			"seo_keywords": f"mlbb api endpoint, {group}, curl, readable response",
 			"operations": matched_operations,
 			"sidebar_operations": all_operations,
 			"selected_web_path": normalized_path,

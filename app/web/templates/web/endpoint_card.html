@@ -1,8 +1,25 @@
 <article class="min-w-0 overflow-hidden border border-zinc-800 p-4 md:p-5" data-operation-id="{{ operation.operation_id }}">
+    {% set method = operation.method %}
+    {% if method == 'GET' %}
+        {% set method_class = 'border-emerald-500/60 bg-emerald-950/30 text-emerald-300' %}
+    {% elif method == 'POST' %}
+        {% set method_class = 'border-sky-500/60 bg-sky-950/30 text-sky-300' %}
+    {% elif method == 'PUT' %}
+        {% set method_class = 'border-amber-500/60 bg-amber-950/30 text-amber-300' %}
+    {% elif method == 'PATCH' %}
+        {% set method_class = 'border-cyan-500/60 bg-cyan-950/30 text-cyan-300' %}
+    {% elif method == 'DELETE' %}
+        {% set method_class = 'border-rose-500/60 bg-rose-950/30 text-rose-300' %}
+    {% else %}
+        {% set method_class = 'border-zinc-500/60 bg-zinc-900/50 text-zinc-300' %}
+    {% endif %}
+
     <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
         <div>
-            <p class="text-[10px] uppercase tracking-[0.18em] text-zinc-500">{{ operation.method }}</p>
-            <h3 class="text-lg font-semibold text-zinc-100">{{ operation.summary }}</h3>
+            <h3 class="text-lg font-semibold text-zinc-100">
+                <span class="mr-1 inline-flex rounded border px-1.5 py-0.5 text-[10px] align-middle uppercase tracking-[0.16em] {{ method_class }}">{{ operation.method }}</span>
+                {{ operation.summary }}
+            </h3>
             <p class="mt-1 text-xs text-zinc-500">{{ operation.web_path }}</p>
         </div>
         <a href="{{ operation.web_path }}" class="border border-zinc-700 px-2 py-1 text-xs text-zinc-300 hover:border-zinc-400 hover:text-zinc-100">
@@ -11,7 +28,15 @@
     </div>
 
     {% if operation.description_html %}
-        <div class="mb-4 min-w-0 break-words text-sm leading-6 text-zinc-300">{{ operation.description_html | safe }}</div>
+        <div class="mb-4" data-desc-wrapper>
+            <div class="relative min-w-0 break-words text-sm leading-6 text-zinc-300 max-h-[7.5rem] overflow-hidden" data-desc-content>
+                {{ operation.description_html | safe }}
+                <div class="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-black to-transparent hidden" data-desc-fade></div>
+            </div>
+            <button type="button" class="mt-2 hidden border border-zinc-700 px-2 py-1 text-[11px] text-zinc-300 hover:border-zinc-500 hover:text-zinc-100" data-desc-toggle>
+                Show more
+            </button>
+        </div>
     {% endif %}
 
     <form
@@ -117,12 +142,22 @@
                 </section>
 
                 <section class="border border-zinc-900 bg-black p-3">
-                    <p class="mb-2 text-[11px] uppercase tracking-[0.14em] text-zinc-500">cURL</p>
+                    <div class="mb-2 flex items-center justify-between gap-2">
+                        <p class="text-[11px] uppercase tracking-[0.14em] text-zinc-500">cURL</p>
+                        <button type="button" class="border border-zinc-700 px-2 py-1 text-[10px] uppercase tracking-[0.12em] text-zinc-300 hover:border-zinc-500 hover:text-zinc-100" data-copy-btn data-copy-target="curl">
+                            Copy cURL
+                        </button>
+                    </div>
                     <pre class="custom-scroll max-h-56 w-full max-w-full overflow-auto text-xs text-zinc-200" data-curl-content></pre>
                 </section>
 
                 <section class="border border-zinc-900 bg-black p-3">
-                    <p class="mb-2 text-[11px] uppercase tracking-[0.14em] text-zinc-500">Raw JSON</p>
+                    <div class="mb-2 flex items-center justify-between gap-2">
+                        <p class="text-[11px] uppercase tracking-[0.14em] text-zinc-500">Raw JSON</p>
+                        <button type="button" class="border border-zinc-700 px-2 py-1 text-[10px] uppercase tracking-[0.12em] text-zinc-300 hover:border-zinc-500 hover:text-zinc-100" data-copy-btn data-copy-target="response">
+                            Copy Response
+                        </button>
+                    </div>
                     <pre class="custom-scroll max-h-72 w-full max-w-full overflow-auto text-xs text-zinc-200" data-response-content></pre>
                 </section>
             </div>

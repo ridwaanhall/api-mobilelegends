@@ -403,8 +403,114 @@
         wrapper.classList.remove("hidden");
     }
 
+    async function copyText(value) {
+        const text = String(value || "");
+        if (!text) {
+            return false;
+        }
+
+        if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(text);
+            return true;
+        }
+
+        const temp = document.createElement("textarea");
+        temp.value = text;
+        temp.style.position = "fixed";
+        temp.style.left = "-9999px";
+        document.body.appendChild(temp);
+        temp.focus();
+        temp.select();
+        const success = document.execCommand("copy");
+        temp.remove();
+        return success;
+    }
+
+    function setupDescriptionToggles() {
+        document.querySelectorAll("[data-desc-wrapper]").forEach((wrapper) => {
+            const content = wrapper.querySelector("[data-desc-content]");
+            const button = wrapper.querySelector("[data-desc-toggle]");
+            const fade = wrapper.querySelector("[data-desc-fade]");
+            if (!content || !button) {
+                return;
+            }
+
+            const lineHeight = parseFloat(window.getComputedStyle(content).lineHeight || "24");
+            const collapsedHeight = Math.round(lineHeight * 5);
+            const shouldCollapse = content.scrollHeight > collapsedHeight + 8;
+
+            if (!shouldCollapse) {
+                content.style.maxHeight = "none";
+                content.style.overflow = "visible";
+                if (fade) {
+                    fade.classList.add("hidden");
+                }
+                return;
+            }
+
+            content.style.maxHeight = `${collapsedHeight}px`;
+            content.style.overflow = "hidden";
+            button.classList.remove("hidden");
+            if (fade) {
+                fade.classList.remove("hidden");
+            }
+
+            button.addEventListener("click", () => {
+                const expanded = button.dataset.expanded === "true";
+                if (expanded) {
+                    content.style.maxHeight = `${collapsedHeight}px`;
+                    content.style.overflow = "hidden";
+                    button.dataset.expanded = "false";
+                    button.textContent = "Show more";
+                    if (fade) {
+                        fade.classList.remove("hidden");
+                    }
+                    return;
+                }
+
+                content.style.maxHeight = "none";
+                content.style.overflow = "visible";
+                button.dataset.expanded = "true";
+                button.textContent = "Show less";
+                if (fade) {
+                    fade.classList.add("hidden");
+                }
+            });
+        });
+    }
+
+    function setupCopyButtons() {
+        document.addEventListener("click", async (event) => {
+            const button = event.target.closest("[data-copy-btn]");
+            if (!button) {
+                return;
+            }
+
+            const wrapper = button.closest("[data-response-wrapper]");
+            if (!wrapper) {
+                return;
+            }
+
+            const targetName = button.dataset.copyTarget;
+            const selector = targetName === "curl" ? "[data-curl-content]" : "[data-response-content]";
+            const target = wrapper.querySelector(selector);
+            if (!target) {
+                return;
+            }
+
+            const originalLabel = button.textContent;
+            const ok = await copyText(target.textContent || "");
+            button.textContent = ok ? "Copied" : "Copy failed";
+            setTimeout(() => {
+                button.textContent = originalLabel;
+            }, 1200);
+        });
+    }
+
     document.getElementById("jwt-clear")?.addEventListener("click", clearAuth);
     renderNavbarState();
+    setupDescriptionToggles();
+    setupCopyButtons();
 
     document.querySelectorAll(".api-operation-form").forEach((formElement) => {
         const form = formElement;

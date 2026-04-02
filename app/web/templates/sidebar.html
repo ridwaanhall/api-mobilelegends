@@ -20,7 +20,22 @@
 					href="{{ operation.web_path }}"
 					class="block border px-2 py-2 leading-relaxed {{ 'border-zinc-300 text-zinc-100' if selected_web_path and operation.web_path.rstrip('/') == selected_web_path.rstrip('/') else 'border-zinc-800 text-zinc-400 hover:border-zinc-500 hover:text-zinc-100' }}"
 				>
-					<div class="text-[10px] uppercase tracking-[0.16em] text-zinc-500">{{ operation.method }}</div>
+					{% set method = operation.method %}
+					{% if method == 'GET' %}
+						{% set method_class = 'border-emerald-500/60 bg-emerald-950/30 text-emerald-300' %}
+					{% elif method == 'POST' %}
+						{% set method_class = 'border-sky-500/60 bg-sky-950/30 text-sky-300' %}
+					{% elif method == 'PUT' %}
+						{% set method_class = 'border-amber-500/60 bg-amber-950/30 text-amber-300' %}
+					{% elif method == 'PATCH' %}
+						{% set method_class = 'border-cyan-500/60 bg-cyan-950/30 text-cyan-300' %}
+					{% elif method == 'DELETE' %}
+						{% set method_class = 'border-rose-500/60 bg-rose-950/30 text-rose-300' %}
+					{% else %}
+						{% set method_class = 'border-zinc-500/60 bg-zinc-900/50 text-zinc-300' %}
+					{% endif %}
+
+					<div class="mb-1 inline-flex rounded border px-1.5 py-0.5 text-[10px] uppercase tracking-[0.16em] {{ method_class }}">{{ method }}</div>
 					<div>{{ operation.web_path }}</div>
 				</a>
 			{% endfor %}

@@ -1,16 +1,24 @@
 <footer class="mt-auto border-t border-zinc-900 bg-black">
-	<div class="mx-auto w-full max-w-[1600px] px-4 py-5 text-xs text-zinc-500 lg:px-6">
-		<div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-			<div class="space-y-1.5">
-				<p>Powered by MLBB Public Data API</p>
-				<p>Data © Moonton (Mobile Legends) {{ current_year }}</p>
-				<p>Maintained by ridwaanhall / RoneAI</p>
-			</div>
+    <div class="mx-auto w-full max-w-[1600px] px-4 py-6 text-xs text-zinc-400 lg:px-6">
+        <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            
+            <!-- Left attribution -->
+            <div class="space-y-2">
+                <p><span class="font-semibold">Powered by</span> MLBB Public Data API</p>
+                <p>{{ current_year }} © Moonton (Mobile Legends)</p>
+                <p><span class="font-semibold">Maintained by</span> ridwaanhall / RoneAI</p>
+            </div>
 
-			<div class="flex items-center gap-2">
-				<a href="/api/openapi.json" class="border border-zinc-800 px-2 py-1 hover:border-zinc-500 hover:text-zinc-300">OpenAPI</a>
-				<a href="/api/redoc" class="border border-zinc-800 px-2 py-1 hover:border-zinc-500 hover:text-zinc-300">ReDoc</a>
-			</div>
-		</div>
-	</div>
+            <!-- Right resource links -->
+            <div class="flex items-center gap-2">
+                <a href="/api/openapi.json" class="border border-zinc-800 px-2 py-1 rounded hover:border-zinc-500 hover:text-zinc-300">OpenAPI</a>
+                <a href="/api/redoc" class="border border-zinc-800 px-2 py-1 rounded hover:border-zinc-500 hover:text-zinc-300">ReDoc</a>
+                <a href="https://github.com/ridwaanhall/api-mobilelegends" target="_blank" rel="noreferrer noopener"
+                   class="border border-zinc-800 px-2 py-1 rounded hover:border-zinc-500 hover:text-cyan-200">
+                    Repository
+                </a>
+            </div>
+
+        </div>
+    </div>
 </footer>

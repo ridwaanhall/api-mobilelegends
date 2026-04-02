@@ -333,10 +333,34 @@
 			signOutConfirm?.focus();
 		}
 
+		async function postLogout(auth) {
+			if (!auth || typeof auth.jwt !== "string") {
+				return;
+			}
+
+			try {
+				await fetch("/api/user/auth/logout", {
+					method: "POST",
+					headers: {
+						accept: "application/json",
+						Authorization: `Bearer ${auth.jwt}`,
+					},
+				});
+			} catch {
+				// Even if API logout fails, clear local session to prevent stale auth state.
+			}
+		}
+
 		signOutCancel?.addEventListener("click", closeSignOutModal);
-		signOutConfirm?.addEventListener("click", () => {
+		signOutConfirm?.addEventListener("click", async () => {
+			signOutConfirm.disabled = true;
+			signOutConfirm.textContent = "Signing Out...";
+			const auth = window.MLBBWebAuth.readAuth();
+			await postLogout(auth);
 			window.MLBBWebAuth.clearAuth();
 			closeSignOutModal();
+			signOutConfirm.textContent = "Sign Out";
+			signOutConfirm.disabled = false;
 		});
 
 		signOutModal?.addEventListener("click", (event) => {

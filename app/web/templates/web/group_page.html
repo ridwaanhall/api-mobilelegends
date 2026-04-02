@@ -153,6 +153,34 @@
         return lines.join("\n");
     }
 
+    function buildLanguageSnippets(method, url, headers, requestBody) {
+        const headerEntries = Object.entries(headers);
+        const hasBody = Boolean(requestBody);
+        const jsHeaders = JSON.stringify(headers, null, 2);
+        const pyHeaders = JSON.stringify(headers, null, 2);
+        const parsedBody = requestBody ? parseJson(requestBody) : null;
+        const pyJsonBody = parsedBody ? JSON.stringify(parsedBody, null, 2) : "None";
+        const goBody = requestBody || "";
+
+        const goHeaderLines = headerEntries
+            .map(([key, value]) => `req.Header.Set(${JSON.stringify(key)}, ${JSON.stringify(value)})`)
+            .join("\n");
+
+        const phpHeaders = headerEntries
+            .map(([key, value]) => `${key}: ${value}`)
+            .map((line) => `'${line.replaceAll("'", "\\'")}'`)
+            .join(",\n        ");
+
+        return {
+            curl: buildCurl(method, url, headers, requestBody),
+            javascript: `const response = await fetch(${JSON.stringify(url)}, {\n  method: ${JSON.stringify(method)},\n  headers: ${jsHeaders},${hasBody ? `\n  body: ${JSON.stringify(requestBody)}` : ""}\n});\n\nconst data = await response.json();\nconsole.log(data);`,
+            python: `import requests\n\nurl = ${JSON.stringify(url)}\nheaders = ${pyHeaders}\n${hasBody ? `payload = ${pyJsonBody}` : "payload = None"}\n\nresponse = requests.request(${JSON.stringify(method)}, url, headers=headers${hasBody ? ", json=payload" : ""})\nprint(response.json())`,
+            go: `package main\n\nimport (\n    "fmt"\n    "io"\n    "net/http"\n    "strings"\n)\n\nfunc main() {\n    client := &http.Client{}\n    ${hasBody ? `body := strings.NewReader(${JSON.stringify(goBody)})` : "body := strings.NewReader(\"\")"}\n    req, err := http.NewRequest(${JSON.stringify(method)}, ${JSON.stringify(url)}, body)\n    if err != nil {\n        panic(err)\n    }\n\n${goHeaderLines || "    // No headers required"}\n\n    res, err := client.Do(req)\n    if err != nil {\n        panic(err)\n    }\n    defer res.Body.Close()\n\n    raw, _ := io.ReadAll(res.Body)\n    fmt.Println(string(raw))\n}`,
+            node: `const axios = require("axios");\n\n(async () => {\n  const response = await axios({\n    method: ${JSON.stringify(method.toLowerCase())},\n    url: ${JSON.stringify(url)},\n    headers: ${jsHeaders},${hasBody ? `\n    data: ${JSON.stringify(parsedBody ?? requestBody, null, 2)}` : ""}\n  });\n\n  console.log(response.data);\n})();`,
+            php: `<?php\n$ch = curl_init();\n\ncurl_setopt_array($ch, [\n    CURLOPT_URL => ${JSON.stringify(url)},\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => ${JSON.stringify(method)},\n    CURLOPT_HTTPHEADER => [\n        ${phpHeaders}\n    ],${hasBody ? `\n    CURLOPT_POSTFIELDS => ${JSON.stringify(requestBody)},` : ""}\n]);\n\n$response = curl_exec($ch);\ncurl_close($ch);\n\necho $response;`
+        };
+    }
+
     function createPrimitiveNode(value) {
         const wrapper = document.createElement("div");
         wrapper.className = "space-y-2";
@@ -287,19 +315,40 @@
         return createPrimitiveNode(value);
     }
 
-    function setResponse(form, statusText, responseText, curlText, parsedResponse = null) {
+    function setActiveLanguageSnippet(form, languageKey, snippets) {
+        const wrapper = form.querySelector("[data-response-wrapper]");
+        const languageContent = form.querySelector("[data-language-content]");
+        if (!wrapper || !languageContent || !snippets) {
+            return;
+        }
+
+        const resolvedLanguage = snippets[languageKey] ? languageKey : "curl";
+        languageContent.textContent = snippets[resolvedLanguage] || "";
+        languageContent.dataset.activeLanguage = resolvedLanguage;
+
+        wrapper.querySelectorAll("[data-lang-tab]").forEach((button) => {
+            const active = button.dataset.langKey === resolvedLanguage;
+            button.classList.toggle("border-cyan-500", active);
+            button.classList.toggle("text-cyan-200", active);
+            button.classList.toggle("border-zinc-700", !active);
+            button.classList.toggle("text-zinc-300", !active);
+        });
+    }
+
+    function setResponse(form, statusText, responseText, snippets, parsedResponse = null) {
         const wrapper = form.querySelector("[data-response-wrapper]");
         const status = form.querySelector("[data-response-status]");
         const content = form.querySelector("[data-response-content]");
         const readable = form.querySelector("[data-response-readable]");
-        const curl = form.querySelector("[data-curl-content]");
-        if (!wrapper || !status || !content || !readable || !curl) {
+        const languageContent = form.querySelector("[data-language-content]");
+        if (!wrapper || !status || !content || !readable || !languageContent) {
             return;
         }
 
         status.textContent = statusText;
         content.textContent = responseText;
-        curl.textContent = curlText;
+        languageContent.__snippets = snippets;
+        setActiveLanguageSnippet(form, "curl", snippets);
 
         readable.innerHTML = "";
         if (parsedResponse) {
@@ -403,7 +452,7 @@
             }
 
             const targetName = button.dataset.copyTarget;
-            const selector = targetName === "curl" ? "[data-curl-content]" : "[data-response-content]";
+            const selector = targetName === "language" ? "[data-language-content]" : "[data-response-content]";
             const target = wrapper.querySelector(selector);
             if (!target) {
                 return;
@@ -418,9 +467,34 @@
         });
     }
 
+    function setupLanguageTabs() {
+        document.addEventListener("click", (event) => {
+            const button = event.target.closest("[data-lang-tab]");
+            if (!button) {
+                return;
+            }
+
+            const wrapper = button.closest("[data-response-wrapper]");
+            const form = button.closest("form");
+            const languageContent = wrapper?.querySelector("[data-language-content]");
+            if (!wrapper || !form || !languageContent) {
+                return;
+            }
+
+            const snippets = languageContent.__snippets;
+            if (!snippets || typeof snippets !== "object") {
+                return;
+            }
+
+            const languageKey = button.dataset.langKey || "curl";
+            setActiveLanguageSnippet(form, languageKey, snippets);
+        });
+    }
+
     getAuthApi()?.renderNavbarState?.();
     setupDescriptionToggles();
     setupCopyButtons();
+    setupLanguageTabs();
 
     document.querySelectorAll(".api-operation-form").forEach((formElement) => {
         const form = formElement;
@@ -478,7 +552,7 @@
                         form,
                         "JWT required",
                         "This endpoint requires login. Use /web/user/auth/login first; JWT is cached for 1 day.",
-                        ""
+                            { curl: "", javascript: "", python: "", go: "", node: "", php: "" }
                     );
                     return;
                 }
@@ -492,7 +566,7 @@
                 if (rawBody) {
                     const parsedBody = parseJson(rawBody);
                     if (parsedBody === null) {
-                        setResponse(form, "Invalid JSON", "Request body must be valid JSON.", "");
+                        setResponse(form, "Invalid JSON", "Request body must be valid JSON.", { curl: "", javascript: "", python: "", go: "", node: "", php: "" });
                         return;
                     }
                     requestBody = JSON.stringify(parsedBody);
@@ -501,7 +575,7 @@
             }
 
             try {
-                const curlText = buildCurl(method, url.toString(), headers, requestBody);
+                const snippets = buildLanguageSnippets(method, url.toString(), headers, requestBody);
                 const response = await fetch(url.toString(), {
                     method,
                     headers,
@@ -534,10 +608,10 @@
                     getAuthApi()?.clearAuth?.();
                 }
 
-                setResponse(form, `HTTP ${response.status}`, prettyResponse || "(empty response)", curlText, parsedResponse);
+                setResponse(form, `HTTP ${response.status}`, prettyResponse || "(empty response)", snippets, parsedResponse);
             } catch (error) {
                 const message = error instanceof Error ? error.message : "Request failed.";
-                setResponse(form, "Request Error", message, "");
+                setResponse(form, "Request Error", message, { curl: "", javascript: "", python: "", go: "", node: "", php: "" });
             }
         });
     });

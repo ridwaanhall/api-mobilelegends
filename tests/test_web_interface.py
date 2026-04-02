@@ -100,6 +100,19 @@ def test_user_privacy_page_renders_get_and_post_forms() -> None:
     assert "visibility" in response.text
 
 
+def test_role_and_lane_array_params_render_checkbox_cards() -> None:
+    response = client.get("/web/academy/heroes")
+
+    assert response.status_code == 200
+    assert 'data-param-kind="checkbox-group"' in response.text
+    assert 'data-param-choice="true"' in response.text
+    assert "tank" in response.text
+    assert "fighter" in response.text
+    assert "assassin" in response.text
+    assert "marksman" in response.text
+    assert "support" in response.text
+
+
 def test_user_privacy_post_without_body_does_not_render_body_editor() -> None:
     response = client.get("/web/user/privacy/settings")
 
@@ -141,6 +154,14 @@ def test_login_description_renders_markdown_tokens_as_readable_html() -> None:
     assert "<code" in privacy_response.text
 
 
+def test_parameter_description_renders_inline_code_and_constraints() -> None:
+    response = client.get("/web/academy/equipment")
+
+    assert response.status_code == 200
+    assert '<code class="border border-zinc-700 bg-zinc-950 px-1 py-0.5 font-mono text-[11px] text-zinc-200">en</code>' in response.text
+    assert "Minimum: 1." in response.text
+
+
 def test_equipment_description_preserves_nested_list_indentation() -> None:
     response = client.get("/web/academy/equipment")
 
@@ -154,17 +175,25 @@ def test_response_panel_has_readable_and_raw_views() -> None:
 
     assert response.status_code == 200
     assert "Languages" in response.text
-    assert "JavaScript" in response.text
-    assert "Python" in response.text
-    assert "Go" in response.text
-    assert "Node (Axios)" in response.text
-    assert "PHP" in response.text
+    assert "javascript" in response.text
+    assert "python" in response.text
+    assert "go" in response.text
+    assert "node (axios)" in response.text
+    assert "php" in response.text
+    assert "java" in response.text
+    assert "csharp" in response.text
     assert "data-response-readable" in response.text
     assert "data-response-content" in response.text
     assert "data-language-content" in response.text
     assert "data-copy-btn" in response.text
     assert "Copy Snippet" in response.text
     assert "Copy Response" in response.text
+
+    curl_index = response.text.find('data-lang-key="curl"')
+    python_index = response.text.find('data-lang-key="python"')
+    javascript_index = response.text.find('data-lang-key="javascript"')
+    assert -1 not in (curl_index, python_index, javascript_index)
+    assert curl_index < python_index < javascript_index
 
 
 def test_request_body_editor_uses_six_rows() -> None:

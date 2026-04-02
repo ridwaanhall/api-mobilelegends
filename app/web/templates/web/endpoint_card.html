@@ -1,4 +1,4 @@
-<article class="min-w-0 overflow-hidden border border-zinc-800 p-4 md:p-5" data-operation-id="{{ operation.operation_id }}">
+<article class="min-w-0 border border-zinc-800 p-4 md:p-5" data-operation-id="{{ operation.operation_id }}">
     {% set method = operation.method %}
     {% if method == 'GET' %}
         {% set method_class = 'border-emerald-500/60 bg-emerald-950/30 text-emerald-300' %}
@@ -17,7 +17,7 @@
     <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
         <div>
             <h3 class="text-lg font-semibold text-zinc-100">
-                <span class="mr-1 inline-flex border px-1.5 py-0.5 text-[10px] align-middle uppercase tracking-[0.16em] {{ method_class }}">{{ operation.method }}</span>
+                <span class="inline-flex border px-1 py-0.5 text-[10px] align-middle uppercase tracking-[0.16em] {{ method_class }}">{{ operation.method }}</span>
                 {{ operation.summary }}
             </h3>
             <p class="mt-1 text-xs text-zinc-500">{{ operation.web_path }}</p>
@@ -29,7 +29,7 @@
 
     {% if operation.description_html %}
         <div class="mb-4" data-desc-wrapper>
-            <div class="relative min-w-0 break-words text-sm leading-6 text-zinc-300 max-h-[7.5rem] overflow-hidden" data-desc-content>
+            <div class="relative min-w-0 break-words text-sm leading-6 text-zinc-300 max-h-[7.5rem]" data-desc-content>
                 {{ operation.description_html | safe }}
                 <div class="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-black to-transparent hidden" data-desc-fade></div>
             </div>
@@ -158,13 +158,13 @@
         {% endif %}
 
         <div class="flex flex-wrap items-center gap-2">
-            <button type="submit" class="cursor-pointer border border-cyan-500/60 bg-cyan-950/30 px-4 py-2 text-sm font-medium text-cyan-100 hover:border-cyan-300 hover:bg-cyan-900/40">
+            <button type="submit" class="cursor-pointer border border-cyan-500/60 bg-cyan-950/30 px-2 py-1 text-sm font-medium text-cyan-100 hover:border-cyan-300 hover:bg-cyan-900/40">
                 Execute
             </button>
             <span class="text-xs text-zinc-500">{{ operation.method }} {{ operation.api_path }}</span>
         </div>
 
-        <div class="hidden min-w-0 overflow-hidden border border-zinc-800 p-3 text-xs text-zinc-300" data-response-wrapper>
+        <div class="hidden min-w-0 border border-zinc-800 p-3 text-xs text-zinc-300" data-response-wrapper>
             <p class="mb-2 text-[11px] uppercase tracking-[0.14em] text-zinc-400" data-response-status></p>
 
             <div class="space-y-3">

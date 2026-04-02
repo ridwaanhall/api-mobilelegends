@@ -134,6 +134,87 @@ def _inline_enum_defaults_in_parameters(schema: dict[str, object]) -> None:
                 parameter["schema"] = inlined_schema
 
 
+def _resolve_schema_ref(
+    schema: dict[str, object],
+    component_schemas: dict[str, object],
+) -> dict[str, object]:
+    ref = schema.get("$ref")
+    if not isinstance(ref, str):
+        return schema
+
+    prefix = "#/components/schemas/"
+    if not ref.startswith(prefix):
+        return schema
+
+    component_name = ref[len(prefix):]
+    target = component_schemas.get(component_name, {})
+    if isinstance(target, dict):
+        return target
+    return schema
+
+
+def _order_example_by_schema(
+    example_data: object,
+    schema: dict[str, object],
+    component_schemas: dict[str, object],
+) -> object:
+    resolved = _resolve_schema_ref(schema, component_schemas)
+
+    if isinstance(example_data, dict):
+        properties = resolved.get("properties", {})
+        if isinstance(properties, dict) and properties:
+            ordered: dict[str, object] = {}
+
+            for key, child_schema in properties.items():
+                if key not in example_data:
+                    continue
+                child = child_schema if isinstance(child_schema, dict) else {}
+                ordered[key] = _order_example_by_schema(example_data[key], child, component_schemas)
+
+            for key, value in example_data.items():
+                if key in ordered:
+                    continue
+                ordered[key] = value
+
+            return ordered
+
+        return {
+            key: _order_example_by_schema(value, {}, component_schemas)
+            for key, value in example_data.items()
+        }
+
+    if isinstance(example_data, list):
+        item_schema = resolved.get("items", {})
+        item_schema_dict = item_schema if isinstance(item_schema, dict) else {}
+        return [
+            _order_example_by_schema(item, item_schema_dict, component_schemas)
+            for item in example_data
+        ]
+
+    return example_data
+
+
+def _normalize_component_schema_examples(schema: dict[str, object]) -> None:
+    components = schema.get("components", {})
+    if not isinstance(components, dict):
+        return
+
+    component_schemas = components.get("schemas", {})
+    if not isinstance(component_schemas, dict):
+        return
+
+    for component_schema in component_schemas.values():
+        if not isinstance(component_schema, dict):
+            continue
+
+        if "example" in component_schema:
+            component_schema["example"] = _order_example_by_schema(
+                component_schema["example"],
+                component_schema,
+                component_schemas,
+            )
+
+
 def custom_openapi() -> dict[str, object]:
     if app.openapi_schema is not None:
         return app.openapi_schema
@@ -154,6 +235,7 @@ def custom_openapi() -> dict[str, object]:
     )
 
     _inline_enum_defaults_in_parameters(openapi_schema)
+    _normalize_component_schema_examples(openapi_schema)
     app.openapi_schema = openapi_schema
     return app.openapi_schema
 

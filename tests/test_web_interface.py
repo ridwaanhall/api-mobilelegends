@@ -153,11 +153,17 @@ def test_response_panel_has_readable_and_raw_views() -> None:
     response = client.get("/web/addon/win-rate-calculator")
 
     assert response.status_code == 200
+    assert "Languages" in response.text
+    assert "JavaScript" in response.text
+    assert "Python" in response.text
+    assert "Go" in response.text
+    assert "Node (Axios)" in response.text
+    assert "PHP" in response.text
     assert "data-response-readable" in response.text
     assert "data-response-content" in response.text
-    assert "data-curl-content" in response.text
+    assert "data-language-content" in response.text
     assert "data-copy-btn" in response.text
-    assert "Copy cURL" in response.text
+    assert "Copy Snippet" in response.text
     assert "Copy Response" in response.text
 
 
@@ -183,8 +189,10 @@ def test_web_script_contains_readable_table_and_image_render_helpers() -> None:
     assert "looksLikeImageUrl" in response.text
     assert "createObjectTable" in response.text
     assert "buildCurl" in response.text
+    assert "buildLanguageSnippets" in response.text
     assert "setupDescriptionToggles" in response.text
     assert "setupCopyButtons" in response.text
+    assert "setupLanguageTabs" in response.text
 
 
 def test_footer_contains_repository_link() -> None:
@@ -214,3 +222,4 @@ def test_sign_out_requires_confirmation_prompt() -> None:
 
     assert response.status_code == 200
     assert "Are you sure you want to sign out?" in response.text
+    assert "/api/user/auth/logout" in response.text

@@ -158,6 +158,14 @@ def test_request_body_editor_uses_six_rows() -> None:
     assert 'rows="5"' in response.text
 
 
+def test_login_request_body_example_follows_schema_order() -> None:
+    response = client.get("/web/user/auth/login")
+
+    assert response.status_code == 200
+    expected = "{\n  &#34;role_id&#34;: 1234567890,\n  &#34;zone_id&#34;: 1234,\n  &#34;vc&#34;: 1234\n}"
+    assert expected in response.text
+
+
 def test_web_script_contains_readable_table_and_image_render_helpers() -> None:
     response = client.get("/web/user/info")
 

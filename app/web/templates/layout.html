@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+	<title>{{ title if title else "MLBB Web Interface" }}</title>
+	<meta name="description" content="{{ seo_description if seo_description else 'Interactive web interface for MLBB Public Data API with docs, endpoint forms, readable responses, and cURL output.' }}" />
+	<meta name="keywords" content="{{ seo_keywords if seo_keywords else 'mlbb api, mobile legends api, fastapi, analytics, hero data, openapi, web interface' }}" />
+	<meta name="robots" content="index, follow" />
+	<meta name="theme-color" content="#000000" />
+	<meta property="og:type" content="website" />
+	<meta property="og:title" content="{{ title if title else 'MLBB Web Interface' }}" />
+	<meta property="og:description" content="{{ seo_description if seo_description else 'Interactive web interface for MLBB Public Data API.' }}" />
+	<meta property="og:url" content="{{ request.url }}" />
+	<meta property="og:image" content="https://mlbb-card.rone.dev/static/favicon.ico" />
+	<meta name="twitter:card" content="summary" />
+	<meta name="twitter:title" content="{{ title if title else 'MLBB Web Interface' }}" />
+	<meta name="twitter:description" content="{{ seo_description if seo_description else 'Interactive web interface for MLBB Public Data API.' }}" />
+	<link rel="canonical" href="{{ request.url }}" />
+	<link rel="icon" type="image/x-icon" href="https://mlbb-card.rone.dev/static/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@100..900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+	<style>
+		:root {
+			--scroll-track: rgba(255, 255, 255, 0.04);
+			--scroll-thumb: linear-gradient(180deg, #67e8f9 0%, #14b8a6 100%);
+			--scroll-thumb-hover: linear-gradient(180deg, #a5f3fc 0%, #2dd4bf 100%);
+		}
+
+		html,
+		body {
+			overflow-x: hidden;
+			scrollbar-color: #14b8a6 rgba(255, 255, 255, 0.04);
+			scrollbar-width: auto;
+			font-family: "Onest", sans-serif;
+			text-rendering: optimizeLegibility;
+			-webkit-font-smoothing: antialiased;
+			background: #000;
+		}
+
+		code,
+		pre,
+		.font-mono {
+			font-family: "Space Mono", monospace;
+		}
+
+		* {
+			scrollbar-gutter: stable;
+		}
+
+		*::-webkit-scrollbar {
+			width: 2px;
+			height: 2px;
+		}
+
+		*::-webkit-scrollbar-track {
+			background: var(--scroll-track);
+			border-radius: 999px;
+		}
+
+		*::-webkit-scrollbar-thumb {
+			background: var(--scroll-thumb);
+			border-radius: 999px;
+		}
+
+		*::-webkit-scrollbar-thumb:hover {
+			background: var(--scroll-thumb-hover);
+		}
+
+		*::-webkit-scrollbar-corner {
+			background: transparent;
+		}
+
+		.custom-scroll {
+			overflow: auto;
+		}
+
+		.custom-scroll::-webkit-scrollbar-thumb {
+			background: linear-gradient(180deg, #5eead4 0%, #0d9488 100%);
+		}
+
+		@media (max-width: 768px) {
+			*::-webkit-scrollbar {
+				width: 2px;
+				height: 2px;
+			}
+
+			* {
+				scrollbar-gutter: auto;
+			}
+		}
+
+        .site-ambient-layer {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background: radial-gradient(50rem 30rem at 8% -10%, rgba(34, 211, 238, 0.15), transparent 72%),
+                radial-gradient(44rem 26rem at 100% 0%, rgba(20, 184, 166, 0.12), transparent 70%),
+                radial-gradient(36rem 22rem at 70% 100%, rgba(139, 92, 246, 0.08), transparent 72%),
+                radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.04) 1px, transparent 1.5px),
+                radial-gradient(circle at 72% 62%, rgba(255, 255, 255, 0.03) 1px, transparent 1.5px);
+            background-size:
+                auto,
+                auto,
+                auto,
+                26px 26px,
+                34px 34px;
+        }
+
+        .site-ambient-vignette {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background: radial-gradient(120% 90% at 50% 50%, transparent 44%, rgba(0, 0, 0, 0.55) 100%);
+        }
+	</style>
+</head>
+<body class="flex min-h-screen flex-col overflow-x-hidden bg-black text-zinc-100">
+	<div class="site-ambient-layer" aria-hidden="true"></div>
+	<div class="site-ambient-vignette" aria-hidden="true"></div>
+
+	<div class="relative z-10 flex min-h-screen flex-col">
+	{% include "navbar.html" %}
+
+	<div class="mx-auto flex w-full max-w-[1600px] min-w-0 flex-1 gap-4 px-4 pb-8 pt-6 lg:px-6">
+		{% if request.url.path.startswith('/web') %}
+			{% include "sidebar.html" %}
+		{% endif %}
+
+		<main class="w-full min-w-0">
+			{% block content %}{% endblock %}
+		</main>
+	</div>
+
+	{% include "footer.html" %}
+	<div id="signout-confirm-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 px-4" role="dialog" aria-modal="true" aria-labelledby="signout-confirm-title">
+		<div class="w-full max-w-md border border-zinc-700 bg-black p-5 text-zinc-200 shadow-[0_0_0_1px_rgba(255,255,255,0.04)]">
+			<p class="text-[11px] uppercase tracking-[0.16em] text-zinc-500">Account Session</p>
+			<h2 id="signout-confirm-title" class="mt-2 text-lg font-semibold text-zinc-100">Confirm Sign Out</h2>
+			<p class="mt-3 text-sm leading-6 text-zinc-400">Are you sure you want to sign out?</p>
+			<div class="mt-5 flex flex-wrap justify-end gap-2">
+				<button id="signout-cancel" type="button" class="border border-zinc-700 px-3 py-1.5 text-xs text-zinc-300 hover:border-zinc-500 hover:text-zinc-100">
+					Cancel
+				</button>
+				<button id="signout-confirm" type="button" class="border border-rose-700 px-3 py-1.5 text-xs text-rose-300 hover:border-rose-500 hover:text-rose-200">
+					Sign Out
+				</button>
+			</div>
+		</div>
+	</div>
+	<script>
+	(() => {
+		const AUTH_KEY = "mlbb_user_auth";
+		const USER_INFO_KEY = "mlbb_user_info";
+		const AUTH_TTL_MS = 24 * 60 * 60 * 1000;
+
+		function parseJson(value) {
+			try {
+				return JSON.parse(value);
+			} catch {
+				return null;
+			}
+		}
+
+		function readAuth() {
+			const raw = localStorage.getItem(AUTH_KEY);
+			if (!raw) {
+				return null;
+			}
+
+			const parsed = parseJson(raw);
+			if (!parsed || typeof parsed !== "object") {
+				localStorage.removeItem(AUTH_KEY);
+				localStorage.removeItem(USER_INFO_KEY);
+				return null;
+			}
+
+			if (typeof parsed.jwt !== "string" || typeof parsed.expiresAt !== "number") {
+				localStorage.removeItem(AUTH_KEY);
+				localStorage.removeItem(USER_INFO_KEY);
+				return null;
+			}
+
+			if (Date.now() > parsed.expiresAt) {
+				localStorage.removeItem(AUTH_KEY);
+				localStorage.removeItem(USER_INFO_KEY);
+				return null;
+			}
+
+			return parsed;
+		}
+
+		function readUserInfo(auth) {
+			if (!auth) {
+				return null;
+			}
+
+			const raw = localStorage.getItem(USER_INFO_KEY);
+			if (!raw) {
+				return null;
+			}
+
+			const parsed = parseJson(raw);
+			if (!parsed || typeof parsed !== "object") {
+				localStorage.removeItem(USER_INFO_KEY);
+				return null;
+			}
+
+			if (parsed.expiresAt !== auth.expiresAt || !parsed.data || typeof parsed.data !== "object") {
+				localStorage.removeItem(USER_INFO_KEY);
+				return null;
+			}
+
+			return parsed.data;
+		}
+
+		function renderNavbarState() {
+			const badge = document.getElementById("jwt-status");
+			const authAction = document.getElementById("jwt-auth-action");
+			const userBadge = document.getElementById("user-badge");
+			const userAvatar = document.getElementById("user-avatar");
+			const userName = document.getElementById("user-name");
+			if (!badge) {
+				return;
+			}
+
+			const auth = readAuth();
+			if (!auth) {
+				badge.textContent = "Not Signed In";
+				if (authAction) {
+					authAction.textContent = "Sign In";
+				}
+				if (userBadge) {
+					userBadge.classList.add("hidden");
+					userBadge.classList.remove("inline-flex");
+				}
+				return;
+			}
+
+			const remaining = Math.max(0, Math.floor((auth.expiresAt - Date.now()) / (60 * 60 * 1000)));
+			badge.textContent = `Signed In (${remaining}h)`;
+			if (authAction) {
+				authAction.textContent = "Sign Out";
+			}
+
+			const userInfo = readUserInfo(auth);
+			if (!userInfo || !userBadge || !userAvatar || !userName) {
+				if (userBadge) {
+					userBadge.classList.add("hidden");
+					userBadge.classList.remove("inline-flex");
+				}
+				return;
+			}
+
+			const avatar = typeof userInfo.avatar === "string" ? userInfo.avatar : "";
+			const name = typeof userInfo.name === "string" && userInfo.name.trim() ? userInfo.name.trim() : "Player";
+
+			userAvatar.src = avatar || "https://placehold.co/48x48/000000/FFFFFF?text=U";
+			userName.textContent = name;
+			userBadge.classList.remove("hidden");
+			userBadge.classList.add("inline-flex");
+		}
+
+		function clearAuth() {
+			localStorage.removeItem(AUTH_KEY);
+			localStorage.removeItem(USER_INFO_KEY);
+			renderNavbarState();
+		}
+
+		function writeAuth(jwt) {
+			if (typeof jwt !== "string" || !jwt.trim()) {
+				return;
+			}
+
+			localStorage.removeItem(USER_INFO_KEY);
+			localStorage.setItem(
+				AUTH_KEY,
+				JSON.stringify({
+					jwt,
+					expiresAt: Date.now() + AUTH_TTL_MS,
+				})
+			);
+			renderNavbarState();
+		}
+
+		function writeUserInfo(userInfo, expiresAt) {
+			if (!userInfo || typeof userInfo !== "object" || typeof expiresAt !== "number") {
+				return;
+			}
+
+			localStorage.setItem(
+				USER_INFO_KEY,
+				JSON.stringify({
+					data: userInfo,
+					expiresAt,
+				})
+			);
+			renderNavbarState();
+		}
+
+		window.MLBBWebAuth = {
+			readAuth,
+			readUserInfo,
+			writeAuth,
+			writeUserInfo,
+			clearAuth,
+			renderNavbarState,
+		};
+
+		const signOutModal = document.getElementById("signout-confirm-modal");
+		const signOutConfirm = document.getElementById("signout-confirm");
+		const signOutCancel = document.getElementById("signout-cancel");
+
+		function closeSignOutModal() {
+			if (!signOutModal) {
+				return;
+			}
+			signOutModal.classList.add("hidden");
+			signOutModal.classList.remove("flex");
+		}
+
+		function openSignOutModal() {
+			if (!signOutModal) {
+				window.MLBBWebAuth.clearAuth();
+				return;
+			}
+			signOutModal.classList.remove("hidden");
+			signOutModal.classList.add("flex");
+			signOutConfirm?.focus();
+		}
+
+		async function postLogout(auth) {
+			if (!auth || typeof auth.jwt !== "string") {
+				return;
+			}
+
+			try {
+				await fetch("/api/user/auth/logout", {
+					method: "POST",
+					headers: {
+						accept: "application/json",
+						Authorization: `Bearer ${auth.jwt}`,
+					},
+				});
+			} catch {
+				// Even if API logout fails, clear local session to prevent stale auth state.
+			}
+		}
+
+		signOutCancel?.addEventListener("click", closeSignOutModal);
+		signOutConfirm?.addEventListener("click", async () => {
+			signOutConfirm.disabled = true;
+			signOutConfirm.textContent = "Signing Out...";
+			const auth = window.MLBBWebAuth.readAuth();
+			await postLogout(auth);
+			window.MLBBWebAuth.clearAuth();
+			closeSignOutModal();
+			signOutConfirm.textContent = "Sign Out";
+			signOutConfirm.disabled = false;
+		});
+
+		signOutModal?.addEventListener("click", (event) => {
+			if (event.target === signOutModal) {
+				closeSignOutModal();
+			}
+		});
+
+		document.addEventListener("keydown", (event) => {
+			if (event.key !== "Escape") {
+				return;
+			}
+			if (!signOutModal || signOutModal.classList.contains("hidden")) {
+				return;
+			}
+			closeSignOutModal();
+		});
+
+		document.getElementById("jwt-auth-action")?.addEventListener("click", () => {
+			const auth = window.MLBBWebAuth.readAuth();
+			if (auth) {
+				openSignOutModal();
+				return;
+			}
+			window.location.href = "/web/user/auth/send-vc";
+		});
+		window.MLBBWebAuth.renderNavbarState();
+	})();
+	</script>
+	{% block scripts %}{% endblock %}
+	</div>
+</body>
+</html>

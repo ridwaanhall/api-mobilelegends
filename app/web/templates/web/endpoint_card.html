@@ -1,0 +1,175 @@
+<article class="min-w-0 overflow-hidden border border-zinc-800 p-4 md:p-5" data-operation-id="{{ operation.operation_id }}">
+    {% set method = operation.method %}
+    {% if method == 'GET' %}
+        {% set method_class = 'border-emerald-500/60 bg-emerald-950/30 text-emerald-300' %}
+    {% elif method == 'POST' %}
+        {% set method_class = 'border-sky-500/60 bg-sky-950/30 text-sky-300' %}
+    {% elif method == 'PUT' %}
+        {% set method_class = 'border-amber-500/60 bg-amber-950/30 text-amber-300' %}
+    {% elif method == 'PATCH' %}
+        {% set method_class = 'border-cyan-500/60 bg-cyan-950/30 text-cyan-300' %}
+    {% elif method == 'DELETE' %}
+        {% set method_class = 'border-rose-500/60 bg-rose-950/30 text-rose-300' %}
+    {% else %}
+        {% set method_class = 'border-zinc-500/60 bg-zinc-900/50 text-zinc-300' %}
+    {% endif %}
+
+    <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+        <div>
+            <h3 class="text-lg font-semibold text-zinc-100">
+                <span class="mr-1 inline-flex border px-1.5 py-0.5 text-[10px] align-middle uppercase tracking-[0.16em] {{ method_class }}">{{ operation.method }}</span>
+                {{ operation.summary }}
+            </h3>
+            <p class="mt-1 text-xs text-zinc-500">{{ operation.web_path }}</p>
+        </div>
+        <a href="{{ operation.web_path }}" class="border border-zinc-700 px-2 py-1 text-xs text-zinc-300 hover:border-zinc-400 hover:text-zinc-100">
+            Open Only This
+        </a>
+    </div>
+
+    {% if operation.description_html %}
+        <div class="mb-4" data-desc-wrapper>
+            <div class="relative min-w-0 break-words text-sm leading-6 text-zinc-300 max-h-[7.5rem] overflow-hidden" data-desc-content>
+                {{ operation.description_html | safe }}
+                <div class="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-black to-transparent hidden" data-desc-fade></div>
+            </div>
+            <button type="button" class="mt-2 hidden border border-zinc-700 px-2 py-1 text-[11px] text-zinc-300 hover:border-zinc-500 hover:text-zinc-100" data-desc-toggle>
+                Show more
+            </button>
+        </div>
+    {% endif %}
+
+    <form
+        class="api-operation-form space-y-4"
+        data-method="{{ operation.method }}"
+        data-api-path="{{ operation.api_path }}"
+        data-requires-auth="{{ 'true' if operation.requires_auth else 'false' }}"
+    >
+        {% if operation.parameters %}
+            <div class="grid gap-4 md:grid-cols-2">
+                {% for parameter in operation.parameters %}
+                    <label class="block border border-zinc-800 p-3 text-xs text-zinc-300">
+                        <div class="mb-2 flex items-center justify-between gap-2">
+                            <span class="font-semibold text-zinc-200">{{ parameter.name }}</span>
+                            <span class="text-[10px] uppercase tracking-[0.14em] text-zinc-500">{{ parameter.location }}</span>
+                        </div>
+
+                        {% if parameter.enum_values and parameter.is_array %}
+                            <select
+                                class="w-full border border-zinc-700 bg-black px-3 py-2 text-sm text-zinc-100 outline-none"
+                                data-param-in="{{ parameter.location }}"
+                                data-param-name="{{ parameter.name }}"
+                                data-array="true"
+                                multiple
+                                {% if parameter.required %}required{% endif %}
+                            >
+                                {% for option in parameter.enum_values %}
+                                    <option
+                                        value="{{ option }}"
+                                        {% if parameter.default and option in parameter.default %}selected{% endif %}
+                                    >
+                                        {{ option }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        {% elif parameter.enum_values %}
+                            <select
+                                class="w-full border border-zinc-700 bg-black px-3 py-2 text-sm text-zinc-100 outline-none"
+                                data-param-in="{{ parameter.location }}"
+                                data-param-name="{{ parameter.name }}"
+                                data-array="{{ 'true' if parameter.is_array else 'false' }}"
+                                {% if parameter.required %}required{% endif %}
+                            >
+                                {% if not parameter.required %}
+                                    <option value="">--</option>
+                                {% endif %}
+                                {% for option in parameter.enum_values %}
+                                    <option value="{{ option }}" {% if parameter.default == option %}selected{% endif %}>{{ option }}</option>
+                                {% endfor %}
+                            </select>
+                        {% else %}
+                            <input
+                                class="w-full border border-zinc-700 bg-black px-3 py-2 text-sm text-zinc-100 outline-none"
+                                type="{{ parameter.input_type }}"
+                                value="{{ parameter.default_display }}"
+                                placeholder="{{ 'comma separated' if parameter.is_array else 'value' }}"
+                                data-param-in="{{ parameter.location }}"
+                                data-param-name="{{ parameter.name }}"
+                                data-array="{{ 'true' if parameter.is_array else 'false' }}"
+                                {% if parameter.required %}required{% endif %}
+                            />
+                        {% endif %}
+
+                        <p class="mt-2 text-[11px] text-zinc-500">
+                            {{ parameter.description }}
+                            {% if parameter.required %}
+                                <span class="text-zinc-300">Required.</span>
+                            {% endif %}
+                        </p>
+                    </label>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if operation.request_body %}
+            <label class="block border border-zinc-800 p-3 text-xs text-zinc-300">
+                <div class="mb-2 flex items-center justify-between gap-2">
+                    <span class="font-semibold text-zinc-200">Request Body</span>
+                    <span class="text-[10px] uppercase tracking-[0.14em] text-zinc-500">json</span>
+                </div>
+                <textarea
+                    class="min-h-20 w-full border border-zinc-700 bg-black px-3 py-2 font-mono text-xs text-zinc-100 outline-none"
+                    rows="5"
+                    data-request-body="true"
+                    {% if operation.request_body.required %}required{% endif %}
+                >{{ operation.request_body.example_json }}</textarea>
+            </label>
+        {% endif %}
+
+        <div class="flex flex-wrap items-center gap-2">
+            <button type="submit" class="border border-zinc-600 px-4 py-2 text-sm font-medium text-zinc-100 hover:border-zinc-200">
+                Execute
+            </button>
+            <span class="text-xs text-zinc-500">{{ operation.method }} {{ operation.api_path }}</span>
+        </div>
+
+        <div class="hidden min-w-0 overflow-hidden border border-zinc-800 p-3 text-xs text-zinc-300" data-response-wrapper>
+            <p class="mb-2 text-[11px] uppercase tracking-[0.14em] text-zinc-400" data-response-status></p>
+
+            <div class="space-y-3">
+                <section class="border border-zinc-900 bg-black p-3">
+                    <div class="mb-2 flex flex-wrap items-center justify-between gap-2">
+                        <p class="text-[11px] uppercase tracking-[0.14em] text-zinc-500">Languages</p>
+                        <button type="button" class="border border-zinc-700 px-2 py-1 text-[10px] uppercase tracking-[0.12em] text-zinc-300 hover:border-zinc-500 hover:text-zinc-100" data-copy-btn data-copy-target="language">
+                            Copy Snippet
+                        </button>
+                    </div>
+                    <div class="mb-2 flex flex-wrap gap-2" data-languages-wrapper>
+                        <button type="button" class="border border-zinc-700 px-2 py-1 text-[10px] uppercase tracking-[0.12em] text-zinc-300 hover:border-zinc-500 hover:text-zinc-100" data-lang-tab data-lang-key="curl">cURL</button>
+                        <button type="button" class="border border-zinc-700 px-2 py-1 text-[10px] uppercase tracking-[0.12em] text-zinc-300 hover:border-zinc-500 hover:text-zinc-100" data-lang-tab data-lang-key="javascript">JavaScript</button>
+                        <button type="button" class="border border-zinc-700 px-2 py-1 text-[10px] uppercase tracking-[0.12em] text-zinc-300 hover:border-zinc-500 hover:text-zinc-100" data-lang-tab data-lang-key="python">Python</button>
+                        <button type="button" class="border border-zinc-700 px-2 py-1 text-[10px] uppercase tracking-[0.12em] text-zinc-300 hover:border-zinc-500 hover:text-zinc-100" data-lang-tab data-lang-key="go">Go</button>
+                        <button type="button" class="border border-zinc-700 px-2 py-1 text-[10px] uppercase tracking-[0.12em] text-zinc-300 hover:border-zinc-500 hover:text-zinc-100" data-lang-tab data-lang-key="node">Node (Axios)</button>
+                        <button type="button" class="border border-zinc-700 px-2 py-1 text-[10px] uppercase tracking-[0.12em] text-zinc-300 hover:border-zinc-500 hover:text-zinc-100" data-lang-tab data-lang-key="php">PHP</button>
+                    </div>
+                    <pre class="custom-scroll max-h-56 w-full max-w-full overflow-auto text-xs text-zinc-200" data-language-content></pre>
+                </section>
+
+                <section class="border border-zinc-900 bg-black p-3">
+                    <p class="mb-2 text-[11px] uppercase tracking-[0.14em] text-zinc-500">Readable Response</p>
+                    <div class="custom-scroll max-h-[34rem] min-w-0 overflow-auto" data-response-readable></div>
+                </section>
+
+                <section class="border border-zinc-900 bg-black p-3">
+                    <div class="mb-2 flex items-center justify-between gap-2">
+                        <p class="text-[11px] uppercase tracking-[0.14em] text-zinc-500">Raw JSON</p>
+                        <button type="button" class="border border-zinc-700 px-2 py-1 text-[10px] uppercase tracking-[0.12em] text-zinc-300 hover:border-zinc-500 hover:text-zinc-100" data-copy-btn data-copy-target="response">
+                            Copy Response
+                        </button>
+                    </div>
+                    <pre class="custom-scroll max-h-72 w-full max-w-full overflow-auto text-xs text-zinc-200" data-response-content></pre>
+                </section>
+            </div>
+        </div>
+    </form>
+</article>

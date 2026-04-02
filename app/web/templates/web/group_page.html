@@ -1,0 +1,620 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<section class="min-w-0 space-y-4">
+    <div class="border border-zinc-800 p-5 md:p-6">
+        <p class="text-xs uppercase tracking-[0.22em] text-zinc-500">Web Playground</p>
+        <h1 class="mt-2 text-2xl font-semibold tracking-tight text-zinc-100 md:text-4xl">{{ title }}</h1>
+        <p class="mt-2 text-sm leading-7 text-zinc-400">{{ subtitle }}</p>
+        <p class="mt-3 text-xs text-zinc-500">
+            Each card below maps directly to an API endpoint. Query, path, and request body fields are generated from OpenAPI.
+        </p>
+    </div>
+
+    {% if not operations %}
+        <div class="border border-zinc-800 p-6 text-sm text-zinc-400">
+            No endpoint metadata found for this group.
+        </div>
+    {% else %}
+        <div class="space-y-4">
+            {% for operation in operations %}
+                {% include "web/endpoint_card.html" %}
+            {% endfor %}
+        </div>
+    {% endif %}
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(() => {
+    function getAuthApi() {
+        return window.MLBBWebAuth || null;
+    }
+
+    function parseJson(text) {
+        try {
+            return JSON.parse(text);
+        } catch {
+            return null;
+        }
+    }
+
+    function hasCoreUserInfo(userInfo) {
+        if (!userInfo || typeof userInfo !== "object") {
+            return false;
+        }
+
+        const avatar = typeof userInfo.avatar === "string" ? userInfo.avatar.trim() : "";
+        const name = typeof userInfo.name === "string" ? userInfo.name.trim() : "";
+        return Boolean(avatar && name);
+    }
+
+    async function hydrateUserInfoIfMissing() {
+        const authApi = getAuthApi();
+        if (!authApi) {
+            return;
+        }
+
+        const auth = authApi.readAuth?.();
+        if (!auth || typeof auth.jwt !== "string") {
+            return;
+        }
+
+        const cachedInfo = authApi.readUserInfo?.(auth);
+        if (hasCoreUserInfo(cachedInfo)) {
+            return;
+        }
+
+        try {
+            const response = await fetch("/api/user/info", {
+                method: "GET",
+                headers: {
+                    accept: "application/json",
+                    Authorization: `Bearer ${auth.jwt}`,
+                },
+            });
+
+            if (!response.ok) {
+                return;
+            }
+
+            const rawText = await response.text();
+            const parsed = parseJson(rawText);
+            if (parsed?.data && hasCoreUserInfo(parsed.data)) {
+                authApi.writeUserInfo?.(parsed.data, auth.expiresAt);
+            }
+        } catch {
+            // Skip silent background hydration failures.
+        }
+    }
+
+    function getValuesFromInput(input) {
+        if (input.tagName === "SELECT") {
+            if (input.multiple) {
+                return Array.from(input.selectedOptions).map((option) => option.value).filter(Boolean);
+            }
+            return input.value ? [input.value] : [];
+        }
+
+        const rawValue = input.value.trim();
+        if (!rawValue) {
+            return [];
+        }
+
+        if (input.dataset.array === "true") {
+            return rawValue
+                .split(",")
+                .map((part) => part.trim())
+                .filter(Boolean);
+        }
+
+        return [rawValue];
+    }
+
+    function escapeHtml(value) {
+        return String(value)
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#39;");
+    }
+
+    function looksLikeUrl(value) {
+        return typeof value === "string" && /^https?:\/\//i.test(value.trim());
+    }
+
+    function looksLikeImageUrl(value) {
+        if (!looksLikeUrl(value)) {
+            return false;
+        }
+        return /\.(png|jpe?g|gif|webp|svg|bmp|avif)(\?.*)?$/i.test(value.trim());
+    }
+
+    function shellQuote(value) {
+        return `'${String(value).replaceAll("'", "'\\''")}'`;
+    }
+
+    function buildCurl(method, url, headers, requestBody) {
+        const lines = [`curl -X ${shellQuote(method)} \\`, `  ${shellQuote(url)} \\`];
+
+        Object.entries(headers).forEach(([key, value]) => {
+            lines.push(`  -H ${shellQuote(`${key}: ${value}`)} \\`);
+        });
+
+        if (requestBody) {
+            lines.push(`  -d ${shellQuote(requestBody)}`);
+        } else {
+            const last = lines[lines.length - 1];
+            lines[lines.length - 1] = last.replace(/ \\\\$/, "");
+        }
+
+        return lines.join("\n");
+    }
+
+    function buildLanguageSnippets(method, url, headers, requestBody) {
+        const headerEntries = Object.entries(headers);
+        const hasBody = Boolean(requestBody);
+        const jsHeaders = JSON.stringify(headers, null, 2);
+        const pyHeaders = JSON.stringify(headers, null, 2);
+        const parsedBody = requestBody ? parseJson(requestBody) : null;
+        const pyJsonBody = parsedBody ? JSON.stringify(parsedBody, null, 2) : "None";
+        const goBody = requestBody || "";
+
+        const goHeaderLines = headerEntries
+            .map(([key, value]) => `req.Header.Set(${JSON.stringify(key)}, ${JSON.stringify(value)})`)
+            .join("\n");
+
+        const phpHeaders = headerEntries
+            .map(([key, value]) => `${key}: ${value}`)
+            .map((line) => `'${line.replaceAll("'", "\\'")}'`)
+            .join(",\n        ");
+
+        return {
+            curl: buildCurl(method, url, headers, requestBody),
+            javascript: `const response = await fetch(${JSON.stringify(url)}, {\n  method: ${JSON.stringify(method)},\n  headers: ${jsHeaders},${hasBody ? `\n  body: ${JSON.stringify(requestBody)}` : ""}\n});\n\nconst data = await response.json();\nconsole.log(data);`,
+            python: `import requests\n\nurl = ${JSON.stringify(url)}\nheaders = ${pyHeaders}\n${hasBody ? `payload = ${pyJsonBody}` : "payload = None"}\n\nresponse = requests.request(${JSON.stringify(method)}, url, headers=headers${hasBody ? ", json=payload" : ""})\nprint(response.json())`,
+            go: `package main\n\nimport (\n    "fmt"\n    "io"\n    "net/http"\n    "strings"\n)\n\nfunc main() {\n    client := &http.Client{}\n    ${hasBody ? `body := strings.NewReader(${JSON.stringify(goBody)})` : "body := strings.NewReader(\"\")"}\n    req, err := http.NewRequest(${JSON.stringify(method)}, ${JSON.stringify(url)}, body)\n    if err != nil {\n        panic(err)\n    }\n\n${goHeaderLines || "    // No headers required"}\n\n    res, err := client.Do(req)\n    if err != nil {\n        panic(err)\n    }\n    defer res.Body.Close()\n\n    raw, _ := io.ReadAll(res.Body)\n    fmt.Println(string(raw))\n}`,
+            node: `const axios = require("axios");\n\n(async () => {\n  const response = await axios({\n    method: ${JSON.stringify(method.toLowerCase())},\n    url: ${JSON.stringify(url)},\n    headers: ${jsHeaders},${hasBody ? `\n    data: ${JSON.stringify(parsedBody ?? requestBody, null, 2)}` : ""}\n  });\n\n  console.log(response.data);\n})();`,
+            php: `<?php\n$ch = curl_init();\n\ncurl_setopt_array($ch, [\n    CURLOPT_URL => ${JSON.stringify(url)},\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => ${JSON.stringify(method)},\n    CURLOPT_HTTPHEADER => [\n        ${phpHeaders}\n    ],${hasBody ? `\n    CURLOPT_POSTFIELDS => ${JSON.stringify(requestBody)},` : ""}\n]);\n\n$response = curl_exec($ch);\ncurl_close($ch);\n\necho $response;`
+        };
+    }
+
+    function createPrimitiveNode(value) {
+        const wrapper = document.createElement("div");
+        wrapper.className = "space-y-2";
+
+        if (value === null || value === undefined) {
+            wrapper.innerHTML = '<span class="text-zinc-500">null</span>';
+            return wrapper;
+        }
+
+        if (typeof value === "boolean") {
+            wrapper.innerHTML = `<span class="inline-flex border border-zinc-700 px-2 py-1 text-xs ${value ? "text-emerald-300" : "text-amber-300"}">${value}</span>`;
+            return wrapper;
+        }
+
+        if (typeof value === "number") {
+            wrapper.innerHTML = `<span class="font-mono text-zinc-200">${escapeHtml(value)}</span>`;
+            return wrapper;
+        }
+
+        if (typeof value === "string") {
+            if (looksLikeUrl(value)) {
+                if (looksLikeImageUrl(value)) {
+                    const preview = document.createElement("img");
+                    preview.src = value;
+                    preview.alt = "Image preview";
+                    preview.className = "mt-2 max-h-44 border border-zinc-700 object-contain";
+                    preview.loading = "lazy";
+                    const imageLink = document.createElement("a");
+                    imageLink.href = value;
+                    imageLink.target = "_blank";
+                    imageLink.rel = "noreferrer noopener";
+                    imageLink.className = "inline-block";
+                    imageLink.appendChild(preview);
+                    wrapper.appendChild(imageLink);
+                } else {
+                    const link = document.createElement("a");
+                    link.href = value;
+                    link.target = "_blank";
+                    link.rel = "noreferrer noopener";
+                    link.className = "block break-all text-sky-300 hover:text-sky-200 underline underline-offset-2";
+                    link.textContent = value;
+                    wrapper.appendChild(link);
+                }
+
+                return wrapper;
+            }
+
+            wrapper.innerHTML = `<span class="break-words text-zinc-200">${escapeHtml(value)}</span>`;
+            return wrapper;
+        }
+
+        wrapper.innerHTML = `<span class="text-zinc-200">${escapeHtml(value)}</span>`;
+        return wrapper;
+    }
+
+    function createObjectTable(value) {
+        const container = document.createElement("div");
+        container.className = "custom-scroll w-full overflow-auto";
+
+        const table = document.createElement("table");
+        table.className = "w-full min-w-[20rem] border-collapse text-xs";
+        const body = document.createElement("tbody");
+
+        Object.entries(value).forEach(([key, nested]) => {
+            const row = document.createElement("tr");
+            row.className = "border-b border-zinc-900 align-top";
+
+            const keyCell = document.createElement("td");
+            keyCell.className = "w-52 border-r border-zinc-900 px-3 py-2 font-semibold tracking-wide text-zinc-400";
+            keyCell.textContent = key;
+
+            const valueCell = document.createElement("td");
+            valueCell.className = "px-3 py-2";
+            valueCell.appendChild(renderReadableValueAsNode(nested));
+
+            row.appendChild(keyCell);
+            row.appendChild(valueCell);
+            body.appendChild(row);
+        });
+
+        table.appendChild(body);
+        container.appendChild(table);
+        return container;
+    }
+
+    function createArrayTable(value) {
+        const container = document.createElement("div");
+        container.className = "custom-scroll w-full overflow-auto";
+
+        const table = document.createElement("table");
+        table.className = "w-full min-w-[20rem] border-collapse text-xs";
+        const body = document.createElement("tbody");
+
+        value.forEach((item, index) => {
+            const row = document.createElement("tr");
+            row.className = "border-b border-zinc-900 align-top";
+
+            const indexCell = document.createElement("td");
+            indexCell.className = "w-20 border-r border-zinc-900 px-3 py-2 font-semibold tracking-wide text-zinc-400";
+            indexCell.textContent = `#${index}`;
+
+            const valueCell = document.createElement("td");
+            valueCell.className = "px-3 py-2";
+            valueCell.appendChild(renderReadableValueAsNode(item));
+
+            row.appendChild(indexCell);
+            row.appendChild(valueCell);
+            body.appendChild(row);
+        });
+
+        table.appendChild(body);
+        container.appendChild(table);
+        return container;
+    }
+
+    function renderReadableValueAsNode(value) {
+        if (Array.isArray(value)) {
+            if (value.length === 0) {
+                return createPrimitiveNode("[]");
+            }
+            return createArrayTable(value);
+        }
+
+        if (value && typeof value === "object") {
+            const entries = Object.keys(value);
+            if (entries.length === 0) {
+                return createPrimitiveNode("{}");
+            }
+            return createObjectTable(value);
+        }
+
+        return createPrimitiveNode(value);
+    }
+
+    function setActiveLanguageSnippet(form, languageKey, snippets) {
+        const wrapper = form.querySelector("[data-response-wrapper]");
+        const languageContent = form.querySelector("[data-language-content]");
+        if (!wrapper || !languageContent || !snippets) {
+            return;
+        }
+
+        const resolvedLanguage = snippets[languageKey] ? languageKey : "curl";
+        languageContent.textContent = snippets[resolvedLanguage] || "";
+        languageContent.dataset.activeLanguage = resolvedLanguage;
+
+        wrapper.querySelectorAll("[data-lang-tab]").forEach((button) => {
+            const active = button.dataset.langKey === resolvedLanguage;
+            button.classList.toggle("border-cyan-500", active);
+            button.classList.toggle("text-cyan-200", active);
+            button.classList.toggle("border-zinc-700", !active);
+            button.classList.toggle("text-zinc-300", !active);
+        });
+    }
+
+    function setResponse(form, statusText, responseText, snippets, parsedResponse = null) {
+        const wrapper = form.querySelector("[data-response-wrapper]");
+        const status = form.querySelector("[data-response-status]");
+        const content = form.querySelector("[data-response-content]");
+        const readable = form.querySelector("[data-response-readable]");
+        const languageContent = form.querySelector("[data-language-content]");
+        if (!wrapper || !status || !content || !readable || !languageContent) {
+            return;
+        }
+
+        status.textContent = statusText;
+        content.textContent = responseText;
+        languageContent.__snippets = snippets;
+        setActiveLanguageSnippet(form, "curl", snippets);
+
+        readable.innerHTML = "";
+        if (parsedResponse) {
+            readable.appendChild(renderReadableValueAsNode(parsedResponse));
+        } else {
+            const fallback = document.createElement("span");
+            fallback.className = "text-zinc-500";
+            fallback.textContent = "Response is not JSON.";
+            readable.appendChild(fallback);
+        }
+
+        wrapper.classList.remove("hidden");
+    }
+
+    async function copyText(value) {
+        const text = String(value || "");
+        if (!text) {
+            return false;
+        }
+
+        if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(text);
+            return true;
+        }
+
+        const temp = document.createElement("textarea");
+        temp.value = text;
+        temp.style.position = "fixed";
+        temp.style.left = "-9999px";
+        document.body.appendChild(temp);
+        temp.focus();
+        temp.select();
+        const success = document.execCommand("copy");
+        temp.remove();
+        return success;
+    }
+
+    function setupDescriptionToggles() {
+        document.querySelectorAll("[data-desc-wrapper]").forEach((wrapper) => {
+            const content = wrapper.querySelector("[data-desc-content]");
+            const button = wrapper.querySelector("[data-desc-toggle]");
+            const fade = wrapper.querySelector("[data-desc-fade]");
+            if (!content || !button) {
+                return;
+            }
+
+            const lineHeight = parseFloat(window.getComputedStyle(content).lineHeight || "24");
+            const collapsedHeight = Math.round(lineHeight * 5);
+            const shouldCollapse = content.scrollHeight > collapsedHeight + 8;
+
+            if (!shouldCollapse) {
+                content.style.maxHeight = "none";
+                content.style.overflow = "visible";
+                if (fade) {
+                    fade.classList.add("hidden");
+                }
+                return;
+            }
+
+            content.style.maxHeight = `${collapsedHeight}px`;
+            content.style.overflow = "hidden";
+            button.classList.remove("hidden");
+            if (fade) {
+                fade.classList.remove("hidden");
+            }
+
+            button.addEventListener("click", () => {
+                const expanded = button.dataset.expanded === "true";
+                if (expanded) {
+                    content.style.maxHeight = `${collapsedHeight}px`;
+                    content.style.overflow = "hidden";
+                    button.dataset.expanded = "false";
+                    button.textContent = "Show more";
+                    if (fade) {
+                        fade.classList.remove("hidden");
+                    }
+                    return;
+                }
+
+                content.style.maxHeight = "none";
+                content.style.overflow = "visible";
+                button.dataset.expanded = "true";
+                button.textContent = "Show less";
+                if (fade) {
+                    fade.classList.add("hidden");
+                }
+            });
+        });
+    }
+
+    function setupCopyButtons() {
+        document.addEventListener("click", async (event) => {
+            const button = event.target.closest("[data-copy-btn]");
+            if (!button) {
+                return;
+            }
+
+            const wrapper = button.closest("[data-response-wrapper]");
+            if (!wrapper) {
+                return;
+            }
+
+            const targetName = button.dataset.copyTarget;
+            const selector = targetName === "language" ? "[data-language-content]" : "[data-response-content]";
+            const target = wrapper.querySelector(selector);
+            if (!target) {
+                return;
+            }
+
+            const originalLabel = button.textContent;
+            const ok = await copyText(target.textContent || "");
+            button.textContent = ok ? "Copied" : "Copy failed";
+            setTimeout(() => {
+                button.textContent = originalLabel;
+            }, 1200);
+        });
+    }
+
+    function setupLanguageTabs() {
+        document.addEventListener("click", (event) => {
+            const button = event.target.closest("[data-lang-tab]");
+            if (!button) {
+                return;
+            }
+
+            const wrapper = button.closest("[data-response-wrapper]");
+            const form = button.closest("form");
+            const languageContent = wrapper?.querySelector("[data-language-content]");
+            if (!wrapper || !form || !languageContent) {
+                return;
+            }
+
+            const snippets = languageContent.__snippets;
+            if (!snippets || typeof snippets !== "object") {
+                return;
+            }
+
+            const languageKey = button.dataset.langKey || "curl";
+            setActiveLanguageSnippet(form, languageKey, snippets);
+        });
+    }
+
+    getAuthApi()?.renderNavbarState?.();
+    setupDescriptionToggles();
+    setupCopyButtons();
+    setupLanguageTabs();
+
+    document.querySelectorAll(".api-operation-form").forEach((formElement) => {
+        const form = formElement;
+
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            const method = form.dataset.method || "GET";
+            let apiPath = form.dataset.apiPath || "";
+            const requiresAuth = form.dataset.requiresAuth === "true";
+
+            const pathInputs = form.querySelectorAll('[data-param-in="path"]');
+            for (const input of pathInputs) {
+                const parameterName = input.dataset.paramName;
+                const values = getValuesFromInput(input);
+
+                if (!parameterName || values.length === 0) {
+                    setResponse(form, "Missing path parameter", "Please fill all required path parameters.", "");
+                    return;
+                }
+
+                apiPath = apiPath.replace(`{${parameterName}}`, encodeURIComponent(values[0]));
+            }
+
+            const url = new URL(apiPath, window.location.origin);
+
+            const queryInputs = form.querySelectorAll('[data-param-in="query"]');
+            for (const input of queryInputs) {
+                const parameterName = input.dataset.paramName;
+                const required = input.hasAttribute("required");
+                const values = getValuesFromInput(input);
+
+                if (!parameterName) {
+                    continue;
+                }
+
+                if (required && values.length === 0) {
+                    setResponse(form, "Missing query parameter", `Please fill required query parameter: ${parameterName}.`, "");
+                    return;
+                }
+
+                values.forEach((value) => {
+                    url.searchParams.append(parameterName, value);
+                });
+            }
+
+            const headers = {
+                accept: "application/json",
+            };
+
+            if (requiresAuth) {
+                const auth = getAuthApi()?.readAuth?.();
+                if (!auth || typeof auth.jwt !== "string") {
+                    setResponse(
+                        form,
+                        "JWT required",
+                        "This endpoint requires login. Use /web/user/auth/login first; JWT is cached for 1 day.",
+                            { curl: "", javascript: "", python: "", go: "", node: "", php: "" }
+                    );
+                    return;
+                }
+                headers["Authorization"] = `Bearer ${auth.jwt}`;
+            }
+
+            let requestBody;
+            const bodyField = form.querySelector("textarea[data-request-body='true']");
+            if (bodyField) {
+                const rawBody = bodyField.value.trim();
+                if (rawBody) {
+                    const parsedBody = parseJson(rawBody);
+                    if (parsedBody === null) {
+                        setResponse(form, "Invalid JSON", "Request body must be valid JSON.", { curl: "", javascript: "", python: "", go: "", node: "", php: "" });
+                        return;
+                    }
+                    requestBody = JSON.stringify(parsedBody);
+                    headers["content-type"] = "application/json";
+                }
+            }
+
+            try {
+                const snippets = buildLanguageSnippets(method, url.toString(), headers, requestBody);
+                const response = await fetch(url.toString(), {
+                    method,
+                    headers,
+                    body: method === "GET" ? undefined : requestBody,
+                });
+
+                const responseRawText = await response.text();
+                const parsedResponse = parseJson(responseRawText);
+                const prettyResponse = parsedResponse
+                    ? JSON.stringify(parsedResponse, null, 2)
+                    : responseRawText;
+
+                if (apiPath === "/api/user/auth/login" && parsedResponse?.data?.jwt) {
+                    getAuthApi()?.writeAuth?.(parsedResponse.data.jwt);
+                    void hydrateUserInfoIfMissing();
+                }
+
+                if (apiPath === "/api/user/info" && parsedResponse?.data) {
+                    const authApi = getAuthApi();
+                    const activeAuth = authApi?.readAuth?.();
+                    if (activeAuth) {
+                        const cachedInfo = authApi?.readUserInfo?.(activeAuth);
+                        if (!hasCoreUserInfo(cachedInfo) && hasCoreUserInfo(parsedResponse.data)) {
+                            authApi?.writeUserInfo?.(parsedResponse.data, activeAuth.expiresAt);
+                        }
+                    }
+                }
+
+                if (apiPath === "/api/user/auth/logout" && response.ok) {
+                    getAuthApi()?.clearAuth?.();
+                }
+
+                setResponse(form, `HTTP ${response.status}`, prettyResponse || "(empty response)", snippets, parsedResponse);
+            } catch (error) {
+                const message = error instanceof Error ? error.message : "Request failed.";
+                setResponse(form, "Request Error", message, { curl: "", javascript: "", python: "", go: "", node: "", php: "" });
+            }
+        });
+    });
+})();
+</script>
+{% endblock %}

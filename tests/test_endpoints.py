@@ -81,6 +81,14 @@ def test_openapi_documents_academy_path_and_query_constraints() -> None:
     assert days_param["schema"]["enum"] == ["7", "15", "30"]
 
 
+def test_openapi_login_request_example_keeps_schema_field_order() -> None:
+    openapi = client.get("/api/openapi.json").json()
+    schema = openapi["components"]["schemas"]["UserLoginRequest"]
+    example = schema["example"]
+
+    assert list(example.keys()) == ["role_id", "zone_id", "vc"]
+
+
 def test_robots_txt_allows_all_crawlers() -> None:
     response = client.get("/robots.txt")
     content = response.text

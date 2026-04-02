@@ -1,0 +1,50 @@
+<header class="sticky top-0 z-30 border-b border-zinc-800">
+    <div class="mx-auto flex w-full max-w-[1600px] flex-wrap items-center justify-between gap-3 px-4 py-3 lg:px-6">
+        
+        <!-- Brand + Version -->
+        <a href="/" class="inline-flex items-baseline gap-1 border border-zinc-700 px-3 py-1 text-sm font-semibold tracking-wide text-zinc-100 hover:border-zinc-400">
+            MLBB API Web
+            <span class="text-[10px] font-medium text-cyan-300 align-super">
+                v{{ api_version }}
+            </span>
+        </a>
+
+        <!-- Navigation -->
+        <nav class="flex flex-wrap items-center gap-4 text-xs md:text-sm">
+            <div class="flex flex-wrap items-center gap-2">
+                <a href="https://mlbb-card.rone.dev" target="_blank" class="text-cyan-500 border border-cyan-700 px-3 py-1 hover:border-cyan-400 hover:text-cyan-300">
+                    MLBB Card
+                </a>
+                <a href="https://buymeacoffee.com/ridwaanhall" target="_blank" rel="noreferrer noopener" class="text-pink-500 border border-pink-700 px-3 py-1 hover:border-pink-400 hover:text-pink-300">
+                    Donate
+                </a>
+            </div>
+
+            <!-- Web group -->
+            <div class="flex flex-wrap items-center gap-2">
+                {% for group in groups %}
+                    <a
+                        href="/web/{{ group }}"
+                        class="border border-zinc-700 px-3 py-1 
+                            {{ 'text-zinc-100 hover:border-zinc-400' if current_group == group 
+                                else 'text-zinc-400 hover:border-zinc-500 hover:text-zinc-100' }}"
+                    >
+                        {{ group_meta[group]["title"] }}
+                    </a>
+                {% endfor %}
+            </div>
+        </nav>
+
+        <!-- Auth + User -->
+        <div class="flex items-center gap-2 text-xs md:text-sm">
+            <div id="user-badge" class="hidden items-center gap-2 border border-zinc-700 px-2 py-1">
+                <img id="user-avatar" src="" alt="User avatar" class="h-6 w-6 border border-zinc-700 object-cover" />
+                <span id="user-name" class="max-w-40 truncate text-zinc-200"></span>
+            </div>
+            <span id="jwt-status" class="border border-zinc-700 px-3 py-1 text-zinc-300">Not Signed In</span>
+            <button id="jwt-auth-action" type="button" class="border border-zinc-700 px-3 py-1 text-zinc-300 hover:border-zinc-400 hover:text-zinc-100">
+                Sign In
+            </button>
+        </div>
+    </div>
+</header>

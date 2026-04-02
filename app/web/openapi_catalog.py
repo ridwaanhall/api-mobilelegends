@@ -207,7 +207,7 @@ def _render_inline_markdown(text: str) -> str:
 
     def _code_replacement(match: re.Match[str]) -> str:
         return (
-            f'<code class="border border-zinc-700 bg-zinc-950 px-1 py-0.5 '
+            f'<code class="border border-zinc-700 px-1 py-0.5 '
             f'font-mono text-[11px] text-zinc-200">{match.group(1)}</code>'
         )
 

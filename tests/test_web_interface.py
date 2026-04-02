@@ -43,6 +43,8 @@ def test_navbar_shows_api_version_badge() -> None:
     assert "MLBB API Web" in response.text
     assert "v3.2.1" in response.text
     assert "https://buymeacoffee.com/ridwaanhall" in response.text
+    assert "user-menu-trigger" in response.text
+    assert "user-menu-panel" in response.text
 
 
 def test_web_group_pages_are_available() -> None:
@@ -51,6 +53,14 @@ def test_web_group_pages_are_available() -> None:
 
         assert response.status_code == 200
         assert f"/web/{group}" in response.text
+
+
+def test_mobile_endpoint_jump_strip_is_present_on_group_pages() -> None:
+    response = client.get("/web/academy")
+
+    assert response.status_code == 200
+    assert "data-mobile-endpoint-strip" in response.text
+    assert "Jump to endpoint" in response.text
 
 
 def test_web_pages_cover_all_documented_group_operations() -> None:

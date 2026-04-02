@@ -51,8 +51,14 @@
 		}
 
 		*::-webkit-scrollbar {
-			width: 1px;
-			height: 1px;
+			width: 5px;
+			height: 5px;
+		}
+
+		*::-webkit-scrollbar-button {
+			display: none;
+			width: 0;
+			height: 0;
 		}
 
 		*::-webkit-scrollbar-track {
@@ -92,8 +98,8 @@
 
 		@media (max-width: 768px) {
 			*::-webkit-scrollbar {
-				width: 1px;
-				height: 1px;
+				width: 4px;
+				height: 4px;
 			}
 
 			* {
@@ -135,7 +141,7 @@
 	<div class="relative z-10 flex min-h-screen flex-col">
 	{% include "navbar.html" %}
 
-	<div class="mx-auto flex w-full max-w-[1600px] min-w-0 flex-1 gap-4 px-4 pb-8 pt-6 lg:px-6">
+	<div class="mx-auto flex w-full max-w-[1600px] min-w-0 flex-1 gap-3 px-3 pb-8 pt-4 sm:px-4 sm:pt-5 lg:gap-4 lg:px-6 lg:pt-6">
 		{% if request.url.path.startswith('/web') %}
 			{% include "sidebar.html" %}
 		{% endif %}
@@ -243,9 +249,11 @@
 				if (authAction) {
 					authAction.textContent = "Sign In";
 				}
-				if (userBadge) {
-					userBadge.classList.add("hidden");
-					userBadge.classList.remove("inline-flex");
+				if (userBadge && userAvatar && userName) {
+					userAvatar.src = "https://placehold.co/48x48/000000/FFFFFF?text=U";
+					userName.textContent = "Guest";
+					userBadge.classList.remove("hidden");
+					userBadge.classList.add("inline-flex");
 				}
 				return;
 			}
@@ -258,9 +266,11 @@
 
 			const userInfo = readUserInfo(auth);
 			if (!userInfo || !userBadge || !userAvatar || !userName) {
-				if (userBadge) {
-					userBadge.classList.add("hidden");
-					userBadge.classList.remove("inline-flex");
+				if (userBadge && userAvatar && userName) {
+					userAvatar.src = "https://placehold.co/48x48/000000/FFFFFF?text=U";
+					userName.textContent = "Player";
+					userBadge.classList.remove("hidden");
+					userBadge.classList.add("inline-flex");
 				}
 				return;
 			}
@@ -323,6 +333,22 @@
 		const signOutModal = document.getElementById("signout-confirm-modal");
 		const signOutConfirm = document.getElementById("signout-confirm");
 		const signOutCancel = document.getElementById("signout-cancel");
+		const userMenuTrigger = document.getElementById("user-menu-trigger");
+		const userMenuPanel = document.getElementById("user-menu-panel");
+
+		function closeUserMenu() {
+			if (!userMenuPanel) {
+				return;
+			}
+			userMenuPanel.classList.add("hidden");
+		}
+
+		function toggleUserMenu() {
+			if (!userMenuPanel) {
+				return;
+			}
+			userMenuPanel.classList.toggle("hidden");
+		}
 
 		function closeSignOutModal() {
 			if (!signOutModal) {
@@ -378,10 +404,33 @@
 			}
 		});
 
+		userMenuTrigger?.addEventListener("click", (event) => {
+			event.stopPropagation();
+			toggleUserMenu();
+		});
+
+		document.addEventListener("click", (event) => {
+			if (!userMenuPanel || !userMenuTrigger) {
+				return;
+			}
+			if (userMenuPanel.classList.contains("hidden")) {
+				return;
+			}
+			const target = event.target;
+			if (!(target instanceof Node)) {
+				return;
+			}
+			if (userMenuPanel.contains(target) || userMenuTrigger.contains(target)) {
+				return;
+			}
+			closeUserMenu();
+		});
+
 		document.addEventListener("keydown", (event) => {
 			if (event.key !== "Escape") {
 				return;
 			}
+			closeUserMenu();
 			if (!signOutModal || signOutModal.classList.contains("hidden")) {
 				return;
 			}
@@ -389,6 +438,7 @@
 		});
 
 		document.getElementById("jwt-auth-action")?.addEventListener("click", () => {
+			closeUserMenu();
 			const auth = window.MLBBWebAuth.readAuth();
 			if (auth) {
 				openSignOutModal();

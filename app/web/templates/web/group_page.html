@@ -206,71 +206,197 @@
             .replaceAll("'", "&#39;");
     }
 
-    function renderReadableValue(value) {
+    function looksLikeUrl(value) {
+        return typeof value === "string" && /^https?:\/\//i.test(value.trim());
+    }
+
+    function looksLikeImageUrl(value) {
+        if (!looksLikeUrl(value)) {
+            return false;
+        }
+        return /\.(png|jpe?g|gif|webp|svg|bmp|avif)(\?.*)?$/i.test(value.trim());
+    }
+
+    function shellQuote(value) {
+        return `'${String(value).replaceAll("'", "'\\''")}'`;
+    }
+
+    function buildCurl(method, url, headers, requestBody) {
+        const lines = [`curl -X ${shellQuote(method)} \\`, `  ${shellQuote(url)} \\`];
+
+        Object.entries(headers).forEach(([key, value]) => {
+            lines.push(`  -H ${shellQuote(`${key}: ${value}`)} \\`);
+        });
+
+        if (requestBody) {
+            lines.push(`  -d ${shellQuote(requestBody)}`);
+        } else {
+            const last = lines[lines.length - 1];
+            lines[lines.length - 1] = last.replace(/ \\\\$/, "");
+        }
+
+        return lines.join("\n");
+    }
+
+    function createPrimitiveNode(value) {
+        const wrapper = document.createElement("div");
+        wrapper.className = "space-y-2";
+
         if (value === null || value === undefined) {
-            return '<span class="text-zinc-500">null</span>';
+            wrapper.innerHTML = '<span class="text-zinc-500">null</span>';
+            return wrapper;
         }
 
-        if (Array.isArray(value)) {
-            if (value.length === 0) {
-                return '<span class="text-zinc-500">[]</span>';
-            }
-
-            return (
-                '<div class="space-y-2">' +
-                value
-                    .map((item, index) => (
-                        '<div class="border border-zinc-800 p-2">' +
-                        `<p class="mb-2 text-[11px] uppercase tracking-[0.12em] text-zinc-500">Item ${index + 1}</p>` +
-                        renderReadableValue(item) +
-                        '</div>'
-                    ))
-                    .join("") +
-                '</div>'
-            );
+        if (typeof value === "boolean") {
+            wrapper.innerHTML = `<span class="inline-flex border border-zinc-700 px-2 py-1 text-xs ${value ? "text-emerald-300" : "text-amber-300"}">${value}</span>`;
+            return wrapper;
         }
 
-        if (typeof value === "object") {
-            const entries = Object.entries(value);
-            if (entries.length === 0) {
-                return '<span class="text-zinc-500">{}</span>';
-            }
-
-            return (
-                '<div class="space-y-2">' +
-                entries
-                    .map(([key, nested]) => (
-                        '<div class="border border-zinc-800 p-2">' +
-                        `<p class="mb-2 text-[11px] uppercase tracking-[0.12em] text-zinc-500">${escapeHtml(key)}</p>` +
-                        renderReadableValue(nested) +
-                        '</div>'
-                    ))
-                    .join("") +
-                '</div>'
-            );
+        if (typeof value === "number") {
+            wrapper.innerHTML = `<span class="font-mono text-zinc-200">${escapeHtml(value)}</span>`;
+            return wrapper;
         }
 
         if (typeof value === "string") {
-            return `<span class="break-words text-zinc-200">${escapeHtml(value)}</span>`;
+            if (looksLikeUrl(value)) {
+                const link = document.createElement("a");
+                link.href = value;
+                link.target = "_blank";
+                link.rel = "noreferrer noopener";
+                link.className = "block break-all text-sky-300 hover:text-sky-200 underline underline-offset-2";
+                link.textContent = value;
+                wrapper.appendChild(link);
+
+                const preview = document.createElement("img");
+                preview.src = value;
+                preview.alt = "Image preview";
+                preview.className = "mt-2 max-h-44 rounded border border-zinc-700 object-contain";
+                preview.loading = "lazy";
+                preview.onerror = () => {
+                    preview.remove();
+                };
+
+                if (looksLikeImageUrl(value)) {
+                    wrapper.appendChild(preview);
+                } else {
+                    // Try graceful preview for unknown extension image URLs.
+                    wrapper.appendChild(preview);
+                }
+
+                return wrapper;
+            }
+
+            wrapper.innerHTML = `<span class="break-words text-zinc-200">${escapeHtml(value)}</span>`;
+            return wrapper;
         }
 
-        return `<span class="text-zinc-200">${escapeHtml(value)}</span>`;
+        wrapper.innerHTML = `<span class="text-zinc-200">${escapeHtml(value)}</span>`;
+        return wrapper;
     }
 
-    function setResponse(form, statusText, responseText, parsedResponse = null) {
+    function createObjectTable(value) {
+        const container = document.createElement("div");
+        container.className = "w-full overflow-auto";
+
+        const table = document.createElement("table");
+        table.className = "w-full min-w-[20rem] border-collapse text-xs";
+        const body = document.createElement("tbody");
+
+        Object.entries(value).forEach(([key, nested]) => {
+            const row = document.createElement("tr");
+            row.className = "border-b border-zinc-900 align-top";
+
+            const keyCell = document.createElement("td");
+            keyCell.className = "w-52 border-r border-zinc-900 px-3 py-2 font-semibold tracking-wide text-zinc-400";
+            keyCell.textContent = key;
+
+            const valueCell = document.createElement("td");
+            valueCell.className = "px-3 py-2";
+            valueCell.appendChild(renderReadableValueAsNode(nested));
+
+            row.appendChild(keyCell);
+            row.appendChild(valueCell);
+            body.appendChild(row);
+        });
+
+        table.appendChild(body);
+        container.appendChild(table);
+        return container;
+    }
+
+    function createArrayTable(value) {
+        const container = document.createElement("div");
+        container.className = "w-full overflow-auto";
+
+        const table = document.createElement("table");
+        table.className = "w-full min-w-[20rem] border-collapse text-xs";
+        const body = document.createElement("tbody");
+
+        value.forEach((item, index) => {
+            const row = document.createElement("tr");
+            row.className = "border-b border-zinc-900 align-top";
+
+            const indexCell = document.createElement("td");
+            indexCell.className = "w-20 border-r border-zinc-900 px-3 py-2 font-semibold tracking-wide text-zinc-400";
+            indexCell.textContent = `#${index}`;
+
+            const valueCell = document.createElement("td");
+            valueCell.className = "px-3 py-2";
+            valueCell.appendChild(renderReadableValueAsNode(item));
+
+            row.appendChild(indexCell);
+            row.appendChild(valueCell);
+            body.appendChild(row);
+        });
+
+        table.appendChild(body);
+        container.appendChild(table);
+        return container;
+    }
+
+    function renderReadableValueAsNode(value) {
+        if (Array.isArray(value)) {
+            if (value.length === 0) {
+                return createPrimitiveNode("[]");
+            }
+            return createArrayTable(value);
+        }
+
+        if (value && typeof value === "object") {
+            const entries = Object.keys(value);
+            if (entries.length === 0) {
+                return createPrimitiveNode("{}");
+            }
+            return createObjectTable(value);
+        }
+
+        return createPrimitiveNode(value);
+    }
+
+    function setResponse(form, statusText, responseText, curlText, parsedResponse = null) {
         const wrapper = form.querySelector("[data-response-wrapper]");
         const status = form.querySelector("[data-response-status]");
         const content = form.querySelector("[data-response-content]");
         const readable = form.querySelector("[data-response-readable]");
-        if (!wrapper || !status || !content || !readable) {
+        const curl = form.querySelector("[data-curl-content]");
+        if (!wrapper || !status || !content || !readable || !curl) {
             return;
         }
 
         status.textContent = statusText;
         content.textContent = responseText;
-        readable.innerHTML = parsedResponse
-            ? renderReadableValue(parsedResponse)
-            : '<span class="text-zinc-500">Response is not JSON.</span>';
+        curl.textContent = curlText;
+
+        readable.innerHTML = "";
+        if (parsedResponse) {
+            readable.appendChild(renderReadableValueAsNode(parsedResponse));
+        } else {
+            const fallback = document.createElement("span");
+            fallback.className = "text-zinc-500";
+            fallback.textContent = "Response is not JSON.";
+            readable.appendChild(fallback);
+        }
+
         wrapper.classList.remove("hidden");
     }
 
@@ -293,7 +419,7 @@
                 const values = getValuesFromInput(input);
 
                 if (!parameterName || values.length === 0) {
-                    setResponse(form, "Missing path parameter", "Please fill all required path parameters.");
+                    setResponse(form, "Missing path parameter", "Please fill all required path parameters.", "");
                     return;
                 }
 
@@ -313,7 +439,7 @@
                 }
 
                 if (required && values.length === 0) {
-                    setResponse(form, "Missing query parameter", `Please fill required query parameter: ${parameterName}.`);
+                    setResponse(form, "Missing query parameter", `Please fill required query parameter: ${parameterName}.`, "");
                     return;
                 }
 
@@ -332,7 +458,8 @@
                     setResponse(
                         form,
                         "JWT required",
-                        "This endpoint requires login. Use /web/user/auth/login first; JWT is cached for 1 day."
+                        "This endpoint requires login. Use /web/user/auth/login first; JWT is cached for 1 day.",
+                        ""
                     );
                     return;
                 }
@@ -346,7 +473,7 @@
                 if (rawBody) {
                     const parsedBody = parseJson(rawBody);
                     if (parsedBody === null) {
-                        setResponse(form, "Invalid JSON", "Request body must be valid JSON.");
+                        setResponse(form, "Invalid JSON", "Request body must be valid JSON.", "");
                         return;
                     }
                     requestBody = JSON.stringify(parsedBody);
@@ -355,6 +482,7 @@
             }
 
             try {
+                const curlText = buildCurl(method, url.toString(), headers, requestBody);
                 const response = await fetch(url.toString(), {
                     method,
                     headers,
@@ -382,10 +510,10 @@
                     clearAuth();
                 }
 
-                setResponse(form, `HTTP ${response.status}`, prettyResponse || "(empty response)", parsedResponse);
+                setResponse(form, `HTTP ${response.status}`, prettyResponse || "(empty response)", curlText, parsedResponse);
             } catch (error) {
                 const message = error instanceof Error ? error.message : "Request failed.";
-                setResponse(form, "Request Error", message);
+                setResponse(form, "Request Error", message, "");
             }
         });
     });

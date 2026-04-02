@@ -25,6 +25,8 @@ def test_landing_page_has_docs_and_demo_options() -> None:
     assert "Open Demo Website" in response.text
     assert "/api/docs" in response.text
     assert "/web/user" in response.text
+    assert "Plus+Jakarta+Sans" in response.text
+    assert "Space+Mono" in response.text
 
 
 def test_web_group_pages_are_available() -> None:
@@ -126,3 +128,13 @@ def test_response_panel_has_readable_and_raw_views() -> None:
     assert response.status_code == 200
     assert "data-response-readable" in response.text
     assert "data-response-content" in response.text
+    assert "data-curl-content" in response.text
+
+
+def test_web_script_contains_readable_table_and_image_render_helpers() -> None:
+    response = client.get("/web/user/info")
+
+    assert response.status_code == 200
+    assert "looksLikeImageUrl" in response.text
+    assert "createObjectTable" in response.text
+    assert "buildCurl" in response.text

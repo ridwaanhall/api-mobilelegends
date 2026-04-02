@@ -133,10 +133,20 @@ def test_login_description_renders_markdown_tokens_as_readable_html() -> None:
     assert response.status_code == 200
     assert "**role_id**" not in response.text
     assert "<strong" in response.text
+    assert 'class="font-semibold text-zinc-100"' in response.text
+    assert '\\&quot;font-semibold' not in response.text
 
     privacy_response = client.get("/web/user/privacy/settings")
     assert privacy_response.status_code == 200
     assert "<code" in privacy_response.text
+
+
+def test_equipment_description_preserves_nested_list_indentation() -> None:
+    response = client.get("/web/academy/equipment")
+
+    assert response.status_code == 200
+    assert "<li><strong class=\"font-semibold text-zinc-100\">records</strong>: Array of equipment entries, each containing:<ul" in response.text
+    assert "<li><strong class=\"font-semibold text-zinc-100\">data</strong>:<ul" in response.text
 
 
 def test_response_panel_has_readable_and_raw_views() -> None:

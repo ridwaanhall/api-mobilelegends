@@ -29,6 +29,8 @@ def test_landing_page_has_docs_and_demo_options() -> None:
     assert "Space+Mono" in response.text
     assert "mlbb-card.rone.dev/static/favicon.ico" in response.text
     assert "application/ld+json" in response.text
+    assert "const AUTH_KEY = \"mlbb_user_auth\";" in response.text
+    assert "renderNavbarState()" in response.text
 
 
 def test_web_group_pages_are_available() -> None:

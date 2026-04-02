@@ -107,6 +107,121 @@
 	</div>
 
 	{% include "footer.html" %}
+	<script>
+	(() => {
+		const AUTH_KEY = "mlbb_user_auth";
+		const USER_INFO_KEY = "mlbb_user_info";
+
+		function parseJson(value) {
+			try {
+				return JSON.parse(value);
+			} catch {
+				return null;
+			}
+		}
+
+		function readAuth() {
+			const raw = localStorage.getItem(AUTH_KEY);
+			if (!raw) {
+				return null;
+			}
+
+			const parsed = parseJson(raw);
+			if (!parsed || typeof parsed !== "object") {
+				localStorage.removeItem(AUTH_KEY);
+				localStorage.removeItem(USER_INFO_KEY);
+				return null;
+			}
+
+			if (typeof parsed.jwt !== "string" || typeof parsed.expiresAt !== "number") {
+				localStorage.removeItem(AUTH_KEY);
+				localStorage.removeItem(USER_INFO_KEY);
+				return null;
+			}
+
+			if (Date.now() > parsed.expiresAt) {
+				localStorage.removeItem(AUTH_KEY);
+				localStorage.removeItem(USER_INFO_KEY);
+				return null;
+			}
+
+			return parsed;
+		}
+
+		function readUserInfo(auth) {
+			if (!auth) {
+				return null;
+			}
+
+			const raw = localStorage.getItem(USER_INFO_KEY);
+			if (!raw) {
+				return null;
+			}
+
+			const parsed = parseJson(raw);
+			if (!parsed || typeof parsed !== "object") {
+				localStorage.removeItem(USER_INFO_KEY);
+				return null;
+			}
+
+			if (parsed.expiresAt !== auth.expiresAt || !parsed.data || typeof parsed.data !== "object") {
+				localStorage.removeItem(USER_INFO_KEY);
+				return null;
+			}
+
+			return parsed.data;
+		}
+
+		function renderNavbarState() {
+			const badge = document.getElementById("jwt-status");
+			const userBadge = document.getElementById("user-badge");
+			const userAvatar = document.getElementById("user-avatar");
+			const userName = document.getElementById("user-name");
+			if (!badge) {
+				return;
+			}
+
+			const auth = readAuth();
+			if (!auth) {
+				badge.textContent = "JWT: not set";
+				if (userBadge) {
+					userBadge.classList.add("hidden");
+					userBadge.classList.remove("inline-flex");
+				}
+				return;
+			}
+
+			const remaining = Math.max(0, Math.floor((auth.expiresAt - Date.now()) / (60 * 60 * 1000)));
+			badge.textContent = `JWT: active (${remaining}h)`;
+
+			const userInfo = readUserInfo(auth);
+			if (!userInfo || !userBadge || !userAvatar || !userName) {
+				if (userBadge) {
+					userBadge.classList.add("hidden");
+					userBadge.classList.remove("inline-flex");
+				}
+				return;
+			}
+
+			const avatar = typeof userInfo.avatar === "string" ? userInfo.avatar : "";
+			const name = typeof userInfo.name === "string" && userInfo.name.trim() ? userInfo.name.trim() : "Player";
+
+			userAvatar.src = avatar || "https://placehold.co/48x48/000000/FFFFFF?text=U";
+			userName.textContent = name;
+			userBadge.classList.remove("hidden");
+			userBadge.classList.add("inline-flex");
+		}
+
+		function clearAuth() {
+			localStorage.removeItem(AUTH_KEY);
+			localStorage.removeItem(USER_INFO_KEY);
+			renderNavbarState();
+		}
+
+		document.getElementById("jwt-clear")?.addEventListener("click", clearAuth);
+		renderNavbarState();
+	})();
+	</script>
 	{% block scripts %}{% endblock %}
 </body>
 </html>

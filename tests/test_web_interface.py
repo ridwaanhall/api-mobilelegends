@@ -25,7 +25,7 @@ def test_landing_page_has_docs_and_demo_options() -> None:
     assert "Open Demo Website" in response.text
     assert "/api/docs" in response.text
     assert "/web/user" in response.text
-    assert "Plus+Jakarta+Sans" in response.text
+    assert "family=Onest" in response.text
     assert "Space+Mono" in response.text
     assert "mlbb-card.rone.dev/static/favicon.ico" in response.text
     assert "application/ld+json" in response.text

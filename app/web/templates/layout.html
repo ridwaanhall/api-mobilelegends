@@ -91,9 +91,39 @@
 				scrollbar-gutter: auto;
 			}
 		}
+
+        .site-ambient-layer {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background: radial-gradient(50rem 30rem at 8% -10%, rgba(34, 211, 238, 0.15), transparent 72%),
+                radial-gradient(44rem 26rem at 100% 0%, rgba(20, 184, 166, 0.12), transparent 70%),
+                radial-gradient(36rem 22rem at 70% 100%, rgba(139, 92, 246, 0.08), transparent 72%),
+                radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.04) 1px, transparent 1.5px),
+                radial-gradient(circle at 72% 62%, rgba(255, 255, 255, 0.03) 1px, transparent 1.5px);
+            background-size:
+                auto,
+                auto,
+                auto,
+                26px 26px,
+                34px 34px;
+        }
+
+        .site-ambient-vignette {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background: radial-gradient(120% 90% at 50% 50%, transparent 44%, rgba(0, 0, 0, 0.55) 100%);
+        }
 	</style>
 </head>
 <body class="flex min-h-screen flex-col overflow-x-hidden bg-black text-zinc-100">
+	<div class="site-ambient-layer" aria-hidden="true"></div>
+	<div class="site-ambient-vignette" aria-hidden="true"></div>
+
+	<div class="relative z-10 flex min-h-screen flex-col">
 	{% include "navbar.html" %}
 
 	<div class="mx-auto flex w-full max-w-[1600px] min-w-0 flex-1 gap-4 px-4 pb-8 pt-6 lg:px-6">
@@ -237,5 +267,6 @@
 	})();
 	</script>
 	{% block scripts %}{% endblock %}
+	</div>
 </body>
 </html>

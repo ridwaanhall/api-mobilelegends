@@ -81,6 +81,15 @@
 			background: linear-gradient(180deg, #5eead4 0%, #0d9488 100%);
 		}
 
+		button:not(:disabled),
+		a[href],
+		[data-lang-tab],
+		[data-copy-btn],
+		[data-desc-toggle],
+		label:has(input[type="checkbox"]) {
+			cursor: pointer;
+		}
+
 		@media (max-width: 768px) {
 			*::-webkit-scrollbar {
 				width: 2px;

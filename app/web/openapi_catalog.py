@@ -77,6 +77,25 @@ def _build_parameter(parameter: dict[str, Any], component_schemas: dict[str, Any
     default_value = schema.get("default")
     type_name = schema.get("type", "string")
     is_array = type_name == "array"
+    option_values: list[str] = []
+
+    if enum_values:
+        option_values = [str(value) for value in enum_values]
+    elif is_array and isinstance(default_value, list) and all(isinstance(item, str) for item in default_value):
+        option_values = [str(item) for item in default_value]
+
+    default_selected: list[str] = []
+    if isinstance(default_value, list):
+        default_selected = [str(item) for item in default_value]
+
+    description_text = parameter.get("description") or schema.get("description") or ""
+
+    minimum = schema.get("minimum")
+    maximum = schema.get("maximum")
+    min_items = schema.get("minItems")
+    max_items = schema.get("maxItems")
+    min_length = schema.get("minLength")
+    max_length = schema.get("maxLength")
 
     input_type = "text"
     if type_name in {"integer", "number"}:
@@ -86,14 +105,23 @@ def _build_parameter(parameter: dict[str, Any], component_schemas: dict[str, Any
         "name": parameter.get("name", ""),
         "location": parameter.get("in", "query"),
         "required": bool(parameter.get("required", False)),
-        "description": parameter.get("description") or schema.get("description") or "",
+        "description": description_text,
+        "description_html": _render_inline_markdown(str(description_text)),
         "enum_values": enum_values,
+        "option_values": option_values,
         "default": default_value,
+        "default_selected": default_selected,
         "default_display": _normalize_default(default_value),
         "type": type_name,
         "item_type": item_schema.get("type", "string"),
         "is_array": is_array,
         "input_type": input_type,
+        "minimum": minimum,
+        "maximum": maximum,
+        "min_items": min_items,
+        "max_items": max_items,
+        "min_length": min_length,
+        "max_length": max_length,
     }
 
 

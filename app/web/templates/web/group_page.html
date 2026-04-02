@@ -90,6 +90,12 @@
     }
 
     function getValuesFromInput(input) {
+        if (input.dataset.paramKind === "checkbox-group") {
+            return Array.from(input.querySelectorAll('input[data-param-choice="true"]:checked'))
+                .map((checkbox) => checkbox.value)
+                .filter(Boolean);
+        }
+
         if (input.tagName === "SELECT") {
             if (input.multiple) {
                 return Array.from(input.selectedOptions).map((option) => option.value).filter(Boolean);
@@ -137,20 +143,33 @@
     }
 
     function buildCurl(method, url, headers, requestBody) {
-        const lines = [`curl -X ${shellQuote(method)} \\`, `  ${shellQuote(url)} \\`];
+        const lines = [`curl -X ${shellQuote(method)} \\`, `    ${shellQuote(url)} \\`];
 
         Object.entries(headers).forEach(([key, value]) => {
-            lines.push(`  -H ${shellQuote(`${key}: ${value}`)} \\`);
+            lines.push(`    -H ${shellQuote(`${key}: ${value}`)} \\`);
         });
 
         if (requestBody) {
-            lines.push(`  -d ${shellQuote(requestBody)}`);
+            lines.push(`    -d ${shellQuote(requestBody)}`);
         } else {
             const last = lines[lines.length - 1];
             lines[lines.length - 1] = last.replace(/ \\\\$/, "");
         }
 
         return lines.join("\n");
+    }
+
+    function emptySnippets() {
+        return {
+            curl: "",
+            python: "",
+            javascript: "",
+            go: "",
+            node: "",
+            php: "",
+            java: "",
+            csharp: "",
+        };
     }
 
     function buildLanguageSnippets(method, url, headers, requestBody) {
@@ -161,6 +180,7 @@
         const parsedBody = requestBody ? parseJson(requestBody) : null;
         const pyJsonBody = parsedBody ? JSON.stringify(parsedBody, null, 2) : "None";
         const goBody = requestBody || "";
+        const jsBody = hasBody ? (parsedBody ?? requestBody) : null;
 
         const goHeaderLines = headerEntries
             .map(([key, value]) => `req.Header.Set(${JSON.stringify(key)}, ${JSON.stringify(value)})`)
@@ -173,11 +193,13 @@
 
         return {
             curl: buildCurl(method, url, headers, requestBody),
-            javascript: `const response = await fetch(${JSON.stringify(url)}, {\n  method: ${JSON.stringify(method)},\n  headers: ${jsHeaders},${hasBody ? `\n  body: ${JSON.stringify(requestBody)}` : ""}\n});\n\nconst data = await response.json();\nconsole.log(data);`,
             python: `import requests\n\nurl = ${JSON.stringify(url)}\nheaders = ${pyHeaders}\n${hasBody ? `payload = ${pyJsonBody}` : "payload = None"}\n\nresponse = requests.request(${JSON.stringify(method)}, url, headers=headers${hasBody ? ", json=payload" : ""})\nprint(response.json())`,
+            javascript: `const response = await fetch(${JSON.stringify(url)}, {\n    method: ${JSON.stringify(method)},\n    headers: ${jsHeaders},${hasBody ? `\n    body: ${JSON.stringify(requestBody)}` : ""}\n});\n\nconst data = await response.json();\nconsole.log(data);`,
             go: `package main\n\nimport (\n    "fmt"\n    "io"\n    "net/http"\n    "strings"\n)\n\nfunc main() {\n    client := &http.Client{}\n    ${hasBody ? `body := strings.NewReader(${JSON.stringify(goBody)})` : "body := strings.NewReader(\"\")"}\n    req, err := http.NewRequest(${JSON.stringify(method)}, ${JSON.stringify(url)}, body)\n    if err != nil {\n        panic(err)\n    }\n\n${goHeaderLines || "    // No headers required"}\n\n    res, err := client.Do(req)\n    if err != nil {\n        panic(err)\n    }\n    defer res.Body.Close()\n\n    raw, _ := io.ReadAll(res.Body)\n    fmt.Println(string(raw))\n}`,
-            node: `const axios = require("axios");\n\n(async () => {\n  const response = await axios({\n    method: ${JSON.stringify(method.toLowerCase())},\n    url: ${JSON.stringify(url)},\n    headers: ${jsHeaders},${hasBody ? `\n    data: ${JSON.stringify(parsedBody ?? requestBody, null, 2)}` : ""}\n  });\n\n  console.log(response.data);\n})();`,
-            php: `<?php\n$ch = curl_init();\n\ncurl_setopt_array($ch, [\n    CURLOPT_URL => ${JSON.stringify(url)},\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => ${JSON.stringify(method)},\n    CURLOPT_HTTPHEADER => [\n        ${phpHeaders}\n    ],${hasBody ? `\n    CURLOPT_POSTFIELDS => ${JSON.stringify(requestBody)},` : ""}\n]);\n\n$response = curl_exec($ch);\ncurl_close($ch);\n\necho $response;`
+            node: `const axios = require("axios");\n\n(async () => {\n    const response = await axios({\n        method: ${JSON.stringify(method.toLowerCase())},\n        url: ${JSON.stringify(url)},\n        headers: ${jsHeaders},${hasBody ? `\n        data: ${JSON.stringify(jsBody, null, 2)}` : ""}\n    });\n\n    console.log(response.data);\n})();`,
+            php: `<?php\n$ch = curl_init();\n\ncurl_setopt_array($ch, [\n    CURLOPT_URL => ${JSON.stringify(url)},\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => ${JSON.stringify(method)},\n    CURLOPT_HTTPHEADER => [\n        ${phpHeaders}\n    ],${hasBody ? `\n    CURLOPT_POSTFIELDS => ${JSON.stringify(requestBody)},` : ""}\n]);\n\n$response = curl_exec($ch);\ncurl_close($ch);\n\necho $response;`,
+            java: `HttpRequest request = HttpRequest.newBuilder()\n    .uri(URI.create(${JSON.stringify(url)}))\n    .method(${JSON.stringify(method)}, ${hasBody ? `HttpRequest.BodyPublishers.ofString(${JSON.stringify(requestBody)})` : "HttpRequest.BodyPublishers.noBody()"})\n${headerEntries.map(([key, value]) => `    .header(${JSON.stringify(key)}, ${JSON.stringify(value)})`).join("\n")}\n    .build();\n\nHttpClient client = HttpClient.newHttpClient();\nHttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());\nSystem.out.println(response.body());`,
+            csharp: `using System.Net.Http;\nusing System.Text;\n\nvar client = new HttpClient();\nvar request = new HttpRequestMessage(HttpMethod.${method.toUpperCase()}, ${JSON.stringify(url)});\n${headerEntries.map(([key, value]) => `request.Headers.TryAddWithoutValidation(${JSON.stringify(key)}, ${JSON.stringify(value)});`).join("\n")}\n${hasBody ? `request.Content = new StringContent(${JSON.stringify(requestBody)}, Encoding.UTF8, "application/json");` : ""}\n\nvar response = await client.SendAsync(request);\nvar content = await response.Content.ReadAsStringAsync();\nConsole.WriteLine(content);`,
         };
     }
 
@@ -345,10 +367,12 @@
             return;
         }
 
+        const resolvedSnippets = snippets && typeof snippets === "object" ? snippets : emptySnippets();
+
         status.textContent = statusText;
         content.textContent = responseText;
-        languageContent.__snippets = snippets;
-        setActiveLanguageSnippet(form, "curl", snippets);
+        languageContent.__snippets = resolvedSnippets;
+        setActiveLanguageSnippet(form, "curl", resolvedSnippets);
 
         readable.innerHTML = "";
         if (parsedResponse) {
@@ -512,7 +536,7 @@
                 const values = getValuesFromInput(input);
 
                 if (!parameterName || values.length === 0) {
-                    setResponse(form, "Missing path parameter", "Please fill all required path parameters.", "");
+                    setResponse(form, "Missing path parameter", "Please fill all required path parameters.", emptySnippets());
                     return;
                 }
 
@@ -524,7 +548,7 @@
             const queryInputs = form.querySelectorAll('[data-param-in="query"]');
             for (const input of queryInputs) {
                 const parameterName = input.dataset.paramName;
-                const required = input.hasAttribute("required");
+                const required = input.hasAttribute("required") || input.dataset.required === "true";
                 const values = getValuesFromInput(input);
 
                 if (!parameterName) {
@@ -532,7 +556,7 @@
                 }
 
                 if (required && values.length === 0) {
-                    setResponse(form, "Missing query parameter", `Please fill required query parameter: ${parameterName}.`, "");
+                    setResponse(form, "Missing query parameter", `Please fill required query parameter: ${parameterName}.`, emptySnippets());
                     return;
                 }
 
@@ -552,7 +576,7 @@
                         form,
                         "JWT required",
                         "This endpoint requires login. Use /web/user/auth/login first; JWT is cached for 1 day.",
-                            { curl: "", javascript: "", python: "", go: "", node: "", php: "" }
+                        emptySnippets()
                     );
                     return;
                 }
@@ -566,7 +590,7 @@
                 if (rawBody) {
                     const parsedBody = parseJson(rawBody);
                     if (parsedBody === null) {
-                        setResponse(form, "Invalid JSON", "Request body must be valid JSON.", { curl: "", javascript: "", python: "", go: "", node: "", php: "" });
+                        setResponse(form, "Invalid JSON", "Request body must be valid JSON.", emptySnippets());
                         return;
                     }
                     requestBody = JSON.stringify(parsedBody);
@@ -611,7 +635,7 @@
                 setResponse(form, `HTTP ${response.status}`, prettyResponse || "(empty response)", snippets, parsedResponse);
             } catch (error) {
                 const message = error instanceof Error ? error.message : "Request failed.";
-                setResponse(form, "Request Error", message, { curl: "", javascript: "", python: "", go: "", node: "", php: "" });
+                setResponse(form, "Request Error", message, emptySnippets());
             }
         });
     });

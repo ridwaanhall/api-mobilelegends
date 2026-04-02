@@ -22,7 +22,7 @@
             </h3>
             <p class="mt-1 text-xs text-zinc-500">{{ operation.web_path }}</p>
         </div>
-        <a href="{{ operation.web_path }}" class="border border-zinc-700 px-2 py-1 text-xs text-zinc-300 hover:border-zinc-400 hover:text-zinc-100">
+        <a href="{{ operation.web_path }}" class="cursor-pointer border border-zinc-700 px-2 py-1 text-xs text-zinc-300 hover:border-zinc-400 hover:text-zinc-100">
             Open Only This
         </a>
     </div>
@@ -33,7 +33,7 @@
                 {{ operation.description_html | safe }}
                 <div class="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-black to-transparent hidden" data-desc-fade></div>
             </div>
-            <button type="button" class="mt-2 hidden border border-zinc-700 px-2 py-1 text-[11px] text-zinc-300 hover:border-zinc-500 hover:text-zinc-100" data-desc-toggle>
+            <button type="button" class="mt-2 hidden cursor-pointer border border-zinc-700 px-2 py-1 text-[11px] text-zinc-300 hover:border-zinc-500 hover:text-zinc-100" data-desc-toggle>
                 Show more
             </button>
         </div>
@@ -54,24 +54,35 @@
                             <span class="text-[10px] uppercase tracking-[0.14em] text-zinc-500">{{ parameter.location }}</span>
                         </div>
 
-                        {% if parameter.enum_values and parameter.is_array %}
-                            <select
-                                class="w-full border border-zinc-700 bg-black px-3 py-2 text-sm text-zinc-100 outline-none"
+                        {% if parameter.is_array and parameter.option_values %}
+                            <div
+                                class="flex flex-wrap gap-1.5"
                                 data-param-in="{{ parameter.location }}"
                                 data-param-name="{{ parameter.name }}"
                                 data-array="true"
-                                multiple
-                                {% if parameter.required %}required{% endif %}
+                                data-param-kind="checkbox-group"
+                                data-required="{{ 'true' if parameter.required else 'false' }}"
                             >
-                                {% for option in parameter.enum_values %}
-                                    <option
-                                        value="{{ option }}"
-                                        {% if parameter.default and option in parameter.default %}selected{% endif %}
-                                    >
-                                        {{ option }}
-                                    </option>
+                                {% for option in parameter.option_values %}
+                                    {% set option_id = "param-" ~ operation.operation_id ~ "-" ~ parameter.name ~ "-" ~ loop.index %}
+                                    <div class="inline-flex">
+                                        <input
+                                            id="{{ option_id }}"
+                                            type="checkbox"
+                                            class="peer sr-only"
+                                            data-param-choice="true"
+                                            value="{{ option }}"
+                                            {% if option in parameter.default_selected %}checked{% endif %}
+                                        />
+                                        <label
+                                            for="{{ option_id }}"
+                                            class="inline-flex cursor-pointer select-none border border-zinc-700 px-2 py-1 text-[10px] leading-none text-zinc-300 hover:border-zinc-500 hover:text-zinc-100 peer-checked:border-cyan-400 peer-checked:bg-cyan-950/35 peer-checked:text-cyan-100"
+                                        >
+                                            {{ option }}
+                                        </label>
+                                    </div>
                                 {% endfor %}
-                            </select>
+                            </div>
                         {% elif parameter.enum_values %}
                             <select
                                 class="w-full border border-zinc-700 bg-black px-3 py-2 text-sm text-zinc-100 outline-none"
@@ -96,14 +107,34 @@
                                 data-param-in="{{ parameter.location }}"
                                 data-param-name="{{ parameter.name }}"
                                 data-array="{{ 'true' if parameter.is_array else 'false' }}"
+                                {% if parameter.minimum is not none %}min="{{ parameter.minimum }}"{% endif %}
+                                {% if parameter.maximum is not none %}max="{{ parameter.maximum }}"{% endif %}
                                 {% if parameter.required %}required{% endif %}
                             />
                         {% endif %}
 
                         <p class="mt-2 text-[11px] text-zinc-500">
-                            {{ parameter.description }}
+                            {{ parameter.description_html | safe }}
                             {% if parameter.required %}
                                 <span class="text-zinc-300">Required.</span>
+                            {% endif %}
+                            {% if parameter.minimum is not none %}
+                                <span class="text-zinc-400">Minimum: {{ parameter.minimum }}.</span>
+                            {% endif %}
+                            {% if parameter.maximum is not none %}
+                                <span class="text-zinc-400">Maximum: {{ parameter.maximum }}.</span>
+                            {% endif %}
+                            {% if parameter.min_items is not none %}
+                                <span class="text-zinc-400">Min items: {{ parameter.min_items }}.</span>
+                            {% endif %}
+                            {% if parameter.max_items is not none %}
+                                <span class="text-zinc-400">Max items: {{ parameter.max_items }}.</span>
+                            {% endif %}
+                            {% if parameter.min_length is not none %}
+                                <span class="text-zinc-400">Min length: {{ parameter.min_length }}.</span>
+                            {% endif %}
+                            {% if parameter.max_length is not none %}
+                                <span class="text-zinc-400">Max length: {{ parameter.max_length }}.</span>
                             {% endif %}
                         </p>
                     </label>
@@ -127,7 +158,7 @@
         {% endif %}
 
         <div class="flex flex-wrap items-center gap-2">
-            <button type="submit" class="border border-zinc-600 px-4 py-2 text-sm font-medium text-zinc-100 hover:border-zinc-200">
+            <button type="submit" class="cursor-pointer border border-zinc-600 px-4 py-2 text-sm font-medium text-zinc-100 hover:border-zinc-200">
                 Execute
             </button>
             <span class="text-xs text-zinc-500">{{ operation.method }} {{ operation.api_path }}</span>
@@ -139,18 +170,20 @@
             <div class="space-y-3">
                 <section class="border border-zinc-900 bg-black p-3">
                     <div class="mb-2 flex flex-wrap items-center justify-between gap-2">
-                        <p class="text-[11px] uppercase tracking-[0.14em] text-zinc-500">Languages</p>
-                        <button type="button" class="border border-zinc-700 px-2 py-1 text-[10px] uppercase tracking-[0.12em] text-zinc-300 hover:border-zinc-500 hover:text-zinc-100" data-copy-btn data-copy-target="language">
+                        <p class="text-[11px] tracking-[0.08em] text-zinc-500">Languages</p>
+                        <button type="button" class="cursor-pointer border border-zinc-700 px-2 py-1 text-[11px] text-zinc-300 hover:border-zinc-500 hover:text-zinc-100" data-copy-btn data-copy-target="language">
                             Copy Snippet
                         </button>
                     </div>
                     <div class="mb-2 flex flex-wrap gap-2" data-languages-wrapper>
-                        <button type="button" class="border border-zinc-700 px-2 py-1 text-[10px] uppercase tracking-[0.12em] text-zinc-300 hover:border-zinc-500 hover:text-zinc-100" data-lang-tab data-lang-key="curl">cURL</button>
-                        <button type="button" class="border border-zinc-700 px-2 py-1 text-[10px] uppercase tracking-[0.12em] text-zinc-300 hover:border-zinc-500 hover:text-zinc-100" data-lang-tab data-lang-key="javascript">JavaScript</button>
-                        <button type="button" class="border border-zinc-700 px-2 py-1 text-[10px] uppercase tracking-[0.12em] text-zinc-300 hover:border-zinc-500 hover:text-zinc-100" data-lang-tab data-lang-key="python">Python</button>
-                        <button type="button" class="border border-zinc-700 px-2 py-1 text-[10px] uppercase tracking-[0.12em] text-zinc-300 hover:border-zinc-500 hover:text-zinc-100" data-lang-tab data-lang-key="go">Go</button>
-                        <button type="button" class="border border-zinc-700 px-2 py-1 text-[10px] uppercase tracking-[0.12em] text-zinc-300 hover:border-zinc-500 hover:text-zinc-100" data-lang-tab data-lang-key="node">Node (Axios)</button>
-                        <button type="button" class="border border-zinc-700 px-2 py-1 text-[10px] uppercase tracking-[0.12em] text-zinc-300 hover:border-zinc-500 hover:text-zinc-100" data-lang-tab data-lang-key="php">PHP</button>
+                        <button type="button" class="cursor-pointer border border-zinc-700 px-2 py-1 text-[11px] text-zinc-300 hover:border-zinc-500 hover:text-zinc-100" data-lang-tab data-lang-key="curl">curl</button>
+                        <button type="button" class="cursor-pointer border border-zinc-700 px-2 py-1 text-[11px] text-zinc-300 hover:border-zinc-500 hover:text-zinc-100" data-lang-tab data-lang-key="python">python</button>
+                        <button type="button" class="cursor-pointer border border-zinc-700 px-2 py-1 text-[11px] text-zinc-300 hover:border-zinc-500 hover:text-zinc-100" data-lang-tab data-lang-key="javascript">javascript</button>
+                        <button type="button" class="cursor-pointer border border-zinc-700 px-2 py-1 text-[11px] text-zinc-300 hover:border-zinc-500 hover:text-zinc-100" data-lang-tab data-lang-key="go">go</button>
+                        <button type="button" class="cursor-pointer border border-zinc-700 px-2 py-1 text-[11px] text-zinc-300 hover:border-zinc-500 hover:text-zinc-100" data-lang-tab data-lang-key="node">node (axios)</button>
+                        <button type="button" class="cursor-pointer border border-zinc-700 px-2 py-1 text-[11px] text-zinc-300 hover:border-zinc-500 hover:text-zinc-100" data-lang-tab data-lang-key="php">php</button>
+                        <button type="button" class="cursor-pointer border border-zinc-700 px-2 py-1 text-[11px] text-zinc-300 hover:border-zinc-500 hover:text-zinc-100" data-lang-tab data-lang-key="java">java</button>
+                        <button type="button" class="cursor-pointer border border-zinc-700 px-2 py-1 text-[11px] text-zinc-300 hover:border-zinc-500 hover:text-zinc-100" data-lang-tab data-lang-key="csharp">csharp</button>
                     </div>
                     <pre class="custom-scroll max-h-56 w-full max-w-full overflow-auto text-xs text-zinc-200" data-language-content></pre>
                 </section>
@@ -163,7 +196,7 @@
                 <section class="border border-zinc-900 bg-black p-3">
                     <div class="mb-2 flex items-center justify-between gap-2">
                         <p class="text-[11px] uppercase tracking-[0.14em] text-zinc-500">Raw JSON</p>
-                        <button type="button" class="border border-zinc-700 px-2 py-1 text-[10px] uppercase tracking-[0.12em] text-zinc-300 hover:border-zinc-500 hover:text-zinc-100" data-copy-btn data-copy-target="response">
+                        <button type="button" class="cursor-pointer border border-zinc-700 px-2 py-1 text-[10px] uppercase tracking-[0.12em] text-zinc-300 hover:border-zinc-500 hover:text-zinc-100" data-copy-btn data-copy-target="response">
                             Copy Response
                         </button>
                     </div>

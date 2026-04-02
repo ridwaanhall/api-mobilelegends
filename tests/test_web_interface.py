@@ -42,6 +42,7 @@ def test_navbar_shows_api_version_badge() -> None:
     assert response.status_code == 200
     assert "MLBB API Web" in response.text
     assert "v3.2.0" in response.text
+    assert "https://buymeacoffee.com/ridwaanhall" in response.text
 
 
 def test_web_group_pages_are_available() -> None:
@@ -86,6 +87,7 @@ def test_user_login_page_has_jwt_cache_script() -> None:
     assert "mlbb_user_auth" in response.text
     assert "24 * 60 * 60 * 1000" in response.text
     assert "/api/user/auth/login" in response.text
+    assert "hydrateUserInfoIfMissing" in response.text
 
 
 def test_user_privacy_page_renders_get_and_post_forms() -> None:
@@ -149,6 +151,13 @@ def test_response_panel_has_readable_and_raw_views() -> None:
     assert "Copy Response" in response.text
 
 
+def test_request_body_editor_uses_six_rows() -> None:
+    response = client.get("/web/user/auth/login")
+
+    assert response.status_code == 200
+    assert 'rows="5"' in response.text
+
+
 def test_web_script_contains_readable_table_and_image_render_helpers() -> None:
     response = client.get("/web/user/info")
 
@@ -180,3 +189,10 @@ def test_description_expand_markers_present() -> None:
     assert response.status_code == 200
     assert "data-desc-toggle" in response.text
     assert "Show more" in response.text
+
+
+def test_sign_out_requires_confirmation_prompt() -> None:
+    response = client.get("/web/user")
+
+    assert response.status_code == 200
+    assert "Are you sure you want to sign out?" in response.text

@@ -17,7 +17,7 @@
     <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
         <div>
             <h3 class="text-lg font-semibold text-zinc-100">
-                <span class="mr-1 inline-flex rounded border px-1.5 py-0.5 text-[10px] align-middle uppercase tracking-[0.16em] {{ method_class }}">{{ operation.method }}</span>
+                <span class="mr-1 inline-flex border px-1.5 py-0.5 text-[10px] align-middle uppercase tracking-[0.16em] {{ method_class }}">{{ operation.method }}</span>
                 {{ operation.summary }}
             </h3>
             <p class="mt-1 text-xs text-zinc-500">{{ operation.web_path }}</p>
@@ -118,7 +118,8 @@
                     <span class="text-[10px] uppercase tracking-[0.14em] text-zinc-500">json</span>
                 </div>
                 <textarea
-                    class="min-h-48 w-full border border-zinc-700 bg-black px-3 py-2 font-mono text-xs text-zinc-100 outline-none"
+                    class="min-h-24 w-full border border-zinc-700 bg-black px-3 py-2 font-mono text-xs text-zinc-100 outline-none"
+                    rows="5"
                     data-request-body="true"
                     {% if operation.request_body.required %}required{% endif %}
                 >{{ operation.request_body.example_json }}</textarea>

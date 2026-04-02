@@ -131,7 +131,7 @@
 			{% include "sidebar.html" %}
 		{% endif %}
 
-		<main class="w-full min-w-0 overflow-x-hidden">
+		<main class="w-full min-w-0">
 			{% block content %}{% endblock %}
 		</main>
 	</div>
@@ -299,6 +299,10 @@
 		document.getElementById("jwt-auth-action")?.addEventListener("click", () => {
 			const auth = window.MLBBWebAuth.readAuth();
 			if (auth) {
+				const shouldSignOut = window.confirm("Are you sure you want to sign out?");
+				if (!shouldSignOut) {
+					return;
+				}
 				window.MLBBWebAuth.clearAuth();
 				return;
 			}

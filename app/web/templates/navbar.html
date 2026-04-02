@@ -2,7 +2,7 @@
     <div class="mx-auto flex w-full max-w-[1600px] flex-wrap items-center justify-between gap-3 px-4 py-3 lg:px-6">
         
         <!-- Brand + Version -->
-        <a href="/" class="inline-flex items-baseline gap-1 border border-zinc-700 px-3 py-1 rounded text-sm font-semibold tracking-wide text-zinc-100 hover:border-zinc-400">
+        <a href="/" class="inline-flex items-baseline gap-1 border border-zinc-700 px-3 py-1 text-sm font-semibold tracking-wide text-zinc-100 hover:border-zinc-400">
             MLBB API Web
             <span class="text-[10px] font-medium text-cyan-300 align-super">
                 v{{ api_version }}
@@ -11,10 +11,12 @@
 
         <!-- Navigation -->
         <nav class="flex flex-wrap items-center gap-4 text-xs md:text-sm">
-            <!-- API group -->
             <div class="flex flex-wrap items-center gap-2">
                 <a href="https://mlbb-card.rone.dev" class="border border-zinc-700 px-3 py-1 rounded hover:border-zinc-400">
                     MLBB Card
+                </a>
+                <a href="https://buymeacoffee.com/ridwaanhall" target="_blank" rel="noreferrer noopener" class="border border-zinc-700 px-3 py-1 hover:border-zinc-400">
+                    Donate
                 </a>
             </div>
 
@@ -23,7 +25,7 @@
                 {% for group in groups %}
                     <a
                         href="/web/{{ group }}"
-                        class="border border-zinc-700 px-3 py-1 rounded 
+                        class="border border-zinc-700 px-3 py-1 
                             {{ 'text-zinc-100 hover:border-zinc-400' if current_group == group 
                                 else 'text-zinc-400 hover:border-zinc-500 hover:text-zinc-100' }}"
                     >
@@ -35,12 +37,12 @@
 
         <!-- Auth + User -->
         <div class="flex items-center gap-2 text-xs md:text-sm">
-            <div id="user-badge" class="hidden items-center gap-2 border border-zinc-700 px-2 py-1 rounded">
+            <div id="user-badge" class="hidden items-center gap-2 border border-zinc-700 px-2 py-1">
                 <img id="user-avatar" src="" alt="User avatar" class="h-6 w-6 rounded-full border border-zinc-700 object-cover" />
                 <span id="user-name" class="max-w-40 truncate text-zinc-200"></span>
             </div>
-            <span id="jwt-status" class="border border-zinc-700 px-3 py-1 rounded text-zinc-300">Not Signed In</span>
-            <button id="jwt-auth-action" type="button" class="border border-zinc-700 px-3 py-1 rounded text-zinc-300 hover:border-zinc-400 hover:text-zinc-100">
+            <span id="jwt-status" class="border border-zinc-700 px-3 py-1 text-zinc-300">Not Signed In</span>
+            <button id="jwt-auth-action" type="button" class="border border-zinc-700 px-3 py-1 text-zinc-300 hover:border-zinc-400 hover:text-zinc-100">
                 Sign In
             </button>
         </div>

@@ -6,6 +6,7 @@ from app.services.user import fetch_user_post, fetch_user_actgateway, fetch_user
 
 from app.core.exceptions import AppError
 from app.core.http import MLBBHeaderBuilder
+from app.core.errors import _hero_id_or_404
 from app.core.enums import LanguageEnum, VisibilityEnum
 from app.schemas.user import (
     UserAuthSimpleResponse,
@@ -20,6 +21,7 @@ from app.schemas.user import (
     UserSendVcRequest,
     UserSeasonResponse,
     UserStatsResponse,
+    UserMatchesByHeroResponse,
 )
 
 from typing import Annotated
@@ -1080,6 +1082,195 @@ def user_frequent_heroes(
         params["last_cursor"] = last_cursor
 
     response = _require_dict_response(fetch_user_actgateway("battlereport/heros/frequent", headers, params))
+    _require_key(response, "code")
+    _require_key(response, "data")
+    return response
+
+
+@router.get(
+    path="/matches/hero/{hero_identifier}",
+    name="api.user.matches_by_hero",
+    response_model=UserMatchesByHeroResponse,
+    summary="User Matches by Hero",
+    description=(
+        "Retrieve the authenticated player's recent matches filtered by a specific hero using a valid JWT. "
+        "Supports query parameters for season filtering, pagination, and localization. Requires an Authorization header "
+        "with the JWT from login.\n\n"
+        "Headers:\n"
+        "- **Authorization**: `Bearer <jwt>` (JWT obtained during login).\n\n"
+        "Path parameters:\n"
+        "- **hero_identifier**: Hero identifier as numeric hero ID or hero name. "
+        "Name matching ignores spaces/symbols and is case-insensitive (e.g., `Luo Yi` -> `luoyi`).\n\n"
+        "Query parameters:\n"
+        "- **sid**: Season ID for filtering matches (must be a valid season ID from `/api/user/season`).\n"
+        "- **limit**: Maximum number of matches to retrieve (minimum: 1).\n"
+        "- **last_cursor**: Cursor for pagination. Set this to `nextCursor` from the last item in the previous response.\n"
+        "- **lang**: Language code for localized content (default: `en`).\n\n"
+        "Response structure:\n"
+        "- **code**: Status code (0 indicates success).\n"
+        "- **message**: Response message from upstream service.\n"
+        "- **traceID**: Upstream trace identifier for request debugging/tracking.\n"
+        "- **data**: Main payload object.\n"
+        "    - **pageInfo**: Pagination metadata object.\n"
+        "        - **nextCursor**: Cursor value for the next page, used for pagination.\n"
+        "        - **hasNext**: Boolean flag indicating whether more results are available.\n"
+        "        - **count**: Number of results returned in the current page.\n"
+        "    - **hi**: Aggregated hero summary for the selected hero and season.\n"
+        "        - **hid**: Hero ID.\n"
+        "        - **tc**: Total Count (matches played with this hero).\n"
+        "        - **wc**: Win Count (matches won with this hero).\n"
+        "        - **bs**: Battle Score (average score; interpret as `bs/100` when non-zero).\n"
+        "        - **mr**: Match Rating points for this hero.\n"
+        "        - **mrp**: Match Rating percentage/contribution.\n"
+        "        - **hid_e**: Hero metadata object.\n"
+        "            - **id**: Hero ID metadata.\n"
+        "            - **n**: Hero name.\n"
+        "            - **ix**: Hero image URL.\n"
+        "            - **i2x**: Large hero image URL.\n"
+        "        - **p**: Hero power/MMR-style value.\n"
+        "    - **result**: Array of match entries for this hero.\n"
+        "        - **sid**: Season ID.\n"
+        "        - **bid**: Battle ID (numeric).\n"
+        "        - **hid**: Hero ID used in that match.\n"
+        "        - **k**: Kills.\n"
+        "        - **d**: Deaths.\n"
+        "        - **a**: Assists.\n"
+        "        - **lid**: Lane ID (1 EXP, 2 Mid, 3 Roam, 4 Jungle, 5 Gold).\n"
+        "        - **s**: Match score/performance value (commonly interpreted as `s/100`).\n"
+        "        - **mvp**: MVP flag (1 if MVP, 0 otherwise).\n"
+        "        - **res**: Result (1 = Win, 0 = Loss).\n"
+        "        - **ts**: Match timestamp (unix time).\n"
+        "        - **hid_e**: Hero metadata object.\n"
+        "            - **id**: Hero ID metadata.\n"
+        "            - **n**: Hero name.\n"
+        "            - **ix**: Hero image URL.\n"
+        "            - **i2x**: Large hero image URL.\n"
+        "        - **bid_s**: String battle ID.\n\n"
+        "Pagination example:\n"
+        "    First request: `/api/user/matches/hero/17?sid=40&limit=10&lang=en`\n"
+        "    Next request: `/api/user/matches/hero/17?sid=40&limit=10&last_cursor=<nextCursor>&lang=en`"
+    ),
+    responses={
+        200: {
+            "description": "Successful Response",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "code": 0,
+                        "message": "Success",
+                        "traceID": "15b79802139dd7766774f6e84ffc31bd",
+                        "data": {
+                            "pageInfo": {
+                                "nextCursor": "",
+                                "hasNext": False,
+                                "count": 0
+                            },
+                            "hi": {
+                                "hid": 17,
+                                "tc": 9,
+                                "wc": 8,
+                                "bs": 0,
+                                "mr": 6788,
+                                "mrp": 0.6641,
+                                "hid_e": {
+                                    "id": 17,
+                                    "n": "Fanny",
+                                    "ix": "https://akmweb.youngjoygame.com/web/svnres/img/mlbb/community/100_ae8ca46da01da69619a6c03dc7069921.png",
+                                    "i2x": "https://akmweb.youngjoygame.com/web/svnres/file/mlbb/homepage/100_74fabc6c0d5db065fbb836b6879f36ca.jpg"
+                                },
+                                "p": 1496
+                            },
+                            "result": [
+                                {
+                                    "sid": 40,
+                                    "bid": 4138442308503475824,
+                                    "hid": 17,
+                                    "k": 7,
+                                    "d": 3,
+                                    "a": 7,
+                                    "lid": 4,
+                                    "s": 810,
+                                    "mvp": 0,
+                                    "res": 1,
+                                    "ts": 1774955310,
+                                    "hid_e": {
+                                        "id": 17,
+                                        "n": "Fanny",
+                                        "ix": "https://akmweb.youngjoygame.com/web/svnres/img/mlbb/community/100_ae8ca46da01da69619a6c03dc7069921.png",
+                                        "i2x": "https://akmweb.youngjoygame.com/web/svnres/file/mlbb/homepage/100_74fabc6c0d5db065fbb836b6879f36ca.jpg"
+                                    },
+                                    "bid_s": "4138442308503475824"
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    }
+)
+def user_matches_by_hero(
+    jwt: Annotated[
+        str,
+        Depends(require_user_jwt),
+    ],
+    hero_identifier: Annotated[
+        str,
+        Path(
+            title="Hero Identifier",
+            description=(
+                "Hero identifier as numeric hero ID or hero name. "
+                "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Luo Yi' → `luoyi`)."
+            ),
+        )
+    ],
+    sid: Annotated[
+        int,
+        Query(
+            title="Season ID",
+            description="The season ID for filtering matches by hero.",
+        )
+    ],
+    limit: Annotated[
+        int,
+        Query(
+            title="Limit",
+            description="The maximum number of matches to retrieve.",
+            ge=1,
+        )
+    ] = 10,
+    last_cursor: Annotated[
+        int | None,
+        Query(
+            title="Last Cursor",
+            description="The cursor for pagination to retrieve the next set of recent matches. `bid_s`",
+        )
+    ] = None,
+    lang: Annotated[
+        LanguageEnum,
+        Query(
+            title="Language",
+            description="Language code for localized content.",
+        )
+    ] = LanguageEnum.ENGLISH,
+) -> object:
+    hero_id = _hero_id_or_404(
+        hero_identifier,
+        lang
+    )
+    headers = MLBBHeaderBuilder.get_user_header(
+        lang=lang,
+        x_token=jwt,
+    )
+    params = {
+        "hid": hero_id,
+        "sid": sid,
+        "limit": limit,
+    }
+    if last_cursor is not None:
+        params["last_cursor"] = last_cursor
+
+    response = _require_dict_response(fetch_user_actgateway("battlereport/hero/matches", headers, params))
     _require_key(response, "code")
     _require_key(response, "data")
     return response

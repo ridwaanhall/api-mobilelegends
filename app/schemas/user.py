@@ -205,6 +205,39 @@ class UserMatchesResponse(UserDataBaseResponse):
     data: UserMatchesData | dict[str, Any] | None = None
 
 
+class UserMatchesByHeroHeroInfo(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    hid: int | None = None
+    tc: int | None = None
+    wc: int | None = None
+    bs: float | None = None
+    mr: int | None = None
+    mrp: float | None = None
+    hid_e: UserEntity | None = None
+    p: int | None = None
+
+
+class UserMatchesByHeroData(BaseModel):
+    """Data payload for matches filtered by a specific hero."""
+
+    model_config = ConfigDict(extra="allow")
+
+    pageInfo: UserPageInfo | None = None
+    hi: UserMatchesByHeroHeroInfo | None = None
+    result: list[UserMatchSummary] = Field(default_factory=list)
+
+
+class UserMatchesByHeroResponse(UserDataBaseResponse):
+    """Response model for user matches filtered by hero."""
+
+    model_config = ConfigDict(
+        extra="allow",
+    )
+
+    data: UserMatchesByHeroData | None = None
+
+
 class UserItemEntity(BaseModel):
     model_config = ConfigDict(extra="allow")
 

@@ -672,13 +672,12 @@ def user_season(
         "Query parameters:\n"
         "- **sid**: Season ID for filtering matches (must be a valid season ID from `/api/user/season`).\n"
         "- **limit**: Maximum number of matches to retrieve (minimum: 1).\n"
-        "- **last_cursor**: Cursor for pagination. Must be set to the `bid_s` of the last match from the previous page. "
-        "The API response includes `pageInfo.nextCursor`, which corresponds to the `bid_s` of the last item in the current result set. "
-        "Use that value as `last_cursor` in the next request to fetch the following page.\n"
+        "- **last_cursor**: Cursor for pagination. Use the value from `pageInfo.nextCursor` in the current response. "
+        "If `pageInfo.hasNext` is `false` or `pageInfo.nextCursor` is empty, there is no next page.\n"
         "- **lang**: Language code for localized content (default: `en`).\n\n"
         "The response includes match details:\n"
         "- **sid**: Season ID.\n"
-        "- **bid**: Battle ID (unique match reference), use `bid_s` for pagination.\n"
+        "- **bid**: Battle ID (unique match reference).\n"
         "- **hid**: Hero ID used in the match.\n"
         "- **k**: Kills.\n"
         "- **d**: Deaths.\n"
@@ -689,11 +688,12 @@ def user_season(
         "- **res**: Result (1 = Win, 0 = Loss).\n"
         "- **ts**: Timestamp of the match.\n"
         "- **hid_e**: Hero entity metadata (hero ID, name, images).\n"
-        "- **bid_s**: String battle ID (used for pagination cursor).\n\n"
+        "- **bid_s**: String battle ID representation.\n\n"
         "Pagination example:\n"
         "    First request: `/api/user/matches?sid=40&limit=10&lang=en` → response includes `pageInfo.nextCursor = 4139649383291049463`.\n"
         "    Second request: `/api/user/matches?sid=40&limit=10&last_cursor=4139649383291049463&lang=en` → retrieves the next page, "
-        "starting from the match with `bid_s = 4139649383291049463`.\n\n"
+        "using `pageInfo.nextCursor` from the current response.\n"
+        "    Stop pagination when `pageInfo.hasNext = false` or `pageInfo.nextCursor` is empty.\n\n"
         "The response also includes pagination metadata:\n"
         "- **pageInfo.nextCursor**: Cursor value for the next page.\n"
         "- **pageInfo.hasNext**: Boolean flag indicating if more results are available.\n"
@@ -771,7 +771,7 @@ def user_matches(
         int | None,
         Query(
             title="Last Cursor",
-            description="The cursor for pagination to retrieve the next set of recent matches. `bid_s`",
+            description="Pagination cursor from `pageInfo.nextCursor` of the current response.",
         )
     ] = None,
     lang: Annotated[
@@ -966,9 +966,8 @@ def user_match_details(
         "Query parameters:\n"
         "- **sid**: Season ID for filtering frequent heroes (must be a valid season ID from `/api/user/season`).\n"
         "- **limit**: Maximum number of heroes to retrieve (minimum: 1).\n"
-        "- **last_cursor**: Cursor for pagination. Must be set to the `hid` (hero_id) of the last hero from the previous page. "
-        "The API response includes `pageInfo.nextCursor`, which corresponds to the hero_id of the first hero in the next page. "
-        "Use that value as `last_cursor` in the next request to fetch subsequent heroes.\n"
+        "- **last_cursor**: Cursor for pagination. Use the value from `pageInfo.nextCursor` in the current response. "
+        "If `pageInfo.hasNext` is `false` or `pageInfo.nextCursor` is empty, there is no next page.\n"
         "- **lang**: Language code for localized content (default: `en`).\n\n"
         "The response includes frequent hero usage details:\n"
         "- **hid**: Hero ID.\n"
@@ -986,7 +985,8 @@ def user_match_details(
         "Pagination example:\n"
         "    First request: `/api/user/heroes/frequent?sid=37&limit=5&lang=en` → response includes `pageInfo.nextCursor = 11`.\n"
         "    Second request: `/api/user/heroes/frequent?sid=37&limit=5&last_cursor=11&lang=en` → retrieves the next page, "
-        "starting from the hero with `hid = 11`.\n\n"
+        "using `pageInfo.nextCursor` from the current response.\n"
+        "    Stop pagination when `pageInfo.hasNext = false` or `pageInfo.nextCursor` is empty.\n\n"
         "The response also includes pagination metadata:\n"
         "- **pageInfo.nextCursor**: Cursor value for the next page.\n"
         "- **pageInfo.hasNext**: Boolean flag indicating if more results are available.\n"
@@ -1059,7 +1059,7 @@ def user_frequent_heroes(
         int | None,
         Query(
             title="Last Cursor",
-            description="The cursor for pagination to retrieve the next set of frequent heroes. (hero_id)",
+            description="Pagination cursor from `pageInfo.nextCursor` of the current response.",
         )
     ] = None,
     lang: Annotated[
@@ -1104,7 +1104,8 @@ def user_frequent_heroes(
         "Query parameters:\n"
         "- **sid**: Season ID for filtering matches (must be a valid season ID from `/api/user/season`).\n"
         "- **limit**: Maximum number of matches to retrieve (minimum: 1).\n"
-        "- **last_cursor**: Cursor for pagination. Set this to `nextCursor` from the last item in the previous response.\n"
+        "- **last_cursor**: Cursor for pagination. Use the value from `pageInfo.nextCursor` in the current response. "
+        "If `pageInfo.hasNext` is `false` or `pageInfo.nextCursor` is empty, there is no next page.\n"
         "- **lang**: Language code for localized content (default: `en`).\n\n"
         "Response structure:\n"
         "- **code**: Status code (0 indicates success).\n"
@@ -1148,7 +1149,8 @@ def user_frequent_heroes(
         "        - **bid_s**: String battle ID.\n\n"
         "Pagination example:\n"
         "    First request: `/api/user/matches/hero/17?sid=40&limit=10&lang=en`\n"
-        "    Next request: `/api/user/matches/hero/17?sid=40&limit=10&last_cursor=<nextCursor>&lang=en`"
+        "    Next request: `/api/user/matches/hero/17?sid=40&limit=10&last_cursor=<pageInfo.nextCursor>&lang=en`\n"
+        "    Stop pagination when `pageInfo.hasNext = false` or `pageInfo.nextCursor` is empty."
     ),
     responses={
         200: {
@@ -1243,7 +1245,7 @@ def user_matches_by_hero(
         int | None,
         Query(
             title="Last Cursor",
-            description="The cursor for pagination to retrieve the next set of recent matches. `bid_s`",
+            description="Pagination cursor from `pageInfo.nextCursor` of the current response.",
         )
     ] = None,
     lang: Annotated[

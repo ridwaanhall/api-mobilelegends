@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 from typing import Annotated, Literal
 
@@ -621,8 +621,7 @@ def hero_position(
         "Get detailed information for a specific hero by ID or name. "
         "Supports query parameters for pagination and localization.\n\n"
         "Path parameters:\n"
-        "- **hero_identifier**: Hero identifier as numeric hero ID or hero name. "
-        "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Luo Yi' → `luoyi`).\n\n"
+        "- **hero_identifier**: Hero identifier as numeric hero ID or hero name. Accepts values like `30`, `Yi Sun-shin`, or `yisunshin`.\n\n"
         "Query parameters:\n"
         "- **size**: Number of items per page (minimum: 1).\n"
         "- **index**: Page index (starting from 1).\n"
@@ -872,8 +871,7 @@ def hero_detail(
         Path(
             title="Hero Identifier",
             description=(
-                "Hero identifier as numeric hero ID or hero name. "
-                "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Luo Yi' → `luoyi`)."
+                "Hero identifier as numeric hero ID or hero name. Accepts values like `30`, `Yi Sun-shin`, or `yisunshin`."
             )
         )
     ],
@@ -932,8 +930,7 @@ def hero_detail(
         "Get detailed statistics for a specific hero by ID or name. "
         "Supports query parameters for rank tier, pagination, and localization.\n\n"
         "Path parameters:\n"
-        "- **hero_identifier**: Hero identifier as numeric hero ID or hero name. "
-        "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Angela' → `angela`).\n\n"
+        "- **hero_identifier**: Hero identifier as numeric hero ID or hero name. Accepts values like `30`, `Yi Sun-shin`, or `yisunshin`.\n\n"
         "Query parameters:\n"
         "- **rank**: Rank filter. Allowed values: `all`, `epic`, `legend`, `mythic`, `honor`, `glory`.\n"
         "- **size**: Number of items per page (minimum: 1).\n"
@@ -966,13 +963,13 @@ def hero_detail(
         "                - **data**:\n"
         "                    - **head**: Sub-hero portrait image URL.\n"
         "            - **min_win_rate6**: Win rate in matches ≤ 6 minutes.\n"
-        "            - **min_win_rate6_8**: Win rate in matches 6–8 minutes.\n"
-        "            - **min_win_rate8_10**: Win rate in matches 8–10 minutes.\n"
-        "            - **min_win_rate10_12**: Win rate in matches 10–12 minutes.\n"
-        "            - **min_win_rate12_14**: Win rate in matches 12–14 minutes.\n"
-        "            - **min_win_rate14_16**: Win rate in matches 14–16 minutes.\n"
-        "            - **min_win_rate16_18**: Win rate in matches 16–18 minutes.\n"
-        "            - **min_win_rate18_20**: Win rate in matches 18–20 minutes.\n"
+        "            - **min_win_rate6_8**: Win rate in matches 6-8 minutes.\n"
+        "            - **min_win_rate8_10**: Win rate in matches 8-10 minutes.\n"
+        "            - **min_win_rate10_12**: Win rate in matches 10-12 minutes.\n"
+        "            - **min_win_rate12_14**: Win rate in matches 12-14 minutes.\n"
+        "            - **min_win_rate14_16**: Win rate in matches 14-16 minutes.\n"
+        "            - **min_win_rate16_18**: Win rate in matches 16-18 minutes.\n"
+        "            - **min_win_rate18_20**: Win rate in matches 18-20 minutes.\n"
         "            - **min_win_rate20**: Win rate in matches ≥ 20 minutes.\n"
         "        - **sub_hero_last**: Array of negative synergy heroes, each containing:\n"
         "            - **heroid**: Sub-hero ID.\n"
@@ -1080,8 +1077,7 @@ def hero_detail_stats(
         Path(
             title="Hero Identifier",
             description=(
-                "Hero identifier as numeric hero ID or hero name. "
-                "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Luo Yi' → `luoyi`)."
+                "Hero identifier as numeric hero ID or hero name. Accepts values like `30`, `Yi Sun-shin`, or `yisunshin`."
             ),
         )
     ],
@@ -1156,8 +1152,7 @@ def hero_detail_stats(
         "Get the most effective skill combos for a specific hero by ID or name. "
         "Supports query parameters for pagination and localization.\n\n"
         "Path parameters:\n"
-        "- **hero_identifier**: Hero identifier as numeric hero ID or hero name. "
-        "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Marcel' → `marcel`).\n\n"
+        "- **hero_identifier**: Hero identifier as numeric hero ID or hero name. Accepts values like `30`, `Yi Sun-shin`, or `yisunshin`.\n\n"
         "Query parameters:\n"
         "- **size**: Number of items per page (minimum: 1).\n"
         "- **index**: Page index (starting from 1).\n"
@@ -1242,8 +1237,7 @@ def hero_skill_combo(
         Path(
             title="Hero Identifier",
             description=(
-                "Hero identifier as numeric hero ID or hero name. "
-                "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Luo Yi' → `luoyi`)."
+                "Hero identifier as numeric hero ID or hero name. Accepts values like `30`, `Yi Sun-shin`, or `yisunshin`."
             ),
         )
     ],
@@ -1302,8 +1296,7 @@ def hero_skill_combo(
         "Get rate trends for a specific hero by ID or name over a specified time window. "
         "Supports query parameters for rank tier, past days window, pagination, and localization.\n\n"
         "Path parameters:\n"
-        "- **hero_identifier**: Hero identifier as numeric hero ID or hero name. "
-        "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Balmond' → `balmond`).\n\n"
+        "- **hero_identifier**: Hero identifier as numeric hero ID or hero name. Accepts values like `30`, `Yi Sun-shin`, or `yisunshin`.\n\n"
         "Query parameters:\n"
         "- **rank**: Rank filter. Allowed values: `all`, `epic`, `legend`, `mythic`, `honor`, `glory`.\n"
         "- **past-days**: Rate window in days. Allowed values: `7`, `15`, `30`.\n"
@@ -1376,8 +1369,7 @@ def hero_rate(
         Path(
             title="Hero Identifier",
             description=(
-                "Hero identifier as numeric hero ID or hero name. "
-                "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Luo Yi' → `luoyi`)."
+                "Hero identifier as numeric hero ID or hero name. Accepts values like `30`, `Yi Sun-shin`, or `yisunshin`."
             ),
         )
     ],
@@ -1465,8 +1457,7 @@ def hero_rate(
         "Get information about the relations of a specific hero by ID or name. "
         "Supports query parameters for pagination and localization.\n\n"
         "Path parameters:\n"
-        "- **hero_identifier**: Hero identifier as numeric hero ID or hero name. "
-        "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Luo Yi' → `luoyi`).\n\n"
+        "- **hero_identifier**: Hero identifier as numeric hero ID or hero name. Accepts values like `30`, `Yi Sun-shin`, or `yisunshin`.\n\n"
         "Query parameters:\n"
         "- **size**: Number of items per page (minimum: 1).\n"
         "- **index**: Page index (starting from 1).\n"
@@ -1537,8 +1528,7 @@ def hero_relation(
         Path(
             title="Hero Identifier",
             description=(
-                "Hero identifier as numeric hero ID or hero name. "
-                "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Luo Yi' → `luoyi`)."
+                "Hero identifier as numeric hero ID or hero name. Accepts values like `30`, `Yi Sun-shin`, or `yisunshin`."
             ),
         )
     ],
@@ -1598,8 +1588,7 @@ def hero_relation(
         "Get information about heroes that counter a specific hero by ID or name. "
         "Supports query parameters for rank tier, pagination, and localization.\n\n"
         "Path parameters:\n"
-        "- **hero_identifier**: Hero identifier as numeric hero ID or hero name. "
-        "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Luo Yi' → `luoyi`).\n\n"
+        "- **hero_identifier**: Hero identifier as numeric hero ID or hero name. Accepts values like `30`, `Yi Sun-shin`, or `yisunshin`.\n\n"
         "Query parameters:\n"
         "- **rank**: Rank filter. Allowed values: `all`, `epic`, `legend`, `mythic`, `honor`, `glory`.\n"
         "- **size**: Number of items per page (minimum: 1).\n"
@@ -1745,8 +1734,7 @@ def hero_counter(
         Path(
             title="Hero Identifier",
             description=(
-                "Hero identifier as numeric hero ID or hero name. "
-                "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Luo Yi' → `luoyi`)."
+                "Hero identifier as numeric hero ID or hero name. Accepts values like `30`, `Yi Sun-shin`, or `yisunshin`."
             ),
         )
     ],
@@ -1821,8 +1809,7 @@ def hero_counter(
         "Get compatibility information for a specific hero by ID or name. "
         "Supports query parameters for rank tier, pagination, and localization.\n\n"
         "Path parameters:\n"
-        "- **hero_identifier**: Hero identifier as numeric hero ID or hero name. "
-        "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Luo Yi' → `luoyi`).\n\n"
+        "- **hero_identifier**: Hero identifier as numeric hero ID or hero name. Accepts values like `30`, `Yi Sun-shin`, or `yisunshin`.\n\n"
         "Query parameters:\n"
         "- **rank**: Rank filter. Allowed values: `all`, `epic`, `legend`, `mythic`, `honor`, `glory`.\n"
         "- **size**: Number of items per page (minimum: 1).\n"
@@ -1969,8 +1956,7 @@ def hero_compatibility(
         Path(
             title="Hero Identifier",
             description=(
-                "Hero identifier as numeric hero ID or hero name. "
-                "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Luo Yi' → `luoyi`)."
+                "Hero identifier as numeric hero ID or hero name. Accepts values like `30`, `Yi Sun-shin`, or `yisunshin`."
             ),
         )
     ],
@@ -2029,3 +2015,4 @@ def hero_compatibility(
         "pageIndex": index,
     }
     return fetch_mlbb_post("2756569", payload, lang)
+

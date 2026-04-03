@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Path, Query
+﻿from fastapi import APIRouter, Depends, Path, Query
 
 from app.api.dependencies import require_api_available, require_user_jwt
 
@@ -1099,8 +1099,7 @@ def user_frequent_heroes(
         "Headers:\n"
         "- **Authorization**: `Bearer <jwt>` (JWT obtained during login).\n\n"
         "Path parameters:\n"
-        "- **hero_identifier**: Hero identifier as numeric hero ID or hero name. "
-        "Name matching ignores spaces/symbols and is case-insensitive (e.g., `Luo Yi` -> `luoyi`).\n\n"
+        "- **hero_identifier**: Hero identifier as numeric hero ID or hero name. Accepts values like `30`, `Yi Sun-shin`, or `yisunshin`.\n\n"
         "Query parameters:\n"
         "- **sid**: Season ID for filtering matches (must be a valid season ID from `/api/user/season`).\n"
         "- **limit**: Maximum number of matches to retrieve (minimum: 1).\n"
@@ -1221,8 +1220,7 @@ def user_matches_by_hero(
         Path(
             title="Hero Identifier",
             description=(
-                "Hero identifier as numeric hero ID or hero name. "
-                "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Luo Yi' → `luoyi`)."
+                "Hero identifier as numeric hero ID or hero name. Accepts values like `30`, `Yi Sun-shin`, or `yisunshin`."
             ),
         )
     ],

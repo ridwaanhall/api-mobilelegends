@@ -1825,8 +1825,7 @@ def heroes(
         "Retrieve performance statistics for a specific hero by rank. "
         "Supports query parameters for rank, pagination, and localization.\n\n"
         "Path parameters:\n"
-        "- **hero_identifier**: Hero identifier as numeric hero ID or hero name. "
-        "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Luo Yi' → `luoyi`).\n\n"
+        "- **hero_identifier**: Hero identifier as numeric hero ID or hero name. Accepts values like `30`, `Yi Sun-shin`, or `yisunshin`.\n\n"
         "Query parameters:\n"
         "- **rank**: Rank filter. Allowed values: `all`, `epic`, `legend`, `mythic`, `honor`, `glory`.\n"
         "- **size**: Number of items per page (minimum: 1).\n"
@@ -1966,8 +1965,7 @@ def heroes_stats(
         Path(
             title="Hero Identifier",
             description=(
-                "Hero identifier as numeric hero ID or hero name. "
-                "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Luo Yi' → `luoyi`)."
+                "Hero identifier as numeric hero ID or hero name. Accepts values like `30`, `Yi Sun-shin`, or `yisunshin`."
             ),
         )
     ],
@@ -2037,8 +2035,7 @@ def heroes_stats(
         "Retrieve lane distribution information for a specific hero. "
         "Supports query parameters for pagination and localization.\n\n"
         "Path parameters:\n"
-        "- **hero_identifier**: Hero identifier as numeric hero ID or hero name. "
-        "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Luo Yi' → `luoyi`).\n\n"
+        "- **hero_identifier**: Hero identifier as numeric hero ID or hero name. Accepts values like `30`, `Yi Sun-shin`, or `yisunshin`.\n\n"
         "Query parameters:\n"
         "- **size**: Number of items per page (minimum: 1).\n"
         "- **index**: Page index (starting from 1).\n"
@@ -2122,8 +2119,7 @@ def heroes_lane(
         Path(
             title="Hero Identifier",
             description=(
-                "Hero identifier as numeric hero ID or hero name. "
-                "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Luo Yi' → `luoyi`)."
+                "Hero identifier as numeric hero ID or hero name. Accepts values like `30`, `Yi Sun-shin`, or `yisunshin`."
             ),
         )
     ],
@@ -2178,8 +2174,7 @@ def heroes_lane(
         "Retrieve time-based win rate statistics for a specific hero in a given lane. "
         "Supports query parameters for rank, pagination, and localization.\n\n"
         "Path parameters:\n"
-        "- **hero_identifier**: Hero identifier as numeric hero ID or hero name. "
-        "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Luo Yi' → `luoyi`).\n\n"
+        "- **hero_identifier**: Hero identifier as numeric hero ID or hero name. Accepts values like `30`, `Yi Sun-shin`, or `yisunshin`.\n\n"
         "Query parameters:\n"
         "- **lane**: Lane. Allowed values: `exp`, `mid`, `roam`, `jungle`, `gold`. from `/api/academy/heroes/{hero_identifier}/lane` \n"
         "- **rank**: Rank filter. Allowed values: `all`, `epic`, `legend`, `mythic`, `honor`, `glory`.\n"
@@ -2251,7 +2246,7 @@ def heroes_time_win_rate(
         Path(
             title="Hero Identifier",
             description=(
-                "Hero identifier as numeric hero ID or hero name. "
+                "Hero identifier as numeric hero ID or hero name. Accepts values like `30`, `Yi Sun-shin`, or `yisunshin`. "
                 "Name matching ignores spaces/symbols and is case-insensitive (e.g., `Luo Yi` to `luoyi`)."
             ),
         )
@@ -2329,8 +2324,7 @@ def heroes_time_win_rate(
     summary="Hero Recommended Builds",
     description=(
         "Path parameters:\n"
-        "- **hero_identifier**: Hero identifier as numeric hero ID or hero name. "
-        "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Luo Yi' → `luoyi`).\n\n"
+        "- **hero_identifier**: Hero identifier as numeric hero ID or hero name. Accepts values like `30`, `Yi Sun-shin`, or `yisunshin`.\n\n"
         "Query parameters:\n"
         "- **rank**: Rank filter. Allowed values: `all`, `epic`, `legend`, `mythic`, `honor`, `glory`.\n"
         "- **lane**: Lane. Allowed values: `exp`, `mid`, `roam`, `jungle`, `gold`. from `/api/academy/heroes/{hero_identifier}/lane` \n"
@@ -2441,8 +2435,7 @@ def heroes_builds(
         Path(
             title="Hero Identifier",
             description=(
-                "Hero identifier as numeric hero ID or hero name. "
-                "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Luo Yi' → `luoyi`)."
+                "Hero identifier as numeric hero ID or hero name. Accepts values like `30`, `Yi Sun-shin`, or `yisunshin`."
             ),
         )
     ],
@@ -2520,8 +2513,7 @@ def heroes_builds(
         "Retrieve counter information for a specific hero. "
         "Supports query parameters for rank, pagination, and localization.\n\n"
         "Path parameters:\n"
-        "- **hero_identifier**: Hero identifier as numeric hero ID or hero name. "
-        "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Luo Yi' → `luoyi`).\n\n"
+        "- **hero_identifier**: Hero identifier as numeric hero ID or hero name. Accepts values like `30`, `Yi Sun-shin`, or `yisunshin`.\n\n"
         "Query parameters:\n"
         "- **rank**: Rank filter. Allowed values: `all`, `epic`, `legend`, `mythic`, `honor`, `glory`.\n"
         "- **size**: Number of items per page (minimum: 1).\n"
@@ -2593,8 +2585,7 @@ def heroes_counters(
         Path(
             title="Hero Identifier",
             description=(
-                "Hero identifier as numeric hero ID or hero name. "
-                "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Luo Yi' → `luoyi`)."
+                "Hero identifier as numeric hero ID or hero name. Accepts values like `30`, `Yi Sun-shin`, or `yisunshin`."
             ),
         )
     ],
@@ -2664,8 +2655,7 @@ def heroes_counters(
         "Retrieve teammate information for a specific hero. "
         "Supports query parameters for rank, pagination, and localization.\n\n"
         "Path parameters:\n"
-        "- **hero_identifier**: Hero identifier as numeric hero ID or hero name. "
-        "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Luo Yi' → `luoyi`).\n\n"
+        "- **hero_identifier**: Hero identifier as numeric hero ID or hero name. Accepts values like `30`, `Yi Sun-shin`, or `yisunshin`.\n\n"
         "Query parameters:\n"
         "- **rank**: Rank filter. Allowed values: `all`, `epic`, `legend`, `mythic`, `honor`, `glory`.\n"
         "- **size**: Number of items per page (minimum: 1).\n"
@@ -2737,8 +2727,7 @@ def heroes_teammates(
         Path(
             title="Hero Identifier",
             description=(
-                "Hero identifier as numeric hero ID or hero name. "
-                "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Luo Yi' → `luoyi`)."
+                "Hero identifier as numeric hero ID or hero name. Accepts values like `30`, `Yi Sun-shin`, or `yisunshin`."
             ),
         )
     ],
@@ -2808,8 +2797,7 @@ def heroes_teammates(
         "Retrieve trend information for a specific hero over a selected time window. "
         "Supports query parameters for days, rank, pagination, and localization.\n\n"
         "Path parameters:\n"
-        "- **hero_identifier**: Hero identifier as numeric hero ID or hero name. "
-        "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Luo Yi' → `luoyi`).\n\n"
+        "- **hero_identifier**: Hero identifier as numeric hero ID or hero name. Accepts values like `30`, `Yi Sun-shin`, or `yisunshin`.\n\n"
         "Query parameters:\n"
         "- **days**: Trend window in days. Allowed values: `7`, `15`, `30`.\n"
         "- **rank**: Rank filter. Allowed values: `all`, `epic`, `legend`, `mythic`, `honor`, `glory`.\n"
@@ -2882,8 +2870,7 @@ def heroes_trends(
         Path(
             title="Hero Identifier",
             description=(
-                "Hero identifier as numeric hero ID or hero name. "
-                "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Luo Yi' → `luoyi`)."
+                "Hero identifier as numeric hero ID or hero name. Accepts values like `30`, `Yi Sun-shin`, or `yisunshin`."
             ),
         )
     ],
@@ -2968,8 +2955,7 @@ def heroes_trends(
         "Retrieve recommended content for a specific hero. "
         "Supports query parameters for pagination, sorting, and localization.\n\n"
         "Path parameters:\n"
-        "- **hero_identifier**: Hero identifier as numeric hero ID or hero name. "
-        "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Luo Yi' → `luoyi`).\n\n"
+        "- **hero_identifier**: Hero identifier as numeric hero ID or hero name. Accepts values like `30`, `Yi Sun-shin`, or `yisunshin`.\n\n"
         "Query parameters:\n"
         "- **size**: Number of items per page (minimum: 1).\n"
         "- **index**: Page index (starting from 1).\n"
@@ -3136,8 +3122,7 @@ def heroes_recommended(
         Path(
             title="Hero Identifier",
             description=(
-                "Hero identifier as numeric hero ID or hero name. "
-                "Name matching ignores spaces/symbols and is case-insensitive (e.g., 'Luo Yi' → `luoyi`)."
+                "Hero identifier as numeric hero ID or hero name. Accepts values like `30`, `Yi Sun-shin`, or `yisunshin`."
             ),
         )
     ],

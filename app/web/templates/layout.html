@@ -236,6 +236,9 @@
 		function renderNavbarState() {
 			const badge = document.getElementById("jwt-status");
 			const authAction = document.getElementById("jwt-auth-action");
+			const signInButton = document.getElementById("user-signin-button");
+			const userMenuTrigger = document.getElementById("user-menu-trigger");
+			const userMenuPanel = document.getElementById("user-menu-panel");
 			const userBadge = document.getElementById("user-badge");
 			const userAvatar = document.getElementById("user-avatar");
 			const userName = document.getElementById("user-name");
@@ -249,6 +252,17 @@
 				if (authAction) {
 					authAction.textContent = "Sign In";
 				}
+				if (signInButton) {
+					signInButton.classList.remove("hidden");
+					signInButton.classList.add("inline-flex");
+				}
+				if (userMenuTrigger) {
+					userMenuTrigger.classList.add("hidden");
+					userMenuTrigger.classList.remove("inline-flex");
+				}
+				if (userMenuPanel) {
+					userMenuPanel.classList.add("hidden");
+				}
 				if (userBadge && userAvatar && userName) {
 					userAvatar.src = "https://placehold.co/48x48/000000/FFFFFF?text=U";
 					userName.textContent = "Guest";
@@ -258,10 +272,21 @@
 				return;
 			}
 
-			const remaining = Math.max(0, Math.floor((auth.expiresAt - Date.now()) / (60 * 60 * 1000)));
-			badge.textContent = `Signed In (${remaining}h)`;
+			const remaining = auth.expiresAt - Date.now();
+			const h = Math.floor(remaining / (1000 * 60 * 60));
+			const m = Math.floor((remaining / (1000 * 60)) % 60);
+
+			badge.textContent = `Signed In (${h}h ${m}m left)`;
 			if (authAction) {
 				authAction.textContent = "Sign Out";
+			}
+			if (signInButton) {
+				signInButton.classList.add("hidden");
+				signInButton.classList.remove("inline-flex");
+			}
+			if (userMenuTrigger) {
+				userMenuTrigger.classList.remove("hidden");
+				userMenuTrigger.classList.add("inline-flex");
 			}
 
 			const userInfo = readUserInfo(auth);
@@ -333,6 +358,7 @@
 		const signOutModal = document.getElementById("signout-confirm-modal");
 		const signOutConfirm = document.getElementById("signout-confirm");
 		const signOutCancel = document.getElementById("signout-cancel");
+		const signInButton = document.getElementById("user-signin-button");
 		const userMenuTrigger = document.getElementById("user-menu-trigger");
 		const userMenuPanel = document.getElementById("user-menu-panel");
 
@@ -444,6 +470,10 @@
 				openSignOutModal();
 				return;
 			}
+			window.location.href = "/web/user/auth/send-vc";
+		});
+
+		signInButton?.addEventListener("click", () => {
 			window.location.href = "/web/user/auth/send-vc";
 		});
 		window.MLBBWebAuth.renderNavbarState();

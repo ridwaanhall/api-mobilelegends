@@ -60,6 +60,8 @@
 {% block scripts %}
 <script>
 (() => {
+    const formValidationTimers = new WeakMap();
+
     function getAuthApi() {
         return window.MLBBWebAuth || null;
     }
@@ -260,7 +262,7 @@
                     const preview = document.createElement("img");
                     preview.src = value;
                     preview.alt = "Image preview";
-                    preview.className = "mt-2 max-h-44 border border-zinc-700 object-contain";
+                    preview.className = "mt-2 max-w-10 border border-zinc-700 object-contain";
                     preview.loading = "lazy";
                     const imageLink = document.createElement("a");
                     imageLink.href = value;
@@ -419,6 +421,56 @@
         wrapper.classList.remove("hidden");
     }
 
+    function clearFormValidationState(form) {
+        if (!(form instanceof HTMLElement)) {
+            return;
+        }
+
+        const activeTimer = formValidationTimers.get(form);
+        if (activeTimer) {
+            clearTimeout(activeTimer);
+            formValidationTimers.delete(form);
+        }
+
+        form.classList.remove("border-rose-500/70");
+
+        form.querySelectorAll("[data-form-field='true']").forEach((field) => {
+            field.classList.remove("border-rose-500", "border-rose-500/70", "focus:border-rose-400", "text-rose-100");
+            field.classList.add("border-zinc-700");
+        });
+
+        const validationMessage = form.querySelector("[data-form-validation-message]");
+        if (validationMessage instanceof HTMLElement) {
+            validationMessage.classList.add("hidden");
+            validationMessage.textContent = "";
+        }
+    }
+
+    function showFormValidationError(form, message, invalidFields = []) {
+        clearFormValidationState(form);
+        form.classList.add("border-rose-500/70");
+
+        invalidFields.forEach((field) => {
+            if (!(field instanceof HTMLElement)) {
+                return;
+            }
+
+            field.classList.remove("border-zinc-700");
+            field.classList.add("border-rose-500", "focus:border-rose-400", "text-rose-100");
+        });
+
+        const validationMessage = form.querySelector("[data-form-validation-message]");
+        if (validationMessage instanceof HTMLElement) {
+            validationMessage.textContent = message;
+            validationMessage.classList.remove("hidden");
+        }
+
+        const timer = setTimeout(() => {
+            clearFormValidationState(form);
+        }, 5000);
+        formValidationTimers.set(form, timer);
+    }
+
     async function copyText(value) {
         const text = String(value || "");
         if (!text) {
@@ -555,8 +607,21 @@
     document.querySelectorAll(".api-operation-form").forEach((formElement) => {
         const form = formElement;
 
+        form.querySelectorAll("[data-form-field='true']").forEach((field) => {
+            field.addEventListener("input", () => clearFormValidationState(form));
+            field.addEventListener("change", () => clearFormValidationState(form));
+        });
+
         form.addEventListener("submit", async (event) => {
             event.preventDefault();
+            clearFormValidationState(form);
+
+            const nativeInvalidFields = Array.from(form.querySelectorAll(":invalid"));
+            if (nativeInvalidFields.length > 0) {
+                showFormValidationError(form, "Please fill all required fields and fix invalid values.", nativeInvalidFields);
+                setResponse(form, "Validation Error", "Please complete all required form fields.", emptySnippets());
+                return;
+            }
 
             const method = form.dataset.method || "GET";
             let apiPath = form.dataset.apiPath || "";
@@ -568,6 +633,7 @@
                 const values = getValuesFromInput(input);
 
                 if (!parameterName || values.length === 0) {
+                    showFormValidationError(form, `Please fill required path parameter: ${parameterName || "path"}.`, [input]);
                     setResponse(form, "Missing path parameter", "Please fill all required path parameters.", emptySnippets());
                     return;
                 }
@@ -588,6 +654,7 @@
                 }
 
                 if (required && values.length === 0) {
+                    showFormValidationError(form, `Please fill required query parameter: ${parameterName}.`, [input]);
                     setResponse(form, "Missing query parameter", `Please fill required query parameter: ${parameterName}.`, emptySnippets());
                     return;
                 }
@@ -604,6 +671,7 @@
             if (requiresAuth) {
                 const auth = getAuthApi()?.readAuth?.();
                 if (!auth || typeof auth.jwt !== "string") {
+                    showFormValidationError(form, "Please sign in first to use this endpoint.");
                     setResponse(
                         form,
                         "JWT required",
@@ -622,6 +690,7 @@
                 if (rawBody) {
                     const parsedBody = parseJson(rawBody);
                     if (parsedBody === null) {
+                        showFormValidationError(form, "Request body must be valid JSON.", [bodyField]);
                         setResponse(form, "Invalid JSON", "Request body must be valid JSON.", emptySnippets());
                         return;
                     }
@@ -667,6 +736,7 @@
                 setResponse(form, `HTTP ${response.status}`, prettyResponse || "(empty response)", snippets, parsedResponse);
             } catch (error) {
                 const message = error instanceof Error ? error.message : "Request failed.";
+                showFormValidationError(form, message);
                 setResponse(form, "Request Error", message, emptySnippets());
             }
         });

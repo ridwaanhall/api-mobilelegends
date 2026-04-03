@@ -40,7 +40,7 @@
     {% endif %}
 
     <form
-        class="api-operation-form space-y-4"
+        class="api-operation-form space-y-4 border border-transparent p-3 transition-colors duration-300"
         data-method="{{ operation.method }}"
         data-api-path="{{ operation.api_path }}"
         data-requires-auth="{{ 'true' if operation.requires_auth else 'false' }}"
@@ -56,11 +56,12 @@
 
                         {% if parameter.is_array and parameter.option_values %}
                             <div
-                                class="flex flex-wrap gap-1.5"
+                                class="flex flex-wrap gap-1.5 border border-zinc-700 p-2"
                                 data-param-in="{{ parameter.location }}"
                                 data-param-name="{{ parameter.name }}"
                                 data-array="true"
                                 data-param-kind="checkbox-group"
+                                data-form-field="true"
                                 data-required="{{ 'true' if parameter.required else 'false' }}"
                             >
                                 {% for option in parameter.option_values %}
@@ -84,29 +85,34 @@
                                 {% endfor %}
                             </div>
                         {% elif parameter.enum_values %}
-                            <select
-                                class="w-full border border-zinc-700 px-3 py-2 text-sm text-zinc-100 outline-none"
-                                data-param-in="{{ parameter.location }}"
-                                data-param-name="{{ parameter.name }}"
-                                data-array="{{ 'true' if parameter.is_array else 'false' }}"
-                                {% if parameter.required %}required{% endif %}
-                            >
-                                {% if not parameter.required %}
-                                    <option value="">--</option>
-                                {% endif %}
-                                {% for option in parameter.enum_values %}
-                                    <option value="{{ option }}" {% if parameter.default == option %}selected{% endif %}>{{ option }}</option>
-                                {% endfor %}
-                            </select>
+                            <div class="relative">
+                                <select
+                                    class="w-full appearance-none border border-zinc-700 bg-black/20 px-3 py-2 pr-9 text-sm text-zinc-100 outline-none transition-colors focus:border-cyan-400"
+                                    data-param-in="{{ parameter.location }}"
+                                    data-param-name="{{ parameter.name }}"
+                                    data-array="{{ 'true' if parameter.is_array else 'false' }}"
+                                    data-form-field="true"
+                                    {% if parameter.required %}required{% endif %}
+                                >
+                                    {% if not parameter.required %}
+                                        <option value="">--</option>
+                                    {% endif %}
+                                    {% for option in parameter.enum_values %}
+                                        <option value="{{ option }}" {% if parameter.default == option %}selected{% endif %}>{{ option }}</option>
+                                    {% endfor %}
+                                </select>
+                                <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-[11px] text-zinc-500">▾</span>
+                            </div>
                         {% else %}
                             <input
-                                class="w-full border border-zinc-700 px-3 py-2 text-sm text-zinc-100 outline-none"
+                                class="w-full border border-zinc-700 bg-black/20 px-3 py-2 text-sm text-zinc-100 outline-none transition-colors focus:border-cyan-400"
                                 type="{{ parameter.input_type }}"
                                 value="{{ parameter.default_display }}"
                                 placeholder="{{ 'comma separated' if parameter.is_array else 'value' }}"
                                 data-param-in="{{ parameter.location }}"
                                 data-param-name="{{ parameter.name }}"
                                 data-array="{{ 'true' if parameter.is_array else 'false' }}"
+                                data-form-field="true"
                                 {% if parameter.minimum is not none %}min="{{ parameter.minimum }}"{% endif %}
                                 {% if parameter.maximum is not none %}max="{{ parameter.maximum }}"{% endif %}
                                 {% if parameter.required %}required{% endif %}
@@ -149,9 +155,10 @@
                     <span class="text-[10px] uppercase tracking-[0.14em] text-zinc-500">json</span>
                 </div>
                 <textarea
-                    class="min-h-20 w-full border border-zinc-700 px-3 py-2 font-mono text-xs text-zinc-100 outline-none"
+                    class="min-h-20 w-full border border-zinc-700 bg-black/20 px-3 py-2 font-mono text-xs text-zinc-100 outline-none transition-colors focus:border-cyan-400"
                     rows="5"
                     data-request-body="true"
+                    data-form-field="true"
                     {% if operation.request_body.required %}required{% endif %}
                 >{{ operation.request_body.example_json }}</textarea>
             </label>
@@ -163,6 +170,8 @@
             </button>
             <span class="text-xs text-zinc-500">{{ operation.method }} {{ operation.api_path }}</span>
         </div>
+
+        <p class="hidden text-xs text-rose-300" data-form-validation-message></p>
 
         <div class="hidden min-w-0 border border-zinc-800 p-3 text-xs text-zinc-300" data-response-wrapper>
             <p class="mb-2 text-[11px] uppercase tracking-[0.14em] text-zinc-400" data-response-status></p>

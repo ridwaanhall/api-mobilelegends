@@ -51,7 +51,7 @@ DEBUG: bool = env_bool("DEBUG", default=False)
 # =========================
 # Availability Settings
 # =========================
-API_VERSION: str = env_str("API_VERSION", default="3.2.1")
+API_VERSION: str = env_str("API_VERSION", default="3.2.2")
 IS_AVAILABLE: bool = env_bool("IS_AVAILABLE", default=True)
 DATE_AVAILABLE: str = env_str("DATE_AVAILABLE", default="April 1, 2026")
 

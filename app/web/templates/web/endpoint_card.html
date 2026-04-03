@@ -40,7 +40,7 @@
     {% endif %}
 
     <form
-        class="api-operation-form space-y-4 border border-transparent p-3 transition-colors duration-300"
+        class="api-operation-form space-y-4 border border-transparent transition-colors duration-300"
         data-method="{{ operation.method }}"
         data-api-path="{{ operation.api_path }}"
         data-requires-auth="{{ 'true' if operation.requires_auth else 'false' }}"

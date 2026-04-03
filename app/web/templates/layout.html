@@ -167,6 +167,51 @@
 			</div>
 		</div>
 	</div>
+	<div id="signin-modal" class="fixed inset-0 z-50 hidden items-center justify-center px-4" role="dialog" aria-modal="true" aria-labelledby="signin-title">
+		<div class="w-full max-w-md border border-zinc-700 bg-black p-5 text-zinc-200 shadow-[0_0_0_1px_rgba(255,255,255,0.04)]">
+			<p class="text-[11px] uppercase tracking-[0.16em] text-zinc-500">Account Login</p>
+			<h2 id="signin-title" class="mt-2 text-lg font-semibold text-zinc-100">Sign In With Verification Code</h2>
+			<p class="mt-2 text-xs leading-5 text-zinc-400">Use the same role and zone once, send VC, then submit VC to login.</p>
+
+			<div class="mt-4 grid gap-3 sm:grid-cols-2">
+				<label class="text-xs text-zinc-400">
+					<span class="mb-1 block">Role ID</span>
+					<input id="signin-role-id" type="number" min="1" class="w-full border border-zinc-700 bg-black/20 px-3 py-2 text-sm text-zinc-100 outline-none focus:border-cyan-400" placeholder="1234567890" />
+				</label>
+				<label class="text-xs text-zinc-400">
+					<span class="mb-1 block">Zone ID</span>
+					<input id="signin-zone-id" type="number" min="1" class="w-full border border-zinc-700 bg-black/20 px-3 py-2 text-sm text-zinc-100 outline-none focus:border-cyan-400" placeholder="1234" />
+				</label>
+			</div>
+
+			<div class="mt-4 flex flex-wrap items-center gap-2">
+				<button id="signin-send-vc" type="button" class="border border-cyan-600/80 bg-cyan-950/35 px-3 py-1.5 text-xs text-cyan-200 hover:border-cyan-400 hover:text-cyan-100">
+					Send VC
+				</button>
+				<span id="signin-vc-hint" class="text-[11px] text-zinc-500">Send VC first. VC expires in 5 minutes.</span>
+			</div>
+
+			<div id="signin-login-block" class="mt-4 hidden">
+				<label class="text-xs text-zinc-400">
+					<span class="mb-1 block">Verification Code (VC)</span>
+					<input id="signin-vc" type="number" min="1" class="w-full border border-zinc-700 bg-black/20 px-3 py-2 text-sm text-zinc-100 outline-none focus:border-emerald-400" placeholder="4-digit code" />
+				</label>
+				<div class="mt-3 flex flex-wrap items-center gap-2">
+					<button id="signin-login" type="button" class="border border-emerald-600/80 bg-emerald-950/35 px-3 py-1.5 text-xs text-emerald-200 hover:border-emerald-400 hover:text-emerald-100">
+						Sign In
+					</button>
+				</div>
+			</div>
+
+			<p id="signin-status" class="mt-4 min-h-5 text-xs text-zinc-400"></p>
+
+			<div class="mt-4 flex flex-wrap justify-end gap-2">
+				<button id="signin-cancel" type="button" class="border border-zinc-700 px-3 py-1.5 text-xs text-zinc-300 hover:border-zinc-500 hover:text-zinc-100">
+					Close
+				</button>
+			</div>
+		</div>
+	</div>
 	<script>
 	(() => {
 		const AUTH_KEY = "mlbb_user_auth";
@@ -236,6 +281,7 @@
 		function renderNavbarState() {
 			const badge = document.getElementById("jwt-status");
 			const authAction = document.getElementById("jwt-auth-action");
+			const copyJwtAction = document.getElementById("jwt-copy-action");
 			const signInButton = document.getElementById("user-signin-button");
 			const userMenuTrigger = document.getElementById("user-menu-trigger");
 			const userMenuPanel = document.getElementById("user-menu-panel");
@@ -251,6 +297,9 @@
 				badge.textContent = "Not Signed In";
 				if (authAction) {
 					authAction.textContent = "Sign In";
+				}
+				if (copyJwtAction) {
+					copyJwtAction.textContent = "Copy JWT";
 				}
 				if (signInButton) {
 					signInButton.classList.remove("hidden");
@@ -358,9 +407,111 @@
 		const signOutModal = document.getElementById("signout-confirm-modal");
 		const signOutConfirm = document.getElementById("signout-confirm");
 		const signOutCancel = document.getElementById("signout-cancel");
+		const signInModal = document.getElementById("signin-modal");
+		const signInCancel = document.getElementById("signin-cancel");
+		const signInRoleIdInput = document.getElementById("signin-role-id");
+		const signInZoneIdInput = document.getElementById("signin-zone-id");
+		const signInVcInput = document.getElementById("signin-vc");
+		const signInSendVcButton = document.getElementById("signin-send-vc");
+		const signInLoginButton = document.getElementById("signin-login");
+		const signInStatus = document.getElementById("signin-status");
+		const signInLoginBlock = document.getElementById("signin-login-block");
+		const copyJwtAction = document.getElementById("jwt-copy-action");
 		const signInButton = document.getElementById("user-signin-button");
 		const userMenuTrigger = document.getElementById("user-menu-trigger");
 		const userMenuPanel = document.getElementById("user-menu-panel");
+
+		function setSignInStatus(text, variant = "default") {
+			if (!signInStatus) {
+				return;
+			}
+			signInStatus.classList.remove("text-zinc-400", "text-cyan-300", "text-emerald-300", "text-rose-300", "text-amber-300");
+			signInStatus.classList.add(
+				variant === "success"
+					? "text-emerald-300"
+					: variant === "error"
+						? "text-rose-300"
+						: variant === "info"
+							? "text-cyan-300"
+							: variant === "warn"
+								? "text-amber-300"
+								: "text-zinc-400"
+			);
+			signInStatus.textContent = text;
+		}
+
+		function toPositiveInt(value) {
+			if (typeof value !== "string") {
+				return null;
+			}
+			const trimmed = value.trim();
+			if (!trimmed) {
+				return null;
+			}
+			const parsed = Number.parseInt(trimmed, 10);
+			return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
+		}
+
+		function getSignInBasePayload() {
+			const roleId = toPositiveInt(signInRoleIdInput?.value || "");
+			const zoneId = toPositiveInt(signInZoneIdInput?.value || "");
+			if (!roleId || !zoneId) {
+				return null;
+			}
+			return {
+				role_id: roleId,
+				zone_id: zoneId,
+			};
+		}
+
+		async function copyText(value) {
+			const text = String(value || "");
+			if (!text) {
+				return false;
+			}
+
+			if (navigator.clipboard && window.isSecureContext) {
+				await navigator.clipboard.writeText(text);
+				return true;
+			}
+
+			const temp = document.createElement("textarea");
+			temp.value = text;
+			temp.style.position = "fixed";
+			temp.style.left = "-9999px";
+			document.body.appendChild(temp);
+			temp.focus();
+			temp.select();
+			const success = document.execCommand("copy");
+			temp.remove();
+			return success;
+		}
+
+		async function fetchAndCacheUserInfo() {
+			const auth = window.MLBBWebAuth.readAuth();
+			if (!auth || typeof auth.jwt !== "string") {
+				return;
+			}
+
+			try {
+				const response = await fetch("/api/user/info", {
+					method: "GET",
+					headers: {
+						accept: "application/json",
+						Authorization: `Bearer ${auth.jwt}`,
+					},
+				});
+				if (!response.ok) {
+					return;
+				}
+				const parsed = parseJson(await response.text());
+				if (parsed?.data && typeof parsed.data === "object") {
+					window.MLBBWebAuth.writeUserInfo(parsed.data, auth.expiresAt);
+				}
+			} catch {
+				// Keep auth state even if user info hydration fails.
+			}
+		}
 
 		function closeUserMenu() {
 			if (!userMenuPanel) {
@@ -382,6 +533,35 @@
 			}
 			signOutModal.classList.add("hidden");
 			signOutModal.classList.remove("flex");
+		}
+
+		function closeSignInModal() {
+			if (!signInModal) {
+				return;
+			}
+			signInModal.classList.add("hidden");
+			signInModal.classList.remove("flex");
+			if (signInLoginBlock) {
+				signInLoginBlock.classList.add("hidden");
+			}
+			if (signInVcInput) {
+				signInVcInput.value = "";
+			}
+			setSignInStatus("", "default");
+		}
+
+		function openSignInModal() {
+			if (!signInModal) {
+				window.location.href = "/web/user/auth/send-vc";
+				return;
+			}
+			signInModal.classList.remove("hidden");
+			signInModal.classList.add("flex");
+			if (signInLoginBlock) {
+				signInLoginBlock.classList.add("hidden");
+			}
+			setSignInStatus("Fill Role ID and Zone ID, then click Send VC.", "default");
+			signInRoleIdInput?.focus();
 		}
 
 		function openSignOutModal() {
@@ -413,6 +593,7 @@
 		}
 
 		signOutCancel?.addEventListener("click", closeSignOutModal);
+		signInCancel?.addEventListener("click", closeSignInModal);
 		signOutConfirm?.addEventListener("click", async () => {
 			signOutConfirm.disabled = true;
 			signOutConfirm.textContent = "Signing Out...";
@@ -427,6 +608,95 @@
 		signOutModal?.addEventListener("click", (event) => {
 			if (event.target === signOutModal) {
 				closeSignOutModal();
+			}
+		});
+
+		signInModal?.addEventListener("click", (event) => {
+			if (event.target === signInModal) {
+				closeSignInModal();
+			}
+		});
+
+		signInSendVcButton?.addEventListener("click", async () => {
+			const payload = getSignInBasePayload();
+			if (!payload) {
+				setSignInStatus("Role ID and Zone ID must be valid numbers.", "warn");
+				return;
+			}
+
+			signInSendVcButton.disabled = true;
+			signInSendVcButton.textContent = "Sending VC...";
+			try {
+				const response = await fetch("/api/user/auth/send-vc", {
+					method: "POST",
+					headers: {
+						accept: "application/json",
+						"content-type": "application/json",
+					},
+					body: JSON.stringify(payload),
+				});
+				const parsed = parseJson(await response.text());
+				const code = typeof parsed?.code === "number" ? parsed.code : response.status;
+				const message = typeof parsed?.msg === "string" ? parsed.msg : typeof parsed?.message === "string" ? parsed.message : "No message";
+				if (!response.ok || code !== 0) {
+					setSignInStatus(`Send VC failed (code: ${code}) - ${message}`, "error");
+					return;
+				}
+
+				if (signInLoginBlock) {
+					signInLoginBlock.classList.remove("hidden");
+				}
+				setSignInStatus(`Success (code: ${code}) - Check in-game mail for the verification code.`, "info");
+				signInVcInput?.focus();
+			} catch {
+				setSignInStatus("Failed to send VC. Please try again.", "error");
+			} finally {
+				signInSendVcButton.disabled = false;
+				signInSendVcButton.textContent = "Send VC";
+			}
+		});
+
+		signInLoginButton?.addEventListener("click", async () => {
+			const basePayload = getSignInBasePayload();
+			const vc = toPositiveInt(signInVcInput?.value || "");
+			if (!basePayload || !vc) {
+				setSignInStatus("Role ID, Zone ID, and VC are required for login.", "warn");
+				return;
+			}
+
+			signInLoginButton.disabled = true;
+			signInLoginButton.textContent = "Signing In...";
+
+			try {
+				const response = await fetch("/api/user/auth/login", {
+					method: "POST",
+					headers: {
+						accept: "application/json",
+						"content-type": "application/json",
+					},
+					body: JSON.stringify({
+						...basePayload,
+						vc,
+					}),
+				});
+				const parsed = parseJson(await response.text());
+				const code = typeof parsed?.code === "number" ? parsed.code : response.status;
+				const message = typeof parsed?.msg === "string" ? parsed.msg : typeof parsed?.message === "string" ? parsed.message : "No message";
+
+				if (!response.ok || code !== 0 || typeof parsed?.data?.jwt !== "string") {
+					setSignInStatus(`Sign in failed (code: ${code}) - ${message}`, "error");
+					return;
+				}
+
+				window.MLBBWebAuth.writeAuth(parsed.data.jwt);
+				await fetchAndCacheUserInfo();
+				setSignInStatus(`Sign in success (code: ${code}) - ${message}`, "success");
+				closeSignInModal();
+			} catch {
+				setSignInStatus("Sign in request failed. Please try again.", "error");
+			} finally {
+				signInLoginButton.disabled = false;
+				signInLoginButton.textContent = "Sign In";
 			}
 		});
 
@@ -457,6 +727,10 @@
 				return;
 			}
 			closeUserMenu();
+			if (signInModal && !signInModal.classList.contains("hidden")) {
+				closeSignInModal();
+				return;
+			}
 			if (!signOutModal || signOutModal.classList.contains("hidden")) {
 				return;
 			}
@@ -474,7 +748,24 @@
 		});
 
 		signInButton?.addEventListener("click", () => {
-			window.location.href = "/web/user/auth/send-vc";
+			openSignInModal();
+		});
+
+		copyJwtAction?.addEventListener("click", async () => {
+			const auth = window.MLBBWebAuth.readAuth();
+			if (!auth || typeof auth.jwt !== "string") {
+				copyJwtAction.textContent = "No JWT";
+				setTimeout(() => {
+					copyJwtAction.textContent = "Copy JWT";
+				}, 5000);
+				return;
+			}
+
+			const ok = await copyText(auth.jwt);
+			copyJwtAction.textContent = ok ? "Copied" : "Copy failed";
+			setTimeout(() => {
+				copyJwtAction.textContent = "Copy JWT";
+			}, 5000);
 		});
 		window.MLBBWebAuth.renderNavbarState();
 	})();

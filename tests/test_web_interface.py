@@ -41,7 +41,7 @@ def test_navbar_shows_api_version_badge() -> None:
 
     assert response.status_code == 200
     assert "MLBB API Web" in response.text
-    assert "v3.2.1" in response.text
+    assert "v3.2.2" in response.text
     assert "https://buymeacoffee.com/ridwaanhall" in response.text
     assert "user-menu-trigger" in response.text
     assert "user-menu-panel" in response.text

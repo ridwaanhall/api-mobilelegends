@@ -2,7 +2,7 @@
 
 {% block content %}
 <section class="mx-auto w-full max-w-6xl space-y-4 sm:space-y-6">
-	<div class="relative overflow-hidden border border-zinc-800 p-4 sm:p-6 md:p-10">
+	<div class="relative border border-zinc-800 p-4 sm:p-6 md:p-10">
 		<div class="pointer-events-none absolute -right-24 top-0 h-64 w-64 rounded-full bg-cyan-500/10 blur-3xl"></div>
 		<div class="pointer-events-none absolute -left-20 bottom-0 h-56 w-56 rounded-full bg-teal-500/10 blur-3xl"></div>
 
@@ -19,16 +19,25 @@
 		</p>
 
 		<div class="relative z-10 mt-6 grid gap-3 sm:gap-4 md:mt-8 md:grid-cols-2">
+			<a href="/web/user" 
+				class="group relative border border-zinc-700 p-5 transition hover:-translate-y-0.5 hover:border-teal-300">
+				
+				<span class="absolute top-2 right-2 bg-teal-600 px-2 py-1 text-xs">
+					Recommended
+				</span>
+
+				<p class="text-xs uppercase tracking-[0.18em] text-zinc-500 group-hover:text-teal-200">
+					Option 1
+				</p>
+				<h2 class="mt-2 text-xl font-medium text-zinc-100">Open Demo Website</h2>
+				<p class="mt-2 text-sm text-zinc-400">
+					Interactive endpoint workspace with readable tables, image previews, cURL, and copy tools.
+				</p>
+			</a>
 			<a href="/api/docs" class="group border border-zinc-700 p-5 transition hover:-translate-y-0.5 hover:border-cyan-300">
-				<p class="text-xs uppercase tracking-[0.18em] text-zinc-500 group-hover:text-cyan-200">Option 1</p>
+				<p class="text-xs uppercase tracking-[0.18em] text-zinc-500 group-hover:text-cyan-200">Option 2</p>
 				<h2 class="mt-2 text-xl font-medium text-zinc-100">Open API Docs</h2>
 				<p class="mt-2 text-sm text-zinc-400">Swagger UI with try-it execution, full schemas, and request examples.</p>
-			</a>
-
-			<a href="/web/user" class="group border border-zinc-700 p-5 transition hover:-translate-y-0.5 hover:border-teal-300">
-				<p class="text-xs uppercase tracking-[0.18em] text-zinc-500 group-hover:text-teal-200">Option 2</p>
-				<h2 class="mt-2 text-xl font-medium text-zinc-100">Open Demo Website</h2>
-				<p class="mt-2 text-sm text-zinc-400">Interactive endpoint workspace with readable tables, image previews, cURL, and copy tools.</p>
 			</a>
 		</div>
 	</div>

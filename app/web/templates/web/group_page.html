@@ -172,6 +172,72 @@
         return /\.(png|jpe?g|gif|webp|svg|bmp|avif)(\?.*)?$/i.test(value.trim());
     }
 
+    function normalizeSafeColor(value) {
+        if (typeof value !== "string") {
+            return null;
+        }
+
+        const trimmed = value.trim();
+        if (!trimmed) {
+            return null;
+        }
+
+        if (/^#?[0-9a-fA-F]{6}$/.test(trimmed) || /^#?[0-9a-fA-F]{3}$/.test(trimmed)) {
+            return trimmed.startsWith("#") ? trimmed : `#${trimmed}`;
+        }
+
+        if (/^(black|white|red|green|blue|yellow|cyan|magenta|gray|grey|orange)$/.test(trimmed.toLowerCase())) {
+            return trimmed.toLowerCase();
+        }
+
+        return null;
+    }
+
+    function sanitizeInlineMarkup(value) {
+        const template = document.createElement("template");
+        template.innerHTML = value;
+
+        const output = document.createDocumentFragment();
+
+        function appendSanitizedNode(source, target) {
+            source.childNodes.forEach((node) => {
+                if (node.nodeType === Node.TEXT_NODE) {
+                    target.appendChild(document.createTextNode(node.textContent || ""));
+                    return;
+                }
+
+                if (node.nodeType !== Node.ELEMENT_NODE) {
+                    return;
+                }
+
+                const element = node;
+                const tag = element.tagName.toLowerCase();
+
+                if (tag === "br") {
+                    target.appendChild(document.createElement("br"));
+                    return;
+                }
+
+                if (tag === "font") {
+                    const span = document.createElement("span");
+                    const safeColor = normalizeSafeColor(element.getAttribute("color") || "");
+                    if (safeColor) {
+                        span.style.color = safeColor;
+                    }
+                    appendSanitizedNode(element, span);
+                    target.appendChild(span);
+                    return;
+                }
+
+                // Unrecognized tags are flattened to text/content only to prevent script/style injection.
+                appendSanitizedNode(element, target);
+            });
+        }
+
+        appendSanitizedNode(template.content, output);
+        return output;
+    }
+
     function shellQuote(value) {
         return `'${String(value).replaceAll("'", "'\\''")}'`;
     }
@@ -284,7 +350,10 @@
                 return wrapper;
             }
 
-            wrapper.innerHTML = `<span class="break-words text-zinc-200">${escapeHtml(value)}</span>`;
+            const inlineText = document.createElement("span");
+            inlineText.className = "break-words text-zinc-200";
+            inlineText.appendChild(sanitizeInlineMarkup(value));
+            wrapper.appendChild(inlineText);
             return wrapper;
         }
 

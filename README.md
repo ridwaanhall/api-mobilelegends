@@ -1,6 +1,6 @@
 # MLBB Public Data API & Web
 
-[![API Live](https://img.shields.io/badge/API-Live-brightgreen?logo=fastapi&logoColor=white)](https://mlbb.rone.dev/api/docs)
+[![Web Live](https://img.shields.io/badge/API-Live-brightgreen?logo=fastapi&logoColor=white)](https://mlbb.rone.dev)
 ![Release](https://img.shields.io/github/v/release/ridwaanhall/api-mobilelegends?logo=github)
 ![License](https://img.shields.io/github/license/ridwaanhall/api-mobilelegends?logo=opensourceinitiative&logoColor=white)
 ![Stars](https://img.shields.io/github/stars/ridwaanhall/api-mobilelegends?logo=github)
@@ -9,7 +9,7 @@
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
 ![OpenAPI](https://img.shields.io/badge/OpenAPI-3.1-green?logo=openapiinitiative&logoColor=white)
 
-![Landing Page](images/landing-page-322.png)
+![Landing Page](images/blog/landing-page-v3.2.2.webp)
 
 This API & Web provides access to hero analytics, in-game performance data, academy resources, player endpoints, and utility tools. It is designed with a consistent RESTful structure, supports flexible hero identifiers (ID or name), and delivers standardized responses for seamless integration into applications, dashboards, analytics systems, and internal tooling.
 

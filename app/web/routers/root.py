@@ -39,7 +39,7 @@ def landing_page(request: Request) -> HTMLResponse:
     context = _shared_context(request)
     context.update(
         {
-            "title": "MLBB Public Data API | Landing",
+            "title": "Home / MLBB Public Data API Web",
             "seo_description": "Modern landing page for MLBB Public Data API. Access docs and a full interactive web playground for all endpoints.",
             "seo_keywords": "mlbb, mobile legends, api docs, web playground, analytics api",
         }
@@ -61,7 +61,7 @@ def web_group_page(request: Request, group: str) -> HTMLResponse:
     context = _shared_context(request, current_group=group)
     context.update(
         {
-            "title": f"{GROUP_META[group]['title']} Endpoints",
+            "title": f"{GROUP_META[group]['title']} Endpoints / MLBB Public Data API Web",
             "subtitle": GROUP_META[group]["description"],
             "seo_description": f"Browse and execute {GROUP_META[group]['title']} endpoints from the MLBB Public Data API web interface.",
             "seo_keywords": f"mlbb api, {group} endpoints, openapi web ui",
@@ -90,9 +90,11 @@ def web_endpoint_page(request: Request, group: str, endpoint_path: str) -> HTMLR
         raise HTTPException(status_code=404, detail="Web endpoint not found")
 
     context = _shared_context(request, current_group=group)
+    operation_summary = str(matched_operations[0].get("summary") or "Endpoint").strip()
+    group_title = str(GROUP_META[group]["title"]).strip()
     context.update(
         {
-            "title": f"{GROUP_META[group]['title']} Endpoint",
+            "title": f"{operation_summary} - {group_title[:-1] if group_title.endswith('s') else group_title} Endpoint / MLBB Public Data API Web",
             "subtitle": "Interactive request form for this API endpoint.",
             "seo_description": f"Execute and inspect a {GROUP_META[group]['title']} endpoint from the MLBB API web interface.",
             "seo_keywords": f"mlbb api endpoint, {group}, curl, readable response",

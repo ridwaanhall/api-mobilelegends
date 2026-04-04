@@ -3,18 +3,18 @@
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-	<title>{{ title if title else "MLBB Web Interface" }}</title>
+	<title>{{ title if title else "Home / MLBB Public Data API Web" }}</title>
 	<meta name="description" content="{{ seo_description if seo_description else 'Interactive web interface for MLBB Public Data API with docs, endpoint forms, readable responses, and cURL output.' }}" />
 	<meta name="keywords" content="{{ seo_keywords if seo_keywords else 'mlbb api, mobile legends api, fastapi, analytics, hero data, openapi, web interface' }}" />
 	<meta name="robots" content="index, follow" />
 	<meta name="theme-color" content="#000000" />
 	<meta property="og:type" content="website" />
-	<meta property="og:title" content="{{ title if title else 'MLBB Web Interface' }}" />
+	<meta property="og:title" content="{{ title if title else 'Home / MLBB Public Data API Web' }}" />
 	<meta property="og:description" content="{{ seo_description if seo_description else 'Interactive web interface for MLBB Public Data API.' }}" />
 	<meta property="og:url" content="{{ request.url }}" />
 	<meta property="og:image" content="https://mlbb-card.rone.dev/static/favicon.ico" />
 	<meta name="twitter:card" content="summary" />
-	<meta name="twitter:title" content="{{ title if title else 'MLBB Web Interface' }}" />
+	<meta name="twitter:title" content="{{ title if title else 'Home / MLBB Public Data API Web' }}" />
 	<meta name="twitter:description" content="{{ seo_description if seo_description else 'Interactive web interface for MLBB Public Data API.' }}" />
 	<link rel="canonical" href="{{ request.url }}" />
 	<link rel="icon" type="image/x-icon" href="https://mlbb-card.rone.dev/static/favicon.ico" />
@@ -212,6 +212,25 @@
 			</div>
 		</div>
 	</div>
+	<div id="donate-modal" class="fixed inset-0 z-50 hidden items-center justify-center px-4" role="dialog" aria-modal="true" aria-labelledby="donate-title">
+		<div class="w-full max-w-md border border-zinc-700 bg-black p-5 text-zinc-200 shadow-[0_0_0_1px_rgba(255,255,255,0.04)]">
+			<p class="text-[11px] uppercase tracking-[0.16em] text-zinc-500">Support Project</p>
+			<h2 id="donate-title" class="mt-2 text-lg font-semibold text-zinc-100">Donation Links</h2>
+			<p class="mt-2 text-xs leading-5 text-zinc-400">Support maintenance and feature updates through any platform below.</p>
+
+			<div class="mt-4 grid gap-2 text-xs">
+				<a href="https://github.com/sponsors/ridwaanhall" target="_blank" rel="noreferrer noopener" class="border border-zinc-700 px-3 py-2 text-zinc-300 hover:border-cyan-500 hover:text-cyan-200">GitHub Sponsors</a>
+				<a href="https://paypal.me/ridwaanhall" target="_blank" rel="noreferrer noopener" class="border border-zinc-700 px-3 py-2 text-zinc-300 hover:border-cyan-500 hover:text-cyan-200">PayPal</a>
+				<a href="https://buymeacoffee.com/ridwaanhall" target="_blank" rel="noreferrer noopener" class="border border-zinc-700 px-3 py-2 text-zinc-300 hover:border-cyan-500 hover:text-cyan-200">Buy Me a Coffee</a>
+				<a href="https://saweria.co/ridwaanhall" target="_blank" rel="noreferrer noopener" class="border border-zinc-700 px-3 py-2 text-zinc-300 hover:border-cyan-500 hover:text-cyan-200">Saweria</a>
+				<a href="https://sociabuzz.com/ridwaanhall/support" target="_blank" rel="noreferrer noopener" class="border border-zinc-700 px-3 py-2 text-zinc-300 hover:border-cyan-500 hover:text-cyan-200">Sociabuzz</a>
+			</div>
+
+			<div class="mt-4 flex flex-wrap justify-end gap-2">
+				<button id="donate-close" type="button" class="border border-zinc-700 px-3 py-1.5 text-xs text-zinc-300 hover:border-zinc-500 hover:text-zinc-100">Close</button>
+			</div>
+		</div>
+	</div>
 	<script>
 	(() => {
 		const AUTH_KEY = "mlbb_user_auth";
@@ -288,6 +307,9 @@
 			const userBadge = document.getElementById("user-badge");
 			const userAvatar = document.getElementById("user-avatar");
 			const userName = document.getElementById("user-name");
+			const userCountry = document.getElementById("user-country");
+			const userRoleId = document.getElementById("user-role-id");
+			const userZoneId = document.getElementById("user-zone-id");
 			if (!badge) {
 				return;
 			}
@@ -318,6 +340,15 @@
 					userBadge.classList.remove("hidden");
 					userBadge.classList.add("inline-flex");
 				}
+				if (userCountry) {
+					userCountry.textContent = "-";
+				}
+				if (userRoleId) {
+					userRoleId.textContent = "-";
+				}
+				if (userZoneId) {
+					userZoneId.textContent = "-";
+				}
 				return;
 			}
 
@@ -346,16 +377,37 @@
 					userBadge.classList.remove("hidden");
 					userBadge.classList.add("inline-flex");
 				}
+				if (userCountry) {
+					userCountry.textContent = "-";
+				}
+				if (userRoleId) {
+					userRoleId.textContent = "-";
+				}
+				if (userZoneId) {
+					userZoneId.textContent = "-";
+				}
 				return;
 			}
 
 			const avatar = typeof userInfo.avatar === "string" ? userInfo.avatar : "";
 			const name = typeof userInfo.name === "string" && userInfo.name.trim() ? userInfo.name.trim() : "Player";
+			const regCountry = typeof userInfo.reg_country === "string" && userInfo.reg_country.trim() ? userInfo.reg_country.trim() : "-";
+			const roleIdValue = userInfo.roleId ?? userInfo.roleid;
+			const zoneIdValue = userInfo.zoneId ?? userInfo.zoneid;
 
 			userAvatar.src = avatar || "https://placehold.co/48x48/000000/FFFFFF?text=U";
 			userName.textContent = name;
 			userBadge.classList.remove("hidden");
 			userBadge.classList.add("inline-flex");
+			if (userCountry) {
+				userCountry.textContent = regCountry;
+			}
+			if (userRoleId) {
+				userRoleId.textContent = roleIdValue !== undefined && roleIdValue !== null ? String(roleIdValue) : "-";
+			}
+			if (userZoneId) {
+				userZoneId.textContent = zoneIdValue !== undefined && zoneIdValue !== null ? String(zoneIdValue) : "-";
+			}
 		}
 
 		function clearAuth() {
@@ -417,6 +469,9 @@
 		const signInStatus = document.getElementById("signin-status");
 		const signInLoginBlock = document.getElementById("signin-login-block");
 		const copyJwtAction = document.getElementById("jwt-copy-action");
+		const donateModal = document.getElementById("donate-modal");
+		const donateModalTrigger = document.getElementById("donate-modal-trigger");
+		const donateClose = document.getElementById("donate-close");
 		const signInButton = document.getElementById("user-signin-button");
 		const userMenuTrigger = document.getElementById("user-menu-trigger");
 		const userMenuPanel = document.getElementById("user-menu-panel");
@@ -564,6 +619,23 @@
 			signInRoleIdInput?.focus();
 		}
 
+		function closeDonateModal() {
+			if (!donateModal) {
+				return;
+			}
+			donateModal.classList.add("hidden");
+			donateModal.classList.remove("flex");
+		}
+
+		function openDonateModal() {
+			if (!donateModal) {
+				return;
+			}
+			donateModal.classList.remove("hidden");
+			donateModal.classList.add("flex");
+			donateClose?.focus();
+		}
+
 		function openSignOutModal() {
 			if (!signOutModal) {
 				window.MLBBWebAuth.clearAuth();
@@ -615,6 +687,20 @@
 			if (event.target === signInModal) {
 				closeSignInModal();
 			}
+		});
+
+		donateModal?.addEventListener("click", (event) => {
+			if (event.target === donateModal) {
+				closeDonateModal();
+			}
+		});
+
+		donateModalTrigger?.addEventListener("click", () => {
+			openDonateModal();
+		});
+
+		donateClose?.addEventListener("click", () => {
+			closeDonateModal();
 		});
 
 		signInSendVcButton?.addEventListener("click", async () => {
@@ -729,6 +815,10 @@
 			closeUserMenu();
 			if (signInModal && !signInModal.classList.contains("hidden")) {
 				closeSignInModal();
+				return;
+			}
+			if (donateModal && !donateModal.classList.contains("hidden")) {
+				closeDonateModal();
 				return;
 			}
 			if (!signOutModal || signOutModal.classList.contains("hidden")) {

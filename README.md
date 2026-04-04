@@ -18,197 +18,60 @@ This API & Web provides access to hero analytics, in-game performance data, acad
 
 ## Features
 
-- **Hero listings**: Rankings, positions, and detailed analytics
-- **Performance trends**: Skill combos, counters, and compatibility insights
-- **MLBB Academy data**: Roles, equipment, emblems, spells, builds, and ratings
-- **Player endpoints**: Authentication, stats, match history, and social data
-- **Utility tools**: Win rate calculator and IP lookup
-- **Interactive API documentation**: Swagger & ReDoc
-- **Modern web playground**: Responsive interface for all endpoint groups (`/web/*`)
-- **Readable response UX**: Structured tables, media previews, and raw JSON views
-- **Developer helpers**: Generated cURL output and one-click copy actions
-- **Auth-aware navbar**: Sign In/Sign Out state toggles based on cached JWT session
-- **Version visibility**: API version badge shown in navbar and landing page
+- **Public REST API for MLBB data**: user, mlbb, academy, and addon service groups
+- **Web playground for all endpoints**: form-driven execution at `/web/*`
+- **Flexible hero identifier support**: hero ID or hero name (including compact slug-like names)
+- **Readable response views**: switch between Key-Value and Key-As-Header table modes
+- **Language snippets**: curl, python, javascript, go, node, php, java, csharp
+- **Copy helpers**: copy snippet, copy response, copy JWT from signed-in menu
+- **Auth modal flow for user endpoints**: Send VC + Login in one popup
+- **JWT-aware navbar state**: profile photo, username, country, roleId(zoneId), sign out
+- **Tutorial & blog pages**: step-by-step guides with SEO-ready detail pages
+- **OpenAPI-first docs**: Swagger UI, ReDoc, and OpenAPI JSON
 
 ## Documentation
 
-- Swagger UI: `/api/docs`
-- ReDoc: `/api/redoc`
-- OpenAPI JSON: `/api/openapi.json`
-- Web Demo: `/web/user`, `/web/mlbb`, `/web/academy`, `/web/addon`
+- Website home: `https://mlbb.rone.dev/`
+- Tutorial & Blog: `https://mlbb.rone.dev/blog`
+- Web Playground: `https://mlbb.rone.dev/web`
+- Swagger UI: `https://mlbb.rone.dev/api/docs`
+- ReDoc: `https://mlbb.rone.dev/api/redoc`
+- OpenAPI JSON: `https://mlbb.rone.dev/api/openapi.json`
 
 ### Web Interface Highlights
 
-- Base URL `/` includes quick access cards for docs and web playground
-- Navbar reflects auth state: `Sign In` when not signed in, `Sign Out` when signed in
-- Cached JWT and user profile badge are shared across landing and web pages
-- Endpoint cards support long-description expand/collapse, readable response tables, and copy actions
+- Home page provides two entry points: **Open Demo Website** and **Open API Docs**
+- Demo Website (`/web/*`) is recommended for most usage and exploration
+- Sign In modal supports **Send VC** then **Login with VC** (same role/zone fields, VC expires in 5 minutes)
+- Signed-in menu shows profile details and **Copy JWT** for quick docs authorization
+- Endpoint cards include request forms, snippets, readable/JSON responses, and copy actions
+- Readable response section supports view switching: **Key-Value** or **Key As Header**
 
 ## Base URLs
 
 ```txt
-https://mlbb.rone.dev                # Landing Page
-https://mlbb.rone.dev/web            # Web interface (redirects to /web/user)
-https://mlbb.rone.dev/web/user       # User endpoint forms
-https://mlbb.rone.dev/web/mlbb       # MLBB endpoint forms
-https://mlbb.rone.dev/web/academy    # Academy endpoint forms
-https://mlbb.rone.dev/web/addon      # Addon endpoint forms
-https://mlbb.rone.dev/api            # API index and status
-https://mlbb.rone.dev/api/docs       # Swagger UI
-https://mlbb.rone.dev/api/redoc      # ReDoc
-https://mlbb.rone.dev/api/openapi.json
-https://mlbb.rone.dev/robots.txt
+https://mlbb.rone.dev/                  # Landing page
+https://mlbb.rone.dev/blog              # Tutorial and blog list
+https://mlbb.rone.dev/blog/{slug}       # Blog detail page
+https://mlbb.rone.dev/web               # Web interface (redirects to /web/user)
+https://mlbb.rone.dev/web/user          # User endpoints playground
+https://mlbb.rone.dev/web/mlbb          # MLBB endpoints playground
+https://mlbb.rone.dev/web/academy       # Academy endpoints playground
+https://mlbb.rone.dev/web/addon         # Addon endpoints playground
+https://mlbb.rone.dev/api               # API index/status
+https://mlbb.rone.dev/api/docs          # Swagger UI
+https://mlbb.rone.dev/api/redoc         # ReDoc
+https://mlbb.rone.dev/api/openapi.json  # OpenAPI schema
 ```
-
-## Quick Start
-
-### 1. Visit [mlbb.rone.dev/api/docs](https://mlbb.rone.dev/api/docs)
-
-### 2. Open any API (example: `/api/hero-rank`)
-
-![Step 2](images/step-02.png)
-*Note: If clicking does not work, try expanding the dropdown.*
-
-### 3. Click *Try it out*
-
-![Step 3](images/step-03.png)
-
-### 4. Fill in the required data (or leave defaults if support)
-
-![Step 4](images/step-04.png)
-
-### 5. Click **Execute**
-
-![Step 5](images/step-05.png)
-
-### 6. You will see a response like this
-
-![Step 6](images/step-06.png)
-
-- **Red box**: `curl` code to fetch data
-- **Yellow box**: Request URL to directly test the API
-- **Green Box**: The actual API output
-
-## Authentication (User)
-
-### 1. [send-vc] Provide Role ID and Zone ID
-
-![Step 1](images/auth-step-01.png)
-
-- **Red box**: Endpoint  
-- **Yellow box**: Click **Try it out**  
-- **Green box**: Enter `role_id` and `zone_id`
-
-Click **Execute** and check your in‑game mail for the verification code (`vc`).
-
-### 2. [login] Provide Verification Code
-
-Same as Step 1, but also enter the `vc` received via in‑game mail. Click **Execute** to authenticate.
-
-**Example request:**
-
-```json
-{
-  "role_id": 1234567890,
-  "zone_id": 1234,
-  "vc": 1234
-}
-```
-
-### 3. Copy `jwt` Value
-
-Copy the `jwt` string from the response (e.g., `eyJhbGciOiJI...REDACTED`). Only copy the JWT itself. Check the curl code after clicking **Execute**.
-
-**Example response:**
-
-```json
-{
-  "code": 0,
-  "data": {
-    "email": "",
-    "jwt": "eyJhbGciOiJI...REDACTED",
-    "mobile": "",
-    "module": "",
-    "name": "",
-    "open_id": "",
-    "roleid": 1234567890,
-    "time": 1774975992,
-    "token": "MTc3ND...REDACTED",
-    "zoneid": 1234
-  },
-  "msg": "ok"
-}
-```
-
-### 4. Authorize Using `jwt`
-
-Paste the copied `jwt` into the authorization field and click **Authorize**.
-
-![Step 1](images/auth-step-04.png)
-
-### 5. Authentication Complete
-
-You are now authenticated and can use all user endpoints. Check `curl` code to usage.
 
 ## API Coverage
 
-### User
+Full endpoint lists, operation summaries, and request/response schemas are always available in:
 
-- `POST /api/user/auth/send-vc` — Send Verification Code
-- `POST /api/user/auth/login` — Login with Verification Code
-- `POST /api/user/auth/logout` — Logout
-- `GET /api/user/info` — User Info
-- `GET /api/user/stats` — User Statistics
-- `GET /api/user/privacy/settings` — User Privacy Settings
-- `POST /api/user/privacy/settings` — Update User Privacy Settings
-- `GET /api/user/season` — User Season List
-- `GET /api/user/matches` — User Matches
-- `GET /api/user/matches/{match_id}` — User Match Details
-- `GET /api/user/heroes/frequent` — User Frequent Heroes
-- `GET /api/user/friends` — User Friends
+- `https://mlbb.rone.dev/api/docs` (Swagger UI)
+- `https://mlbb.rone.dev/web` (interactive web endpoint explorer)
 
-### MLBB
-
-- `GET /api/heroes` — List Heroes
-- `GET /api/heroes/rank` — Hero Rank Statistics
-- `GET /api/heroes/positions` — Hero Position Filters
-- `GET /api/heroes/{hero_identifier}` — Hero Detail
-- `GET /api/heroes/{hero_identifier}/stats` — Hero Detail Statistics
-- `GET /api/heroes/{hero_identifier}/skill-combos` — Hero Skill Combos
-- `GET /api/heroes/{hero_identifier}/trends` — Hero Performance Trends
-- `GET /api/heroes/{hero_identifier}/relations` — Hero Relations
-- `GET /api/heroes/{hero_identifier}/counters` — Hero Counters
-- `GET /api/heroes/{hero_identifier}/compatibility` — Hero Compatibility
-
-### Academy
-
-- `GET /api/academy/meta/version` — Game Version Info
-- `GET /api/academy/heroes/catalog` — Hero Catalog
-- `GET /api/academy/roles` — Roles
-- `GET /api/academy/equipment` — Equipment (Items)
-- `GET /api/academy/equipment/expanded` — Equipment Expanded
-- `GET /api/academy/spells` — Battle Spells
-- `GET /api/academy/emblems` — Emblems
-- `GET /api/academy/ranks` — Ranks List
-- `GET /api/academy/ranks/{rank_id}` — Ranks Details
-- `GET /api/academy/recommended` — Recommended Content
-- `GET /api/academy/recommended/{recommended_id}` — Recommended Detail
-- `GET /api/academy/heroes` — Hero Filters
-- `GET /api/academy/heroes/{hero_identifier}/stats` — Hero Statistics
-- `GET /api/academy/heroes/{hero_identifier}/lane` — Hero Lane Distribution
-- `GET /api/academy/heroes/{hero_identifier}/win-rate/timeline` — Hero Lane Time-based Win Rate
-- `GET /api/academy/heroes/{hero_identifier}/builds` — Hero Recommended Builds
-- `GET /api/academy/heroes/{hero_identifier}/counters` — Hero Counters
-- `GET /api/academy/heroes/{hero_identifier}/teammates` — Hero Teammates
-- `GET /api/academy/heroes/{hero_identifier}/trends` — Hero Performance Trends
-- `GET /api/academy/heroes/{hero_identifier}/recommended` — Hero Recommended Content
-- `GET /api/academy/heroes/ratings` — Hero Ratings Index
-- `GET /api/academy/heroes/ratings/{subject}` — Hero Ratings by Subject
-
-### Addon
-
-- `GET /api/addon/win-rate-calculator` — Win Rate Calculator
-- `GET /api/addon/ip` — IP Address Lookup
+This ensures API coverage documentation stays up to date with every release without maintaining manual endpoint lists in README.
 
 ## Changelog
 

@@ -18,6 +18,7 @@ from app.api.routers.academy import router as academy_router
 from app.api.routers.addon import router as addon_router
 from app.api.routers.user import router as user_router
 from app.web.routers.root import router as web_router
+from app.web.routers.blog import router as blog_router
 
 from app.core.errors import AppError, app_error_handler, safe_error_payload, unhandled_error_handler
 
@@ -253,6 +254,7 @@ app.include_router(addon_router)
 
 # web routes
 app.include_router(web_router)
+app.include_router(blog_router)
 
 # static assets
 _STATIC_IMAGES_DIR = Path(__file__).resolve().parents[1] / "images"

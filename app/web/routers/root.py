@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 from pathlib import Path
-import re
 
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
@@ -15,72 +14,6 @@ router = APIRouter(tags=["web"])
 
 _TEMPLATES_DIR = Path(__file__).resolve().parents[1] / "templates"
 templates = Jinja2Templates(directory=str(_TEMPLATES_DIR))
-
-
-def _slugify_title(title: str) -> str:
-    cleaned = re.sub(r"[^a-z0-9]+", "-", title.lower())
-    return cleaned.strip("-")
-
-
-_BLOG_POSTS: list[dict[str, object]] = [
-    {
-        "title": "How to Use MLBB Public Data API Web Project",
-        "excerpt": "Complete beginner tutorial to sign in, run endpoint requests, use snippets, read responses, and authorize API docs.",
-        "cover_image": "/images/blog/how-to-use-mlbb-public-data-api-web-project-cover.png",
-        "published_at": "2026-04-04",
-        "read_time": "8 min read",
-        "sections": [
-            {
-                "heading": "Step 1: Open the Website",
-                "body": "Visit https://mlbb.rone.dev. On the home page you will see two options: Open Demo Website and Open API Docs. Recommended path for most users is Open Demo Website.",
-                "image": "/images/blog/tutorial-step-1-home.png",
-                "image_note": "Replace this image at images/blog/tutorial-step-1-home.png",
-            },
-            {
-                "heading": "Step 2: Sign In (Required for User Endpoints)",
-                "body": "Click Sign In in the navbar, then fill Role ID and Zone ID once. Click Send VC. A verification code (VC) is sent to in-game mail and expires in 5 minutes.",
-                "image": "/images/blog/tutorial-step-2-signin-send-vc.png",
-                "image_note": "Replace this image at images/blog/tutorial-step-2-signin-send-vc.png",
-            },
-            {
-                "heading": "Step 3: Login with VC",
-                "body": "In the same popup, enter the VC and click Sign In. After success, your profile photo, username, and country appear in navbar. Click your name to see roleId (zoneId) and Copy JWT.",
-                "image": "/images/blog/tutorial-step-3-login-vc.png",
-                "image_note": "Replace this image at images/blog/tutorial-step-3-login-vc.png",
-            },
-            {
-                "heading": "Step 4: Run Endpoint Requests from Demo Website",
-                "body": "Select any endpoint group and endpoint. Example: MLBB heroes detail endpoint. Fill hero_identifier (accepts hero ID or name), optional size/index/lang, then click Execute.",
-                "image": "/images/blog/tutorial-step-4-execute-endpoint.png",
-                "image_note": "Replace this image at images/blog/tutorial-step-4-execute-endpoint.png",
-            },
-            {
-                "heading": "Step 5: Use Snippets, Readable Response, and Raw JSON",
-                "body": "After execution, use language snippets (curl, python, javascript, go, node, php, java, csharp) and Copy Snippet. Review Readable Response with View mode switch (Key-Value or Key As Header), and use Raw JSON + Copy Response when needed.",
-                "image": "/images/blog/tutorial-step-5-response-views.png",
-                "image_note": "Replace this image at images/blog/tutorial-step-5-response-views.png",
-            },
-            {
-                "heading": "Step 6: Option 2 - Open API Docs",
-                "body": "If you prefer Swagger UI, open API Docs from home page. For user endpoints, use JWT from Copy JWT in navbar and authorize with Bearer token in docs.",
-                "image": "/images/blog/tutorial-step-6-api-docs-auth.png",
-                "image_note": "Replace this image at images/blog/tutorial-step-6-api-docs-auth.png",
-            },
-        ],
-    }
-]
-
-for post in _BLOG_POSTS:
-    title = str(post.get("title") or "")
-    post["slug"] = _slugify_title(title)
-
-
-def _get_blog_post_or_404(slug: str) -> dict[str, object]:
-    normalized = slug.strip().lower()
-    for post in _BLOG_POSTS:
-        if str(post.get("slug") or "") == normalized:
-            return post
-    raise HTTPException(status_code=404, detail="Blog post not found")
 
 
 def _shared_context(request: Request, current_group: str | None = None) -> dict[str, object]:
@@ -118,39 +51,6 @@ def landing_page(request: Request) -> HTMLResponse:
 @router.get(path="/web", include_in_schema=False)
 def web_home() -> RedirectResponse:
     return RedirectResponse(url="/web/user", status_code=307)
-
-
-@router.get(path="/blog", include_in_schema=False, response_class=HTMLResponse)
-def blog_list_page(request: Request) -> HTMLResponse:
-    context = _shared_context(request)
-    context.update(
-        {
-            "title": "Tutorial & Blog / MLBB Public Data API Web",
-            "web_title": "Tutorial & Blog",
-            "subtitle": "Guides and practical tutorials for using MLBB Public Data API & Web effectively.",
-            "seo_description": "Read MLBB Public Data API tutorials: login flow, endpoint execution, snippets, readable responses, and API docs authorization.",
-            "seo_keywords": "mlbb api tutorial, mlbb web tutorial, mobile legends api guide, swagger authorization",
-            "blog_posts": _BLOG_POSTS,
-        }
-    )
-    return templates.TemplateResponse(request, "blog/list_page.html", context)
-
-
-@router.get(path="/blog/{slug}", include_in_schema=False, response_class=HTMLResponse)
-def blog_detail_page(request: Request, slug: str) -> HTMLResponse:
-    post = _get_blog_post_or_404(slug)
-    context = _shared_context(request)
-    context.update(
-        {
-            "title": f"{post['title']} / MLBB Public Data API Web",
-            "web_title": str(post["title"]),
-            "subtitle": str(post["excerpt"]),
-            "seo_description": str(post["excerpt"]),
-            "seo_keywords": "mlbb tutorial, mlbb api guide, endpoint tutorial, jwt login tutorial",
-            "blog_post": post,
-        }
-    )
-    return templates.TemplateResponse(request, "blog/detail_page.html", context)
 
 
 @router.get(path="/web/{group}", include_in_schema=False, response_class=HTMLResponse)

@@ -295,59 +295,60 @@ def hero_rank(
         )
     ] = LanguageEnum.ENGLISH
 ) -> object:
-    def create_rank_payload(rank_value: str) -> dict[str, object]:
-        return {
-            "pageSize": 20,
-            "filters": [
-                {
-                    "field": "bigrank",
-                    "operator": "eq",
-                    "value": rank_value
-                },
-                {
-                    "field": "match_type",
-                    "operator": "eq",
-                    "value": "0"
-                },
-            ],
-            "sorts": [],
-            "pageIndex": 1,
-            "fields": [
-                "main_hero",
-                "main_hero_appearance_rate",
-                "main_hero_ban_rate",
-                "main_hero_channel",
-                "main_hero_win_rate",
-                "main_heroid",
-                "data.sub_hero.hero",
-                "data.sub_hero.hero_channel",
-                "data.sub_hero.increase_win_rate",
-                "data.sub_hero.heroid",
-            ],
-        }
-
     sort_field_map = {
         "pick_rate": "main_hero_appearance_rate",
         "ban_rate": "main_hero_ban_rate",
         "win_rate": "main_hero_win_rate",
     }
-    url_map = {"1": "2756567", "3": "2756568", "7": "2756569", "15": "2756565", "30": "2756570"}
 
-    payload = create_rank_payload(validate_and_map_rank(rank))
-    payload["pageSize"] = size
-    payload["pageIndex"] = index
-    payload["sorts"] = [
-        {
-            "data":
-                {
+    url_map = {
+        "1": "2756567",
+        "3": "2756568",
+        "7": "2756569",
+        "15": "2756565",
+        "30": "2756570",
+    }
+
+    payload = {
+        "pageSize": size,
+        "filters": [
+            {
+                "field": "bigrank",
+                "operator": "eq",
+                "value": validate_and_map_rank(rank),
+            },
+            {
+                "field": "match_type",
+                "operator": "eq",
+                "value": "0",
+            },
+        ],
+        "sorts": [
+            {
+                "data": {
                     "field": sort_field_map.get(sort_field, "main_hero_win_rate"),
-                    "order": sort_order
+                    "order": sort_order,
                 },
-            "type": "sequence"
-        }
-    ]
+                "type": "sequence",
+            }
+        ],
+        "pageIndex": index,
+        "fields": [
+            "main_hero",
+            "main_hero_appearance_rate",
+            "main_hero_ban_rate",
+            "main_hero_channel",
+            "main_hero_win_rate",
+            "main_heroid",
+            "data.sub_hero.hero",
+            "data.sub_hero.hero_channel",
+            "data.sub_hero.increase_win_rate",
+            "data.sub_hero.heroid",
+        ],
+    }
 
-    return fetch_mlbb_post(url_map.get(days, "2756567"), payload, lang)
+    url_key = url_map.get(days, "2756567")
+    return fetch_mlbb_post(url_key, payload, lang)
 
 
 @router.get(

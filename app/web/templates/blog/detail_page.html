@@ -2,10 +2,18 @@
 
 {% block content %}
 <section class="mx-auto w-full max-w-4xl space-y-4 sm:space-y-6">
-    <article class="border border-zinc-800 p-5 md:p-6">
-        <a href="/blog" class="text-xs text-zinc-500 hover:text-zinc-300">← Back to Blog</a>
+    <article class="border border-zinc-800 bg-zinc-950/60 p-5 md:p-6">
+        <a href="/blog" class="border border-red-700/80 px-2 py-1 text-xs text-red-500 hover:text-red-300">Back to Blog</a>
 
-        <p class="mt-4 text-xs uppercase tracking-[0.2em] text-zinc-500">Tutorial</p>
+        <div class="mt-4 flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-[0.14em] text-zinc-400">
+            <span class="border border-zinc-700/80 px-2 py-1">{{ blog_post.get('category', 'Article') }}</span>
+            {% if blog_post.get('is_featured') %}
+                <span class="border border-cyan-700/60 bg-cyan-950/20 px-2 py-1 text-cyan-200">Featured</span>
+            {% endif %}
+            {% if blog_post.get('is_pinned') %}
+                <span class="border border-amber-700/60 bg-amber-950/20 px-2 py-1 text-amber-200">Pinned</span>
+            {% endif %}
+        </div>
         <h1 class="mt-2 text-2xl font-semibold tracking-tight text-zinc-100 md:text-4xl">{{ blog_post['title'] }}</h1>
         <p class="mt-3 text-sm leading-7 text-zinc-400">{{ blog_post['excerpt'] }}</p>
 
@@ -14,6 +22,17 @@
             <span>•</span>
             <span>{{ blog_post['read_time'] }}</span>
         </div>
+
+        {% if blog_post.get('key_points') %}
+            <div class="mt-4 border border-zinc-800 bg-zinc-900/60 p-4">
+                <p class="text-[11px] uppercase tracking-[0.18em] text-zinc-500">Key Points</p>
+                <ul class="mt-2 space-y-1 text-xs text-zinc-300">
+                    {% for point in blog_post['key_points'] %}
+                        <li>• {{ point }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
 
         <div class="mt-5 overflow-hidden border border-zinc-800">
             <img src="{{ blog_post['cover_image'] }}" alt="{{ blog_post['title'] }}" class="w-full object-cover" loading="lazy" />
@@ -25,10 +44,29 @@
             <h2 class="text-xl font-semibold text-zinc-100">{{ section['heading'] }}</h2>
             <p class="mt-3 text-sm leading-7 text-zinc-300">{{ section['body'] }}</p>
 
-            <div class="mt-4 overflow-hidden border border-zinc-800">
-                <img src="{{ section['image'] }}" alt="{{ section['heading'] }}" class="w-full object-cover" loading="lazy" />
-            </div>
-            <p class="mt-2 text-xs text-zinc-500">Image placeholder path: {{ section['image_note'] }}</p>
+            {% if section.get('bullets') %}
+                <ul class="mt-4 space-y-1 text-sm text-zinc-300">
+                    {% for item in section['bullets'] %}
+                        <li>• {{ item }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            {% if section.get('callout') %}
+                <div class="mt-4 border border-amber-700/50 bg-amber-950/20 p-3 text-xs text-amber-200">
+                    {{ section['callout'] }}
+                </div>
+            {% endif %}
+
+            {% if section.get('image') %}
+                <div class="mt-4 overflow-hidden border border-zinc-800 aspect-[16/9] flex items-center justify-center">
+                    <img src="{{ section['image'] }}" alt="{{ section['heading'] }}"
+                        class="w-full h-full object-contain" loading="lazy" />
+                </div>
+            {% endif %}
+            {% if section.get('image_note') %}
+                <p class="mt-2 text-xs text-zinc-500">{{ section['image_note'] }}</p>
+            {% endif %}
         </article>
     {% endfor %}
 </section>

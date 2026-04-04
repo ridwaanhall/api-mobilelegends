@@ -12,7 +12,7 @@ _BLOG_POSTS: list[dict[str, object]] = [
     {
         "title": "MLBB API Web v3.2.2 Changelog (v3.2.1 -> v3.2.2)",
         "excerpt": "Detailed release notes covering API additions, UI redesign, docs updates, and testing changes from commit 3.2.1 to 3.2.2.",
-        "cover_image": "/images/blog/landing-page-v3.2.2.png",
+        "cover_image": "/images/blog/landing-page-v3.2.2.webp",
         "published_at": "2026-04-05",
         "read_time": "9 min read",
         "category": "Release Notes",
@@ -26,7 +26,7 @@ _BLOG_POSTS: list[dict[str, object]] = [
         "sections": [
             {
                 "heading": "Release Scope and Baseline",
-                "body": "This release stream starts at v3.2.1 (commit 754bac3f4c052fb181f272ae8933d2921b6f19be) and includes all commits up to main.",
+                "body": "This release stream starts at v3.2.1 and includes all commits up to main.",
                 "bullets": [
                     "Version bump and API metadata refresh to v3.2.2.",
                     "Significant expansion of web UX and endpoint interaction quality.",
@@ -89,7 +89,7 @@ _BLOG_POSTS: list[dict[str, object]] = [
     {
         "title": "How to Use MLBB Public Data API Web Project",
         "excerpt": "Complete beginner tutorial to sign in, run endpoint requests, use snippets, read responses, and authorize API docs.",
-        "cover_image": "/images/blog/landing-page-v3.2.2.png",
+        "cover_image": "/images/blog/landing-page-v3.2.2.webp",
         "published_at": "2026-04-04",
         "read_time": "8 min read",
         "category": "Tutorial",
@@ -104,7 +104,7 @@ _BLOG_POSTS: list[dict[str, object]] = [
             {
                 "heading": "Step 1: Open the Website",
                 "body": "Visit https://mlbb.rone.dev. On the home page you will see two options: Open Demo Website and Open API Docs. Start with Open Demo Website if you want the guided interactive flow.",
-                "image": "/images/blog/landing-page-v3.2.2.png",
+                "image": "/images/blog/landing-page-v3.2.2.webp",
                 "image_note": "Landing page with clear entry points to web playground and API docs.",
             },
             {
@@ -114,20 +114,20 @@ _BLOG_POSTS: list[dict[str, object]] = [
                     "Without sign-in, user endpoints can fail or return unauthorized responses.",
                     "This applies to both web endpoint execution and API docs authorization.",
                 ],
-                "image": "/images/blog/tutorial-step-2-signin-send-vc.png",
+                "image": "/images/blog/tutorial-step-2-signin-send-vc.webp",
                 "image_note": "Sign-in modal with Role ID, Zone ID, and Send VC button.",
                 "callout": "Important: User endpoint routes are designed for authenticated usage. Always complete login and keep JWT available.",
             },
             {
                 "heading": "Step 3: Login with VC",
                 "body": "In the same popup, enter VC and click Sign In. On success, navbar shows your avatar, username, and country. Open account panel to view roleId (zoneId) and copy JWT.",
-                "image": "/images/blog/tutorial-step-3-login-vc.png",
+                "image": "/images/blog/tutorial-step-3-login-vc.webp",
                 "image_note": "Sign-in form with VC input and post-login navbar state showing user details.",
             },
             {
                 "heading": "Step 4: Execute Endpoint Requests",
                 "body": "Choose a group and endpoint. For example, MLBB hero detail. Fill required parameters like hero_identifier (numeric ID or normalized name), plus optional size/index/lang.",
-                "image": "/images/blog/tutorial-step-4-execute-endpoint.png",
+                "image": "/images/blog/tutorial-step-4-execute-endpoint.webp",
                 "image_note": "Endpoint execution interface with parameter inputs.",
             },
             {
@@ -137,19 +137,19 @@ _BLOG_POSTS: list[dict[str, object]] = [
                     "Key-Value mode is best for object inspection.",
                     "Key As Header mode is best for compact table-style scanning.",
                 ],
-                "image": "/images/blog/tutorial-step-5-response-views.png",
+                "image": "/images/blog/tutorial-step-5-response-views.webp",
                 "image_note": "Response viewing options with different display modes.",
             },
             {
                 "heading": "Step 6: Optionally Use API Docs",
                 "body": "If you prefer Swagger UI, open API Docs from home. For user endpoints, authorize with Bearer token using JWT copied from navbar.",
-                "image": "/images/blog/tutorial-step-6-api-docs-auth.png",
+                "image": "/images/blog/tutorial-step-6-api-docs-auth.webp",
                 "image_note": "API docs authorization with Bearer token.",
             },
             {
                 "heading": "Step 7: Paste JWT for API Docs Authorization",
                 "body": "In the API docs, click Authorize. Paste JWT in the Bearer token field. After successful auth, you can execute user endpoints directly from the docs interface.",
-                "image": "/images/blog/tutorial-step-7-paste-jwt-api-docs.png",
+                "image": "/images/blog/tutorial-step-7-paste-jwt-api-docs.webp",
                 "image_note": "API docs with JWT pasted in Bearer token field for authorization.",
             }
         ],

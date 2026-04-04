@@ -1,0 +1,217 @@
+from __future__ import annotations
+
+from fastapi import APIRouter, HTTPException, Request
+from fastapi.responses import HTMLResponse
+
+from app.web.routers.root import _shared_context, templates
+
+router = APIRouter(tags=["web"])
+
+
+_BLOG_POSTS: list[dict[str, object]] = [
+    {
+        "title": "MLBB API Web v3.2.2 Changelog (v3.2.1 -> v3.2.2)",
+        "excerpt": "Detailed release notes covering API additions, UI redesign, docs updates, and testing changes from commit 3.2.1 to 3.2.2.",
+        "cover_image": "/images/blog/landing-page-v3.2.2.png",
+        "published_at": "2026-04-05",
+        "read_time": "9 min read",
+        "category": "Release Notes",
+        "is_featured": True,
+        "is_pinned": True,
+        "key_points": [
+            "Range: 3.2.1 -> 3.2.2",
+            "Scope: 21 files changed, 1305 insertions, 338 deletions",
+            "Version move: v3.2.1 to v3.2.2",
+        ],
+        "sections": [
+            {
+                "heading": "Release Scope and Baseline",
+                "body": "This release stream starts at v3.2.1 (commit 754bac3f4c052fb181f272ae8933d2921b6f19be) and includes all commits up to main.",
+                "bullets": [
+                    "Version bump and API metadata refresh to v3.2.2.",
+                    "Significant expansion of web UX and endpoint interaction quality.",
+                    "Changelog includes both committed work and present workspace edits.",
+                ],
+            },
+            {
+                "heading": "API and Schema Enhancements",
+                "body": "User domain capabilities were expanded and documentation accuracy was improved across multiple endpoint groups.",
+                "bullets": [
+                    "New user endpoint for matches filtered by hero, with dedicated schema examples and response model coverage.",
+                    "Pagination guidance clarified around pageInfo.nextCursor behavior for user routes.",
+                    "Hero identifier input docs normalized to accept numeric IDs and normalized hero names.",
+                    "Router-level docs cleanup in academy, mlbb, addon, and user modules.",
+                ],
+            },
+            {
+                "heading": "Web App UX Redesign",
+                "body": "The interactive web workspace received a major usability pass focused on clarity, response readability, and authentication flow.",
+                "bullets": [
+                    "New sign-in modal flow with Send VC + Login handling and JWT copy action.",
+                    "Navbar/account panel improvements with richer signed-in state details.",
+                    "Readable response renderer hardened with safe inline markup sanitation.",
+                    "Dual readable response table modes: key-value and key-as-header.",
+                    "Landing page and metadata refinements for clearer entry points and page titles.",
+                    "Donation interaction replaced with themed modal workflow.",
+                ],
+            },
+            {
+                "heading": "Blog and Tutorial Foundation",
+                "body": "A content system was introduced to help new users onboard through guided walkthroughs and release communication.",
+                "bullets": [
+                    "New /blog index and /blog/{slug} detail pages with SEO-focused metadata.",
+                    "Tutorial post structure added with step-by-step sections and image slots.",
+                    "Static image serving mounted at /images for blog/tutorial assets.",
+                    "Tutorial entry linked from primary navbar for discoverability.",
+                ],
+            },
+            {
+                "heading": "Docs, Versioning, and Quality",
+                "body": "Project documentation and test coverage were aligned to ensure behavioral consistency and safer iteration speed.",
+                "bullets": [
+                    "README refreshed to reflect modern web flow, auth usage, and tutorial availability.",
+                    "API version references synchronized in templates and config to v3.2.2.",
+                    "Web interface tests expanded for navbar/auth, blog pages, and response rendering helpers.",
+                    "Current regression status before this post update: previously validated at 59 passing tests.",
+                ],
+            },
+            {
+                "heading": "Migration Notes for Integrators",
+                "body": "No breaking URL path changes were introduced for existing API endpoints, but consumers should review behavior updates around user auth and documentation semantics.",
+                "bullets": [
+                    "Use JWT sign-in before calling protected user endpoints in web or docs workflows.",
+                    "If your client consumed old last_cursor wording, align with pageInfo.nextCursor semantics.",
+                    "If your client accepted free-form hero naming, follow normalized hero_identifier examples for best results.",
+                ],
+            },
+        ],
+    },
+    {
+        "title": "How to Use MLBB Public Data API Web Project",
+        "excerpt": "Complete beginner tutorial to sign in, run endpoint requests, use snippets, read responses, and authorize API docs.",
+        "cover_image": "/images/blog/landing-page-v3.2.2.png",
+        "published_at": "2026-04-04",
+        "read_time": "8 min read",
+        "category": "Tutorial",
+        "is_featured": True,
+        "is_pinned": True,
+        "key_points": [
+            "User endpoints require sign-in first",
+            "Covers both web workspace and Swagger authorization flow",
+            "Includes response reading and snippet export tips",
+        ],
+        "sections": [
+            {
+                "heading": "Step 1: Open the Website",
+                "body": "Visit https://mlbb.rone.dev. On the home page you will see two options: Open Demo Website and Open API Docs. Start with Open Demo Website if you want the guided interactive flow.",
+                "image": "/images/blog/landing-page-v3.2.2.png",
+                "image_note": "Landing page with clear entry points to web playground and API docs.",
+            },
+            {
+                "heading": "Step 2: Sign In First (Mandatory for User Endpoints)",
+                "body": "Click Sign In in the navbar, then fill Role ID and Zone ID. Click Send VC. A verification code is sent to in-game mail and expires in 5 minutes.",
+                "bullets": [
+                    "Without sign-in, user endpoints can fail or return unauthorized responses.",
+                    "This applies to both web endpoint execution and API docs authorization.",
+                ],
+                "image": "/images/blog/tutorial-step-2-signin-send-vc.png",
+                "image_note": "Sign-in modal with Role ID, Zone ID, and Send VC button.",
+                "callout": "Important: User endpoint routes are designed for authenticated usage. Always complete login and keep JWT available.",
+            },
+            {
+                "heading": "Step 3: Login with VC",
+                "body": "In the same popup, enter VC and click Sign In. On success, navbar shows your avatar, username, and country. Open account panel to view roleId (zoneId) and copy JWT.",
+                "image": "/images/blog/tutorial-step-3-login-vc.png",
+                "image_note": "Sign-in form with VC input and post-login navbar state showing user details.",
+            },
+            {
+                "heading": "Step 4: Execute Endpoint Requests",
+                "body": "Choose a group and endpoint. For example, MLBB hero detail. Fill required parameters like hero_identifier (numeric ID or normalized name), plus optional size/index/lang.",
+                "image": "/images/blog/tutorial-step-4-execute-endpoint.png",
+                "image_note": "Endpoint execution interface with parameter inputs.",
+            },
+            {
+                "heading": "Step 5: Read Responses and Export Snippets",
+                "body": "After execution, use snippet tabs (curl, python, javascript, go, node, php, java, csharp) and copy actions. Inspect Readable Response with the view-mode switch, then verify raw JSON if needed.",
+                "bullets": [
+                    "Key-Value mode is best for object inspection.",
+                    "Key As Header mode is best for compact table-style scanning.",
+                ],
+                "image": "/images/blog/tutorial-step-5-response-views.png",
+                "image_note": "Response viewing options with different display modes.",
+            },
+            {
+                "heading": "Step 6: Optionally Use API Docs",
+                "body": "If you prefer Swagger UI, open API Docs from home. For user endpoints, authorize with Bearer token using JWT copied from navbar.",
+                "image": "/images/blog/tutorial-step-6-api-docs-auth.png",
+                "image_note": "API docs authorization with Bearer token.",
+            },
+            {
+                "heading": "Step 7: Paste JWT for API Docs Authorization",
+                "body": "In the API docs, click Authorize. Paste JWT in the Bearer token field. After successful auth, you can execute user endpoints directly from the docs interface.",
+                "image": "/images/blog/tutorial-step-7-paste-jwt-api-docs.png",
+                "image_note": "API docs with JWT pasted in Bearer token field for authorization.",
+            }
+        ],
+    },
+]
+
+
+def _slugify_title(title: str) -> str:
+    return "-".join(filter(None, "".join(ch.lower() if ch.isalnum() else " " for ch in title).split()))
+
+
+for post in _BLOG_POSTS:
+    title = str(post.get("title") or "")
+    post["slug"] = _slugify_title(title)
+
+
+def _get_blog_post_or_404(slug: str) -> dict[str, object]:
+    normalized = slug.strip().lower()
+    for post in _BLOG_POSTS:
+        if str(post.get("slug") or "") == normalized:
+            return post
+    raise HTTPException(status_code=404, detail="Blog post not found")
+
+
+@router.get(path="/blog", include_in_schema=False, response_class=HTMLResponse, name="web.blog.list")
+def blog_list_page(request: Request) -> HTMLResponse:
+    ordered_posts = sorted(
+        _BLOG_POSTS,
+        key=lambda post: str(post.get("published_at") or ""),
+        reverse=True,
+    )
+    featured_posts = [post for post in ordered_posts if bool(post.get("is_featured"))]
+    pinned_posts = [post for post in ordered_posts if bool(post.get("is_pinned"))]
+
+    context = _shared_context(request)
+    context.update(
+        {
+            "title": "Tutorial & Blog / MLBB Public Data API Web",
+            "web_title": "Tutorial & Blog",
+            "subtitle": "Guides, release notes, and practical walkthroughs for MLBB Public Data API & Web.",
+            "seo_description": "Read MLBB Public Data API tutorials and changelogs: sign-in flow, endpoint execution, snippets, response rendering, and release updates.",
+            "seo_keywords": "mlbb api tutorial, mlbb changelog, mobile legends api guide, swagger authorization",
+            "blog_posts": ordered_posts,
+            "featured_posts": featured_posts,
+            "pinned_posts": pinned_posts,
+        }
+    )
+    return templates.TemplateResponse(request, "blog/list_page.html", context)
+
+
+@router.get(path="/blog/{slug}", include_in_schema=False, response_class=HTMLResponse, name="web.blog.detail")
+def blog_detail_page(request: Request, slug: str) -> HTMLResponse:
+    post = _get_blog_post_or_404(slug)
+    context = _shared_context(request)
+    context.update(
+        {
+            "title": f"{post['title']} / MLBB Public Data API Web",
+            "web_title": str(post["title"]),
+            "subtitle": str(post["excerpt"]),
+            "seo_description": str(post["excerpt"]),
+            "seo_keywords": "mlbb tutorial, mlbb changelog, endpoint guide, jwt login tutorial",
+            "blog_post": post,
+        }
+    )
+    return templates.TemplateResponse(request, "blog/detail_page.html", context)

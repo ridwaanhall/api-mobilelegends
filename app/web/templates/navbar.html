@@ -12,7 +12,11 @@
 
                 <div class="flex items-center gap-1.5 text-[11px] sm:text-xs">
                     <a href="https://mlbb-card.rone.dev" target="_blank" class="border border-cyan-700/70 px-2 py-1 text-cyan-300 hover:border-cyan-400 hover:text-cyan-200">MLBB Card</a>
-                    <button id="donate-modal-trigger" type="button" class="border border-rose-700/70 px-2 py-1 text-rose-300 hover:border-rose-400 hover:text-rose-200">Donate</button>
+                    <a href="/blog" class="border border-emerald-700/70 px-2 py-1 text-emerald-300 hover:border-emerald-400 hover:text-emerald-200">Tutorial</a>
+                    <button id="donate-modal-trigger" type="button"
+                        class="border border-rose-700/70 px-2 py-1 hover:border-rose-400 hover:text-rose-200">
+                        <span class="text-rose-300 animate-pulse">Donate</span>
+                    </button>
                     <a href="https://github.com/ridwaanhall/api-mobilelegends" 
                         target="_blank" 
                         rel="noreferrer noopener" 
@@ -26,6 +30,12 @@
 
             <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div class="flex min-w-0 flex-1 items-center gap-2 overflow-x-auto whitespace-nowrap pb-1 text-[11px] sm:text-xs" aria-label="API groups">
+                    <a
+                        href="/"
+                        class="shrink-0 border px-2.5 py-1.5 {{ 'border-cyan-500/60 text-cyan-100' if current_group is none else 'border-zinc-700 text-zinc-400 hover:border-zinc-500 hover:text-zinc-100' }}"
+                    >
+                        Home
+                    </a>
                     {% for group in groups %}
                         <a
                             href="/web/{{ group }}"

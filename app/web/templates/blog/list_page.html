@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<section class="mx-auto w-full max-w-6xl space-y-4 sm:space-y-6">
+    <div class="border border-zinc-800 p-5 md:p-6">
+        <p class="text-xs uppercase tracking-[0.22em] text-zinc-500">Knowledge Hub</p>
+        <h1 class="mt-2 text-2xl font-semibold tracking-tight text-zinc-100 md:text-4xl">{{ web_title if web_title else "Tutorial & Blog" }}</h1>
+        <p class="mt-2 text-sm leading-7 text-zinc-400">{{ subtitle }}</p>
+    </div>
+
+    {% if not blog_posts %}
+        <div class="border border-zinc-800 p-6 text-sm text-zinc-400">
+            No blog content available yet.
+        </div>
+    {% else %}
+        <div class="grid gap-4 md:grid-cols-2">
+            {% for post in blog_posts %}
+                <article class="border border-zinc-800 p-4 md:p-5">
+                    <a href="/blog/{{ post['slug'] }}" class="block overflow-hidden border border-zinc-800">
+                        <img
+                            src="{{ post['cover_image'] }}"
+                            alt="{{ post['title'] }}"
+                            class="h-48 w-full object-cover"
+                            loading="lazy"
+                        />
+                    </a>
+                    <div class="mt-4 flex items-center gap-2 text-[11px] text-zinc-500">
+                        <span>{{ post['published_at'] }}</span>
+                        <span>•</span>
+                        <span>{{ post['read_time'] }}</span>
+                    </div>
+                    <h2 class="mt-2 text-xl font-semibold text-zinc-100">
+                        <a href="/blog/{{ post['slug'] }}" class="hover:text-cyan-200">{{ post['title'] }}</a>
+                    </h2>
+                    <p class="mt-2 text-sm leading-6 text-zinc-400">{{ post['excerpt'] }}</p>
+                    <a href="/blog/{{ post['slug'] }}" class="mt-4 inline-flex border border-zinc-700 px-3 py-1.5 text-xs text-zinc-300 hover:border-cyan-500 hover:text-cyan-200">
+                        Read Tutorial
+                    </a>
+                </article>
+            {% endfor %}
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

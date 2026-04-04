@@ -262,3 +262,29 @@ def test_sign_out_requires_confirmation_prompt() -> None:
     assert response.status_code == 200
     assert "Are you sure you want to sign out?" in response.text
     assert "/api/user/auth/logout" in response.text
+
+
+def test_blog_list_page_renders_tutorial_cards() -> None:
+    response = client.get("/blog")
+
+    assert response.status_code == 200
+    assert "Tutorial &amp; Blog" in response.text or "Tutorial & Blog" in response.text
+    assert "How to Use MLBB Public Data API Web Project" in response.text
+    assert "/blog/how-to-use-mlbb-public-data-api-web-project" in response.text
+
+
+def test_blog_detail_page_uses_slug_url_and_shows_steps() -> None:
+    response = client.get("/blog/how-to-use-mlbb-public-data-api-web-project")
+
+    assert response.status_code == 200
+    assert "Step 1: Open the Website" in response.text
+    assert "Image placeholder path:" in response.text
+    assert "/images/blog/tutorial-step-1-home.png" in response.text
+
+
+def test_navbar_includes_tutorial_button() -> None:
+    response = client.get("/web/user")
+
+    assert response.status_code == 200
+    assert ">Tutorial<" in response.text
+    assert "href=\"/blog\"" in response.text

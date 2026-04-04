@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 from copy import deepcopy
+from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
 from fastapi.openapi.utils import get_openapi
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 
 from app.core.config import DEBUG, API_VERSION
 
@@ -251,6 +253,10 @@ app.include_router(addon_router)
 
 # web routes
 app.include_router(web_router)
+
+# static assets
+_STATIC_IMAGES_DIR = Path(__file__).resolve().parents[1] / "images"
+app.mount("/images", StaticFiles(directory=str(_STATIC_IMAGES_DIR)), name="images")
 
 
 # exception handlers

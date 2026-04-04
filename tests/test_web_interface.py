@@ -269,8 +269,20 @@ def test_blog_list_page_renders_tutorial_cards() -> None:
 
     assert response.status_code == 200
     assert "Tutorial &amp; Blog" in response.text or "Tutorial & Blog" in response.text
+    assert "MLBB API Web v3.2.2 Changelog" in response.text
     assert "How to Use MLBB Public Data API Web Project" in response.text
     assert "/blog/how-to-use-mlbb-public-data-api-web-project" in response.text
+    assert "Read Featured Post" in response.text
+    assert "High-priority reading" in response.text
+
+
+def test_blog_changelog_page_renders_release_scope() -> None:
+    response = client.get("/blog/mlbb-api-web-v3-2-2-changelog-v3-2-1-working-tree")
+
+    assert response.status_code == 200
+    assert "754bac3f4c052fb181f272ae8933d2921b6f19be" in response.text
+    assert "21 files changed, 1305 insertions, 338 deletions" in response.text
+    assert "Migration Notes for Integrators" in response.text
 
 
 def test_blog_detail_page_uses_slug_url_and_shows_steps() -> None:
@@ -278,6 +290,7 @@ def test_blog_detail_page_uses_slug_url_and_shows_steps() -> None:
 
     assert response.status_code == 200
     assert "Step 1: Open the Website" in response.text
+    assert "Mandatory for User Endpoints" in response.text
     assert "Image placeholder path:" in response.text
     assert "/images/blog/tutorial-step-1-home.png" in response.text
 

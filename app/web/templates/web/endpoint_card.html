@@ -198,7 +198,12 @@
                 </section>
 
                 <section class="border border-zinc-900 p-3">
-                    <p class="mb-2 text-[11px] uppercase tracking-[0.14em] text-zinc-500">Readable Response</p>
+                    <div class="mb-2 flex items-center justify-between gap-2">
+                        <p class="text-[11px] uppercase tracking-[0.14em] text-zinc-500">Readable Response</p>
+                        <button type="button" class="cursor-pointer border border-zinc-700 px-2 py-1 text-[10px] uppercase tracking-[0.12em] text-zinc-300 hover:border-zinc-500 hover:text-zinc-100" data-readable-mode-toggle>
+                            View: Key-Value
+                        </button>
+                    </div>
                     <div class="custom-scroll max-h-[34rem] min-w-0 overflow-auto" data-response-readable></div>
                 </section>
 

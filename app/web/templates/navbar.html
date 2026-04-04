@@ -44,16 +44,17 @@
                     <button id="user-menu-trigger" type="button" class="hidden items-center gap-1.5 border border-zinc-700 px-1 py-1 hover:border-zinc-500">
                         <span id="user-badge" class="inline-flex items-center gap-1.5">
                             <img id="user-avatar" src="" alt="User avatar" class="h-5 w-5 border border-zinc-700 object-cover sm:h-6 sm:w-6" />
-                            <span id="user-name" class="max-w-24 text-zinc-200 sm:max-w-36"></span>
+                            <span class="max-w-32 truncate text-zinc-200 sm:max-w-44">
+                                <span id="user-name"></span>
+                                <span id="user-country-inline" class="text-zinc-400"></span>
+                            </span>
                         </span>
                     </button>
 
                     <div id="user-menu-panel" class="absolute right-0 top-full z-40 mt-1 hidden border border-zinc-700 p-1 shadow-[0_0_0_1px_rgba(255,255,255,0.03)]">
                         <span id="jwt-status" class="mb-2 block border border-zinc-700 px-1 py-1 text-zinc-300">Signed In</span>
                         <div class="mb-2 border border-zinc-700 px-1.5 py-1 text-[10px] text-zinc-400">
-                            <p><span class="text-zinc-500">Country:</span> <span id="user-country" class="text-zinc-300">-</span></p>
-                            <p><span class="text-zinc-500">Role ID:</span> <span id="user-role-id" class="text-zinc-300">-</span></p>
-                            <p><span class="text-zinc-500">Zone ID:</span> <span id="user-zone-id" class="text-zinc-300">-</span></p>
+                            <p><span id="user-role-zone" class="text-zinc-300">-</span></p>
                         </div>
                         <button id="jwt-copy-action" type="button" class="mb-1 w-full border border-lime-700/80 bg-lime-950/30 px-1 py-1 text-left text-lime-300 hover:border-lime-500 hover:text-lime-200">Copy JWT</button>
                         <button id="jwt-auth-action" type="button" class="w-full border border-rose-700 px-1 py-1 text-left text-rose-300 hover:border-rose-400 hover:text-rose-100">Sign Out</button>

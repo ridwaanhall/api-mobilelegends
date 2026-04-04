@@ -307,9 +307,8 @@
 			const userBadge = document.getElementById("user-badge");
 			const userAvatar = document.getElementById("user-avatar");
 			const userName = document.getElementById("user-name");
-			const userCountry = document.getElementById("user-country");
-			const userRoleId = document.getElementById("user-role-id");
-			const userZoneId = document.getElementById("user-zone-id");
+			const userCountryInline = document.getElementById("user-country-inline");
+			const userRoleZone = document.getElementById("user-role-zone");
 			if (!badge) {
 				return;
 			}
@@ -340,14 +339,11 @@
 					userBadge.classList.remove("hidden");
 					userBadge.classList.add("inline-flex");
 				}
-				if (userCountry) {
-					userCountry.textContent = "-";
+				if (userCountryInline) {
+					userCountryInline.textContent = "";
 				}
-				if (userRoleId) {
-					userRoleId.textContent = "-";
-				}
-				if (userZoneId) {
-					userZoneId.textContent = "-";
+				if (userRoleZone) {
+					userRoleZone.textContent = "-";
 				}
 				return;
 			}
@@ -377,14 +373,11 @@
 					userBadge.classList.remove("hidden");
 					userBadge.classList.add("inline-flex");
 				}
-				if (userCountry) {
-					userCountry.textContent = "-";
+				if (userCountryInline) {
+					userCountryInline.textContent = "";
 				}
-				if (userRoleId) {
-					userRoleId.textContent = "-";
-				}
-				if (userZoneId) {
-					userZoneId.textContent = "-";
+				if (userRoleZone) {
+					userRoleZone.textContent = "-";
 				}
 				return;
 			}
@@ -399,14 +392,13 @@
 			userName.textContent = name;
 			userBadge.classList.remove("hidden");
 			userBadge.classList.add("inline-flex");
-			if (userCountry) {
-				userCountry.textContent = regCountry;
+			if (userCountryInline) {
+				userCountryInline.textContent = regCountry !== "-" ? ` (${regCountry})` : "";
 			}
-			if (userRoleId) {
-				userRoleId.textContent = roleIdValue !== undefined && roleIdValue !== null ? String(roleIdValue) : "-";
-			}
-			if (userZoneId) {
-				userZoneId.textContent = zoneIdValue !== undefined && zoneIdValue !== null ? String(zoneIdValue) : "-";
+			if (userRoleZone) {
+				const roleText = roleIdValue !== undefined && roleIdValue !== null ? String(roleIdValue) : "-";
+				const zoneText = zoneIdValue !== undefined && zoneIdValue !== null ? String(zoneIdValue) : "-";
+				userRoleZone.textContent = `${roleText} (${zoneText})`;
 			}
 		}
 

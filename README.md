@@ -31,7 +31,7 @@ This API & Web provides access to hero analytics, in-game performance data, acad
 
 ## Documentation
 
-- Website home: `https://mlbb.rone.dev/`
+- Website home: `https://mlbb.rone.dev`
 - Tutorial & Blog: `https://mlbb.rone.dev/blog`
 - Web Playground: `https://mlbb.rone.dev/web`
 - Swagger UI: `https://mlbb.rone.dev/api/docs`
@@ -113,12 +113,22 @@ cp .env.example .env
 
 ### Run
 
-```bash
-# for development
-fastapi dev
+#### Development
 
-# production
+```bash
+fastapi dev
+```
+
+#### Production
+
+```bash
 fastapi run
+```
+
+#### Deploy
+
+```bash
+fastapi deploy
 ```
 
 ### Test

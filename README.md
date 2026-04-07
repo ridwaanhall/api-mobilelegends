@@ -2,7 +2,7 @@
 
 [![Web Live](https://img.shields.io/badge/API-Live-brightgreen?logo=fastapi&logoColor=white)](https://mlbb.rone.dev)
 ![Release](https://img.shields.io/github/v/release/ridwaanhall/api-mobilelegends?logo=github)
-![License](https://img.shields.io/github/license/ridwaanhall/api-mobilelegends?logo=opensourceinitiative&logoColor=white)
+![License](https://img.shields.io/github/license/ridwaanhall/api-mobilelegends?logo=bsd&logoColor=white)
 ![Stars](https://img.shields.io/github/stars/ridwaanhall/api-mobilelegends?logo=github)
 ![Forks](https://img.shields.io/github/forks/ridwaanhall/api-mobilelegends?logo=github)
 ![Python](https://img.shields.io/badge/Python-3.12+-blue?logo=python&logoColor=white)

@@ -31,12 +31,14 @@ This API & Web provides access to hero analytics, in-game performance data, acad
 
 ## Documentation
 
-- Website home: `https://mlbb.rone.dev`
-- Tutorial & Blog: `https://mlbb.rone.dev/blog`
-- Web Playground: `https://mlbb.rone.dev/web`
-- Swagger UI: `https://mlbb.rone.dev/api/docs`
-- ReDoc: `https://mlbb.rone.dev/api/redoc`
-- OpenAPI JSON: `https://mlbb.rone.dev/api/openapi.json`
+| Title | Link | Description |
+| --- | --- | --- |
+| Website Home | [mlbb.rone.dev](https://mlbb.rone.dev) | Main landing page with quick access to Demo Website and API Docs. |
+| Tutorial and Blog | [mlbb.rone.dev/blog](https://mlbb.rone.dev/blog) | Guides, tutorials, and release/changelog posts. |
+| Web Playground | [mlbb.rone.dev/web](https://mlbb.rone.dev/web) | Interactive endpoint workspace for executing API requests from browser forms. |
+| Swagger UI | [mlbb.rone.dev/api/docs](https://mlbb.rone.dev/api/docs) | OpenAPI-powered docs with live request execution and authorization support. |
+| ReDoc | [mlbb.rone.dev/api/redoc](https://mlbb.rone.dev/api/redoc) | Alternative API documentation view optimized for reference reading. |
+| OpenAPI JSON | [mlbb.rone.dev/api/openapi.json](https://mlbb.rone.dev/api/openapi.json) | Raw OpenAPI schema for tooling, SDK generation, and integrations. |
 
 ### Web Interface Highlights
 

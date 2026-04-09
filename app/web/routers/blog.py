@@ -10,7 +10,7 @@ router = APIRouter(tags=["web"])
 
 _BLOG_POSTS: list[dict[str, object]] = [
     {
-        "title": "MLBB API Web v3.2.3 Changelog (a89c7c5 -> latest)",
+        "title": "MLBB API Web v3.2.3 Changelog (a89c7c5 -> cf535dd)",
         "excerpt": "Clear release notes for the 3.2.2 to 3.2.3 update, covering API docs, versioning, dependency refresh, UI polish, and documentation improvements.",
         "cover_image": "/images/blog/update-v3.2.3.webp",
         "published_at": "2026-04-10",
@@ -19,14 +19,14 @@ _BLOG_POSTS: list[dict[str, object]] = [
         "is_featured": True,
         "is_pinned": True,
         "key_points": [
-            "Range: a89c7c5b667b88c80f49fa330c03bc22291a8bbe -> latest commit",
+            "Range: a89c7c5b667b88c80f49fa330c03bc22291a8bbe -> cf535dd87394f04def39e6e3ff4557791ec54bec",
             "Scope: 8 files changed, 138 insertions, 118 deletions",
             "Version move: v3.2.2 to v3.2.3",
         ],
         "sections": [
             {
                 "heading": "Release Scope",
-                "body": "This update tracks all changes from commit a89c7c5b667b88c80f49fa330c03bc22291a8bbe to the latest commit in this project branch and prepares the project for the v3.2.3 release line.",
+                "body": "This update tracks all changes from commit a89c7c5b667b88c80f49fa330c03bc22291a8bbe to the cf535dd87394f04def39e6e3ff4557791ec54bec in this project branch and prepares the project for the v3.2.3 release line.",
                 "bullets": [
                     "Core version upgrade from 3.2.2 to 3.2.3 in project and runtime config.",
                     "Balanced scope with both implementation cleanup and documentation quality improvements.",

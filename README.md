@@ -130,6 +130,7 @@ fastapi run
 #### Deploy
 
 ```bash
+# deploy via fastapicloud
 fastapi deploy
 ```
 

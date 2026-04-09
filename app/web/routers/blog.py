@@ -10,6 +10,87 @@ router = APIRouter(tags=["web"])
 
 _BLOG_POSTS: list[dict[str, object]] = [
     {
+        "title": "MLBB API Web v3.2.3 Changelog (a89c7c5 -> latest)",
+        "excerpt": "Clear release notes for the 3.2.2 to 3.2.3 update, covering API docs, versioning, dependency refresh, UI polish, and documentation improvements.",
+        "cover_image": "/images/blog/update-v3.2.3.webp",
+        "published_at": "2026-04-10",
+        "read_time": "8 min read",
+        "category": "Release Notes",
+        "is_featured": True,
+        "is_pinned": True,
+        "key_points": [
+            "Range: a89c7c5b667b88c80f49fa330c03bc22291a8bbe -> latest commit",
+            "Scope: 8 files changed, 138 insertions, 118 deletions",
+            "Version move: v3.2.2 to v3.2.3",
+        ],
+        "sections": [
+            {
+                "heading": "Release Scope",
+                "body": "This update tracks all changes from commit a89c7c5b667b88c80f49fa330c03bc22291a8bbe to the latest commit in this project branch and prepares the project for the v3.2.3 release line.",
+                "bullets": [
+                    "Core version upgrade from 3.2.2 to 3.2.3 in project and runtime config.",
+                    "Balanced scope with both implementation cleanup and documentation quality improvements.",
+                    "Includes merged updates from main plus branch-specific release notes polish.",
+                ],
+            },
+            {
+                "heading": "Versioning and Dependency Updates",
+                "body": "Release metadata and cryptography dependency were updated to keep runtime configuration and lock state aligned with the new version.",
+                "bullets": [
+                    "app/core/config.py: default API version changed to 3.2.3.",
+                    "app/core/config.py: availability date updated to April 10, 2026.",
+                    "pyproject.toml: project version moved to 3.2.3.",
+                    "pyproject.toml and uv.lock: cryptography bumped to 46.0.7.",
+                ],
+            },
+            {
+                "heading": "MLBB Router Improvements",
+                "body": "The hero rank payload flow was refactored for readability and easier maintenance while preserving endpoint behavior.",
+                "bullets": [
+                    "Removed nested payload builder function and inlined payload composition in hero_rank.",
+                    "Kept ranking maps explicit with cleaner url_map and sort mapping definitions.",
+                    "Added clearer query parameter documentation for days in related MLBB endpoint docs.",
+                    "Updated docs note around days defaults and accepted values: 1, 3, 7, 15, 30.",
+                ],
+            },
+            {
+                "heading": "Web UI and Styling Updates",
+                "body": "The web interface received visual consistency upgrades focused on discoverability and cross-browser polish.",
+                "bullets": [
+                    "Global scrollbar styling standardized across Firefox and WebKit engines with thin scrollbars and 10px size.",
+                    "Footer now includes a BSD-3-Clause license badge for quick legal visibility.",
+                    "License badge icon usage in documentation and UI aligned to BSD branding.",
+                ],
+            },
+            {
+                "heading": "Documentation and Developer Experience",
+                "body": "README improvements make project entry points and deployment flow easier to scan for new and returning contributors.",
+                "bullets": [
+                    "Documentation links converted into a clearer Title / Link / Description table.",
+                    "Deployment guidance for FastAPI Cloud added in the run section.",
+                    "Website home link formatting and docs structure refined for readability.",
+                ],
+            },
+            {
+                "heading": "Legal and Attribution Refresh",
+                "body": "License text and attribution were updated to better reflect current ownership and stewardship.",
+                "bullets": [
+                    "LICENSE copyright line updated to 2024-2026.",
+                    "Attribution now references ridwaanhall / RoneAI in the core legal header.",
+                ],
+            },
+            {
+                "heading": "Upgrade Guidance for Users",
+                "body": "No major endpoint-path break was introduced in this release, but users should still sync docs and dependency state to avoid drift.",
+                "bullets": [
+                    "Regenerate local lock/dependency state when upgrading to v3.2.3.",
+                    "Review MLBB endpoint query docs if your client hardcodes days defaults.",
+                    "Use updated docs table and deployment section as the source of truth for project onboarding.",
+                ],
+            },
+        ],
+    },
+    {
         "title": "MLBB API Web v3.2.2 Changelog (v3.2.1 -> v3.2.2)",
         "excerpt": "Detailed release notes covering API additions, UI redesign, docs updates, and testing changes from commit 3.2.1 to 3.2.2.",
         "cover_image": "/images/blog/landing-page-v3.2.2.webp",

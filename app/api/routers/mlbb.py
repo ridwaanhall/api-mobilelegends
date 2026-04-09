@@ -20,11 +20,6 @@ router = APIRouter(prefix="/api", tags=["mlbb"], dependencies=[Depends(require_a
 
 
 @router.get(
-    path="/hero-list",
-    response_model=MlbbCollectionResponse,
-    include_in_schema=False,
-)
-@router.get(
     path="/heroes",
     name="api.mlbb.hero_list",
     response_model=MlbbCollectionResponse,
@@ -155,11 +150,6 @@ def hero_list(
     return fetch_mlbb_post("2756564", payload, lang)
 
 
-@router.get(
-    path="/hero-rank",
-    response_model=MlbbCollectionResponse,
-    include_in_schema=False,
-)
 @router.get(
     path="/heroes/rank",
     name="api.mlbb.hero_rank",
@@ -305,66 +295,62 @@ def hero_rank(
         )
     ] = LanguageEnum.ENGLISH
 ) -> object:
-    def create_rank_payload(rank_value: str) -> dict[str, object]:
-        return {
-            "pageSize": 20,
-            "filters": [
-                {
-                    "field": "bigrank",
-                    "operator": "eq",
-                    "value": rank_value
-                },
-                {
-                    "field": "match_type",
-                    "operator": "eq",
-                    "value": "0"
-                },
-            ],
-            "sorts": [],
-            "pageIndex": 1,
-            "fields": [
-                "main_hero",
-                "main_hero_appearance_rate",
-                "main_hero_ban_rate",
-                "main_hero_channel",
-                "main_hero_win_rate",
-                "main_heroid",
-                "data.sub_hero.hero",
-                "data.sub_hero.hero_channel",
-                "data.sub_hero.increase_win_rate",
-                "data.sub_hero.heroid",
-            ],
-        }
-
     sort_field_map = {
         "pick_rate": "main_hero_appearance_rate",
         "ban_rate": "main_hero_ban_rate",
         "win_rate": "main_hero_win_rate",
     }
-    url_map = {"1": "2756567", "3": "2756568", "7": "2756569", "15": "2756565", "30": "2756570"}
 
-    payload = create_rank_payload(validate_and_map_rank(rank))
-    payload["pageSize"] = size
-    payload["pageIndex"] = index
-    payload["sorts"] = [
-        {
-            "data":
-                {
+    url_map = {
+        "1": "2756567",
+        "3": "2756568",
+        "7": "2756569",
+        "15": "2756565",
+        "30": "2756570",
+    }
+
+    payload = {
+        "pageSize": size,
+        "filters": [
+            {
+                "field": "bigrank",
+                "operator": "eq",
+                "value": validate_and_map_rank(rank),
+            },
+            {
+                "field": "match_type",
+                "operator": "eq",
+                "value": "0",
+            },
+        ],
+        "sorts": [
+            {
+                "data": {
                     "field": sort_field_map.get(sort_field, "main_hero_win_rate"),
-                    "order": sort_order
+                    "order": sort_order,
                 },
-            "type": "sequence"
-        }
-    ]
+                "type": "sequence",
+            }
+        ],
+        "pageIndex": index,
+        "fields": [
+            "main_hero",
+            "main_hero_appearance_rate",
+            "main_hero_ban_rate",
+            "main_hero_channel",
+            "main_hero_win_rate",
+            "main_heroid",
+            "data.sub_hero.hero",
+            "data.sub_hero.hero_channel",
+            "data.sub_hero.increase_win_rate",
+            "data.sub_hero.heroid",
+        ],
+    }
 
-    return fetch_mlbb_post(url_map.get(days, "2756567"), payload, lang)
+    url_key = url_map.get(days, "2756567")
+    return fetch_mlbb_post(url_key, payload, lang)
 
 
-@router.get(
-    path="/hero-position",
-    response_model=MlbbCollectionResponse,
-    include_in_schema=False,
-)
 @router.get(
     path="/heroes/positions",
     name="api.mlbb.hero_position",
@@ -601,17 +587,19 @@ def hero_position(
             }
         ],
         "pageIndex": index,
-        "fields": ["id", "hero_id", "hero.data.name", "hero.data.smallmap", "hero.data.sortid", "hero.data.roadsort"],
+        "fields": [
+            "id",
+            "hero_id",
+            "hero.data.name",
+            "hero.data.smallmap",
+            "hero.data.sortid",
+            "hero.data.roadsort"
+        ],
         "object": [],
     }
     return fetch_mlbb_post("2756564", payload, lang)
 
 
-@router.get(
-    path="/hero-detail/{hero_identifier}",
-    response_model=MlbbCollectionResponse,
-    include_in_schema=False,
-)
 @router.get(
     path="/heroes/{hero_identifier}",
     name="api.mlbb.hero_detail",
@@ -917,11 +905,6 @@ def hero_detail(
 
 
 @router.get(
-    path="/hero-detail-stats/{hero_identifier}",
-    response_model=MlbbCollectionResponse,
-    include_in_schema=False,
-)
-@router.get(
     path="/heroes/{hero_identifier}/stats",
     name="api.mlbb.hero_detail_stats",
     response_model=MlbbCollectionResponse,
@@ -1139,11 +1122,6 @@ def hero_detail_stats(
 
 
 @router.get(
-    path="/hero-skill-combo/{hero_identifier}",
-    response_model=MlbbCollectionResponse,
-    include_in_schema=False,
-)
-@router.get(
     path="/heroes/{hero_identifier}/skill-combos",
     name="api.mlbb.hero_skill_combo",
     response_model=MlbbCollectionResponse,
@@ -1282,11 +1260,6 @@ def hero_skill_combo(
     return fetch_mlbb_post("2674711", payload, lang)
 
 
-@router.get(
-    path="/hero-rate/{hero_identifier}",
-    response_model=MlbbCollectionResponse,
-    include_in_schema=False,
-)
 @router.get(
     path="/heroes/{hero_identifier}/trends",
     name="api.mlbb.hero_rate",
@@ -1444,11 +1417,6 @@ def hero_rate(
 
 
 @router.get(
-    path="/hero-relation/{hero_identifier}",
-    response_model=MlbbCollectionResponse,
-    include_in_schema=False,
-)
-@router.get(
     path="/heroes/{hero_identifier}/relations",
     name="api.mlbb.hero_relation",
     response_model=MlbbCollectionResponse,
@@ -1575,11 +1543,6 @@ def hero_relation(
 
 
 @router.get(
-    path="/hero-counter/{hero_identifier}",
-    response_model=MlbbCollectionResponse,
-    include_in_schema=False,
-)
-@router.get(
     path="/heroes/{hero_identifier}/counters",
     name="api.mlbb.hero_counter",
     response_model=MlbbCollectionResponse,
@@ -1590,6 +1553,7 @@ def hero_relation(
         "Path parameters:\n"
         "- **hero_identifier**: Hero identifier as numeric hero ID or hero name. Accepts values like `30`, `Yi Sun-shin`, or `yisunshin`.\n\n"
         "Query parameters:\n"
+        "- days: Time window for counter data. Allowed values: `1`, `3`, `7`, `15`, `30`.\n"
         "- **rank**: Rank filter. Allowed values: `all`, `epic`, `legend`, `mythic`, `honor`, `glory`.\n"
         "- **size**: Number of items per page (minimum: 1).\n"
         "- **index**: Page index (starting from 1).\n"
@@ -1738,6 +1702,13 @@ def hero_counter(
             ),
         )
     ],
+    days: Annotated[
+        Literal["1", "3", "7", "15", "30"],
+        Query(
+            title="Past Days",
+            description="Past day window for rank statistics.",
+        )
+    ] = "1",
     rank: Annotated[
         RankEnum,
         Query(
@@ -1770,6 +1741,7 @@ def hero_counter(
     ] = LanguageEnum.ENGLISH
 ) -> object:
     hero_id = _hero_id_or_404(hero_identifier, lang)
+    url_map = {"1": "2756567", "3": "2756568", "7": "2756569", "15": "2756565", "30": "2756570"}
     payload = {
         "pageSize": size,
         "filters": [
@@ -1792,14 +1764,10 @@ def hero_counter(
         "sorts": [],
         "pageIndex": index,
     }
-    return fetch_mlbb_post("2756569", payload, lang)
+    url_key = url_map.get(days, "2756567")
+    return fetch_mlbb_post(url_key, payload, lang)
 
 
-@router.get(
-    path="/hero-compatibility/{hero_identifier}",
-    response_model=MlbbCollectionResponse,
-    include_in_schema=False,
-)
 @router.get(
     path="/heroes/{hero_identifier}/compatibility",
     name="api.mlbb.hero_compatibility",
@@ -1811,6 +1779,7 @@ def hero_counter(
         "Path parameters:\n"
         "- **hero_identifier**: Hero identifier as numeric hero ID or hero name. Accepts values like `30`, `Yi Sun-shin`, or `yisunshin`.\n\n"
         "Query parameters:\n"
+        "- **days**: Time window for compatibility data. Allowed values: `1`, `3`, `7`, `15`, `30`.\n"
         "- **rank**: Rank filter. Allowed values: `all`, `epic`, `legend`, `mythic`, `honor`, `glory`.\n"
         "- **size**: Number of items per page (minimum: 1).\n"
         "- **index**: Page index (starting from 1).\n"
@@ -1960,6 +1929,13 @@ def hero_compatibility(
             ),
         )
     ],
+    days: Annotated[
+        Literal["1", "3", "7", "15", "30"],
+        Query(
+            title="Past Days",
+            description="Past day window for rank statistics.",
+        )
+    ] = "1",
     rank: Annotated[
         RankEnum,
         Query(
@@ -1992,6 +1968,7 @@ def hero_compatibility(
     ] = LanguageEnum.ENGLISH
 ) -> object:
     hero_id = _hero_id_or_404(hero_identifier, lang)
+    url_map = {"1": "2756567", "3": "2756568", "7": "2756569", "15": "2756565", "30": "2756570"}
     payload = {
         "pageSize": size,
         "filters": [
@@ -2014,5 +1991,5 @@ def hero_compatibility(
         "sorts": [],
         "pageIndex": index,
     }
-    return fetch_mlbb_post("2756569", payload, lang)
-
+    url_key = url_map.get(days, "2756567")
+    return fetch_mlbb_post(url_key, payload, lang)

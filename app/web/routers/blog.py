@@ -10,7 +10,7 @@ router = APIRouter(tags=["web"])
 
 _BLOG_POSTS: list[dict[str, object]] = [
     {
-        "title": "MLBB API Web v3.2.3 Changelog (a89c7c5 -> cf535dd)",
+        "title": "MLBB API Web v3.2.3 Changelog (3.2.2 -> 3.2.3)",
         "excerpt": "Clear release notes for the 3.2.2 to 3.2.3 update, covering API docs, versioning, dependency refresh, UI polish, and documentation improvements.",
         "cover_image": "/images/blog/update-v3.2.3.webp",
         "published_at": "2026-04-10",
@@ -98,7 +98,7 @@ _BLOG_POSTS: list[dict[str, object]] = [
         "read_time": "9 min read",
         "category": "Release Notes",
         "is_featured": True,
-        "is_pinned": True,
+        "is_pinned": False,
         "key_points": [
             "Range: 3.2.1 -> 3.2.2",
             "Scope: 21 files changed, 1305 insertions, 338 deletions",

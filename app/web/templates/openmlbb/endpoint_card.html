@@ -18,7 +18,7 @@
 
     {% if operation.description_html %}
         <div class="mb-4" data-desc-wrapper>
-            <div class="relative min-w-0 break-words text-sm leading-6 text-zinc-300 max-h-[7.5rem]" data-desc-content>
+            <div class="relative min-w-0 break-words overflow-hidden text-sm leading-6 text-zinc-300 max-h-[7.5rem]" data-desc-content>
                 {{ operation.description_html | safe }}
                 <div class="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-black to-transparent hidden" data-desc-fade></div>
             </div>

@@ -342,6 +342,7 @@ def test_openmlbb_endpoint_card_has_open_only_this_and_show_more() -> None:
     assert response.status_code == 200
     assert "Open Only This" in response.text
     assert 'data-desc-toggle' in response.text
+    assert "overflow-hidden" in response.text
     assert "Show more" in response.text
 
 
@@ -350,8 +351,23 @@ def test_landing_page_highlights_openmlbb_install() -> None:
 
     assert response.status_code == 200
     assert "pip install OpenMLBB" in response.text
-    assert "Open OpenMLBB Docs" in response.text
-    assert 'href="/openmlbb"' in response.text
+    assert "Official Python SDK" in response.text
+
+
+def test_blog_list_includes_v4_0_4_release_notes() -> None:
+    response = client.get("/blog")
+
+    assert response.status_code == 200
+    assert "MLBB API Web v4.0.4 Release Notes (3.2.3 -&gt; 4.0.4)" in response.text or "MLBB API Web v4.0.4 Release Notes (3.2.3 -> 4.0.4)" in response.text
+
+
+def test_blog_detail_v4_0_4_release_notes_no_commit_hash() -> None:
+    response = client.get("/blog/mlbb-api-web-v4-0-4-release-notes-3-2-3-4-0-4")
+
+    assert response.status_code == 200
+    assert "Version move: 3.2.3 -&gt; 4.0.4" in response.text or "Version move: 3.2.3 -> 4.0.4" in response.text
+    assert "OpenMLBB SDK documentation" in response.text
+    assert "799250329d76cefce207c7ed425f2606c5d57a62" not in response.text
 
 
 def test_navbar_includes_openmlbb_button_between_card_and_tutorial() -> None:

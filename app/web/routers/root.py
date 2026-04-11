@@ -107,3 +107,18 @@ def web_endpoint_page(request: Request, group: str, endpoint_path: str) -> HTMLR
         }
     )
     return templates.TemplateResponse(request, "web/group_page.html", context)
+
+
+@router.get(path="/openmlbb/academy/meta/version", include_in_schema=False, response_class=HTMLResponse)
+def openmlbb_academy_meta_version_page(request: Request) -> HTMLResponse:
+    context = _shared_context(request)
+    context.update(
+        {
+            "title": "OpenMLBB SDK / Academy Meta Version",
+            "web_title": "OpenMLBB SDK",
+            "subtitle": "Learn how to use the OpenMLBB Python package for the academy meta version endpoint.",
+            "seo_description": "OpenMLBB Python SDK guide for academy meta version endpoint with install and usage examples.",
+            "seo_keywords": "openmlbb, pypi, mlbb python sdk, academy meta version",
+        }
+    )
+    return templates.TemplateResponse(request, "openmlbb/academy_meta_version.html", context)

@@ -299,5 +299,30 @@ def test_navbar_includes_tutorial_button() -> None:
     response = client.get("/web/user")
 
     assert response.status_code == 200
-    assert ">Tutorial<" in response.text
+    assert "Tutorial" in response.text
     assert "href=\"/blog\"" in response.text
+
+
+def test_openmlbb_page_is_available() -> None:
+    response = client.get("/openmlbb/academy/meta/version")
+
+    assert response.status_code == 200
+    assert "OpenMLBB Python SDK" in response.text
+    assert "client.academy.meta_version" in response.text
+    assert "pip install OpenMLBB" in response.text
+
+
+def test_navbar_includes_openmlbb_button_between_card_and_tutorial() -> None:
+    response = client.get("/web/user")
+
+    assert response.status_code == 200
+    card_idx = response.text.find('href="https://mlbb-card.rone.dev"')
+    openmlbb_idx = response.text.find('href="/openmlbb/academy/meta/version"')
+    tutorial_idx = response.text.find('href="/blog"')
+
+    assert card_idx != -1
+    assert openmlbb_idx != -1
+    assert tutorial_idx != -1
+    assert card_idx < openmlbb_idx < tutorial_idx
+    assert 'href="/openmlbb/academy/meta/version"' in response.text
+    assert "OpenMLBB" in response.text

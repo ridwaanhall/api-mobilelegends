@@ -41,3 +41,52 @@
     {% endif %}
 </section>
 {% endblock %}
+
+{% block scripts %}
+<script>
+(() => {
+    function setupDescriptionToggles() {
+        const wrappers = document.querySelectorAll("[data-desc-wrapper]");
+        wrappers.forEach((wrapper) => {
+            const content = wrapper.querySelector("[data-desc-content]");
+            const toggle = wrapper.querySelector("[data-desc-toggle]");
+            const fade = wrapper.querySelector("[data-desc-fade]");
+
+            if (!content || !toggle || !fade) {
+                return;
+            }
+
+            const collapsedHeight = 120;
+            const fullHeight = content.scrollHeight;
+            if (fullHeight <= collapsedHeight + 6) {
+                content.style.maxHeight = "none";
+                fade.classList.add("hidden");
+                toggle.classList.add("hidden");
+                return;
+            }
+
+            let expanded = false;
+            content.style.maxHeight = `${collapsedHeight}px`;
+            fade.classList.remove("hidden");
+            toggle.classList.remove("hidden");
+            toggle.textContent = "Show more";
+
+            toggle.addEventListener("click", () => {
+                expanded = !expanded;
+                if (expanded) {
+                    content.style.maxHeight = `${fullHeight}px`;
+                    fade.classList.add("hidden");
+                    toggle.textContent = "Show less";
+                } else {
+                    content.style.maxHeight = `${collapsedHeight}px`;
+                    fade.classList.remove("hidden");
+                    toggle.textContent = "Show more";
+                }
+            });
+        });
+    }
+
+    setupDescriptionToggles();
+})();
+</script>
+{% endblock %}

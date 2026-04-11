@@ -25,9 +25,27 @@ jobs:
       tag: ${{ steps.version.outputs.tag }}
 
     steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
       - name: Generate release version
         id: version
         run: |
+          CONFIG_VERSION="$(python - << 'PY'
+          import pathlib
+          import re
+
+          content = pathlib.Path("app/core/config.py").read_text(encoding="utf-8")
+          match = re.search(r'API_VERSION:\s*str\s*=\s*env_str\("API_VERSION",\s*default="([^"]+)"\)', content)
+          if not match:
+              raise SystemExit("API_VERSION default not found in app/core/config.py")
+          print(match.group(1))
+          PY
+          )"
+
           BRANCH="${GITHUB_REF#refs/heads/}"
           SHOULD_RELEASE="false"
           SHOULD_PUBLISH="false"
@@ -42,11 +60,9 @@ jobs:
             PRERELEASE="true"
           fi
 
-          BASE_VERSION="4.0.${GITHUB_RUN_NUMBER}"
+          BASE_VERSION="${CONFIG_VERSION}"
           if [ "${PRERELEASE}" = "true" ]; then
             VERSION="${BASE_VERSION}rc${GITHUB_RUN_ATTEMPT}"
-          elif [ "${GITHUB_RUN_ATTEMPT}" -gt 1 ]; then
-            VERSION="${BASE_VERSION}.post${GITHUB_RUN_ATTEMPT}"
           else
             VERSION="${BASE_VERSION}"
           fi

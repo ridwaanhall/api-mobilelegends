@@ -9,6 +9,7 @@ from fastapi.templating import Jinja2Templates
 
 from app.core.config import API_VERSION
 from app.web.openapi_catalog import GROUP_META, WEB_GROUPS, get_group_operations
+from app.web.openmlbb_catalog import OPENMLBB_GROUP_META, OPENMLBB_GROUPS, get_openmlbb_group_operations
 
 router = APIRouter(tags=["web"])
 
@@ -109,16 +110,61 @@ def web_endpoint_page(request: Request, group: str, endpoint_path: str) -> HTMLR
     return templates.TemplateResponse(request, "web/group_page.html", context)
 
 
-@router.get(path="/openmlbb/academy/meta/version", include_in_schema=False, response_class=HTMLResponse)
-def openmlbb_academy_meta_version_page(request: Request) -> HTMLResponse:
-    context = _shared_context(request)
+@router.get(path="/openmlbb", include_in_schema=False)
+def openmlbb_home() -> RedirectResponse:
+    return RedirectResponse(url="/openmlbb/user", status_code=307)
+
+
+@router.get(path="/openmlbb/{group}", include_in_schema=False, response_class=HTMLResponse)
+def openmlbb_group_page(request: Request, group: str) -> HTMLResponse:
+    if group not in OPENMLBB_GROUPS:
+        raise HTTPException(status_code=404, detail="OpenMLBB group not found")
+
+    operations = get_openmlbb_group_operations(request.app, group)
+    context = _shared_context(request, current_group=group)
     context.update(
         {
-            "title": "OpenMLBB SDK / Academy Meta Version",
-            "web_title": "OpenMLBB SDK",
-            "subtitle": "Learn how to use the OpenMLBB Python package for the academy meta version endpoint.",
-            "seo_description": "OpenMLBB Python SDK guide for academy meta version endpoint with install and usage examples.",
-            "seo_keywords": "openmlbb, pypi, mlbb python sdk, academy meta version",
+            "title": f"OpenMLBB {OPENMLBB_GROUP_META[group]['title']} Client / SDK Docs",
+            "web_title": f"OpenMLBB {OPENMLBB_GROUP_META[group]['title']} Client",
+            "subtitle": f"Structured SDK docs for {OPENMLBB_GROUP_META[group]['title']} endpoints using from OpenMLBB import OpenMLBB.",
+            "seo_description": f"OpenMLBB Python SDK documentation for {group} endpoints.",
+            "seo_keywords": f"openmlbb, python sdk, {group}, mlbb api",
+            "operations": operations,
+            "sidebar_operations": operations,
+            "selected_openmlbb_path": None,
         }
     )
-    return templates.TemplateResponse(request, "openmlbb/academy_meta_version.html", context)
+    return templates.TemplateResponse(request, "openmlbb/group_page.html", context)
+
+
+@router.get(path="/openmlbb/{group}/{endpoint_path:path}", include_in_schema=False, response_class=HTMLResponse)
+def openmlbb_endpoint_page(request: Request, group: str, endpoint_path: str) -> HTMLResponse:
+    if group not in OPENMLBB_GROUPS:
+        raise HTTPException(status_code=404, detail="OpenMLBB group not found")
+
+    all_operations = get_openmlbb_group_operations(request.app, group)
+    normalized_path = _normalize_path(f"/openmlbb/{group}/{endpoint_path}")
+    matched_operations = [
+        operation
+        for operation in all_operations
+        if _normalize_path(str(operation["openmlbb_path"])) == normalized_path
+    ]
+
+    if not matched_operations:
+        raise HTTPException(status_code=404, detail="OpenMLBB endpoint not found")
+
+    context = _shared_context(request, current_group=group)
+    operation_summary = str(matched_operations[0].get("summary") or "Endpoint").strip()
+    context.update(
+        {
+            "title": f"{operation_summary} / OpenMLBB SDK",
+            "web_title": "OpenMLBB Endpoint",
+            "subtitle": "SDK call mapping, request requirements, and Python example.",
+            "seo_description": f"OpenMLBB endpoint docs for {operation_summary}.",
+            "seo_keywords": f"openmlbb endpoint, {group}, python sdk",
+            "operations": matched_operations,
+            "sidebar_operations": all_operations,
+            "selected_openmlbb_path": normalized_path,
+        }
+    )
+    return templates.TemplateResponse(request, "openmlbb/group_page.html", context)

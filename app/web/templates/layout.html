@@ -140,6 +140,8 @@
 	<div class="mx-auto flex w-full max-w-[1600px] min-w-0 flex-1 gap-3 px-3 pb-8 pt-4 sm:px-4 sm:pt-5 lg:gap-4 lg:px-6 lg:pt-6">
 		{% if request.url.path.startswith('/web') %}
 			{% include "sidebar.html" %}
+		{% elif request.url.path.startswith('/openmlbb') %}
+			{% include "openmlbb_sidebar.html" %}
 		{% endif %}
 
 		<main class="w-full min-w-0">

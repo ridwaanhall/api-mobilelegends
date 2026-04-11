@@ -304,12 +304,36 @@ def test_navbar_includes_tutorial_button() -> None:
 
 
 def test_openmlbb_page_is_available() -> None:
+    home_response = client.get("/openmlbb", follow_redirects=False)
+    assert home_response.status_code == 307
+    assert home_response.headers.get("location") == "/openmlbb/user"
+
     response = client.get("/openmlbb/academy/meta/version")
 
     assert response.status_code == 200
-    assert "OpenMLBB Python SDK" in response.text
+    assert "OpenMLBB SDK Docs" in response.text
     assert "client.academy.meta_version" in response.text
-    assert "pip install OpenMLBB" in response.text
+    assert "Path and Query Parameters" in response.text
+
+
+def test_openmlbb_group_pages_cover_all_clients() -> None:
+    for group in WEB_GROUPS:
+        response = client.get(f"/openmlbb/{group}")
+        assert response.status_code == 200
+        assert "OpenMLBB" in response.text
+        assert f"/openmlbb/{group}" in response.text
+
+    user_page = client.get("/openmlbb/user")
+    assert user_page.status_code == 200
+    assert "client.user.login" in user_page.text
+
+    mlbb_page = client.get("/openmlbb/mlbb")
+    assert mlbb_page.status_code == 200
+    assert "client.mlbb.heroes" in mlbb_page.text
+
+    addon_page = client.get("/openmlbb/addon")
+    assert addon_page.status_code == 200
+    assert "client.addon.win_rate_calculator" in addon_page.text
 
 
 def test_navbar_includes_openmlbb_button_between_card_and_tutorial() -> None:
@@ -317,12 +341,12 @@ def test_navbar_includes_openmlbb_button_between_card_and_tutorial() -> None:
 
     assert response.status_code == 200
     card_idx = response.text.find('href="https://mlbb-card.rone.dev"')
-    openmlbb_idx = response.text.find('href="/openmlbb/academy/meta/version"')
+    openmlbb_idx = response.text.find('href="/openmlbb"')
     tutorial_idx = response.text.find('href="/blog"')
 
     assert card_idx != -1
     assert openmlbb_idx != -1
     assert tutorial_idx != -1
     assert card_idx < openmlbb_idx < tutorial_idx
-    assert 'href="/openmlbb/academy/meta/version"' in response.text
+    assert 'href="/openmlbb"' in response.text
     assert "OpenMLBB" in response.text

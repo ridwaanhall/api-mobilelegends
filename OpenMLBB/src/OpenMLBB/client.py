@@ -141,6 +141,9 @@ class AcademyClient:
     def heroes_ratings(self, **params: Any) -> dict[str, Any]:
         return self._transport.request("GET", "/academy/heroes/ratings", params=params)
 
+    def heroes_ratings_subject(self, subject: str, **params: Any) -> dict[str, Any]:
+        return self._transport.request("GET", f"/academy/heroes/ratings/{subject}", params=params)
+
 
 class MlbbClient:
     def __init__(self, transport: _Transport) -> None:

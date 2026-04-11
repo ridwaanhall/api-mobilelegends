@@ -36,6 +36,7 @@ This API & Web provides access to hero analytics, in-game performance data, acad
 | Website Home | [mlbb.rone.dev](https://mlbb.rone.dev) | Main landing page with quick access to Demo Website and API Docs. |
 | Tutorial and Blog | [mlbb.rone.dev/blog](https://mlbb.rone.dev/blog) | Guides, tutorials, and release/changelog posts. |
 | Web Playground | [mlbb.rone.dev/web](https://mlbb.rone.dev/web) | Interactive endpoint workspace for executing API requests from browser forms. |
+| OpenMLBB SDK Docs | [mlbb.rone.dev/openmlbb](https://mlbb.rone.dev/openmlbb) | Structured Python SDK docs for academy, mlbb, user, and addon clients with endpoint-level examples. |
 | Swagger UI | [mlbb.rone.dev/api/docs](https://mlbb.rone.dev/api/docs) | OpenAPI-powered docs with live request execution and authorization support. |
 | ReDoc | [mlbb.rone.dev/api/redoc](https://mlbb.rone.dev/api/redoc) | Alternative API documentation view optimized for reference reading. |
 | OpenAPI JSON | [mlbb.rone.dev/api/openapi.json](https://mlbb.rone.dev/api/openapi.json) | Raw OpenAPI schema for tooling, SDK generation, and integrations. |
@@ -60,6 +61,11 @@ https://mlbb.rone.dev/web/user          # User endpoints playground
 https://mlbb.rone.dev/web/mlbb          # MLBB endpoints playground
 https://mlbb.rone.dev/web/academy       # Academy endpoints playground
 https://mlbb.rone.dev/web/addon         # Addon endpoints playground
+https://mlbb.rone.dev/openmlbb          # OpenMLBB docs (redirects to /openmlbb/user)
+https://mlbb.rone.dev/openmlbb/user     # OpenMLBB user client docs
+https://mlbb.rone.dev/openmlbb/mlbb     # OpenMLBB mlbb client docs
+https://mlbb.rone.dev/openmlbb/academy  # OpenMLBB academy client docs
+https://mlbb.rone.dev/openmlbb/addon    # OpenMLBB addon client docs
 https://mlbb.rone.dev/api               # API index/status
 https://mlbb.rone.dev/api/docs          # Swagger UI
 https://mlbb.rone.dev/api/redoc         # ReDoc
@@ -98,15 +104,14 @@ SDK defaults:
 ### Automated Release Rules (4.x.x)
 
 - Workflow file: `.github/workflows/python-publish.yml`
+- Version source for release/tag/PyPI: `API_VERSION` default in `app/core/config.py`
 - Version tags use format: `4.x.x` (no `v` prefix)
 - Push behavior:
-	- Add `[release]` in commit message to trigger publish flow.
-	- Without `[release]`, workflow skips release/tag/publish.
-- Branch behavior when `[release]` is used:
-	- `main` branch creates stable release (`4.0.1`, `4.0.2`, ...)
-	- non-`main` branch creates prerelease (`4.0.1rc1`, `4.0.1rc2`, ...)
-- Manual behavior:
-	- Run `workflow_dispatch` and set `publish=true` for forced release.
+  - `main` branch creates stable GitHub release and publishes to PyPI.
+  - non-`main` branch creates prerelease only when `ENABLE_NON_MAIN_PRERELEASE="true"`.
+- Update process:
+  - Manually set the next version in `app/core/config.py` before pushing release commit.
+  - Workflow still automates release build, tag, GitHub release, and PyPI publish.
 
 ## API Coverage
 

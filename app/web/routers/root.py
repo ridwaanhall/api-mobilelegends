@@ -110,9 +110,19 @@ def web_endpoint_page(request: Request, group: str, endpoint_path: str) -> HTMLR
     return templates.TemplateResponse(request, "web/group_page.html", context)
 
 
-@router.get(path="/openmlbb", include_in_schema=False)
-def openmlbb_home() -> RedirectResponse:
-    return RedirectResponse(url="/openmlbb/user", status_code=307)
+@router.get(path="/openmlbb", include_in_schema=False, response_class=HTMLResponse)
+def openmlbb_home(request: Request) -> HTMLResponse:
+    context = _shared_context(request)
+    context.update(
+        {
+            "title": "OpenMLBB SDK / Home",
+            "web_title": "OpenMLBB SDK",
+            "subtitle": "Pick a client group to browse the Python SDK docs and copy practical examples.",
+            "seo_description": "OpenMLBB SDK hub for academy, mlbb, user, and addon docs.",
+            "seo_keywords": "openmlbb, python sdk, mlbb api, academy, user, addon",
+        }
+    )
+    return templates.TemplateResponse(request, "openmlbb/landing_page.html", context)
 
 
 @router.get(path="/openmlbb/{group}", include_in_schema=False, response_class=HTMLResponse)

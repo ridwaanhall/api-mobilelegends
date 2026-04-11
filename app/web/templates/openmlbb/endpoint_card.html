@@ -18,15 +18,9 @@
         </p>
     {% endif %}
 
-    <div class="mt-4 grid gap-3 lg:grid-cols-2">
-        <div class="border border-zinc-800 p-3">
-            <p class="text-[11px] uppercase tracking-[0.14em] text-zinc-500">OpenMLBB Call</p>
-            <pre class="mt-2 overflow-x-auto border border-zinc-700 bg-black/40 p-3 text-xs text-zinc-200"><code>{{ operation.sdk_call }}</code></pre>
-        </div>
-        <div class="border border-zinc-800 p-3">
-            <p class="text-[11px] uppercase tracking-[0.14em] text-zinc-500">Python Example</p>
-            <pre class="mt-2 overflow-x-auto border border-zinc-700 bg-black/40 p-3 text-xs text-zinc-200"><code>{{ operation.sdk_example }}</code></pre>
-        </div>
+    <div class="mt-4 border border-zinc-800 p-3">
+        <p class="text-[11px] uppercase tracking-[0.14em] text-zinc-500">Python Example</p>
+        <pre class="mt-2 overflow-x-auto border border-zinc-700 bg-black/40 p-3 text-xs text-zinc-200"><code>{{ operation.sdk_example }}</code></pre>
     </div>
 
     {% if operation.parameters %}

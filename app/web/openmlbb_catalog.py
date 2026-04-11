@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from copy import deepcopy
+import re
 from typing import Any
 
 from fastapi import FastAPI
@@ -85,6 +86,80 @@ def _build_python_example(sdk_call: str) -> str:
     )
 
 
+def _is_valid_identifier(value: str) -> bool:
+    return bool(re.match(r"^[A-Za-z_][A-Za-z0-9_]*$", value))
+
+
+def _sample_value_from_param(param: dict[str, Any]) -> str:
+    name = str(param.get("name") or "")
+    param_type = str(param.get("type") or "string")
+    enum_values = param.get("enum_values") or []
+    default = param.get("default")
+
+    if default not in (None, ""):
+        if isinstance(default, str):
+            return f'"{default}"'
+        if isinstance(default, bool):
+            return "True" if default else "False"
+        return str(default)
+
+    if isinstance(enum_values, list) and enum_values:
+        first = enum_values[0]
+        if isinstance(first, str):
+            return f'"{first}"'
+        return str(first)
+
+    if param_type == "integer":
+        return "1"
+    if param_type == "number":
+        return "1.0"
+    if param_type == "boolean":
+        return "True"
+    if param_type == "array":
+        return "[]"
+
+    if name == "lang":
+        return '"en"'
+    if name == "order" or name == "sort_order":
+        return '"desc"'
+    return '"value"'
+
+
+def _normalize_sdk_call(sdk_call: str, operation: dict[str, Any]) -> str:
+    normalized = sdk_call.replace(", **params", "").replace("(**params)", "()")
+
+    # Replace ambiguous placeholder variables with concrete values for readability.
+    normalized = re.sub(r"\brank_id\b", "1", normalized)
+    normalized = re.sub(r"\brecommended_id\b", "1", normalized)
+    normalized = re.sub(r"\bhero_identifier\b", '"miya"', normalized)
+    normalized = re.sub(r"\bsubject\b", '"all"', normalized)
+    normalized = re.sub(r"\bmatch_id\b", "1234567890", normalized)
+
+    parameters = operation.get("parameters") or []
+    query_params = [
+        param
+        for param in parameters
+        if isinstance(param, dict) and param.get("location") == "query"
+    ]
+
+    extra_args: list[str] = []
+    for param in query_params:
+        name = str(param.get("name") or "")
+        if not _is_valid_identifier(name):
+            continue
+        if f"{name}=" in normalized:
+            continue
+        extra_args.append(f"{name}={_sample_value_from_param(param)}")
+
+    if extra_args:
+        if normalized.endswith("()"):
+            normalized = normalized[:-1] + ", ".join(extra_args) + ")"
+        else:
+            normalized = normalized[:-1] + ", " + ", ".join(extra_args) + ")"
+
+    return normalized
+
+
 def get_openmlbb_group_operations(app: FastAPI, group: str) -> list[dict[str, Any]]:
     api_operations = get_group_operations(app, group)
     if not api_operations:
@@ -97,11 +172,12 @@ def get_openmlbb_group_operations(app: FastAPI, group: str) -> list[dict[str, An
 
         sdk_info = _SDK_MAP.get((method, api_path), {})
         sdk_call = sdk_info.get("call", "# SDK mapping unavailable for this endpoint")
+        pretty_call = _normalize_sdk_call(sdk_call, operation)
 
         op = deepcopy(operation)
         op["openmlbb_path"] = _to_openmlbb_path(group, api_path)
-        op["sdk_call"] = sdk_call
-        op["sdk_example"] = _build_python_example(sdk_call)
+        op["sdk_call"] = pretty_call
+        op["sdk_example"] = _build_python_example(pretty_call)
         operations.append(op)
 
     return operations

@@ -10,14 +10,76 @@ router = APIRouter(tags=["web"])
 
 _BLOG_POSTS: list[dict[str, object]] = [
     {
+        "title": "MLBB API Web v4.0.4 Release Notes (3.2.3 -> 4.0.4)",
+        "excerpt": "Version 4.0.4 is now released from 3.2.3, introducing the OpenMLBB SDK track, full web documentation coverage, and a refined release workflow aligned to manual config versioning.",
+        "cover_image": "/images/blog/update-v4.0.4.webp",
+        "published_at": "2026-04-11",
+        "read_time": "7 min read",
+        "category": "Release Notes",
+        "is_featured": True,
+        "is_pinned": True,
+        "key_points": [
+            "Version move: 3.2.3 -> 4.0.4",
+            "OpenMLBB SDK and web docs now fully aligned with API groups",
+            "Release automation now reads manual version from app/core/config.py",
+        ],
+        "sections": [
+            {
+                "heading": "Release Summary",
+                "body": "This release marks the transition from 3.2.3 to 4.0.4 and focuses on making the project easier to consume as both a web API and a Python package.",
+                "bullets": [
+                    "OpenMLBB SDK documentation is now available directly in the web interface.",
+                    "Navigation and landing page messaging were improved for Python users.",
+                    "Release flow remains automated while version control is now manual from config.",
+                ],
+            },
+            {
+                "heading": "OpenMLBB Documentation Expansion",
+                "body": "The OpenMLBB documentation was expanded from a single endpoint page to structured coverage for all SDK groups.",
+                "bullets": [
+                    "Academy, MLBB, User, and Addon clients are documented with endpoint-level examples.",
+                    "Endpoint cards now include concise Python examples and request requirement tables.",
+                    "Open-only endpoint navigation and sidebar grouping improve discoverability.",
+                ],
+            },
+            {
+                "heading": "User Experience Improvements",
+                "body": "This release improves clarity for onboarding users who start from the website home page.",
+                "bullets": [
+                    "Landing page now prominently highlights the install command: pip install OpenMLBB.",
+                    "OpenMLBB endpoint descriptions now use a proper collapsed/expanded behavior for long text.",
+                    "Navbar paths are aligned with the latest OpenMLBB documentation flow.",
+                ],
+            },
+            {
+                "heading": "Versioning and Publishing Flow",
+                "body": "The release process is now explicitly tied to manually managed project version configuration.",
+                "bullets": [
+                    "Version source for release and PyPI publish is API_VERSION in app/core/config.py.",
+                    "GitHub release creation and PyPI publishing stay automated in workflow execution.",
+                    "Tag naming remains in 4.x.x format without a v prefix.",
+                ],
+            },
+            {
+                "heading": "Migration Notes",
+                "body": "Existing API consumers can keep current integrations while adopting the SDK and docs improvements gradually.",
+                "bullets": [
+                    "If you publish a new release, update API_VERSION in config first.",
+                    "Use the /openmlbb docs route for endpoint-by-endpoint SDK mapping.",
+                    "Validate client examples against the updated docs for best onboarding experience.",
+                ],
+            },
+        ],
+    },
+    {
         "title": "MLBB API Web v3.2.3 Changelog (3.2.2 -> 3.2.3)",
         "excerpt": "Clear release notes for the 3.2.2 to 3.2.3 update, covering API docs, versioning, dependency refresh, UI polish, and documentation improvements.",
         "cover_image": "/images/blog/update-v3.2.3.webp",
         "published_at": "2026-04-10",
         "read_time": "8 min read",
         "category": "Release Notes",
-        "is_featured": True,
-        "is_pinned": True,
+        "is_featured": False,
+        "is_pinned": False,
         "key_points": [
             "Range: a89c7c5b667b88c80f49fa330c03bc22291a8bbe -> cf535dd87394f04def39e6e3ff4557791ec54bec",
             "Scope: 8 files changed, 138 insertions, 118 deletions",

@@ -1,110 +1,141 @@
-﻿name: python-publish
+﻿name: Publish Python Package
 
 on:
   push:
     branches:
       - "**"
   workflow_dispatch:
-    inputs:
-      publish:
-        description: "Create GitHub release/tag and publish to PyPI"
-        required: true
-        type: boolean
-        default: false
+
+env:
+  ENABLE_NON_MAIN_PRERELEASE: "false"
 
 permissions:
-  contents: write
-  id-token: write
+  contents: read
 
 jobs:
-  publish:
-    name: Publish OpenMLBB
+  release:
     runs-on: ubuntu-latest
-    if: ${{ (github.event_name == 'workflow_dispatch' && inputs.publish) || (github.event_name == 'push' && contains(github.event.head_commit.message, '[release]')) }}
-    environment: ${{ 'pypi' }}
+    permissions:
+      contents: write
+    outputs:
+      should_release: ${{ steps.version.outputs.should_release }}
+      should_publish: ${{ steps.version.outputs.should_publish }}
+      prerelease: ${{ steps.version.outputs.prerelease }}
+      version: ${{ steps.version.outputs.version }}
+      tag: ${{ steps.version.outputs.tag }}
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Generate release version
+        id: version
+        run: |
+          BRANCH="${GITHUB_REF#refs/heads/}"
+          SHOULD_RELEASE="false"
+          SHOULD_PUBLISH="false"
+          PRERELEASE="false"
+
+          if [ "${BRANCH}" = "main" ]; then
+            SHOULD_RELEASE="true"
+            SHOULD_PUBLISH="true"
+          elif [ "${ENABLE_NON_MAIN_PRERELEASE}" = "true" ]; then
+            SHOULD_RELEASE="true"
+            SHOULD_PUBLISH="false"
+            PRERELEASE="true"
+          fi
+
+          BASE_VERSION="4.0.${GITHUB_RUN_NUMBER}"
+          if [ "${PRERELEASE}" = "true" ]; then
+            VERSION="${BASE_VERSION}rc${GITHUB_RUN_ATTEMPT}"
+          elif [ "${GITHUB_RUN_ATTEMPT}" -gt 1 ]; then
+            VERSION="${BASE_VERSION}.post${GITHUB_RUN_ATTEMPT}"
+          else
+            VERSION="${BASE_VERSION}"
+          fi
+
+          TAG="${VERSION}"
+
+          echo "should_release=${SHOULD_RELEASE}" >> "$GITHUB_OUTPUT"
+          echo "should_publish=${SHOULD_PUBLISH}" >> "$GITHUB_OUTPUT"
+          echo "prerelease=${PRERELEASE}" >> "$GITHUB_OUTPUT"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub release
+        if: steps.version.outputs.should_release == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: Release ${{ steps.version.outputs.tag }}
+          target_commitish: ${{ github.sha }}
+          generate_release_notes: true
+          prerelease: ${{ steps.version.outputs.prerelease }}
+
+  build:
+    runs-on: ubuntu-latest
+    needs: release
+    if: needs.release.outputs.should_release == 'true'
+
+    steps:
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.x"
 
-      - name: Calculate next version
-        id: version
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          git fetch --tags --force
-
-          latest_stable="$(git tag --list '4.*.*' | grep -E '^4\.[0-9]+\.[0-9]+$' | sort -V | tail -n 1 || true)"
-          if [ -z "${latest_stable}" ]; then
-            latest_stable="4.0.0"
-          fi
-
-          IFS='.' read -r major minor patch <<< "${latest_stable}"
-          next_patch=$((patch + 1))
-
-          if [ "${GITHUB_REF_NAME}" = "main" ]; then
-            version="${major}.${minor}.${next_patch}"
-            prerelease="false"
-          else
-            base_version="${major}.${minor}.${next_patch}"
-            latest_rc="$(git tag --list "${base_version}rc*" | grep -E "^${base_version}rc[0-9]+$" | sed 's/.*rc//' | sort -n | tail -n 1 || true)"
-            if [ -z "${latest_rc}" ]; then
-              latest_rc=0
-            fi
-            next_rc=$((latest_rc + 1))
-            version="${base_version}rc${next_rc}"
-            prerelease="true"
-          fi
-
-          echo "version=${version}" >> "$GITHUB_OUTPUT"
-          echo "prerelease=${prerelease}" >> "$GITHUB_OUTPUT"
-          echo "VERSION=${version}" >> "$GITHUB_ENV"
-
-      - name: Update SDK version file
-        shell: bash
+      - name: Set package version
         run: |
           cat > OpenMLBB/src/OpenMLBB/_version.py << EOF
           """Package version for OpenMLBB."""
 
-          __version__ = "${VERSION}"
+          __version__ = "${{ needs.release.outputs.version }}"
           EOF
 
-      - name: Install build tools
+      - name: Install build dependencies
         run: |
           python -m pip install --upgrade pip
           python -m pip install build
 
       - name: Build distributions
-        run: python -m build
-
-      - name: Create and push Git tag
-        shell: bash
         run: |
-          set -euo pipefail
-          if git rev-parse "${VERSION}" >/dev/null 2>&1; then
-            echo "Tag ${VERSION} already exists."
-          else
-            git tag "${VERSION}"
-            git push origin "${VERSION}"
+          python -m build
+
+      - name: Validate release version
+        run: |
+          ls -la dist
+          if ls dist/*dev* >/dev/null 2>&1; then
+            echo "Found dev version artifact, expected release version."
+            exit 1
           fi
 
-      - name: Create GitHub release
-        uses: softprops/action-gh-release@v2
+      - name: Upload distributions
+        uses: actions/upload-artifact@v4
         with:
-          tag_name: ${{ steps.version.outputs.version }}
-          name: ${{ steps.version.outputs.version }}
-          generate_release_notes: true
-          prerelease: ${{ steps.version.outputs.prerelease == 'true' }}
+          name: python-package-dists
+          path: dist/
 
-      - name: Publish to PyPI
+  publish:
+    runs-on: ubuntu-latest
+    needs:
+      - release
+      - build
+    if: needs.release.outputs.should_publish == 'true'
+    permissions:
+      id-token: write
+      contents: read
+
+    environment:
+      name: pypi
+      url: https://pypi.org/project/OpenMLBB/${{ needs.release.outputs.version }}/
+
+    steps:
+      - name: Retrieve distributions
+        uses: actions/download-artifact@v4
+        with:
+          name: python-package-dists
+          path: dist/
+
+      - name: Publish release distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: dist/

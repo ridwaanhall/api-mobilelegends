@@ -66,6 +66,48 @@ https://mlbb.rone.dev/api/redoc         # ReDoc
 https://mlbb.rone.dev/api/openapi.json  # OpenAPI schema
 ```
 
+## Python SDK (PyPI)
+
+Install:
+
+```bash
+pip install OpenMLBB
+```
+
+Usage:
+
+```python
+from OpenMLBB import OpenMLBB
+
+client = OpenMLBB()
+
+# same endpoint groups as API routers
+academy_data = client.academy.roles(lang="en")
+mlbb_data = client.mlbb.heroes(size=10, index=1, order="desc", lang="en")
+
+print(academy_data)
+print(mlbb_data)
+```
+
+SDK defaults:
+
+- Base endpoint: `https://mlbb.rone.dev/api`
+- Response type: JSON payload mapped to Python dictionary
+- User-Agent: `RoneAI-OpenMLBB-Python-SDK`
+
+### Automated Release Rules (4.x.x)
+
+- Workflow file: `.github/workflows/python-publish.yml`
+- Version tags use format: `4.x.x` (no `v` prefix)
+- Push behavior:
+	- Add `[release]` in commit message to trigger publish flow.
+	- Without `[release]`, workflow skips release/tag/publish.
+- Branch behavior when `[release]` is used:
+	- `main` branch creates stable release (`4.0.1`, `4.0.2`, ...)
+	- non-`main` branch creates prerelease (`4.0.1rc1`, `4.0.1rc2`, ...)
+- Manual behavior:
+	- Run `workflow_dispatch` and set `publish=true` for forced release.
+
 ## API Coverage
 
 Full endpoint lists, operation summaries, and request/response schemas are always available in:

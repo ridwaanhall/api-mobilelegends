@@ -1,0 +1,110 @@
+﻿name: python-publish
+
+on:
+  push:
+    branches:
+      - "**"
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: "Create GitHub release/tag and publish to PyPI"
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  publish:
+    name: Publish OpenMLBB
+    runs-on: ubuntu-latest
+    if: ${{ (github.event_name == 'workflow_dispatch' && inputs.publish) || (github.event_name == 'push' && contains(github.event.head_commit.message, '[release]')) }}
+    environment: ${{ 'pypi' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Calculate next version
+        id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git fetch --tags --force
+
+          latest_stable="$(git tag --list '4.*.*' | grep -E '^4\.[0-9]+\.[0-9]+$' | sort -V | tail -n 1 || true)"
+          if [ -z "${latest_stable}" ]; then
+            latest_stable="4.0.0"
+          fi
+
+          IFS='.' read -r major minor patch <<< "${latest_stable}"
+          next_patch=$((patch + 1))
+
+          if [ "${GITHUB_REF_NAME}" = "main" ]; then
+            version="${major}.${minor}.${next_patch}"
+            prerelease="false"
+          else
+            base_version="${major}.${minor}.${next_patch}"
+            latest_rc="$(git tag --list "${base_version}rc*" | grep -E "^${base_version}rc[0-9]+$" | sed 's/.*rc//' | sort -n | tail -n 1 || true)"
+            if [ -z "${latest_rc}" ]; then
+              latest_rc=0
+            fi
+            next_rc=$((latest_rc + 1))
+            version="${base_version}rc${next_rc}"
+            prerelease="true"
+          fi
+
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          echo "prerelease=${prerelease}" >> "$GITHUB_OUTPUT"
+          echo "VERSION=${version}" >> "$GITHUB_ENV"
+
+      - name: Update SDK version file
+        shell: bash
+        run: |
+          cat > OpenMLBB/src/OpenMLBB/_version.py << EOF
+          """Package version for OpenMLBB."""
+
+          __version__ = "${VERSION}"
+          EOF
+
+      - name: Install build tools
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install build
+
+      - name: Build distributions
+        run: python -m build
+
+      - name: Create and push Git tag
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git rev-parse "${VERSION}" >/dev/null 2>&1; then
+            echo "Tag ${VERSION} already exists."
+          else
+            git tag "${VERSION}"
+            git push origin "${VERSION}"
+          fi
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          name: ${{ steps.version.outputs.version }}
+          generate_release_notes: true
+          prerelease: ${{ steps.version.outputs.prerelease == 'true' }}
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist/

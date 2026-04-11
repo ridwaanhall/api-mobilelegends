@@ -336,6 +336,24 @@ def test_openmlbb_group_pages_cover_all_clients() -> None:
     assert "client.addon.win_rate_calculator" in addon_page.text
 
 
+def test_openmlbb_endpoint_card_has_open_only_this_and_show_more() -> None:
+    response = client.get("/openmlbb/academy/meta/version")
+
+    assert response.status_code == 200
+    assert "Open Only This" in response.text
+    assert 'data-desc-toggle' in response.text
+    assert "Show more" in response.text
+
+
+def test_landing_page_highlights_openmlbb_install() -> None:
+    response = client.get("/")
+
+    assert response.status_code == 200
+    assert "pip install OpenMLBB" in response.text
+    assert "Open OpenMLBB Docs" in response.text
+    assert 'href="/openmlbb"' in response.text
+
+
 def test_navbar_includes_openmlbb_button_between_card_and_tutorial() -> None:
     response = client.get("/web/user")
 

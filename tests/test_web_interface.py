@@ -304,9 +304,11 @@ def test_navbar_includes_tutorial_button() -> None:
 
 
 def test_openmlbb_page_is_available() -> None:
-    home_response = client.get("/openmlbb", follow_redirects=False)
-    assert home_response.status_code == 307
-    assert home_response.headers.get("location") == "/openmlbb/user"
+    home_response = client.get("/openmlbb")
+    assert home_response.status_code == 200
+    assert "OpenMLBB SDK" in home_response.text
+    assert "pip install OpenMLBB" in home_response.text
+    assert '/openmlbb/user' in home_response.text
 
     response = client.get("/openmlbb/academy/meta/version")
 
@@ -336,6 +338,17 @@ def test_openmlbb_group_pages_cover_all_clients() -> None:
     assert "client.addon.win_rate_calculator" in addon_page.text
 
 
+def test_openmlbb_hub_includes_group_cards_and_copy_button() -> None:
+    response = client.get("/openmlbb")
+
+    assert response.status_code == 200
+    assert 'data-copy-pip-install' in response.text
+    assert '/openmlbb/user' in response.text
+    assert '/openmlbb/mlbb' in response.text
+    assert '/openmlbb/academy' in response.text
+    assert '/openmlbb/addon' in response.text
+
+
 def test_openmlbb_endpoint_card_has_open_only_this_and_show_more() -> None:
     response = client.get("/openmlbb/academy/meta/version")
 
@@ -352,6 +365,7 @@ def test_landing_page_highlights_openmlbb_install() -> None:
     assert response.status_code == 200
     assert "pip install OpenMLBB" in response.text
     assert "Official Python SDK" in response.text
+    assert 'data-copy-pip-install' in response.text
 
 
 def test_blog_list_includes_v4_0_4_release_notes() -> None:
@@ -384,3 +398,13 @@ def test_navbar_includes_openmlbb_button_between_card_and_tutorial() -> None:
     assert card_idx < openmlbb_idx < tutorial_idx
     assert 'href="/openmlbb"' in response.text
     assert "OpenMLBB" in response.text
+
+
+def test_navbar_group_links_follow_openmlbb_namespace() -> None:
+    response = client.get("/openmlbb/user")
+
+    assert response.status_code == 200
+    assert 'href="/openmlbb/user"' in response.text
+    assert 'href="/openmlbb/mlbb"' in response.text
+    assert 'href="/openmlbb/academy"' in response.text
+    assert 'href="/openmlbb/addon"' in response.text

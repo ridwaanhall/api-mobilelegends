@@ -9,7 +9,7 @@ from fastapi.openapi.utils import get_openapi
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
-from app.core.config import DEBUG, API_VERSION
+from app.core.config import DEBUG, PROJECT_VERSION
 
 
 from app.api.routers.root import router as root_router
@@ -36,7 +36,7 @@ app = FastAPI(
         "The API is designed with a consistent and RESTful structure, supports flexible hero identifiers using either ID or name, and delivers standardized responses optimized for seamless integration into applications, dashboards, and analytics systems."
     ),
 
-    version=API_VERSION,
+    version=PROJECT_VERSION,
 
     docs_url="/api/docs",
     redoc_url="/api/redoc",

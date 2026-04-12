@@ -4,4 +4,4 @@ from typing import Final
 
 from app.core import config
 
-__version__: Final[str] = config.API_VERSION
+__version__: Final[str] = config.PROJECT_VERSION

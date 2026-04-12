@@ -55,7 +55,7 @@ _BLOG_POSTS: list[dict[str, object]] = [
                 "heading": "Versioning and Publishing Flow",
                 "body": "The release process is now explicitly tied to manually managed project version configuration.",
                 "bullets": [
-                    "Version source for release and PyPI publish is API_VERSION in app/core/config.py.",
+                    "Version source for release and PyPI publish is PROJECT_VERSION in app/core/config.py.",
                     "GitHub release creation and PyPI publishing stay automated in workflow execution.",
                     "Tag naming remains in 4.x.x format without a v prefix.",
                 ],
@@ -64,7 +64,7 @@ _BLOG_POSTS: list[dict[str, object]] = [
                 "heading": "Migration Notes",
                 "body": "Existing API consumers can keep current integrations while adopting the SDK and docs improvements gradually.",
                 "bullets": [
-                    "If you publish a new release, update API_VERSION in config first.",
+                    "If you publish a new release, update PROJECT_VERSION in config first.",
                     "Use the /openmlbb docs route for endpoint-by-endpoint SDK mapping.",
                     "Validate client examples against the updated docs for best onboarding experience.",
                 ],

@@ -8,7 +8,7 @@ from fastapi.responses import PlainTextResponse, RedirectResponse
 from app.core.config import (
     API_BASE_URL,
     API_STATUS_MESSAGES,
-    API_VERSION,
+    PROJECT_VERSION,
     DONATION_CURRENCY,
     DONATION_MIN,
     DONATION_NOW,
@@ -125,7 +125,7 @@ async def api_index(request: Request) -> dict:
         "message": "Request processed successfully",
         "timestamp": timestamp,
         "meta": {
-            "version": API_VERSION,
+            "version": PROJECT_VERSION,
             "author": "ridwaanhall",
             "base_url": base_api_url,
             "support": {

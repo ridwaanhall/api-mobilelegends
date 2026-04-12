@@ -1,3 +1,7 @@
 """Package version for OpenMLBB."""
+from __future__ import annotations
+from typing import Final
 
-__version__ = "4.0.0"
+from app.core import config
+
+__version__: Final[str] = config.API_VERSION

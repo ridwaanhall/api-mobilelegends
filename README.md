@@ -104,7 +104,7 @@ SDK defaults:
 ### Automated Release Rules (4.x.x)
 
 - Workflow file: `.github/workflows/python-publish.yml`
-- Version source for release/tag/PyPI: `API_VERSION` default in `app/core/config.py`
+- Version source for release/tag/PyPI: `PROJECT_VERSION` default in `app/core/config.py`
 - Version tags use format: `4.x.x` (no `v` prefix)
 - Push behavior:
   - `main` branch creates stable GitHub release and publishes to PyPI.

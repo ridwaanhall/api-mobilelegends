@@ -69,6 +69,13 @@ jobs:
 
           TAG="${VERSION}"
 
+          if git ls-remote --exit-code --tags origin "refs/tags/${TAG}" >/dev/null 2>&1; then
+            echo "Tag ${TAG} already exists. Skipping release/build/publish."
+            SHOULD_RELEASE="false"
+            SHOULD_PUBLISH="false"
+            PRERELEASE="false"
+          fi
+
           echo "should_release=${SHOULD_RELEASE}" >> "$GITHUB_OUTPUT"
           echo "should_publish=${SHOULD_PUBLISH}" >> "$GITHUB_OUTPUT"
           echo "prerelease=${PRERELEASE}" >> "$GITHUB_OUTPUT"

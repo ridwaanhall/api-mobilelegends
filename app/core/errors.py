@@ -22,6 +22,8 @@ def to_error_code(status_code: int, message: str) -> str:
     normalized = (message or "").lower()
     if "failed to fetch data" in normalized:
         return "UPSTREAM_REQUEST_FAILED"
+    if status_code == 503:
+        return "SERVICE_UNAVAILABLE"
     if status_code == 400:
         return "BAD_REQUEST"
     if status_code == 404:
@@ -37,6 +39,8 @@ def to_error_message(status_code: int, message: str) -> str:
     normalized = (message or "").lower()
     if "failed to fetch data" in normalized:
         return "We could not process your request right now due to an upstream service issue. Please contact support."
+    if status_code == 503:
+        return message or "Service is temporarily unavailable due to high traffic."
     if status_code >= 500:
         return "An internal server error occurred. Please contact support."
     return message or "Request failed."

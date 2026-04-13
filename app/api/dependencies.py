@@ -4,7 +4,8 @@ from typing import Annotated, cast
 
 from fastapi import Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from app.core.config import API_STATUS_MESSAGES, IS_AVAILABLE
+
+from app.core.config import ALTERNATIVE_ENDPOINT_URL, API_STATUS_MESSAGES, IS_AVAILABLE
 from app.core.exceptions import AppError
 from app.core.http import MLBBHeaderBuilder
 
@@ -23,6 +24,7 @@ def require_api_available() -> None:
         message=cast(str, status_info["message"]),
         details={
             "available_endpoints": status_info["available_endpoints"],
+            "alternative_endpoint": ALTERNATIVE_ENDPOINT_URL,
         },
     )
 

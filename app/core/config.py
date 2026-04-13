@@ -51,9 +51,13 @@ DEBUG: bool = env_bool("DEBUG", default=False)
 # =========================
 # Availability Settings
 # =========================
-PROJECT_VERSION: str = env_str("PROJECT_VERSION", default="4.0.5")
+PROJECT_VERSION: str = env_str("PROJECT_VERSION", default="4.0.6")
 IS_AVAILABLE: bool = env_bool("IS_AVAILABLE", default=False)
 DATE_AVAILABLE: str = env_str("DATE_AVAILABLE", default="April 18, 2026")
+ALTERNATIVE_ENDPOINT_URL: str = env_str(
+    "ALTERNATIVE_ENDPOINT_URL",
+    default="https://openmlbb.fastapicloud.dev",
+)
 
 # =========================
 # Support & Donation Details
@@ -78,8 +82,9 @@ DONATION_CURRENCY: str = env_str("DONATION_CURRENCY", default="USD")
 API_STATUS_MESSAGES: dict[str, dict[str, str | list[str]]] = {
     "limited": {
         "status": "limited",
-        "message": f"API is currently in maintenance mode. Will be available {DATE_AVAILABLE}.",
-        "available_endpoints": ["Base API"],
+        "message": "Service is temporarily unavailable due to high traffic. Please use the alternative endpoint.",
+        "available_endpoints": ["/"],
+        "alternative_endpoint": ALTERNATIVE_ENDPOINT_URL,
     },
     "available": {
         "status": "available",

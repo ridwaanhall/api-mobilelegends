@@ -1,6 +1,43 @@
 {% extends "layout.html" %}
 
 {% block content %}
+{% if not is_available %}
+<section class="mx-auto w-full max-w-5xl">
+	<div class="relative overflow-hidden border border-rose-400/50 bg-rose-950/20 p-5 sm:p-8 md:p-10">
+		<div class="pointer-events-none absolute -left-16 -top-20 h-56 w-56 rounded-full bg-rose-500/20 blur-3xl"></div>
+		<div class="pointer-events-none absolute -right-20 -bottom-20 h-64 w-64 rounded-full bg-orange-500/20 blur-3xl"></div>
+
+		<p class="relative z-10 text-xs uppercase tracking-[0.22em] text-rose-200/80">Service Status</p>
+		<h1 class="relative z-10 mt-3 text-2xl font-semibold tracking-tight text-rose-50 sm:text-3xl md:text-4xl">
+			503 Service Unavailable
+		</h1>
+		<p class="relative z-10 mt-4 max-w-3xl text-sm leading-7 text-rose-100/90 sm:text-base">
+			The current endpoint is temporarily unavailable due to high traffic.
+			Please use the alternative endpoint below while maintenance and scaling are in progress.
+		</p>
+
+		<div class="relative z-10 mt-6 border border-rose-300/50 bg-black/25 p-4 sm:p-5">
+			<p class="text-[11px] uppercase tracking-[0.16em] text-rose-100/80">Recommended Endpoint</p>
+			<a
+				href="{{ alternative_endpoint }}"
+				target="_blank"
+				rel="noopener noreferrer"
+				class="mt-2 inline-flex break-all text-cyan-200 underline decoration-cyan-300/70 underline-offset-4 hover:text-cyan-100"
+			>
+				<code class="border border-cyan-300/40 bg-black/30 px-2 py-1 font-mono text-xs sm:text-sm">
+					{{ alternative_endpoint }}
+				</code>
+			</a>
+		</div>
+
+		<div class="relative z-10 mt-5 flex flex-wrap gap-2 text-xs text-zinc-300">
+			<span class="border border-zinc-700 px-3 py-1">Base URL remains reachable for status updates</span>
+			<span class="border border-zinc-700 px-3 py-1">API and interactive web routes are currently restricted</span>
+			<span class="border border-zinc-700 px-3 py-1">Tutorial pages remain accessible under /blog</span>
+		</div>
+	</div>
+</section>
+{% else %}
 <section class="mx-auto w-full max-w-6xl space-y-4 sm:space-y-6">
 	<div class="relative border border-zinc-800 p-4 sm:p-6 md:p-10">
 		<div class="pointer-events-none absolute -right-24 top-0 h-64 w-64 rounded-full bg-cyan-500/10 blur-3xl"></div>
@@ -89,6 +126,7 @@
 		</div>
 	</div>
 </section>
+{% endif %}
 
 <script type="application/ld+json">
 {

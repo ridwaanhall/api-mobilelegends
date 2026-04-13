@@ -7,7 +7,7 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
-from app.core.config import PROJECT_VERSION
+from app.core.config import ALTERNATIVE_ENDPOINT_URL, API_STATUS_MESSAGES, IS_AVAILABLE, PROJECT_VERSION
 from app.web.openapi_catalog import GROUP_META, WEB_GROUPS, get_group_operations
 from app.web.openmlbb_catalog import OPENMLBB_GROUP_META, OPENMLBB_GROUPS, get_openmlbb_group_operations
 
@@ -25,6 +25,9 @@ def _shared_context(request: Request, current_group: str | None = None) -> dict[
         "current_group": current_group,
         "current_year": datetime.now(UTC).year,
         "api_version": PROJECT_VERSION,
+        "is_available": IS_AVAILABLE,
+        "alternative_endpoint": ALTERNATIVE_ENDPOINT_URL,
+        "maintenance_message": API_STATUS_MESSAGES["limited"]["message"],
         "seo_description": "Interactive web interface for MLBB Public Data API with endpoint forms, readable response tables, and cURL output.",
         "seo_keywords": "mlbb api, mobile legends api, web ui, fastapi, openapi, response table",
     }
@@ -38,15 +41,26 @@ def _normalize_path(value: str) -> str:
 @router.get(path="/", include_in_schema=False, response_class=HTMLResponse)
 def landing_page(request: Request) -> HTMLResponse:
     context = _shared_context(request)
+    if IS_AVAILABLE:
+        context.update(
+            {
+                "title": "Home / MLBB Public Data API & Web",
+                "web_title": "Home",
+                "seo_description": "Modern landing page for MLBB Public Data API. Access docs and a full interactive web playground for all endpoints.",
+                "seo_keywords": "mlbb, mobile legends, api docs, web playground, analytics api",
+            }
+        )
+        return templates.TemplateResponse(request, "root/landing_page.html", context)
+
     context.update(
         {
-            "title": "Home / MLBB Public Data API & Web",
-            "web_title": "Home",
-            "seo_description": "Modern landing page for MLBB Public Data API. Access docs and a full interactive web playground for all endpoints.",
-            "seo_keywords": "mlbb, mobile legends, api docs, web playground, analytics api",
+            "title": "503 Service Unavailable / MLBB Public Data API",
+            "web_title": "Service Unavailable",
+            "seo_description": "MLBB Public Data API is temporarily unavailable due to high traffic.",
+            "seo_keywords": "mlbb api status, service unavailable, high traffic",
         }
     )
-    return templates.TemplateResponse(request, "root/landing_page.html", context)
+    return templates.TemplateResponse(request, "root/landing_page.html", context, status_code=503)
 
 
 @router.get(path="/web", include_in_schema=False)

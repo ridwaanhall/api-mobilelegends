@@ -6,8 +6,8 @@ from typing import Any
 import requests
 
 
-DEFAULT_BASE_URL = "https://mlbb.rone.dev/api"
-DEFAULT_TIMEOUT = 30
+DEFAULT_BASE_URL = "https://openmlbb.fastapicloud.dev/api"
+DEFAULT_TIMEOUT = 45
 DEFAULT_USER_AGENT = "RoneAI-OpenMLBB-Python-SDK"
 
 

@@ -3,13 +3,19 @@ from __future__ import annotations
 from copy import deepcopy
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.openapi.utils import get_openapi
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
-from app.core.config import DEBUG, PROJECT_VERSION
+from app.core.config import (
+    ALTERNATIVE_ENDPOINT_URL,
+    API_STATUS_MESSAGES,
+    DEBUG,
+    IS_AVAILABLE,
+    PROJECT_VERSION,
+)
 
 
 from app.api.routers.root import router as root_router
@@ -244,6 +250,30 @@ def custom_openapi() -> dict[str, object]:
 
 
 app.openapi = custom_openapi
+
+
+@app.middleware("http")
+async def maintenance_mode_guard(request: Request, call_next):
+    allowed_when_limited_prefixes = ("/blog", "/images/blog")
+    if IS_AVAILABLE or request.url.path == "/" or request.url.path.startswith(allowed_when_limited_prefixes):
+        return await call_next(request)
+
+    status_info = API_STATUS_MESSAGES["limited"]
+    available_endpoints = status_info.get("available_endpoints", ["/"])
+    if not isinstance(available_endpoints, list):
+        available_endpoints = ["/"]
+
+    details = {
+        "available_endpoints": available_endpoints,
+        "alternative_endpoint": ALTERNATIVE_ENDPOINT_URL,
+    }
+
+    if request.url.path.startswith("/api"):
+        payload = safe_error_payload(str(status_info["message"]), 503, details)
+        payload["code"] = "SERVICE_UNAVAILABLE"
+        return JSONResponse(status_code=503, content=payload)
+
+    return RedirectResponse(url="/", status_code=307)
 
 # api routers
 app.include_router(root_router)

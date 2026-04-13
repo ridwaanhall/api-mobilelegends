@@ -51,9 +51,9 @@ DEBUG: bool = env_bool("DEBUG", default=False)
 # =========================
 # Availability Settings
 # =========================
-API_VERSION: str = env_str("API_VERSION", default="4.0.4")
-IS_AVAILABLE: bool = env_bool("IS_AVAILABLE", default=True)
-DATE_AVAILABLE: str = env_str("DATE_AVAILABLE", default="April 10, 2026")
+PROJECT_VERSION: str = env_str("PROJECT_VERSION", default="4.0.5")
+IS_AVAILABLE: bool = env_bool("IS_AVAILABLE", default=False)
+DATE_AVAILABLE: str = env_str("DATE_AVAILABLE", default="April 18, 2026")
 
 # =========================
 # Support & Donation Details
@@ -68,7 +68,7 @@ SUPPORT_DETAILS: dict[str, str] = {
 }
 
 DONATION_MIN: int = env_int("DONATION_MIN", default=1)
-DONATION_NOW: int = env_int("DONATION_NOW", default=0)
+DONATION_NOW: int = env_int("DONATION_NOW", default=12)
 DONATION_TARGET: int = env_int("DONATION_TARGET", default=500)
 DONATION_CURRENCY: str = env_str("DONATION_CURRENCY", default="USD")
 

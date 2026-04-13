@@ -39,9 +39,9 @@ jobs:
           import re
 
           content = pathlib.Path("app/core/config.py").read_text(encoding="utf-8")
-          match = re.search(r'API_VERSION:\s*str\s*=\s*env_str\("API_VERSION",\s*default="([^"]+)"\)', content)
+          match = re.search(r'PROJECT_VERSION:\s*str\s*=\s*env_str\("PROJECT_VERSION",\s*default="([^"]+)"\)', content)
           if not match:
-              raise SystemExit("API_VERSION default not found in app/core/config.py")
+              raise SystemExit("PROJECT_VERSION default not found in app/core/config.py")
           print(match.group(1))
           PY
           )"
@@ -68,6 +68,13 @@ jobs:
           fi
 
           TAG="${VERSION}"
+
+          if git ls-remote --exit-code --tags origin "refs/tags/${TAG}" >/dev/null 2>&1; then
+            echo "Tag ${TAG} already exists. Skipping release/build/publish."
+            SHOULD_RELEASE="false"
+            SHOULD_PUBLISH="false"
+            PRERELEASE="false"
+          fi
 
           echo "should_release=${SHOULD_RELEASE}" >> "$GITHUB_OUTPUT"
           echo "should_publish=${SHOULD_PUBLISH}" >> "$GITHUB_OUTPUT"

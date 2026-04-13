@@ -1,13 +1,12 @@
 # MLBB Public Data API & Web
 
 [![Web Live](https://img.shields.io/badge/API-Live-brightgreen?logo=fastapi&logoColor=white)](https://mlbb.rone.dev)
-![Release](https://img.shields.io/github/v/release/ridwaanhall/api-mobilelegends?logo=github)
 ![License](https://img.shields.io/github/license/ridwaanhall/api-mobilelegends?logo=bsd&logoColor=white)
 ![Stars](https://img.shields.io/github/stars/ridwaanhall/api-mobilelegends?logo=github)
-![Forks](https://img.shields.io/github/forks/ridwaanhall/api-mobilelegends?logo=github)
+![PyPI](https://img.shields.io/pypi/v/OpenMLBB?logo=pypi&logoColor=white)
+![Downloads](https://img.shields.io/pypi/dm/OpenMLBB?logo=pypi&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3.12+-blue?logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
-![OpenAPI](https://img.shields.io/badge/OpenAPI-3.1-green?logo=openapiinitiative&logoColor=white)
 
 ![Landing Page](images/blog/landing-page-v3.2.2.webp)
 
@@ -104,7 +103,7 @@ SDK defaults:
 ### Automated Release Rules (4.x.x)
 
 - Workflow file: `.github/workflows/python-publish.yml`
-- Version source for release/tag/PyPI: `API_VERSION` default in `app/core/config.py`
+- Version source for release/tag/PyPI: `PROJECT_VERSION` default in `app/core/config.py`
 - Version tags use format: `4.x.x` (no `v` prefix)
 - Push behavior:
   - `main` branch creates stable GitHub release and publishes to PyPI.

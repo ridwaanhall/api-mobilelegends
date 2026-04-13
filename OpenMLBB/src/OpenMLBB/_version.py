@@ -1,7 +1,7 @@
-"""Package version for OpenMLBB."""
-from __future__ import annotations
-from typing import Final
+"""Package version for OpenMLBB.
 
-from app.core import config
+Keep this value as a plain string literal so setuptools can resolve dynamic
+version metadata during isolated builds (e.g. Vercel/uv build env).
+"""
 
-__version__: Final[str] = config.PROJECT_VERSION
+__version__ = "4.0.5"

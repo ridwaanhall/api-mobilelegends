@@ -51,9 +51,9 @@ DEBUG: bool = env_bool("DEBUG", default=False)
 # =========================
 # Availability Settings
 # =========================
-PROJECT_VERSION: str = env_str("PROJECT_VERSION", default="4.0.6")
+PROJECT_VERSION: str = env_str("PROJECT_VERSION", default="4.0.7")
 IS_AVAILABLE: bool = env_bool("IS_AVAILABLE", default=False)
-DATE_AVAILABLE: str = env_str("DATE_AVAILABLE", default="April 18, 2026")
+DATE_AVAILABLE: str = env_str("DATE_AVAILABLE", default="May 15, 2026")
 ALTERNATIVE_ENDPOINT_URL: str = env_str(
     "ALTERNATIVE_ENDPOINT_URL",
     default="https://openmlbb.fastapicloud.dev",
@@ -63,7 +63,7 @@ ALTERNATIVE_ENDPOINT_URL: str = env_str(
 # Support & Donation Details
 # =========================
 SUPPORT_DETAILS: dict[str, str] = {
-    "support_message": "You can support us by donating from $1 USD (target: $500 USD) to help enhance API performance and handle high request volumes.",
+    "support_message": "You can support us by donating from $5 USD (target: $500 USD) to help enhance API performance and handle high request volumes.",
     "github_sponsors": "https://github.com/sponsors/ridwaanhall",
     "buymeacoffee": "https://www.buymeacoffee.com/ridwaanhall",
     "donation_link": "https://github.com/sponsors/ridwaanhall",
@@ -71,7 +71,7 @@ SUPPORT_DETAILS: dict[str, str] = {
     "id_zone_adv": "advanced server: 1149309666 (57060)",
 }
 
-DONATION_MIN: int = env_int("DONATION_MIN", default=1)
+DONATION_MIN: int = env_int("DONATION_MIN", default=5)
 DONATION_NOW: int = env_int("DONATION_NOW", default=12)
 DONATION_TARGET: int = env_int("DONATION_TARGET", default=500)
 DONATION_CURRENCY: str = env_str("DONATION_CURRENCY", default="USD")

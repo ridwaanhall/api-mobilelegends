@@ -78,8 +78,8 @@ _BLOG_POSTS: list[dict[str, object]] = [
         "published_at": "2026-04-11",
         "read_time": "7 min read",
         "category": "Release Notes",
-        "is_featured": True,
-        "is_pinned": True,
+        "is_featured": False,
+        "is_pinned": False,
         "key_points": [
             "Version move: 3.2.3 -> 4.0.4",
             "OpenMLBB SDK and web docs now fully aligned with API groups",

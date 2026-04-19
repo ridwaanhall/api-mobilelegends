@@ -36,6 +36,7 @@ This API & Web provides access to hero analytics, in-game performance data, acad
 | Tutorial and Blog | [mlbb.rone.dev/blog](https://mlbb.rone.dev/blog) | Guides, tutorials, and release/changelog posts. |
 | Web Playground | [mlbb.rone.dev/web](https://mlbb.rone.dev/web) | Interactive endpoint workspace for executing API requests from browser forms. |
 | OpenMLBB SDK Docs | [mlbb.rone.dev/openmlbb](https://mlbb.rone.dev/openmlbb) | Structured Python SDK docs for academy, mlbb, user, and addon clients with endpoint-level examples. |
+| TypeScript SDK (Alternative) | [npmjs.com/package/mlbb-sdk](https://www.npmjs.com/package/mlbb-sdk) | Alternative SDK option for TypeScript/JavaScript projects. |
 | Swagger UI | [mlbb.rone.dev/api/docs](https://mlbb.rone.dev/api/docs) | OpenAPI-powered docs with live request execution and authorization support. |
 | ReDoc | [mlbb.rone.dev/api/redoc](https://mlbb.rone.dev/api/redoc) | Alternative API documentation view optimized for reference reading. |
 | OpenAPI JSON | [mlbb.rone.dev/api/openapi.json](https://mlbb.rone.dev/api/openapi.json) | Raw OpenAPI schema for tooling, SDK generation, and integrations. |
@@ -99,6 +100,30 @@ SDK defaults:
 - Base endpoint: `https://mlbb.rone.dev/api`
 - Response type: JSON payload mapped to Python dictionary
 - User-Agent: `RoneAI-OpenMLBB-Python-SDK`
+
+## TypeScript SDK (Alternative)
+
+If your project is using TypeScript or JavaScript, you can use `mlbb-sdk` as an alternative SDK.
+
+Install:
+
+```bash
+npm install mlbb-sdk
+```
+
+Quick start:
+
+```ts
+import { createMlbbClient } from "mlbb-sdk";
+
+const client = createMlbbClient({ lang: "en" });
+
+const heroes = await client.mlbb.getHeroes();
+const roles = await client.academy.getRoles();
+
+console.log(heroes);
+console.log(roles);
+```
 
 ### Automated Release Rules (4.x.x)
 

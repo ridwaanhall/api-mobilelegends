@@ -69,3 +69,13 @@ The default `User-Agent` is:
 `RoneAI-OpenMLBB-Python-SDK`
 
 You can override it by passing `user_agent=` to `OpenMLBB(...)`.
+
+## TypeScript Alternative
+
+If your project is using TypeScript or JavaScript, an alternative SDK is available on npm:
+
+```bash
+npm install mlbb-sdk
+```
+
+Package page: `https://www.npmjs.com/package/mlbb-sdk`

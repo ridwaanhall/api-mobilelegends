@@ -131,9 +131,9 @@ def openmlbb_home(request: Request) -> HTMLResponse:
         {
             "title": "OpenMLBB SDK / Home",
             "web_title": "OpenMLBB SDK",
-            "subtitle": "Pick a client group to browse the Python SDK docs and copy practical examples.",
-            "seo_description": "OpenMLBB SDK hub for academy, mlbb, user, and addon docs.",
-            "seo_keywords": "openmlbb, python sdk, mlbb api, academy, user, addon",
+            "subtitle": "Pick a client group to browse Python SDK docs and practical examples, plus a TypeScript alternative.",
+            "seo_description": "OpenMLBB Python SDK hub for academy, mlbb, user, and addon docs, with TypeScript alternative guidance.",
+            "seo_keywords": "openmlbb, python sdk, typescript sdk, mlbb api, academy, user, addon",
         }
     )
     return templates.TemplateResponse(request, "openmlbb/landing_page.html", context)

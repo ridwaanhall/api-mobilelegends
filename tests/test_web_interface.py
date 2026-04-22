@@ -374,7 +374,7 @@ def test_blog_list_includes_v4_0_4_release_notes() -> None:
     response = client.get("/blog")
 
     assert response.status_code == 200
-    assert "MLBB API Web v4.0.7 Release Notes (4.0.6 -&gt; 4.0.7)" in response.text or "MLBB API Web v4.0.7 Release Notes (4.0.6 -> 4.0.7)" in response.text
+    assert "MLBB API Web v4.0.7 Release Notes (4.0.6 -&gt; 4.0.8)" in response.text or "MLBB API Web v4.0.7 Release Notes (4.0.6 -> 4.0.8)" in response.text
     assert "MLBB API Web v4.0.4 Release Notes (3.2.3 -&gt; 4.0.4)" in response.text or "MLBB API Web v4.0.4 Release Notes (3.2.3 -> 4.0.4)" in response.text
 
 
@@ -382,7 +382,7 @@ def test_blog_detail_v4_0_7_release_notes_includes_typescript_alternative() -> N
     response = client.get("/blog/mlbb-api-web-v4-0-7-release-notes-4-0-6-4-0-7")
 
     assert response.status_code == 200
-    assert "Version move: 4.0.6 -&gt; 4.0.7" in response.text or "Version move: 4.0.6 -> 4.0.7" in response.text
+    assert "Version move: 4.0.6 -&gt; 4.0.8" in response.text or "Version move: 4.0.6 -> 4.0.8" in response.text
     assert "npm install mlbb-sdk" in response.text
 
 

@@ -10,8 +10,8 @@ router = APIRouter(tags=["web"])
 
 _BLOG_POSTS: list[dict[str, object]] = [
     {
-        "title": "MLBB API Web v4.0.7 Release Notes (4.0.6 to 4.0.7)",
-        "excerpt": "Version 4.0.7 extends the 4.0.6 maintenance hardening with clearer availability defaults, refreshed SDK versioning, and a TypeScript SDK alternative path for JavaScript/TypeScript projects.",
+        "title": "MLBB API Web v4.0.7 Release Notes (4.0.6 to 4.0.8)",
+        "excerpt": "Version 4.0.8 extends the 4.0.6 maintenance hardening with clearer availability defaults, refreshed SDK versioning, and a TypeScript SDK alternative path for JavaScript/TypeScript projects.",
         "cover_image": "/images/blog/update-v4.0.7.webp",
         "published_at": "2026-04-19",
         "read_time": "6 min read",
@@ -19,16 +19,16 @@ _BLOG_POSTS: list[dict[str, object]] = [
         "is_featured": True,
         "is_pinned": True,
         "key_points": [
-            "Range: 4.0.6 -> 4.0.7",
-            "Version move: 4.0.6 -> 4.0.7",
+            "Range: 4.0.6 -> 4.0.8",
+            "Version move: 4.0.6 -> 4.0.8",
             "Scope from baseline: 9 files changed, 116 insertions, 23 deletions",
         ],
         "sections": [
             {
                 "heading": "Release Summary",
-                "body": "This release finalizes the next patch step after 4.0.6 by aligning project version defaults to 4.0.7 and keeping maintenance-mode behavior and endpoint messaging consistent for production users.",
+                "body": "This release finalizes the next patch step after 4.0.6 by aligning project version defaults to 4.0.8 and keeping maintenance-mode behavior and endpoint messaging consistent for production users.",
                 "bullets": [
-                    "Project version defaults now target 4.0.7 in runtime and SDK package metadata.",
+                    "Project version defaults now target 4.0.8 in runtime and SDK package metadata.",
                     "Landing and availability defaults are set for normal operation while preserving fallback endpoint guidance.",
                     "Release messaging keeps the same operational safety model introduced in 4.0.6.",
                 ],
@@ -57,14 +57,14 @@ _BLOG_POSTS: list[dict[str, object]] = [
                 "bullets": [
                     "Availability defaults target active service mode for regular traffic conditions.",
                     "Support message baseline now reflects donation minimum guidance from $5.",
-                    "Date/version metadata in config has been moved forward for the 4.0.7 release line.",
+                    "Date/version metadata in config has been moved forward for the 4.0.8 release line.",
                 ],
             },
             {
                 "heading": "Upgrade Guidance",
                 "body": "No major API route break is introduced in this patch. Existing clients can upgrade with minimal friction.",
                 "bullets": [
-                    "If you use OpenMLBB, update to the 4.0.7 package version and re-validate your environment defaults.",
+                    "If you use OpenMLBB, update to the 4.0.8 package version and re-validate your environment defaults.",
                     "If your project uses TypeScript, evaluate mlbb-sdk as an alternative client integration path.",
                     "Keep fallback endpoint handling in your client for limited-mode or high-traffic windows.",
                 ],

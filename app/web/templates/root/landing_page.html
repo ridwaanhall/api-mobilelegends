@@ -56,31 +56,62 @@
 			APIs include easy forms, response tables, previews, and cURL for quick integration.
 		</p>
 
-		<div class="relative z-10 mt-6 border border-sky-700/60 p-5 sm:p-6 md:p-8">
-			<div class="flex flex-col items-center gap-4 text-center">
-				<p class="text-[11px] uppercase tracking-[0.16em] text-sky-300">Python SDK</p>
-				
-				<div class="relative inline-flex items-center gap-2 px-2 py-1">
-					<code class="font-mono text-base underline text-sky-100 sm:text-xl md:text-2xl">
-						pip install OpenMLBB
-					</code>
-					<button
-						type="button"
-						class="border border-sky-500/70 px-3 py-1.5 text-[11px] text-sky-200 hover:border-sky-300 hover:text-sky-100"
-						data-copy-pip-install
+		<div class="relative z-10 mt-6">
+			<div class="grid gap-4 md:grid-cols-2">
+				<article class="relative overflow-hidden border border-cyan-700/60 bg-gradient-to-br from-cyan-950/45 via-zinc-950 to-zinc-950 p-4 sm:p-5">
+					<div class="pointer-events-none absolute -left-16 -top-20 h-52 w-52 rounded-full bg-cyan-500/20 blur-3xl"></div>
+					<p class="relative z-10 text-[11px] uppercase tracking-[0.16em] text-cyan-200">Python SDK</p>
+					<h2 class="relative z-10 mt-2 text-lg font-semibold text-zinc-100">Official SDK Track</h2>
+					<p class="relative z-10 mt-2 text-xs leading-6 text-zinc-300">
+						Covers academy, mlbb, user, and addon routes with the same data shape as the API playground.
+					</p>
+					<div class="relative z-10 mt-4 flex flex-wrap items-center gap-2 border border-cyan-700/50 bg-black/35 p-2">
+						<code class="font-mono text-xs text-cyan-100 sm:text-sm">pip install OpenMLBB</code>
+						<button
+							type="button"
+							class="border border-cyan-500/70 px-3 py-1.5 text-[11px] text-cyan-200 hover:border-cyan-300 hover:text-cyan-100"
+							data-copy-command="pip install OpenMLBB"
+						>
+							Copy
+						</button>
+					</div>
+					<a
+						href="https://pypi.org/project/OpenMLBB/"
+						target="_blank"
+						rel="noopener noreferrer"
+						class="relative z-10 mt-3 inline-flex text-[11px] uppercase tracking-[0.12em] text-cyan-300 underline decoration-cyan-500/60 underline-offset-4 hover:text-cyan-100"
 					>
-						Copy
-					</button>
-				</div>
+						View package on PyPI
+					</a>
 
-				<p class="text-xs text-sky-100/80">
-					Use the same endpoint coverage as API routers: academy, mlbb, user, addon.
-				</p>
+				</article>
 
-				<div class="mt-2 border border-zinc-700/80 bg-zinc-950/60 px-3 py-2 text-left text-xs text-zinc-300">
-					<p class="uppercase tracking-[0.14em] text-[10px] text-zinc-500">TypeScript Alternative</p>
-					<p class="mt-1">If your project is using TypeScript, use <span class="font-mono text-cyan-200">npm install mlbb-sdk</span>.</p>
-				</div>
+				<article class="relative overflow-hidden border border-emerald-700/60 bg-gradient-to-bl from-emerald-950/40 via-zinc-950 to-zinc-950 p-4 sm:p-5">
+					<div class="pointer-events-none absolute -right-16 -bottom-20 h-52 w-52 rounded-full bg-emerald-500/20 blur-3xl"></div>
+					<p class="relative z-10 text-[11px] uppercase tracking-[0.16em] text-emerald-200">TypeScript SDK</p>
+					<h2 class="relative z-10 mt-2 text-lg font-semibold text-zinc-100">JavaScript / TS Path</h2>
+					<p class="relative z-10 mt-2 text-xs leading-6 text-zinc-300">
+						Build frontend and Node integrations using the maintained npm package with fast setup.
+					</p>
+					<div class="relative z-10 mt-4 flex flex-wrap items-center gap-2 border border-emerald-700/50 bg-black/35 p-2">
+						<code class="font-mono text-xs text-emerald-100 sm:text-sm">npm install mlbb-sdk</code>
+						<button
+							type="button"
+							class="border border-emerald-500/70 px-3 py-1.5 text-[11px] text-emerald-200 hover:border-emerald-300 hover:text-emerald-100"
+							data-copy-command="npm install mlbb-sdk"
+						>
+							Copy
+						</button>
+					</div>
+					<a
+						href="https://www.npmjs.com/package/mlbb-sdk"
+						target="_blank"
+						rel="noopener noreferrer"
+						class="relative z-10 mt-3 inline-flex text-[11px] uppercase tracking-[0.12em] text-emerald-300 underline decoration-emerald-500/60 underline-offset-4 hover:text-emerald-100"
+					>
+						View package on npm
+					</a>
+				</article>
 			</div>
 		</div>
 
@@ -151,23 +182,29 @@
 {% block scripts %}
 <script>
 (() => {
-	const button = document.querySelector("[data-copy-pip-install]");
-	if (!button) {
+	const copyButtons = document.querySelectorAll("[data-copy-command]");
+	if (!copyButtons.length) {
 		return;
 	}
 
-	const command = "pip install OpenMLBB";
-	button.addEventListener("click", async () => {
-		try {
-			await navigator.clipboard.writeText(command);
-			const previousText = button.textContent;
-			button.textContent = "Copied";
-			window.setTimeout(() => {
-				button.textContent = previousText;
-			}, 1200);
-		} catch {
-			window.prompt("Copy this command", command);
-		}
+	copyButtons.forEach((button) => {
+		button.addEventListener("click", async () => {
+			const command = button.getAttribute("data-copy-command") || "";
+			if (!command) {
+				return;
+			}
+
+			try {
+				await navigator.clipboard.writeText(command);
+				const previousText = button.textContent;
+				button.textContent = "Copied";
+				window.setTimeout(() => {
+					button.textContent = previousText;
+				}, 1200);
+			} catch {
+				window.prompt("Copy this command", command);
+			}
+		});
 	});
 })();
 </script>

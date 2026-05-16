@@ -52,7 +52,13 @@ This API & Web provides access to hero analytics, in-game performance data, acad
 
 ## Base URLs
 
+> [!NOTE]
+> Recommended for 500+ requests per day: https://openmlbb.fastapicloud.dev
+> Standard for 0 - 500 requests per day: https://mlbb.rone.dev
+
 ```txt
+https://openmlbb.fastapicloud.dev/     # Recommended base for high-volume traffic
+https://openmlbb.fastapicloud.dev/api  # API base (fastapicloud)
 https://mlbb.rone.dev/                  # Landing page
 https://mlbb.rone.dev/blog              # Tutorial and blog list
 https://mlbb.rone.dev/blog/{slug}       # Blog detail page

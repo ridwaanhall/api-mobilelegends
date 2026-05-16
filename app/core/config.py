@@ -52,7 +52,7 @@ DEBUG: bool = env_bool("DEBUG", default=False)
 # Availability Settings
 # =========================
 PROJECT_VERSION: str = env_str("PROJECT_VERSION", default="4.0.8")
-IS_AVAILABLE: bool = env_bool("IS_AVAILABLE", default=False)
+IS_AVAILABLE: bool = env_bool("IS_AVAILABLE", default=True)
 DATE_AVAILABLE: str = env_str("DATE_AVAILABLE", default="May 15, 2026")
 ALTERNATIVE_ENDPOINT_URL: str = env_str(
     "ALTERNATIVE_ENDPOINT_URL",

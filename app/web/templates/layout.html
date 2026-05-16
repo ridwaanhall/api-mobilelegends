@@ -129,6 +129,19 @@
             background: radial-gradient(120% 90% at 50% 50%, transparent 44%, rgba(0, 0, 0, 0.55) 100%);
         }
 	</style>
+	{% if is_openmlbb_fastapicloud %}
+	<!-- Google tag (gtag.js) -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-CPMYRKG5XQ"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag() {
+			dataLayer.push(arguments);
+		}
+		gtag("js", new Date());
+
+		gtag("config", "G-CPMYRKG5XQ");
+	</script>
+	{% endif %}
 </head>
 <body class="flex min-h-screen flex-col overflow-x-hidden text-zinc-100">
 	<div class="site-ambient-layer" aria-hidden="true"></div>

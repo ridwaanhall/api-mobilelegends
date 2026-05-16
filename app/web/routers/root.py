@@ -31,7 +31,7 @@ def _shared_context(request: Request, current_group: str | None = None) -> dict[
         "seo_description": "Interactive web interface for MLBB Public Data API with endpoint forms, readable response tables, and cURL output.",
         "seo_keywords": "mlbb api, mobile legends api, web ui, fastapi, openapi, response table",
         "base_url": BASE_URL,
-        "is_openmlbb_fastapicloud": BASE_URL.rstrip("/") == "https://openmlbb.fastapicloud.dev",
+        "is_openmlbb_fastapicloud": ((request.url.hostname or "").lower() == "openmlbb.fastapicloud.dev") or (BASE_URL.rstrip("/") == "https://openmlbb.fastapicloud.dev"),
     }
 
 

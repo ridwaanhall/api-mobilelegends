@@ -18,6 +18,7 @@ class LanguageEnum(str, Enum):
     VIETNAMESE = "vi"
     CHINESE_SIMPLIFIED = "zh-CN"
     CHINESE_TRADITIONAL = "zh-TW"
+    KAMBODIAN = "km"
     
 class RankEnum(str, Enum):
     '''Rank filter for hero statistics.'''

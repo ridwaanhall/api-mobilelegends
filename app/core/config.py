@@ -117,7 +117,21 @@ BASE_URL: str = env_str("BASE_URL", default="https://mlbb.rone.dev/")
 API_BASE_URL: str = env_str("API_BASE_URL", default=f"{BASE_URL}api/")
 DOCS_BASE_URL: str = env_str("DOCS_BASE_URL", default=f"{BASE_URL}docs")
 
-PROD_URL: str = "http://127.0.0.1:8000/api/" if DEBUG else env_str("PROD_URL", default=API_BASE_URL)
+# Production URLs for different request volumes
+PROD_URL_STANDARD: str = (
+    "http://127.0.0.1:8000/api/"
+    if DEBUG
+    else env_str("PROD_URL_STANDARD", default="https://mlbb.rone.dev/api/")
+)
+
+PROD_URL_HIGH_VOLUME: str = (
+    "http://127.0.0.1:8000/api/"
+    if DEBUG
+    else env_str("PROD_URL_HIGH_VOLUME", default="https://openmlbb.fastapicloud.dev/api/")
+)
+
+# Backward compatibility
+PROD_URL: str = PROD_URL_STANDARD
 
 LIVECHAT_LINK: str = env_str("LIVECHAT_LINK", default="https://ridwaanhall.com/guestbook/")
 CONTACT_FORM_LINK: str = env_str("CONTACT_FORM_LINK", default="https://ridwaanhall.com/contact/")

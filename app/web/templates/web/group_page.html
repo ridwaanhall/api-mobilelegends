@@ -92,8 +92,10 @@
     const REQUEST_COUNT_KEY = "mlbb_web_request_count";
     const REQUEST_COUNT_DATE_KEY = "mlbb_web_request_count_date";
     const REQUEST_THRESHOLD = 500;
-    const STANDARD_API_BASE = "https://mlbb.rone.dev";
-    const RECOMMENDED_API_BASE = "https://openmlbb.fastapicloud.dev";
+    const IS_DEBUG = {{ 'true' if is_debug else 'false' }};
+    const DEBUG_API_BASE = IS_DEBUG ? "http://127.0.0.1:8000" : null;
+    const STANDARD_API_BASE = IS_DEBUG ? DEBUG_API_BASE : "{{ prod_url_standard }}";
+    const RECOMMENDED_API_BASE = IS_DEBUG ? DEBUG_API_BASE : "{{ prod_url_high_volume }}";
 
     function getTodayKey() {
         const now = new Date();
@@ -129,9 +131,10 @@
     function updateApiBaseNotice(count = getStoredRequestCount()) {
         const resolvedBase = resolveApiBase(count);
         const modeLabel = count > REQUEST_THRESHOLD ? "High volume" : "Standard volume";
+        const debugNote = IS_DEBUG ? " (Debug Mode - using local server)" : "";
         const note = count > REQUEST_THRESHOLD
-            ? "You are above 500 requests per day. The playground routes to https://openmlbb.fastapicloud.dev (recommended)."
-            : "Under 500 requests per day, the playground routes to https://mlbb.rone.dev. Above 500 requests per day, it switches to https://openmlbb.fastapicloud.dev (recommended).";
+            ? `You are above 500 requests per day. The playground routes to ${RECOMMENDED_API_BASE} (recommended)${debugNote}.`
+            : `Under 500 requests per day, the playground routes to ${STANDARD_API_BASE}. Above 500 requests per day, it switches to ${RECOMMENDED_API_BASE} (recommended)${debugNote}.`;
 
         const activeBase = document.getElementById("api-base-active");
         const activeMode = document.getElementById("api-base-mode");
@@ -142,7 +145,7 @@
             activeBase.textContent = resolvedBase;
         }
         if (activeMode) {
-            activeMode.textContent = modeLabel;
+            activeMode.textContent = modeLabel + (IS_DEBUG ? " (DEBUG)" : "");
         }
         if (requestCount) {
             requestCount.textContent = count.toLocaleString("en-US");
@@ -343,7 +346,7 @@
             lines.push(`    -d ${shellQuote(requestBody)}`);
         } else {
             const last = lines[lines.length - 1];
-            lines[lines.length - 1] = last.replace(/ \\\\$/, "");
+            lines[lines.length - 1] = last.replace(/ \\$/, "");
         }
 
         return lines.join("\n");

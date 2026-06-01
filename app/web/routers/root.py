@@ -7,7 +7,16 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
-from app.core.config import ALTERNATIVE_ENDPOINT_URL, API_STATUS_MESSAGES, IS_AVAILABLE, PROJECT_VERSION, BASE_URL
+from app.core.config import (
+    ALTERNATIVE_ENDPOINT_URL,
+    API_STATUS_MESSAGES,
+    DEBUG,
+    IS_AVAILABLE,
+    PROJECT_VERSION,
+    BASE_URL,
+    PROD_URL_STANDARD,
+    PROD_URL_HIGH_VOLUME,
+)
 from app.web.openapi_catalog import GROUP_META, WEB_GROUPS, get_group_operations
 from app.web.openmlbb_catalog import OPENMLBB_GROUP_META, OPENMLBB_GROUPS, get_openmlbb_group_operations
 
@@ -31,6 +40,10 @@ def _shared_context(request: Request, current_group: str | None = None) -> dict[
         "seo_description": "Interactive web interface for MLBB Public Data API with endpoint forms, readable response tables, and cURL output.",
         "seo_keywords": "mlbb api, mobile legends api, web ui, fastapi, openapi, response table",
         "base_url": BASE_URL,
+        "is_debug": DEBUG,
+        "debug_api_base": "http://127.0.0.1:8000/api" if DEBUG else None,
+        "prod_url_standard": PROD_URL_STANDARD.rstrip("/"),
+        "prod_url_high_volume": PROD_URL_HIGH_VOLUME.rstrip("/"),
         "is_openmlbb_fastapicloud": ((request.url.hostname or "").lower() == "openmlbb.fastapicloud.dev") or (BASE_URL.rstrip("/") == "https://openmlbb.fastapicloud.dev"),
     }
 

@@ -4,7 +4,7 @@
 ![License](https://img.shields.io/github/license/ridwaanhall/api-mobilelegends?logo=bsd&logoColor=white)
 ![Stars](https://img.shields.io/github/stars/ridwaanhall/api-mobilelegends?logo=github)
 ![PyPI](https://img.shields.io/pypi/v/OpenMLBB?logo=pypi&logoColor=white)
-![Downloads](https://img.shields.io/pypi/dm/OpenMLBB?logo=pypi&logoColor=white)
+[![Downloads](https://pepy.tech/badge/OpenMLBB)](https://pepy.tech/project/OpenMLBB)
 ![Python](https://img.shields.io/badge/Python-3.12+-blue?logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
 

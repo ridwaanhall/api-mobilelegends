@@ -12,7 +12,7 @@ requires-python = ">=3.10"
 dependencies = [
     "fastapi[standard]>=0.135.2",
     "requests>=2.32.0,<3",
-    "cryptography==46.0.7",
+    "cryptography==48.0.1",
 ]
 
 [project.urls]

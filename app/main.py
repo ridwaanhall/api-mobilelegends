@@ -8,6 +8,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.openapi.utils import get_openapi
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware  # <-- 1. IMPORT ADDED HERE
 
 from app.core.config import (
     ALTERNATIVE_ENDPOINT_URL,
@@ -16,7 +17,6 @@ from app.core.config import (
     IS_AVAILABLE,
     PROJECT_VERSION,
 )
-
 
 from app.api.routers.root import router as root_router
 from app.api.routers.mlbb import router as mlbb_router
@@ -31,9 +31,7 @@ from app.core.errors import AppError, app_error_handler, safe_error_payload, unh
 app = FastAPI(
     debug=DEBUG,
     title="MLBB Public Data API",
-
     summary="Public API for Mobile Legends: Bang Bang providing hero data, analytics, academy resources, user endpoints, and utility tools.",
-
     description=(
         "MLBB Public Data API is a comprehensive public API for Mobile Legends: Bang Bang, built for developers, analysts, and fans who need structured and reliable game data. "
         "It provides access to hero information including listings, rankings, positions, detailed statistics, performance trends, skill combos, counters, compatibility, and hero relationships. "
@@ -41,9 +39,7 @@ app = FastAPI(
         "User-related endpoints are available for authentication, profile data, match history, and player statistics, while utility tools such as win rate calculators and IP lookup enhance integration capabilities. "
         "The API is designed with a consistent and RESTful structure, supports flexible hero identifiers using either ID or name, and delivers standardized responses optimized for seamless integration into applications, dashboards, and analytics systems."
     ),
-
     version=PROJECT_VERSION,
-
     docs_url="/api/docs",
     redoc_url="/api/redoc",
     openapi_url="/api/openapi.json",
@@ -52,18 +48,15 @@ app = FastAPI(
         "defaultModelsExpandDepth": -1,
         "displayRequestDuration": True,
     },
-
     contact={
         "name": "RoneAI",
         "url": "https://rone.dev/#Contact",
         "email": "founder@rone.dev",
     },
-
     license_info={
         "name": "BSD 3-Clause License",
         "url": "https://github.com/ridwaanhall/api-mobilelegends/blob/main/LICENSE",
     },
-
     openapi_tags=[
         {
             "name": "user",
@@ -82,6 +75,17 @@ app = FastAPI(
             "description": "Utility tools and extra features.",
         },
     ]
+)
+
+# ==========================================
+# 2. CORS MIDDLEWARE ADDED HERE
+# ==========================================
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all domains, including http://localhost:3000
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all HTTP methods (GET, POST, OPTIONS, etc.)
+    allow_headers=["*"],  # Allows all headers
 )
 
 def _inline_enum_defaults_in_parameters(schema: dict[str, object]) -> None:

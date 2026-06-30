@@ -101,8 +101,13 @@ def _build_parameter(parameter: dict[str, Any], component_schemas: dict[str, Any
     if type_name in {"integer", "number"}:
         input_type = "number"
 
+    param_name = parameter.get("name", "")
+    title = schema.get("title") or ""
+
     return {
-        "name": parameter.get("name", ""),
+        "name": param_name,
+        "title": title,
+        "label": title if title else param_name,
         "location": parameter.get("in", "query"),
         "required": bool(parameter.get("required", False)),
         "description": description_text,
@@ -273,6 +278,31 @@ def _render_description_html(text: str) -> str:
     return "".join(blocks)
 
 
+def _extract_response_example(operation: dict[str, Any]) -> str | None:
+    responses = operation.get("responses", {})
+    if not isinstance(responses, dict):
+        return None
+
+    for code in ("200", "201"):
+        resp = responses.get(code, {})
+        if not isinstance(resp, dict):
+            continue
+        content = resp.get("content", {})
+        if not isinstance(content, dict):
+            continue
+        app_json = content.get("application/json", {})
+        if not isinstance(app_json, dict):
+            continue
+        example = app_json.get("example")
+        if example is not None:
+            try:
+                return json.dumps(example, indent=2, ensure_ascii=True)
+            except (TypeError, ValueError):
+                return None
+
+    return None
+
+
 def get_group_operations(app: FastAPI, group: str) -> list[dict[str, Any]]:
     if group not in WEB_GROUPS:
         return []
@@ -331,6 +361,8 @@ def get_group_operations(app: FastAPI, group: str) -> list[dict[str, Any]]:
             if not isinstance(operation_id, str) or not operation_id:
                 operation_id = f"{method_name.lower()}_{api_path.strip('/').replace('/', '_')}"
 
+            response_example_json = _extract_response_example(operation)
+
             operations.append(
                 {
                     "operation_id": operation_id,
@@ -344,6 +376,7 @@ def get_group_operations(app: FastAPI, group: str) -> list[dict[str, Any]]:
                     "request_body": request_body,
                     "requires_auth": requires_auth,
                     "deprecated": bool(operation.get("deprecated", False)),
+                    "response_example_json": response_example_json,
                 }
             )
 

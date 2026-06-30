@@ -21,6 +21,9 @@
                 {% if operation.deprecated %}
                     <span class="inline-flex border border-amber-600/60 bg-amber-950/40 px-1 py-0.5 text-[10px] align-middle uppercase tracking-[0.14em] text-amber-400">Deprecated</span>
                 {% endif %}
+                {% if operation.requires_auth %}
+                    <span class="inline-flex border border-violet-600/50 bg-violet-950/30 px-1 py-0.5 text-[10px] align-middle uppercase tracking-[0.14em] text-violet-300" title="Bearer JWT required (Authorization header)">Auth</span>
+                {% endif %}
                 {{ operation.summary }}
             </h3>
             <p class="mt-1 text-xs text-zinc-500">{{ operation.web_path }}</p>
@@ -49,6 +52,25 @@
         </div>
     {% endif %}
 
+    {% if operation.response_example_json %}
+        <div class="mb-4" data-resp-example-wrapper>
+            <button
+                type="button"
+                class="flex w-full cursor-pointer items-center justify-between border border-zinc-800 px-3 py-2 text-xs text-zinc-400 hover:border-zinc-600 hover:text-zinc-200"
+                data-resp-example-toggle
+            >
+                <span class="flex items-center gap-2">
+                    <span class="text-[10px] uppercase tracking-[0.16em]">Example Response</span>
+                    <span class="inline-flex border border-zinc-700 px-1 py-0.5 text-[9px] uppercase tracking-[0.12em] text-zinc-500">200</span>
+                </span>
+                <span class="text-[10px] text-zinc-600" data-resp-example-chevron>&#9660;</span>
+            </button>
+            <div class="hidden border border-t-0 border-zinc-800 p-3" data-resp-example-body>
+                <pre class="custom-scroll max-h-64 overflow-auto font-mono text-[11px] leading-5 text-zinc-300">{{ operation.response_example_json }}</pre>
+            </div>
+        </div>
+    {% endif %}
+
     <form
         class="api-operation-form space-y-4 border border-transparent transition-colors duration-300"
         data-method="{{ operation.method }}"
@@ -59,9 +81,14 @@
             <div class="grid gap-4 md:grid-cols-2">
                 {% for parameter in operation.parameters %}
                     <div class="block border border-zinc-800 p-3 text-xs text-zinc-300">
-                        <div class="mb-2 flex items-center justify-between gap-2">
-                            <span class="font-semibold text-zinc-200">{{ parameter.name }}</span>
-                            <span class="text-[10px] uppercase tracking-[0.14em] text-zinc-500">{{ parameter.location }}</span>
+                        <div class="mb-2 flex items-start justify-between gap-2">
+                            <div>
+                                <span class="font-semibold text-zinc-200">{{ parameter.label }}</span>{% if parameter.required %}<span class="ml-0.5 text-rose-400" title="Required">*</span>{% endif %}
+                                {% if parameter.title and parameter.title != parameter.name %}
+                                    <code class="ml-1.5 border border-zinc-700 px-1 py-0.5 font-mono text-[10px] text-zinc-500">{{ parameter.name }}</code>
+                                {% endif %}
+                            </div>
+                            <span class="shrink-0 text-[10px] uppercase tracking-[0.14em] text-zinc-500">{{ parameter.location }}</span>
                         </div>
 
                         {% if parameter.is_array and parameter.option_values %}
@@ -131,11 +158,8 @@
 
                         <p class="mt-2 text-[11px] text-zinc-500">
                             {{ parameter.description_html | safe }}
-                            {% if parameter.required %}
-                                <span class="text-zinc-300">Required.</span>
-                            {% endif %}
                             {% if parameter.minimum is not none %}
-                                <span class="text-zinc-400">Minimum: {{ parameter.minimum }}.</span>
+                                <span class="text-zinc-400">Min: {{ parameter.minimum }}.</span>
                             {% endif %}
                             {% if parameter.maximum is not none %}
                                 <span class="text-zinc-400">Maximum: {{ parameter.maximum }}.</span>

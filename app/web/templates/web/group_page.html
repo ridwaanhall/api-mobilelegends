@@ -931,8 +931,24 @@
         });
     }
 
+    function setupResponseExampleToggles() {
+        document.querySelectorAll("[data-resp-example-toggle]").forEach((button) => {
+            const wrapper = button.closest("[data-resp-example-wrapper]");
+            if (!wrapper) return;
+            const body = wrapper.querySelector("[data-resp-example-body]");
+            const chevron = wrapper.querySelector("[data-resp-example-chevron]");
+            if (!body) return;
+
+            button.addEventListener("click", () => {
+                const hidden = body.classList.toggle("hidden");
+                if (chevron) chevron.textContent = hidden ? "▾" : "▴";
+            });
+        });
+    }
+
     getAuthApi()?.renderNavbarState?.();
     setupDescriptionToggles();
+    setupResponseExampleToggles();
     setupCopyButtons();
     setupLanguageTabs();
     setupReadableModeToggles();

@@ -343,6 +343,7 @@ def get_group_operations(app: FastAPI, group: str) -> list[dict[str, Any]]:
                     "parameters": parsed_parameters,
                     "request_body": request_body,
                     "requires_auth": requires_auth,
+                    "deprecated": bool(operation.get("deprecated", False)),
                 }
             )
 

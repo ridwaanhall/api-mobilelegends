@@ -61,9 +61,12 @@
 
                     <a
                         href="{{ operation.web_path }}"
-                        class="shrink-0 border px-2 py-1 text-[10px] leading-relaxed {{ 'border-cyan-500/60 bg-cyan-950/20 text-zinc-100' if selected_web_path and operation.web_path.rstrip('/') == selected_web_path.rstrip('/') else 'border-zinc-700 text-zinc-400 hover:border-zinc-500 hover:text-zinc-100' }}"
+                        class="shrink-0 border px-2 py-1 text-[10px] leading-relaxed {% if selected_web_path and operation.web_path.rstrip('/') == selected_web_path.rstrip('/') %}border-cyan-500/60 bg-cyan-950/20 text-zinc-100{% elif operation.deprecated %}border-amber-800/40 text-zinc-500 hover:border-amber-600/50 hover:text-zinc-300{% else %}border-zinc-700 text-zinc-400 hover:border-zinc-500 hover:text-zinc-100{% endif %}"
                     >
                         <span class="inline-flex border px-1 py-0 text-[9px] {{ method_chip }}">{{ method }}</span>
+                        {% if operation.deprecated %}
+                            <span class="ml-1 inline-flex border border-amber-700/50 px-1 text-[8px] uppercase tracking-[0.1em] text-amber-500/80">depr</span>
+                        {% endif %}
                         <span class="ml-1">{{ operation.web_path }}</span>
                     </a>
                 {% endfor %}

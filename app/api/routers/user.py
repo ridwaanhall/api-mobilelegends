@@ -318,6 +318,7 @@ def user_info(
         "- Identifying favorite heroes.\n"
         "- Showcasing personal achievements in MLBB."
     ),
+    deprecated=True,
     responses={
         200: {
             "description": "Successful Response",
@@ -481,6 +482,7 @@ def user_stats(
         "- **popup_shown**: Whether the privacy popup has been shown to the user.\n"
         "- **privacy**: Current privacy state (true/false)."
     ),
+    deprecated=True,
     responses={
         200: {
             "description": "Successful Response",
@@ -540,6 +542,7 @@ def user_privacy_settings(
         "and `invisible` to hide your profile from friends. This parameter is required.\n"
         "- **lang**: Language code for localized content (default: `en`)."
     ),
+    deprecated=True,
     responses={
         200: {
             "description": "Successful Response",
@@ -616,6 +619,7 @@ def user_update_privacy_settings(
         "- Linking performance data to specific seasons.\n"
         "- Enabling clients to fetch season-specific stats or achievements."
     ),
+    deprecated=True,
     responses={
         200: {
             "description": "Successful Response",
@@ -703,6 +707,7 @@ def user_season(
         "- Analyzing player performance.\n"
         "- Enabling clients to paginate reliably through a player's matches."
     ),
+    deprecated=True,
     responses={
         200: {
             "description": "Successful Response",
@@ -856,6 +861,7 @@ def user_matches(
         "    - Analyzing team compositions.\n"
         "    - Evaluating player performance in detail."
     ),
+    deprecated=True,
     responses={
         200: {
             "description": "Successful Response",
@@ -996,6 +1002,7 @@ def user_match_details(
         "- Tracking win rates and performance scores.\n"
         "- Comparing hero usage across different seasons."
     ),
+    deprecated=True,
     responses={
         200: {
             "description": "Successful Response",
@@ -1151,6 +1158,7 @@ def user_frequent_heroes(
         "    Next request: `/api/user/matches/hero/17?sid=40&limit=10&last_cursor=<pageInfo.nextCursor>&lang=en`\n"
         "    Stop pagination when `pageInfo.hasNext = false` or `pageInfo.nextCursor` is empty."
     ),
+    deprecated=True,
     responses={
         200: {
             "description": "Successful Response",
@@ -1311,6 +1319,7 @@ def user_matches_by_hero(
         "- Tracking shared match history.\n"
         "- Analyzing cooperative performance with friends across different seasons."
     ),
+    deprecated=True,
     responses={
         200: {
             "description": "Successful Response",

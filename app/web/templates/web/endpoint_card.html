@@ -1,4 +1,4 @@
-<article class="min-w-0 border border-zinc-800 p-4 md:p-5" data-operation-id="{{ operation.operation_id }}">
+<article class="min-w-0 border p-4 md:p-5 {{ 'border-amber-800/50 bg-amber-950/10' if operation.deprecated else 'border-zinc-800' }}" data-operation-id="{{ operation.operation_id }}" {% if operation.deprecated %}data-deprecated="true"{% endif %}>
     {% set method = operation.method %}
     {% if method == 'GET' %}
         {% set method_class = 'border-emerald-500/60 bg-emerald-950/30 text-emerald-300' %}
@@ -16,8 +16,11 @@
 
     <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
         <div>
-            <h3 class="text-lg font-semibold text-zinc-100">
+            <h3 class="text-lg font-semibold {{ 'text-zinc-400' if operation.deprecated else 'text-zinc-100' }}">
                 <span class="inline-flex border px-1 py-0.5 text-[10px] align-middle uppercase tracking-[0.16em] {{ method_class }}">{{ operation.method }}</span>
+                {% if operation.deprecated %}
+                    <span class="inline-flex border border-amber-600/60 bg-amber-950/40 px-1 py-0.5 text-[10px] align-middle uppercase tracking-[0.14em] text-amber-400">Deprecated</span>
+                {% endif %}
                 {{ operation.summary }}
             </h3>
             <p class="mt-1 text-xs text-zinc-500">{{ operation.web_path }}</p>
@@ -26,6 +29,13 @@
             Open Only This
         </a>
     </div>
+
+    {% if operation.deprecated %}
+        <div class="mb-4 flex items-start gap-2 border border-amber-800/40 bg-amber-950/20 px-3 py-2 text-xs text-amber-300/90">
+            <span class="mt-0.5 shrink-0 text-amber-500">&#9888;</span>
+            <span>This endpoint is deprecated and may be removed or changed in a future version. Avoid using it in new integrations.</span>
+        </div>
+    {% endif %}
 
     {% if operation.description_html %}
         <div class="mb-4" data-desc-wrapper>
